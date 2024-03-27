@@ -1,9 +1,1 @@
 export { default as Logo } from './logo';
-export { default as HumanBody } from './human-body';
-export { default as Subscribed } from './subscribed';
-export { default as Clock } from './clock';
-export { default as Fire } from './fire';
-export { default as Trophy } from './trophy';
-export { default as Heart } from './heart';
-export { default as Profile } from './profile';
-export { default as BannerLogo } from './banner-logo';

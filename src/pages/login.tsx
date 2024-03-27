@@ -20,6 +20,30 @@ interface RootState {
   auth: any;
 }
 
+interface InputFieldProps {
+  icon: string;
+  placeholder: string;
+  type?: string;
+}
+
+const InputField: React.FC<InputFieldProps> = ({ icon, placeholder, type = "text" }) => (
+  <div className="flex gap-2 p-4 mt-3 text-sm font-medium bg-black rounded-lg border border-solid border-zinc-800 text-neutral-500 max-md:flex-wrap">
+    <img src={icon} alt="" className="shrink-0 w-6 aspect-square" />
+    <input
+      type={type}
+      placeholder={placeholder}
+      className="my-auto w-[500px] focus:ring-0 border-none bg-transparent outline-none text-neutral-500 max-md:max-w-full"
+    />
+  </div>
+);
+
+const SocialButton: React.FC<{ icon: string }> = ({ icon }) => (
+  <div className="flex flex-1 justify-center items-center px-16 py-2 bg-black rounded-lg border border-solid border-zinc-800 max-md:px-5">
+    <img src={icon} alt="" className="aspect-[0.81] w-[17px]" />
+  </div>
+);
+
+
 const LoginPage: React.FunctionComponent<IPage> = props => {
 
   const navigate = useNavigate();
@@ -27,94 +51,61 @@ const LoginPage: React.FunctionComponent<IPage> = props => {
   return (
     <React.Fragment>
 
-        <div className="flex bg-[#000] max-[767px]:block h-[100vh]">
-          <div className="col-1 font-['SF-Pro'] w-[50%] flex m-[50px] max-[767px]:w-[100%] max-[767px]:m-[0px] max-[767px]:p-[25px]">
-            <div className="m-auto rounded-[12px] w-full bg-[#1E1E1E] py-[60px] px-[32px] max-w-[530px] max-[767px]:w-[100%] max-[767px]: px-[15px]">
-              <Logo className="w-[360px] m-[auto]" />
-              <p className="text-[#EFEFEF] text-[14px] text-center mt-[8px] mb-[40px]">
-                Create an account to get started. You’re only one step away.
-              </p>
-              <div>
-                <button className="bg-[#1E1E1E] text-[#828282] border border-[#D0D5DD] w-full flex items-center justify-center py-2 rounded-[5px]">
-                  <img
-                    className="mr-[12px]"
-                    src="https://content.sweatsonic.com/icon.png"
-                  />{" "}
-                  Continue with Google
-                </button>
-                <div className="text-center text-[#A1A1A1] py-[40px] text-[14px]">
-                  ------------- or Sign in with Email -------------
+      <div className="flex justify-center items-center px-16 py-20 bg-[#101010] max-md:px-5">
+        <div className="flex flex-col mt-4 w-full max-w-[1260px] max-md:max-w-full">
+          <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e7c8132155bc57be39b711e2b47631705bd36d5eddeac1ffa3811b8ffd5fd7f5?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&" alt="" className="self-center aspect-[1.14] w-[98px]" />
+          <div className="flex overflow-hidden relative flex-col justify-center items-center px-16 py-10 mt-16 w-full min-h-[624px] max-md:px-5 max-md:mt-10 max-md:max-w-full">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e53c443d7d0dbfc78b8e8a096dfb42ff6d3e9287f0c8cf493870d5e92623f01b?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&" alt="" className="object-cover absolute inset-0 size-full" />
+            <div className="flex relative flex-col p-8 max-w-full rounded-3xl border border-solid bg-stone-950 border-zinc-800 w-[564px] max-md:px-5">
+              <div className="flex justify-center items-center px-16 font-medium text-white max-md:px-5 max-md:max-w-full">
+                <div className="flex flex-col">
+                  <h1 className="self-center text-2xl">Welcome Back</h1>
+                  <p className="mt-2 text-sm">
+                    <span>Don't have an account yet?</span>{" "}
+                    <a href="#" className="font-semibold">
+                      Sign Up
+                    </a>
+                  </p>
                 </div>
               </div>
-              <div className="mb-4">
-                <label className="text-[#fff] font-[400] leading-[30px]">Email</label>
-                <input
-                  type="text"
-                  placeholder="Email"
-                  className="bg-[transparent] border-[#D0D5DD] border text-[#A0ABBB] w-full px-3 py-2 rounded mb-3"
+              <form>
+                <InputField
+                  icon="https://cdn.builder.io/api/v1/image/assets/TEMP/dba5ecb3f4153a4e8f3291072aaa3c3f64f78371548f5aca590f90fc6a39b8f7?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                  placeholder="email address"
+                  type="email"
                 />
-                <label className="text-[#fff] font-[400] leading-[30px]">
-                  Password
-                </label>
-                <input
+                <InputField
+                  icon="https://cdn.builder.io/api/v1/image/assets/TEMP/b2cc13662aa78b8022fcadd25afa926f7318f50c818f9e3cabaaecfde5dcc0b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                  placeholder="password"
                   type="password"
-                  placeholder="Password"
-                  className="bg-[transparent] border-[#D0D5DD] border text-[#A0ABBB] w-full px-3 py-2 rounded mb-1"
                 />
-                {/* <div className="text-sm text-[#F42852] mb-3">Error Message</div> */}
-              </div>
-              <div className="flex items-center justify-between mb-[12px]">
-                <div className="flex items-center">
-                  <input
-                    id="remember_me"
-                    name="remember_me"
-                    type="checkbox"
-                    className="h-4 w-4 text-[#A0ABBB] focus:ring-indigo-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="remember_me"
-                    className="ml-2 block text-sm text-gray-400"
-                  >
-                    Remember Me
-                  </label>
-                </div>
-                <div className="text-sm">
-                  <a
-                    href="#" onClick={() => navigate('/forgot-password')} 
-                    className="font-[400] text-[#D0D5DD] underline hover:text-indigo-500"
-                  >
-                    Forgot Password?
-                  </a>
-                </div>
-              </div>
-              <div>
-                <button className="bg-[#05BEF8] text-[#fff] w-full py-[12px] rounded">
+                <button
+                  type="submit"
+                  className="justify-center w-[500px]  items-center p-4 mt-3 text-sm font-medium text-black whitespace-nowrap bg-lime-300 rounded-lg max-md:px-5 max-md:max-w-full"
+                >
                   Login
                 </button>
+              </form>
+              <div className="flex gap-3 justify-center items-center mt-9 text-sm font-medium whitespace-nowrap text-zinc-600 max-md:flex-wrap max-md:max-w-full">
+                <hr className="flex-1 self-stretch my-auto w-full border border-solid border-zinc-600 stroke-[1px] stroke-zinc-600" />
+                <span>OR</span>
+                <hr className="flex-1 self-stretch my-auto w-full border border-solid border-zinc-600 stroke-[1px] stroke-zinc-600" />
               </div>
-              <div className="mt-[40px] text-center">
-                <p className="text-gray-400 text-[14px]">
-                  Not Registered Yet?{" "}
-                  <a href="#" onClick={() => navigate('/signup')}  className="text-[#05BEF8] hover:text-indigo-500">
-                    Create an account
-                  </a>
-                </p>
+              <div className="flex gap-3 justify-center mt-9 max-md:flex-wrap max-md:max-w-full">
+                <SocialButton icon="https://cdn.builder.io/api/v1/image/assets/TEMP/31ddeb31d5386ef0e087d794c5810231f47a8b16acc00c3f317aa57cfe3c721a?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&" />
+                <SocialButton icon="https://cdn.builder.io/api/v1/image/assets/TEMP/a8928227426d6ebb295990e9f1ff1c255251c365708c790b6c4cc91c5854d76c?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&" />
               </div>
-            </div>
-          </div>
-          <div className="col-1 font-['Poppins-Med'] bg-[#1a1a1a] h-full max-[767px]:w-[100%] justify-center items-center w-[50%] flex bg-[url('https://content.sweatsonic.com/right-side.png')]">
-            <div className="max-[767px]:py-[100px]">
-              <p className="text-[20px] text-[#E7EAEE] font-[500] text-center">
-              </p>
-              <h1 className="text-[48px] font-[600] text-[#E7EAEE] text-center">
-                Welcome Back
-              </h1>
-              <p className="text-[14px] text-[#E7EAEE] font-['Pop-L'] font-[400] text-center">
-                Start with a 14-day free trail, cancel anytime!
-              </p>
+              <a
+                href="#"
+                className="self-start mt-12 ml-2.5 text-sm font-medium underline text-neutral-500 max-md:mt-10"
+              >
+                Forgot Password?
+              </a>
             </div>
           </div>
         </div>
+      </div>
+
 
     </React.Fragment>
   );
