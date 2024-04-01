@@ -1,5 +1,5 @@
 {
-  "name": "sweatsonic-web",
+  "name": "mvssive-web",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -31,8 +31,8 @@
     "axios": "0.24.0",
     "card-validator": "^9.0.0",
     "clsx": "^2.0.0",
-    "flowbite": "^1.6.3",
-    "flowbite-react": "^0.3.8",
+    "flowbite": "^2.3.0",
+    "flowbite-react": "^0.7.6",
     "formik": "^2.2.9",
     "framer-motion": "^10.16.4",
     "js-cookie": "^3.0.1",
@@ -54,6 +54,7 @@
     "react-loading-overlay": "^1.0.1",
     "react-meta-tags": "^1.0.1",
     "react-modal": "^3.16.1",
+    "react-modern-audio-player": "^1.4.0-rc.2",
     "react-payment-icons": "^1.2.6",
     "react-photo-collage": "^1.0.9",
     "react-player": "^2.13.0",

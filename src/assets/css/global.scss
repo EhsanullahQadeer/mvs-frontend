@@ -75,7 +75,36 @@ body {
     box-shadow: 0 1px 3px 0 #cfd7df;
   }
 
+  .img-g {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 36.12%, #000000 92.21%) !important; 
+    opacity: 0.6;
+  }
 
+  .editor {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .editor-section {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .player-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+  .track-current-time {
+    color:rgb(190 242 100) !important;
+  }
+  .rm-player-progress {
+    background-color: rgb(190 242 100) !important;
+  }
 @tailwind base;
 @tailwind components;
 @tailwind utilities
