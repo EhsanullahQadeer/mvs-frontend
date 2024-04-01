@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 
+import ProducerLibrary from "components/producer/library";
 import { Logo } from "icons";
 import * as React from "react";
 
@@ -175,240 +176,613 @@ const Songwrtier = () => {
                         {/* Start Content */}
 
                         <div className="px-5 py-10 w-[1080px]">
-      <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-        <div className="flex flex-col w-[19%] max-md:ml-0 max-md:w-full">
-          <img
-            loading="lazy"
-            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-            className="shrink-0 self-stretch my-auto max-w-full rounded-full border-2 border-solid aspect-square border-stone-300 w-[200px] max-md:mt-10"
-          />
-        </div>
-        <div className="flex flex-col ml-5 w-[81%] max-md:ml-0 max-md:w-full">
-          <div className="grow self-stretch max-md:mt-10 max-md:max-w-full">
-            <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-              <div className="flex flex-col w-2/5 max-md:ml-0 max-md:w-full">
-                <div className="flex flex-col self-stretch my-auto text-sm max-md:mt-10">
-                  <div className="text-4xl font-medium text-white">
-                    Julia Michaels
-                  </div>
-                  <div className="mt-2 text-zinc-300">@dimeloflow</div>
-                  <div className="mt-4 text-stone-300">
-                    Jorge Valdés Vázquez, better known as DJ Flow or Dímelo
-                    Flow, is a Panamanian DJ and producer based in the United
-                    States.f
-                  </div>
-                  <div className="flex gap-1.5 mt-3 text-xs text-white">
-                    <img
-                      loading="lazy"
-                      srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                      className="shrink-0 aspect-[2.78] w-[77px]"
-                    />
-                    <div className="my-auto">
-                      Followed By{" "}
-                      <span className="font-semibold">
-                        Bad Bunny, Young Miko, Archangel{" "}
-                      </span>
-                      and 10 others
-                    </div>
-                  </div>
-                  <div className="flex gap-3 mt-3 font-semibold">
-                    <div className="flex gap-2 px-4 py-2.5 text-black whitespace-nowrap bg-lime-300 rounded-lg">
-                      <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/2d2bcc1ed223d3ba877e701515559fc945c5a2363a12d629e2a32fdd67b466e2?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                        className="shrink-0 w-5 aspect-square"
-                      />
-                      <div className="my-auto">Share</div>
-                    </div>
-                    <div className="flex gap-2 px-4 py-2.5 rounded-lg border-2 border-gray-200 border-solid text-zinc-300">
-                      <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/a7f38a854768b1e7c25fa08a2dda3fd24481ec78b5add6a827fcdf29589f08a1?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                        className="shrink-0 w-5 aspect-square"
-                      />
-                      <div className="my-auto">Send Request</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col ml-5 w-3/5 max-md:ml-0 max-md:w-full">
-                <div className="flex flex-col grow self-stretch pb-12 text-xs font-medium text-stone-300 max-md:mt-10 max-md:max-w-full">
-                  <div className="text-sm font-semibold text-zinc-300 max-md:max-w-full">
-                    COLLABORATORS
-                  </div>
-                  <div className="flex flex-wrap gap-2 content-start pr-1.5 mt-2">
-                    <div className="justify-center px-3 py-2.5 rounded-lg bg-neutral-900">
-                      Justin Quiles
-                    </div>
-                    <div className="justify-center px-3 py-2.5 rounded-lg bg-neutral-900">
-                      Daddy Yankee
-                    </div>
-                    <div className="justify-center px-3 py-2.5 whitespace-nowrap rounded-lg bg-neutral-900">
-                      Sech
-                    </div>
-                    <div className="justify-center px-3 py-2.5 whitespace-nowrap rounded-lg bg-neutral-900">
-                      Arcangel
-                    </div>
-                    <div className="justify-center px-3 py-2.5 rounded-lg bg-neutral-900">
-                      Rauw Alejandro
-                    </div>
-                  </div>
-                  <div className="mt-3 text-sm font-semibold text-zinc-300 max-md:max-w-full">
-                    GENRES
-                  </div>
-                  <div className="flex gap-2 mt-2 whitespace-nowrap max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-                    <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
-                      Reggaeton
-                    </div>
-                    <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
-                      R&B
-                    </div>
-                    <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
-                      Hip-Hop
-                    </div>
-                    <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
-                      Bachata
-                    </div>
-                    <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
-                      Pop
-                    </div>
-                  </div>
-                  <div className="flex gap-2 mt-2 max-w-full whitespace-nowrap w-[179px]">
-                    <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
-                      Salsa
-                    </div>
-                    <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
-                      Mambo
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                            <div className="flex gap-5 max-md:flex-col max-md:gap-0">
+                                <div className="flex flex-col w-[19%] max-md:ml-0 max-md:w-full">
+                                    <img
+                                        loading="lazy"
+                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3e2b7b1bee1da6b10ef93430a11f940dfafc11b26628e9b49e0df191656064d7?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                                        className="shrink-0 self-stretch my-auto max-w-full rounded-full border-2 border-solid aspect-square border-stone-300 w-[200px] max-md:mt-10"
+                                    />
+                                </div>
+                                <div className="flex flex-col ml-5 w-[81%] max-md:ml-0 max-md:w-full">
+                                    <div className="grow self-stretch max-md:mt-10 max-md:max-w-full">
+                                        <div className="flex gap-5 max-md:flex-col max-md:gap-0">
+                                            <div className="flex flex-col w-2/5 max-md:ml-0 max-md:w-full">
+                                                <div className="flex flex-col self-stretch my-auto text-sm max-md:mt-10">
+                                                    <div className="text-4xl font-medium text-white">
+                                                        Julia Michaels
+                                                    </div>
+                                                    <div className="mt-2 text-zinc-300">@dimeloflow</div>
+                                                    <div className="mt-4 text-stone-300">
+                                                        Jorge Valdés Vázquez, better known as DJ Flow or Dímelo
+                                                        Flow, is a Panamanian DJ and producer based in the United
+                                                        States.f
+                                                    </div>
+                                                    <div className="flex gap-1.5 mt-3 text-xs text-white">
+                                                        <img
+                                                            loading="lazy"
+                                                            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/c62f774853916eeaae55fb57c366c9755afec6c1452d653d86873bfd835875aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                                                            className="shrink-0 aspect-[2.78] w-[77px]"
+                                                        />
+                                                        <div className="my-auto">
+                                                            Followed By{" "}
+                                                            <span className="font-semibold">
+                                                                Bad Bunny, Young Miko, Archangel{" "}
+                                                            </span>
+                                                            and 10 others
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-3 mt-3 font-semibold">
+                                                        <div className="flex gap-2 px-4 py-2.5 text-black whitespace-nowrap bg-lime-300 rounded-lg">
+                                                            <img
+                                                                loading="lazy"
+                                                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/2d2bcc1ed223d3ba877e701515559fc945c5a2363a12d629e2a32fdd67b466e2?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                                                                className="shrink-0 w-5 aspect-square"
+                                                            />
+                                                            <div className="my-auto">Share</div>
+                                                        </div>
+                                                        <div className="flex gap-2 px-4 py-2.5 rounded-lg border-2 border-gray-200 border-solid text-zinc-300">
+                                                            <img
+                                                                loading="lazy"
+                                                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/a7f38a854768b1e7c25fa08a2dda3fd24481ec78b5add6a827fcdf29589f08a1?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                                                                className="shrink-0 w-5 aspect-square"
+                                                            />
+                                                            <div className="my-auto">Send Request</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col ml-5 w-3/5 max-md:ml-0 max-md:w-full">
+                                                <div className="flex flex-col grow self-stretch pb-12 text-xs font-medium text-stone-300 max-md:mt-10 max-md:max-w-full">
+                                                    <div className="text-sm font-semibold text-zinc-300 max-md:max-w-full">
+                                                        COLLABORATORS
+                                                    </div>
+                                                    <div className="flex flex-wrap gap-2 content-start pr-1.5 mt-2">
+                                                        <div className="justify-center px-3 py-2.5 rounded-lg bg-neutral-900">
+                                                            Justin Quiles
+                                                        </div>
+                                                        <div className="justify-center px-3 py-2.5 rounded-lg bg-neutral-900">
+                                                            Daddy Yankee
+                                                        </div>
+                                                        <div className="justify-center px-3 py-2.5 whitespace-nowrap rounded-lg bg-neutral-900">
+                                                            Sech
+                                                        </div>
+                                                        <div className="justify-center px-3 py-2.5 whitespace-nowrap rounded-lg bg-neutral-900">
+                                                            Arcangel
+                                                        </div>
+                                                        <div className="justify-center px-3 py-2.5 rounded-lg bg-neutral-900">
+                                                            Rauw Alejandro
+                                                        </div>
+                                                    </div>
+                                                    <div className="mt-3 text-sm font-semibold text-zinc-300 max-md:max-w-full">
+                                                        GENRES
+                                                    </div>
+                                                    <div className="flex gap-2 mt-2 whitespace-nowrap max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+                                                        <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
+                                                            Reggaeton
+                                                        </div>
+                                                        <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
+                                                            R&B
+                                                        </div>
+                                                        <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
+                                                            Hip-Hop
+                                                        </div>
+                                                        <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
+                                                            Bachata
+                                                        </div>
+                                                        <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
+                                                            Pop
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2 mt-2 max-w-full whitespace-nowrap w-[179px]">
+                                                        <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
+                                                            Salsa
+                                                        </div>
+                                                        <div className="justify-center items-start px-3 py-2.5 rounded-lg bg-neutral-900 max-md:pl-5">
+                                                            Mambo
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
-    <div className="flex flex-col self-stretch px-5">
-      <div className="text-xl font-medium text-neutral-300 max-md:max-w-full">
-        My Credits
-      </div>
-      <div className="mt-2 w-[1080px]">
-        <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-          <div className="flex flex-col  max-md:ml-0 w-[382px] h-[100px]">
-            <div className="flex grow gap-3 p-2.5 w-[382px]  text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:mt-2">
-              <img
-                loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                className="shrink-0 max-w-full aspect-square w-[100px]"
-              />
-              <div className="flex flex-col justify-center py-1">
-                <div className="text-sm font-semibold">The Academy</div>
-                <div className="mt-1">
-                  Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez, Feid
-                </div>
-                <div className="mt-1">Oct 12, 2021</div>
-                <div className="flex flex-wrap gap-1 content-start pr-6 mt-3 font-bold text-zinc-300 max-md:pr-5">
-                  <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
-                    Producer
-                  </div>
-                  <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
-                    Featured Artist
-                  </div>
-                  <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
-                    Composer
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col ml-5 w-3/12 max-md:ml-0 w-[382px] h-[100px]">
-            <div className="flex grow gap-3 p-2.5 w-[382px]  text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:mt-2">
-              <img
-                loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                className="shrink-0 max-w-full aspect-square w-[100px]"
-              />
-              <div className="flex flex-col justify-center py-1">
-                <div className="text-sm font-semibold">En Bajita</div>
-                <div className="mt-1">
-                  Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez, Feid
-                </div>
-                <div className="mt-1">Oct 12, 2021</div>
-                <div className="flex flex-wrap gap-1 content-start pr-6 mt-3 font-bold text-zinc-300 max-md:pr-5">
-                  <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
-                    Producer
-                  </div>
-                  <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
-                    Featured Artist
-                  </div>
-                  <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
-                    Composer
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col ml-5 w-3/12 max-md:ml-0 w-[382px] h-[100px]">
-            <div className="flex grow gap-3 p-2.5 w-[382px] text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:mt-2">
-              <img
-                loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                className="shrink-0 max-w-full aspect-square w-[100px]"
-              />
-              <div className="flex flex-col justify-center py-1">
-                <div className="text-sm font-semibold">Tempo</div>
-                <div className="mt-1">
-                  Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez, Feid
-                </div>
-                <div className="mt-1">Oct 12, 2021</div>
-                <div className="flex flex-wrap gap-1 content-start pr-6 mt-3 font-bold text-zinc-300 max-md:pr-5">
-                  <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
-                    Producer
-                  </div>
-                  <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
-                    Featured Artist
-                  </div>
-                  <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
-                    Composer
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col ml-5 w-3/12 max-md:ml-0 w-[382px] h-[100px]">
-            <div className="flex z-10 grow gap-3 p-2.5 w-[382px] text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:mt-2">
-              <img
-                loading="lazy"
-                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                className="shrink-0 max-w-full aspect-square w-[100px]"
-              />
-              <div className="flex flex-col justify-center py-1">
-                <div className="text-sm font-semibold">Tempo</div>
-                <div className="mt-1">
-                  Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez, Feid
-                </div>
-                <div className="mt-1">Oct 12, 2021</div>
-                <div className="flex flex-wrap gap-1 content-start pr-6 mt-3 font-bold text-zinc-300 max-md:pr-5">
-                  <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
-                    Producer
-                  </div>
-                  <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
-                    Featured Artist
-                  </div>
-                  <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
-                    Composer
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                        <div className="flex flex-col self-stretch px-5">
+                            <div className="text-xl font-medium text-neutral-300 max-md:max-w-full">
+                                My Credits
+                            </div>
+                            <div className="mt-2 w-[1080px]">
+                                <div className="flex gap-5 max-md:flex-col max-md:gap-0">
+                                    <div className="flex flex-col  max-md:ml-0 w-[382px] h-[100px]">
+                                        <div className="flex grow gap-3 p-2.5 w-[382px]  text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:mt-2">
+                                            <img
+                                                loading="lazy"
+                                                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/f93a8da09e29ff776b372b34074f7ca5afea5fbcca971145d82761a69f1bf725?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                                                className="shrink-0 max-w-full aspect-square w-[100px]"
+                                            />
+                                            <div className="flex flex-col justify-center py-1">
+                                                <div className="text-sm font-semibold">The Academy</div>
+                                                <div className="mt-1">
+                                                    Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez, Feid
+                                                </div>
+                                                <div className="mt-1">Oct 12, 2021</div>
+                                                <div className="flex flex-wrap gap-1 content-start pr-6 mt-3 font-bold text-zinc-300 max-md:pr-5">
+                                                    <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
+                                                        Producer
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Featured Artist
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
+                                                        Composer
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col ml-5 w-3/12 max-md:ml-0 w-[382px] h-[100px]">
+                                        <div className="flex grow gap-3 p-2.5 w-[382px]  text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:mt-2">
+                                            <img
+                                                loading="lazy"
+                                                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/65ab858cdf19aee9f2770ffd7f98b8e1cd852f248b9f19fa52c6048915f2dc93?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                                                className="shrink-0 max-w-full aspect-square w-[100px]"
+                                            />
+                                            <div className="flex flex-col justify-center py-1">
+                                                <div className="text-sm font-semibold">En Bajita</div>
+                                                <div className="mt-1">
+                                                    Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez, Feid
+                                                </div>
+                                                <div className="mt-1">Oct 12, 2021</div>
+                                                <div className="flex flex-wrap gap-1 content-start pr-6 mt-3 font-bold text-zinc-300 max-md:pr-5">
+                                                    <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
+                                                        Producer
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Featured Artist
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
+                                                        Composer
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col ml-5 w-3/12 max-md:ml-0 w-[382px] h-[100px]">
+                                        <div className="flex grow gap-3 p-2.5 w-[382px] text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:mt-2">
+                                            <img
+                                                loading="lazy"
+                                                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                                                className="shrink-0 max-w-full aspect-square w-[100px]"
+                                            />
+                                            <div className="flex flex-col justify-center py-1">
+                                                <div className="text-sm font-semibold">Tempo</div>
+                                                <div className="mt-1">
+                                                    Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez, Feid
+                                                </div>
+                                                <div className="mt-1">Oct 12, 2021</div>
+                                                <div className="flex flex-wrap gap-1 content-start pr-6 mt-3 font-bold text-zinc-300 max-md:pr-5">
+                                                    <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
+                                                        Producer
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Featured Artist
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
+                                                        Composer
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col ml-5 w-3/12 max-md:ml-0 w-[382px] h-[100px]">
+                                        <div className="flex z-10 grow gap-3 p-2.5 w-[382px] text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:mt-2">
+                                            <img
+                                                loading="lazy"
+                                                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/1ac1402fd57cd8205cf0162c3d8046de04ec8db4c71f510a050a650a668c82aa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                                                className="shrink-0 max-w-full aspect-square w-[100px]"
+                                            />
+                                            <div className="flex flex-col justify-center py-1">
+                                                <div className="text-sm font-semibold">Tempo</div>
+                                                <div className="mt-1">
+                                                    Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez, Feid
+                                                </div>
+                                                <div className="mt-1">Oct 12, 2021</div>
+                                                <div className="flex flex-wrap gap-1 content-start pr-6 mt-3 font-bold text-zinc-300 max-md:pr-5">
+                                                    <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
+                                                        Producer
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Featured Artist
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 whitespace-nowrap rounded bg-neutral-800">
+                                                        Composer
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                        
+                
+
+
+                        <ProducerLibrary tags={false} />
+
+
+                        <div className="flex flex-col self-stretch px-5 mt-8 ">
+                            <div className="text-xl font-medium text-neutral-300 max-md:max-w-full mb-5">
+                                Collaborators                            </div>
+                        </div>
+
+                        <div className="justify-center  w-auto">
+
+                            <div className="flex overflow-x-auto gap-3  max-md:flex-wrap">
+                                <div className="p-5 rounded-xl border border-solid bg-neutral-950 border-stone-900 max-md:max-w-full">
+                                    <div className="flex gap-5 max-md:flex-col max-md:gap-0">
+                                        <div className=" w-[250px] max-md:ml-0 max-md:w-full">
+                                            <div className="flex flex-col grow justify-center pt-2.5 text-xs font-medium max-md:mt-10">
+                                                <img
+                                                    loading="lazy"
+                                                    srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                    className="ml-2.5 max-w-full rounded-full border-2 border-solid aspect-square border-stone-300 w-[150px]"
+                                                />
+                                                <div className="mt-6 text-2xl text-white">
+                                                    Julia Michaels
+                                                </div>
+                                                <div className="mt-2 text-zinc-300">@thisisjulia</div>
+                                                <div className="flex gap-3 px-px mt-2 font-semibold">
+                                                    <div className="justify-center px-3 py-1 rounded border border-gray-200 border-solid text-zinc-300">
+                                                        View Profile
+                                                    </div>
+                                                    <div className="flex gap-2 px-3 py-1 text-black bg-lime-300 rounded">
+                                                        <img
+                                                            loading="lazy"
+                                                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/d9fa150949072bb671a91573274a3bf4f580c851c7959509584a8800d90a4c35?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                            className="shrink-0 w-4 aspect-square"
+                                                        />
+                                                        <div className="my-auto">Send Request</div>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-4 text-sm font-semibold text-zinc-300">
+                                                    Skills
+                                                </div>
+                                                <div className="flex flex-wrap gap-2 content-start mt-1 whitespace-nowrap text-zinc-300">
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Producer
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Songwriter
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Composer
+                                                    </div>
+                                                </div>
+                                                <div className="mt-3 text-sm font-semibold text-zinc-300">
+                                                    Genres
+                                                </div>
+                                                <div className="flex gap-2 mt-1 whitespace-nowrap text-zinc-300">
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+                                                        <span className="flex w-2 h-2 me-2 bg-[#FF8D24] mt-[5px] rounded-full"></span>
+
+                                                        Reggaeton
+                                                    </div>
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+                                                        <span className="flex w-2 h-2 me-2 bg-[#5DFF24] mt-[5px] rounded-full"></span>
+
+                                                        R&B
+                                                    </div>
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+                                                        <span className="flex w-2 h-2 me-2 bg-[#2461FF] mt-[5px] rounded-full"></span>
+
+                                                        Bachata
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2 mt-2 whitespace-nowrap text-zinc-300">
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+
+                                                        <span className="flex w-2 h-2 me-2 bg-[#FF2466] mt-[5px] rounded-full"></span>
+
+                                                        Hip-Hop
+                                                    </div>
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+                                                        <span className="flex w-2 h-2 me-2 bg-[#24CAFF] mt-[5px] rounded-full"></span>
+
+                                                        Pop
+                                                    </div>
+                                                </div>
+                                                <div className="mt-4 text-sm font-semibold text-zinc-300">
+                                                    Label
+                                                </div>
+                                                <div className="flex flex-wrap gap-2 content-start mt-1 text-zinc-300">
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Rich Music
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Sony Publishing
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col ml-5  max-md:ml-0  w-[350px]">
+                                            <div className="flex flex-col grow self-stretch py-px max-md:mt-10">
+                                                <div className="text-xl font-semibold text-white">
+                                                    Library
+                                                </div>
+                                                <div className="mt-5 text-base text-zinc-300">
+                                                    Credits
+                                                </div>
+                                                <div className="flex gap-5 justify-between py-2.5 mt-8">
+                                                    <div className="text-base font-medium text-zinc-500">
+                                                        Results
+                                                    </div>
+                                                    <div className="text-sm text-neutral-400">
+                                                        See All
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 p-2.5 mt-1 text-xs font-medium text-white rounded bg-neutral-900 max-md:pr-5">
+                                                    <img
+                                                        loading="lazy"
+                                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                        className="shrink-0 aspect-square w-[65px] h-[65px]"
+                                                    />
+                                                    <div className="flex flex-col my-auto">
+                                                        <div className="text-sm font-semibold">
+                                                            The Academy
+                                                        </div>
+                                                        <div className="mt-1">
+                                                            Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez,
+                                                            Feid
+                                                        </div>
+                                                        <div className="mt-1">Oct 12, 2021</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 p-2.5 mt-1 text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:pr-5">
+                                                    <img
+                                                        loading="lazy"
+                                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                        className="shrink-0 aspect-square w-[65px] h-[65px]"
+                                                    />
+                                                    <div className="flex flex-col my-auto">
+                                                        <div className="text-sm font-semibold">
+                                                            The Academy
+                                                        </div>
+                                                        <div className="mt-1">
+                                                            Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez,
+                                                            Feid
+                                                        </div>
+                                                        <div className="mt-1">Oct 12, 2021</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 p-2.5 mt-1 text-xs font-medium text-white rounded bg-neutral-900 max-md:pr-5">
+                                                    <img
+                                                        loading="lazy"
+                                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                        className="shrink-0 aspect-square w-[65px] h-[65px]"
+                                                    />
+                                                    <div className="flex flex-col my-auto">
+                                                        <div className="text-sm font-semibold">
+                                                            The Academy
+                                                        </div>
+                                                        <div className="mt-1">
+                                                            Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez,
+                                                            Feid
+                                                        </div>
+                                                        <div className="mt-1">Oct 12, 2021</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 p-2.5 mt-1 text-xs font-medium text-white rounded bg-neutral-900 max-md:pr-5">
+                                                    <img
+                                                        loading="lazy"
+                                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                        className="shrink-0 aspect-square w-[65px] h-[65px]"
+                                                    />
+                                                    <div className="flex flex-col my-auto">
+                                                        <div className="text-sm font-semibold">
+                                                            The Academy
+                                                        </div>
+                                                        <div className="mt-1">
+                                                            Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez,
+                                                            Feid
+                                                        </div>
+                                                        <div className="mt-1">Oct 12, 2021</div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="p-5 rounded-xl border border-solid bg-neutral-950 border-stone-900 max-md:max-w-full">
+                                    <div className="flex gap-5 max-md:flex-col max-md:gap-0">
+                                        <div className=" w-[250px] max-md:ml-0 max-md:w-full">
+                                            <div className="flex flex-col grow justify-center pt-2.5 text-xs font-medium max-md:mt-10">
+                                                <img
+                                                    loading="lazy"
+                                                    srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/56c4de2532c6445f460e4e518405e8a399258d7f60af5049e5a158c5111323b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                    className="ml-2.5 max-w-full rounded-full border-2 border-solid aspect-square border-stone-300 w-[150px]"
+                                                />
+                                                <div className="mt-6 text-2xl text-white">
+                                                    Julia Michaels
+                                                </div>
+                                                <div className="mt-2 text-zinc-300">@thisisjulia</div>
+                                                <div className="flex gap-3 px-px mt-2 font-semibold">
+                                                    <div className="justify-center px-3 py-1 rounded border border-gray-200 border-solid text-zinc-300">
+                                                        View Profile
+                                                    </div>
+                                                    <div className="flex gap-2 px-3 py-1 text-black bg-lime-300 rounded">
+                                                        <img
+                                                            loading="lazy"
+                                                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/d9fa150949072bb671a91573274a3bf4f580c851c7959509584a8800d90a4c35?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                            className="shrink-0 w-4 aspect-square"
+                                                        />
+                                                        <div className="my-auto">Send Request</div>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-4 text-sm font-semibold text-zinc-300">
+                                                    Skills
+                                                </div>
+                                                <div className="flex flex-wrap gap-2 content-start mt-1 whitespace-nowrap text-zinc-300">
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Producer
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Songwriter
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Composer
+                                                    </div>
+                                                </div>
+                                                <div className="mt-3 text-sm font-semibold text-zinc-300">
+                                                    Genres
+                                                </div>
+                                                <div className="flex gap-2 mt-1 whitespace-nowrap text-zinc-300">
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+                                                        <span className="flex w-2 h-2 me-2 bg-[#FF8D24] mt-[5px] rounded-full"></span>
+
+                                                        Reggaeton
+                                                    </div>
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+                                                        <span className="flex w-2 h-2 me-2 bg-[#5DFF24] mt-[5px] rounded-full"></span>
+
+                                                        R&B
+                                                    </div>
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+                                                        <span className="flex w-2 h-2 me-2 bg-[#2461FF] mt-[5px] rounded-full"></span>
+
+                                                        Bachata
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2 mt-2 whitespace-nowrap text-zinc-300">
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+
+                                                        <span className="flex w-2 h-2 me-2 bg-[#FF2466] mt-[5px] rounded-full"></span>
+
+                                                        Hip-Hop
+                                                    </div>
+                                                    <div className="flex items-start px-2 py-1.5 rounded bg-neutral-800">
+                                                        <span className="flex w-2 h-2 me-2 bg-[#24CAFF] mt-[5px] rounded-full"></span>
+
+                                                        Pop
+                                                    </div>
+                                                </div>
+                                                <div className="mt-4 text-sm font-semibold text-zinc-300">
+                                                    Label
+                                                </div>
+                                                <div className="flex flex-wrap gap-2 content-start mt-1 text-zinc-300">
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Rich Music
+                                                    </div>
+                                                    <div className="justify-center px-2 py-1.5 rounded bg-neutral-800">
+                                                        Sony Publishing
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col ml-5  max-md:ml-0  w-[350px]">
+                                            <div className="flex flex-col grow self-stretch py-px max-md:mt-10">
+                                                <div className="text-xl font-semibold text-white">
+                                                    Library
+                                                </div>
+                                                <div className="mt-5 text-base text-zinc-300">
+                                                    Credits
+                                                </div>
+                                                <div className="flex gap-5 justify-between py-2.5 mt-8">
+                                                    <div className="text-base font-medium text-zinc-500">
+                                                        Results
+                                                    </div>
+                                                    <div className="text-sm text-neutral-400">
+                                                        See All
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 p-2.5 mt-1 text-xs font-medium text-white rounded bg-neutral-900 max-md:pr-5">
+                                                    <img
+                                                        loading="lazy"
+                                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/12bbc8fb1ecbc1af798f3f068fc2ff94022ea1f971789f7cb7eab92c914869f8?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                        className="shrink-0 aspect-square w-[65px] h-[65px]"
+                                                    />
+                                                    <div className="flex flex-col my-auto">
+                                                        <div className="text-sm font-semibold">
+                                                            The Academy
+                                                        </div>
+                                                        <div className="mt-1">
+                                                            Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez,
+                                                            Feid
+                                                        </div>
+                                                        <div className="mt-1">Oct 12, 2021</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 p-2.5 mt-1 text-xs font-medium text-white rounded border border-solid bg-neutral-900 border-neutral-700 max-md:pr-5">
+                                                    <img
+                                                        loading="lazy"
+                                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/b26de97aeb2b32396845b647a62c98d0592e285f7b711df3f101d94240bba5db?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                        className="shrink-0 aspect-square w-[65px] h-[65px]"
+                                                    />
+                                                    <div className="flex flex-col my-auto">
+                                                        <div className="text-sm font-semibold">
+                                                            The Academy
+                                                        </div>
+                                                        <div className="mt-1">
+                                                            Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez,
+                                                            Feid
+                                                        </div>
+                                                        <div className="mt-1">Oct 12, 2021</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 p-2.5 mt-1 text-xs font-medium text-white rounded bg-neutral-900 max-md:pr-5">
+                                                    <img
+                                                        loading="lazy"
+                                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/41fb6f35452739345cc3a31969d15a95fad3b5417ff929dd96e3d30aaeaa22e2?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                        className="shrink-0 aspect-square w-[65px] h-[65px]"
+                                                    />
+                                                    <div className="flex flex-col my-auto">
+                                                        <div className="text-sm font-semibold">
+                                                            The Academy
+                                                        </div>
+                                                        <div className="mt-1">
+                                                            Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez,
+                                                            Feid
+                                                        </div>
+                                                        <div className="mt-1">Oct 12, 2021</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 p-2.5 mt-1 text-xs font-medium text-white rounded bg-neutral-900 max-md:pr-5">
+                                                    <img
+                                                        loading="lazy"
+                                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/e41dd938a227c24af558bfde1262e2e188cee180488171127e4100e4960f1eb1?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+                                                        className="shrink-0 aspect-square w-[65px] h-[65px]"
+                                                    />
+                                                    <div className="flex flex-col my-auto">
+                                                        <div className="text-sm font-semibold">
+                                                            The Academy
+                                                        </div>
+                                                        <div className="mt-1">
+                                                            Dimelo Flow, Sech, Lenny Tavarez, Justin Quilez,
+                                                            Feid
+                                                        </div>
+                                                        <div className="mt-1">Oct 12, 2021</div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+
                         {/* End Content */}
 
                     </div>

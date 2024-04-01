@@ -177,7 +177,7 @@ const Producer = () => {
                         {/* Start Content */}
 
                         <ProducerHeader />
-                        <ProducerLibrary />
+                        <ProducerLibrary tags={true} />
                         <MyCredits />
 
                       

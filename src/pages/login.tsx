@@ -20,33 +20,39 @@ interface RootState {
   auth: any;
 }
 
-interface InputFieldProps {
-  icon: string;
-  placeholder: string;
-  type?: string;
-}
 
-const InputField: React.FC<InputFieldProps> = ({ icon, placeholder, type = "text" }) => (
-  <div className="flex gap-2 p-4 mt-3 text-sm font-medium bg-black rounded-lg border border-solid border-zinc-800 text-neutral-500 max-md:flex-wrap">
-    <img src={icon} alt="" className="shrink-0 w-6 aspect-square" />
-    <input
-      type={type}
-      placeholder={placeholder}
-      className="my-auto w-[500px] focus:ring-0 border-none bg-transparent outline-none text-neutral-500 max-md:max-w-full"
-    />
-  </div>
-);
-
-const SocialButton: React.FC<{ icon: string }> = ({ icon }) => (
-  <div className="flex flex-1 justify-center items-center px-16 py-2 bg-black rounded-lg border border-solid border-zinc-800 max-md:px-5">
-    <img src={icon} alt="" className="aspect-[0.81] w-[17px]" />
-  </div>
-);
 
 
 const LoginPage: React.FunctionComponent<IPage> = props => {
 
   const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleChange = (e) => {
+      
+     if(e.target.name === 'email') {
+       setEmail(e.target.value);
+     }
+
+     if(e.target.name === 'password') {
+      setPassword(e.target.value);
+    }
+  }
+
+ 
+  const SocialButton: React.FC<{ icon: string }> = ({ icon }) => (
+    <div className="flex flex-1 justify-center items-center px-16 py-2 bg-black rounded-lg border border-solid border-zinc-800 max-md:px-5">
+      <img src={icon} alt="" className="aspect-[0.81] w-[17px]" />
+    </div>
+  );
+
+
+  useEffect(() => {
+
+
+  }, [])
 
   return (
     <React.Fragment>
@@ -69,19 +75,44 @@ const LoginPage: React.FunctionComponent<IPage> = props => {
                 </div>
               </div>
               <form>
-                <InputField
-                  icon="https://cdn.builder.io/api/v1/image/assets/TEMP/dba5ecb3f4153a4e8f3291072aaa3c3f64f78371548f5aca590f90fc6a39b8f7?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
+               
+
+              <div className="flex gap-2 p-4 mt-3 text-sm font-medium bg-black rounded-lg border border-solid border-zinc-800 text-neutral-500 max-md:flex-wrap">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/dba5ecb3f4153a4e8f3291072aaa3c3f64f78371548f5aca590f90fc6a39b8f7?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&" alt="" className="shrink-0 w-6 aspect-square" />
+                <input
+                  type="text"
+                  name="email"
                   placeholder="email address"
-                  type="email"
+                  className="my-auto w-[500px] focus:ring-0 border-none bg-transparent outline-none text-neutral-500 max-md:max-w-full"
+                  onChange={handleChange}
                 />
-                <InputField
-                  icon="https://cdn.builder.io/api/v1/image/assets/TEMP/b2cc13662aa78b8022fcadd25afa926f7318f50c818f9e3cabaaecfde5dcc0b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
-                  placeholder="password"
+              </div>
+
+              <div className="flex gap-2 p-4 mt-3 text-sm font-medium bg-black rounded-lg border border-solid border-zinc-800 text-neutral-500 max-md:flex-wrap">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/b2cc13662aa78b8022fcadd25afa926f7318f50c818f9e3cabaaecfde5dcc0b6?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&" alt="" className="shrink-0 w-6 aspect-square" />
+                <input
                   type="password"
+                  name="password"
+                  placeholder="password"
+                  className="my-auto w-[500px] focus:ring-0 border-none bg-transparent outline-none text-neutral-500 max-md:max-w-full"
+                  onChange={handleChange}
                 />
-                <button
+              </div>
+              
+              <button
                   type="submit"
                   className="justify-center w-[500px]  items-center p-4 mt-3 text-sm font-medium text-black whitespace-nowrap bg-lime-300 rounded-lg max-md:px-5 max-md:max-w-full"
+                  onClick={() => {
+
+                    if (email === 'dev@gmail.com' && password === 'password') {
+
+                      navigate("/home-feed");
+                    } else {
+
+                      alert("Invalid email or password");
+                    }
+                  }}
+
                 >
                   Login
                 </button>

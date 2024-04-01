@@ -199,7 +199,7 @@ const HomeFeed = () => {
                                                         Learn More
                                                     </button>
                                                     <div className="shrink-0 self-stretch my-auto h-1.5 w-[62px]" />
-                                                    <div className="flex gap-5 self-stretch my-auto">
+                                                    {/* <div className="flex gap-5 self-stretch my-auto">
                                                         <img
                                                             loading="lazy"
                                                             src="https://cdn.builder.io/api/v1/image/assets/TEMP/f3ba0bda073ad0b2a776766683356b2f1199c342c42ccf8ec1a44cdaf1e02e2e?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
@@ -210,7 +210,7 @@ const HomeFeed = () => {
                                                             src="https://cdn.builder.io/api/v1/image/assets/TEMP/035c392f3c7015e8fca0a464de6c1299c0f32fc5ffbd8f5f766e28f6fe524c11?apiKey=eec5a6bf944f4080abff3098ad4bcfe9&"
                                                             className="shrink-0 w-8 aspect-square"
                                                         />
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </div>
                                         </div>
@@ -670,9 +670,9 @@ const HomeFeed = () => {
                                                     </div>
                                                     <div className="mt-2 text-zinc-300">@thisisjulia</div>
                                                     <div className="flex gap-3 px-px mt-2 font-semibold">
-                                                        <div className="justify-center px-3 py-1 rounded border border-gray-200 border-solid text-zinc-300">
+                                                        <a href="/songwriter" className="justify-center px-3 py-1 rounded border border-gray-200 border-solid text-zinc-300">
                                                             View Profile
-                                                        </div>
+                                                        </a>
                                                         <div className="flex gap-2 px-3 py-1 text-black bg-lime-300 rounded">
                                                             <img
                                                                 loading="lazy"
@@ -847,9 +847,9 @@ const HomeFeed = () => {
                                                     </div>
                                                     <div className="mt-2 text-zinc-300">@thisisjulia</div>
                                                     <div className="flex gap-3 px-px mt-2 font-semibold">
-                                                        <div className="justify-center px-3 py-1 rounded border border-gray-200 border-solid text-zinc-300">
+                                                    <a href="/songwriter" className="justify-center px-3 py-1 rounded border border-gray-200 border-solid text-zinc-300">
                                                             View Profile
-                                                        </div>
+                                                        </a>
                                                         <div className="flex gap-2 px-3 py-1 text-black bg-lime-300 rounded">
                                                             <img
                                                                 loading="lazy"
