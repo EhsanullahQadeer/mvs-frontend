@@ -13,10 +13,10 @@ const config = {
     api_url: isLocalhost
       ? "http://localhost:4000"
       : isDev
-      ? "https://dev-api.sweatsonic.com"
+      ? "https://api.mvssive.net"
       : isStaging
-      ? "https://staging-api.sweatsonic.com"
-      : "https://api.sweatsonic.com",
+      ? "https://api.mvssive.net"
+      : "https://api.mvssive.net",
   },
   stripe_publish_key:
     "pk_test_51IEPFoKg2zMGhaBRelsrjcCAzpwiLn3RyLb4HIK7s0gLA0IzJKUowHLrqI0AqyqZWcESSU697CWAGIkaph6WV2RN00kZYzjRd0",

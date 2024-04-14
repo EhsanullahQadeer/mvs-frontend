@@ -1,66 +1,40 @@
 @font-face {
-    font-family: 'SF-Pro-Display';
-    src: url('../fonts/SFProDisplay-Medium.eot');
-    src: url('../fonts/SFProDisplay-Medium.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/SFProDisplay-Medium.woff2') format('woff2'),
-        url('../fonts/SFProDisplay-Medium.woff') format('woff'),
-        url('../fonts/SFProDisplay-Medium.ttf') format('truetype'),
-        url('../fonts/SFProDisplay-Medium.svg#SFProDisplay-Medium') format('svg');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
+  font-family: "Mona-Sans-M";
+  src: url("../fonts/Mona-Sans-Medium.eot");
+  src: url("../fonts/Mona-Sans-Medium.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/Mona-Sans-Medium.woff2") format("woff2"),
+    url("../fonts/Mona-Sans-Medium.woff") format("woff"),
+    url("../fonts/Mona-Sans-Medium.ttf") format("truetype"),
+    url("../fonts/Mona-Sans-Medium.svg#Mona-Sans-Medium") format("svg");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'Poppins';
-    src: url('../fonts/Poppins-Black.eot');
-    src: url('../fonts/Poppins-Black.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/Poppins-Black.woff2') format('woff2'),
-        url('../fonts/Poppins-Black.woff') format('woff'),
-        url('../fonts/Poppins-Black.ttf') format('truetype'),
-        url('../fonts/Poppins-Black.svg#Poppins-Black') format('svg');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
+  font-family: "Mona-Sans-B";
+  src: url("../fonts/Mona-Sans-Bold.eot");
+  src: url("../fonts/Mona-Sans-Bold.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/Mona-Sans-Bold.woff2") format("woff2"),
+    url("../fonts/Mona-Sans-Bold.woff") format("woff"),
+    url("../fonts/Mona-Sans-Bold.ttf") format("truetype"),
+    url("../fonts/Mona-Sans-Bold.svg#Mona-Sans-Bold") format("svg");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'Poppins-Med';
-    src: url('../fonts/Poppins-Medium.eot');
-    src: url('../fonts/Poppins-Medium.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/Poppins-Medium.woff2') format('woff2'),
-        url('../fonts/Poppins-Medium.woff') format('woff'),
-        url('../fonts/Poppins-Medium.ttf') format('truetype'),
-        url('../fonts/Poppins-Medium.svg#Poppins-Medium') format('svg');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'SF-Pro';
-    src: url('../fonts/SFProDisplay-Regular.eot');
-    src: url('../fonts/SFProDisplay-Regular.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/SFProDisplay-Regular.woff2') format('woff2'),
-        url('../fonts/SFProDisplay-Regular.woff') format('woff'),
-        url('../fonts/SFProDisplay-Regular.ttf') format('truetype'),
-        url('../fonts/SFProDisplay-Regular.svg#SFProDisplay-Regular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Pop-L';
-    src: url('../fonts/Poppins-Light.eot');
-    src: url('../fonts/Poppins-Light.eot?#iefix') format('embedded-opentype'),
-        url('../fonts/Poppins-Light.woff2') format('woff2'),
-        url('../fonts/Poppins-Light.woff') format('woff'),
-        url('../fonts/Poppins-Light.ttf') format('truetype'),
-        url('../fonts/Poppins-Light.svg#Poppins-Light') format('svg');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+  font-family: "Mona-Sans-S";
+  src: url("../fonts/Mona-Sans-SemiBold.eot");
+  src: url("../fonts/Mona-Sans-SemiBold.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/Mona-Sans-SemiBold.woff2") format("woff2"),
+    url("../fonts/Mona-Sans-SemiBold.woff") format("woff"),
+    url("../fonts/Mona-Sans-SemiBold.ttf") format("truetype"),
+    url("../fonts/Mona-Sans-SemiBold.svg#Mona-Sans-SemiBold") format("svg");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
 }
 
 body {
@@ -68,44 +42,67 @@ body {
 }
 
 .InputElement {
-    margin: 0 auto;
-  }
-  
-  .StripeElement--focus {
-    box-shadow: 0 1px 3px 0 #cfd7df;
-  }
+  margin: 0 auto;
+}
 
-  .img-g {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 36.12%, #000000 92.21%) !important; 
-    opacity: 0.6;
-  }
+.StripeElement--focus {
+  box-shadow: 0 1px 3px 0 #cfd7df;
+}
 
-  .editor {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .editor-section {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0.5rem;
-  }
-  
-  .player-container {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-  }
-  .track-current-time {
-    color:rgb(190 242 100) !important;
-  }
-  .rm-player-progress {
-    background-color: rgb(190 242 100) !important;
-  }
+.img-g {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 36.12%,
+    #000000 92.21%
+  ) !important;
+  opacity: 0.6;
+}
+
+.editor {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.editor-section {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.player-container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.track-current-time {
+  color: rgb(190 242 100) !important;
+}
+.rm-player-progress {
+  background-color: rgb(190 242 100) !important;
+}
+
+.feed {
+  position: absolute;
+  right: 0;
+  bottom: 100px;
+  display: none;
+}
+
+.home-bg {
+  background: linear-gradient(180deg, #656971 0%, #151515 90.39%);
+}
+
+.dots {
+  width: 35px;
+  height: 20px;
+  padding: 0px 8px 0px 8px;
+  gap: 2px;
+  opacity: 0px;
+}
+
 @tailwind base;
 @tailwind components;
-@tailwind utilities
-
+@tailwind utilities;

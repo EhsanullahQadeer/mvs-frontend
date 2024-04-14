@@ -1,30 +1,83 @@
-import HomeFeed from "pages/home";
 import IRoute from "../interfaces/route";
 import LoginPage from "../pages/login";
-import Producer from "pages/producer";
-import Songwrtier from "pages/songwriter";
+import SignupPage from "pages/signup";
+import RequestInfoPage from "pages/request-info";
+import ThankyouPage from "pages/thankyou";
+import ForgotPasswordPage from "pages/forgot-password";
+import CompleteProfilePage from "pages/complete-profile";
+import HomeFeed from "pages/home";
+import TermsOfService from "pages/terms";
+import SamplesPage from "pages/samples";
 
 const routes: IRoute[] = [
+  {
+    path: "/home",
+    name: "Home",
+    component: HomeFeed,
+  },
   {
     path: "/",
     name: "Login",
     component: LoginPage,
   },
   {
-    path: "/home-feed",
-    name: "Home Feed",
-    component: HomeFeed,
+    path: "/login",
+    name: "Login",
+    component: LoginPage,
   },
   {
-    path: "/producer",
-    name: "Producer",
-    component: Producer,
+    path: "/signup",
+    name: "Signup",
+    component: SignupPage,
+  },
+  {
+    path: "/request-info",
+    name: "Request Info",
+    component: RequestInfoPage,
+  },
+  {
+    path: "/thank-you",
+    name: "Thank you",
+    component: ThankyouPage,
+  },
+  {
+    path: "/forgot-password",
+    name: "Forgot Password",
+    component: ForgotPasswordPage,
   },
 
   {
-    path: "/songwriter",
-    name: "Songwriter",
-    component: Songwrtier,
+    path: "/new-password",
+    name: "New Password",
+    component: ForgotPasswordPage,
+  },
+
+  {
+    path: "/forgot-password-success",
+    name: "Forgot Password Success",
+    component: ForgotPasswordPage,
+  },
+
+  {
+    path: "/complete-profile",
+    name: "Complete Profile",
+    component: CompleteProfilePage,
+  },
+
+  {
+    path: "/forgot-password/reset",
+    name: "Forgot Password",
+    component: ForgotPasswordPage,
+  },
+  {
+    path: "/terms-of-service",
+    name: "Terms of Service",
+    component: TermsOfService,
+  },
+  {
+    path: "/sound/samples/:id",
+    name: "Samples",
+    component: SamplesPage,
   },
   
 ];

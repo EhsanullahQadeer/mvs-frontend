@@ -3,7 +3,7 @@ import  config from "config/config"
 
 
   export async function currentUser() {
-    return axios.get(`${config.defaults.api_url}/users/me`)
+    return axios.get(`${config.defaults.api_url}/auth/me`)
   }
 
   export async function updateProfile(data:any) {
@@ -15,11 +15,20 @@ import  config from "config/config"
   }
 
   export async function forgotPassword(data:any) {
-    return axios.post(`${config.defaults.api_url}/users/forgot-password`,data)
+    return axios.post(`${config.defaults.api_url}/auth/forgot/password`,data)
   }
 
+  export async function confirmEmail(data:any) {
+    return axios.post(`${config.defaults.api_url}/auth/confirm`,data)
+  }
+
+  export async function resendCode(data:any) {
+    return axios.post(`${config.defaults.api_url}/auth/resend/code`,data)
+  }
+
+
   export async function resetPassword(data:any) {
-    return axios.post(`${config.defaults.api_url}/users/reset-password`,data)
+    return axios.post(`${config.defaults.api_url}/auth/confirm/password`,data)
   }
 
   export async function register(data:any) {

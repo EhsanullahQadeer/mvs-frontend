@@ -27,7 +27,10 @@ export function login(params: any) {
               },
             });
           } else {
-            cookie.set("token", user.data?.results.accessToken);
+
+            const expires = new Date(new Date().getTime() + 60 * 60 * 1000);
+
+            cookie.set("token", user.data.results.access_token, { expires });
 
             dispatch({
               type: ActionType.USER_LOGIN_SUCCESS,
@@ -53,7 +56,7 @@ export function fetchCurrentUser() {
   return async function (dispatch: Dispatch) {
     try {
       await axios
-        .get(`${config.defaults.api_url}/users/me`)
+        .get(`${config.defaults.api_url}/auth/me`)
         .then((user: any) => {
           dispatch({
             type: ActionType.CURRENT_USER,
