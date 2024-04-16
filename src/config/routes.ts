@@ -8,6 +8,7 @@ import CompleteProfilePage from "pages/complete-profile";
 import HomeFeed from "pages/home";
 import TermsOfService from "pages/terms";
 import SamplesPage from "pages/samples";
+import MyLikesPage from "pages/my-likes";
 
 const routes: IRoute[] = [
   {
@@ -79,7 +80,17 @@ const routes: IRoute[] = [
     name: "Samples",
     component: SamplesPage,
   },
+  {
+    path: "/sounds",
+    name: "Sounds",
+    component: HomeFeed,
+  },
   
+  {
+    path: "/my/likes",
+    name: "Likes",
+    component: MyLikesPage,
+  },
 ];
 
 export default routes;

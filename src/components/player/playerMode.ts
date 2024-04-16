@@ -60,8 +60,8 @@ import {
     },
     3: {
       interfacePlacement: {
-        playList: "row2-1",
-        progress: "row1-2",
+        playList: "row1-2",
+        progress: "row2-2",
         playButton: "row2-2",
         volume: "row2-3"
       },
@@ -70,7 +70,7 @@ import {
       width: "200px",
       activeUI: {
         playButton: true,
-        playList: "sortable",
+        playList: "unSortable",
         prevNnext: true,
         volume: true
       }

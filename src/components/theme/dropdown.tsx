@@ -9,6 +9,11 @@ import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
+import RequestSplitSheetModal from "components/modals/request-split-sheet";
+import SampleInfoModal from "components/modals/sample-info";
+import { sampleLike, sampleUnlike } from "redux/actionCreators/sounds";
+import { ToastContainer, toast } from "react-toastify";
+
 interface RootState {
   auth: any;
   sounds: any;
@@ -17,6 +22,8 @@ interface RootState {
 const DropDown = (props: any) => {
   const navigate = useNavigate();
   const state = useSelector((state: RootState) => state);
+  const [request_split_sheet, setRequestSplitSheet] = useState(false);
+  const [sample_info, setSampleInfo] = useState(false);
 
   return (
     <React.Fragment>
@@ -40,10 +47,25 @@ const DropDown = (props: any) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute border border-[#545454] rounded-[8px] top-[0px] right-[20px] w-[230px] bg-[#111] h-[341px] p-[10px]">
+            <Menu.Items className="absolute border border-[#545454] rounded-[8px] top-[0px] right-[20px] w-[230px] bg-[#111] h-auto p-[10px]">
               <div className="">
                 <Menu.Item>
-                  <div className="flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]">
+                  <div
+                    onClick={async () => {
+                      if (parseInt(props.sample.is_liked) === 1) {
+                        await sampleUnlike(props.sample.id);
+                        props.getSamples(props.sound.id, props.page);
+                        toast.success(`${props.sample.filename} is removed from your likes`, { className:"bg-[#C4FF48] text-[#000]"});
+
+                      } else {
+                        await sampleLike(props.sample.id);
+                        props.getSamples(props.sound.id, props.page);
+                        toast.success(`${props.sample.filename} is added your likes`,{ className:"bg-[#C4FF48] text-[#000]"});
+
+                      }
+                    }}
+                    className="flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width={20}
@@ -57,12 +79,17 @@ const DropDown = (props: any) => {
                       />
                     </svg>
                     <p className="text-[14px] ml-[8px] font-['Mona-Sans-M'] text-[#CECFDA]">
-                      Add to Like
+                      {parseInt(props.sample.is_liked) === 1
+                        ? "Remove from likes"
+                        : "Add to likes"}
                     </p>
                   </div>
                 </Menu.Item>
                 <Menu.Item>
-                  <div className="flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]">
+                  <div
+                    onClick={() => setSampleInfo(true)}
+                    className="flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width={24}
@@ -78,9 +105,9 @@ const DropDown = (props: any) => {
                         strokeLinejoin="round"
                       />
                     </svg>
-                    <p className="text-[14px] ml-[8px] font-['Mona-Sans-M'] text-[#CECFDA]">
+                    <button className="text-[14px] ml-[8px] font-['Mona-Sans-M'] text-[#CECFDA]">
                       Sample Info
-                    </p>
+                    </button>
                   </div>
                 </Menu.Item>
               </div>
@@ -108,7 +135,10 @@ const DropDown = (props: any) => {
                   </div>
                 </Menu.Item>
                 <Menu.Item>
-                  <div className="flex items-center cursor-pointer hover:bg-[#0014CD] rounded-[4px] py-[8px] px-[12px]">
+                  <div
+                    onClick={() => setRequestSplitSheet(true)}
+                    className="flex items-center cursor-pointer hover:bg-[#0014CD] rounded-[4px] py-[8px] px-[12px]"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width={24}
@@ -124,9 +154,9 @@ const DropDown = (props: any) => {
                         strokeLinejoin="round"
                       />
                     </svg>
-                    <p className="text-[14px] ml-[8px] underline font-['Mona-Sans-M'] text-[#CECFDA]">
+                    <button className="text-[14px] ml-[8px] underline font-['Mona-Sans-M'] text-[#CECFDA]">
                       Request Split Sheet
-                    </p>
+                    </button>
                   </div>
                 </Menu.Item>
               </div>
@@ -153,14 +183,14 @@ const DropDown = (props: any) => {
                     </p>
                   </div>
                 </Menu.Item>
-                <Menu.Item>
+                {/* <Menu.Item>
                   <div>
                     <p className="text-[14px] px-[12px] py-[8px] font-['Mona-Sans-M'] text-[#575757]">
                       Add to collection
                     </p>
                   </div>
-                </Menu.Item>
-                <Menu.Item>
+                </Menu.Item> */}
+                {/* <Menu.Item>
                   <div className="flex hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -189,10 +219,10 @@ const DropDown = (props: any) => {
                       Reggaeton Guitars
                     </p>
                   </div>
-                </Menu.Item>
+                </Menu.Item> */}
               </div>
               <div className="">
-                <Menu.Item>
+                {/* <Menu.Item>
                   <div className="flex hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -213,12 +243,39 @@ const DropDown = (props: any) => {
                       See All.....
                     </p>
                   </div>
-                </Menu.Item>
+                </Menu.Item> */}
               </div>
             </Menu.Items>
           </Transition>
         </Menu>
       </div>
+      {request_split_sheet && (
+        <RequestSplitSheetModal
+          sample={props.sample}
+          openModal={request_split_sheet}
+          setModal={setRequestSplitSheet}
+        />
+      )}
+      {sample_info && (
+        <SampleInfoModal
+          sample={props.sample}
+          openModal={sample_info}
+          setModal={setSampleInfo}
+        />
+      )}
+
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        rtl={false}
+        pauseOnFocusLoss
+        pauseOnHover
+        theme="dark"
+        icon={false}
+        toastStyle={{ backgroundColor: "#3f3d3d", }}
+      />
     </React.Fragment>
   );
 };

@@ -37,6 +37,8 @@
   font-display: swap;
 }
 
+
+
 body {
   background-color: #000;
 }
@@ -102,6 +104,41 @@ body {
   gap: 2px;
   opacity: 0px;
 }
+
+._modal {
+  backdrop-filter: blur(15px);
+}
+
+.main-container {
+  height: fit-content;
+  padding-top: 3rem;
+}
+
+#icons-container {
+  display: flex;
+  position: relative;
+  justify-content: center;
+}
+
+.icon {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border: 1px solid white;
+  margin-right: -15px;
+}
+
+.Toastify__toast-container  {
+  width: 700px !important;
+  text-align: center;
+}
+
+.track-info-container {
+
+  width: 500px !important;
+}
+
+
 
 @tailwind base;
 @tailwind components;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import AudioPlayer, {
   ActiveUI,
   PlayerPlacement,
@@ -6,17 +7,29 @@ import AudioPlayer, {
   VolumeSliderPlacement
 } from "react-modern-audio-player";
 import { useState } from "react";
-import { playList } from "./playlist";
 import Editor from "./editor";
 
-export default function Player() {
-  const [progressType, setProgressType] = useState<ProgressUI>("bar");
+type InitialStates = Omit<
+  React.AudioHTMLAttributes<HTMLAudioElement>,
+  "autoPlay"
+> & {
+	isPlaying?: true;
+};
+
+export default function Player(props: any) {
+  const [progressType, setProgressType] = useState<ProgressUI>("waveform");
   const [playerPlacement, setPlayerPlacement] = useState<PlayerPlacement>(
     "bottom-left"
   );
   const [interfacePlacement, setInterfacePlacement] = useState<
     any
-  >();
+  >({
+        artwork: "row1-1",
+        trackInfo: "row1-2",
+        trackTimeCurrent: "row1-3",
+        trackTimeDuration: "row1-4",
+        progress: "row1-5",
+  });
   const [playListPlacement, setPlayListPlacement] = useState<PlayListPlacement>(
     "bottom"
   );
@@ -30,25 +43,29 @@ export default function Player() {
   return (
     <div className="App">
       <div className="player-container">
-        <AudioPlayer
-          playList={playList}
-          activeUI={{
-            ...activeUI,
-            progress: progressType
-          }}
-          placement={{
-            player: playerPlacement,
-            interface: {
-              templateArea: interfacePlacement
-            },
-            playList: playListPlacement,
-            volumeSlider: volumeSliderPlacement
-          }}
-          rootContainerProps={{
-            colorScheme: theme,
-            width
-          }}
-        />
+        {props.playlist && (
+
+          <AudioPlayer
+            playList={props.playlist}
+            
+            activeUI={{
+              ...activeUI,
+              progress: progressType
+            }}
+            placement={{
+              player: playerPlacement,
+              interface: {
+                templateArea: interfacePlacement
+              },
+              playList: playListPlacement,
+              volumeSlider: volumeSliderPlacement
+            }}
+            rootContainerProps={{
+              colorScheme: theme,
+              width
+            }}
+          />
+        )}
       </div>
 
       <Editor
