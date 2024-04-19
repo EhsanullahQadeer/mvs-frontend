@@ -9,7 +9,11 @@ const Sidebar = () => {
   return (
     <React.Fragment>
       <div className="sidebar py-[50px] w-[276px] px-[12px] bg-[#0F0F0F]">
-        <button className="hover:bg-[#1E34F9] cursor-pointer rounded-[8px] pl-[32px] text-left w-[100%] h-[52px] font-['Mona-Sans-S'] text-[#ddd] text-[14px]">
+        <button 
+         onClick={(() => {
+          navigate('/sounds')
+         })}
+        className="hover:bg-[#1E34F9] cursor-pointer rounded-[8px] pl-[32px] text-left w-[100%] h-[52px] font-['Mona-Sans-S'] text-[#ddd] text-[14px]">
           Browse
         </button>
         <div className="border border-x-0 border-t border-b-0 border-[#28282880] mt-[49px]"></div>

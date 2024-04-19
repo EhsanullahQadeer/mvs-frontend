@@ -8,10 +8,15 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useSelector } from "react-redux";
+import { submitSplitSheetRequest } from "redux/actionCreators/sounds";
 
 const RequestSplitSheetModal = (props: any) => {
   const [submit_request, setSubmitRequest] = useState(false);
   const [submit_request_success, setSubmitRequestSuccess] = useState(false);
+  const [submitting,setSubmitting] = useState(false);
+  const [master_offer,setMasterOffer] = useState(null);
+  const [publisher_offer,setPublisherOffer] = useState(null);
+
   return (
     <React.Fragment>
       <>
@@ -84,6 +89,8 @@ const RequestSplitSheetModal = (props: any) => {
                                 <input
                                   type="text"
                                   placeholder="e.g - 4%"
+                                  onChange={(e) => setMasterOffer(e.target.value)}
+
                                   className="bg-transparent w-full rounded-xl border-[#66666659] justify-center items-start p-5 mt-4 w-full rounded-xl border border-solid border-stone-500 border-opacity-30 text-stone-500 max-md:max-w-full"
                                 />
                                 <div className="mt-7 w-full text-base max-md:max-w-full">
@@ -92,6 +99,7 @@ const RequestSplitSheetModal = (props: any) => {
                                 <input
                                   type="text"
                                   placeholder="e.g - 25%"
+                                  onChange={(e) => setPublisherOffer(e.target.value)}
                                   className="bg-transparent w-full rounded-xl border-[#66666659] justify-center items-start p-5 mt-4 w-full rounded-xl border border-solid border-stone-500 border-opacity-30 text-stone-500 max-md:max-w-full"
                                 />
 
@@ -104,12 +112,30 @@ const RequestSplitSheetModal = (props: any) => {
                                     {props.sample.filename}
                                   </span>
                                 </div>
-                                <button 
-                                 onClick={() => {
-                                    setSubmitRequestSuccess(true);
+                                <button
+                                 disabled={submitting}
+                                 onClick={async () => {
+
+                                     setSubmitting(true);
+                                    
+                                     if(master_offer && publisher_offer) {
+
+                                         await submitSplitSheetRequest({
+                                            publisher_offer,
+                                            master_offer,
+                                            sample_id: props.sample.id
+                                         })
+
+                                         setSubmitRequestSuccess(true);
+                                         setSubmitting(false);
+                                     } else {
+
+                                         alert("Please fill all the required fields");
+                                         setSubmitting(false);
+                                     }
                                  }}
                                  className="text-center items-center p-4 mt-5 w-full text-white rounded-lg border border-white border-solid max-md:px-5 max-md:max-w-full">
-                                  Submit Request
+                                  {submitting ? 'Submitting...' : 'Submit Request'}
                                 </button>
                               </div>
                             </>

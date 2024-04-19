@@ -103,7 +103,7 @@ const Header = () => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-[30px] top-[30px] w-[230px] bg-[#111] border border-[#545454] rounded-[8px] p-[10px]">
+            <Menu.Items className="zindex absolute right-[30px] top-[30px] w-[230px] bg-[#111] border border-[#545454] rounded-[8px] p-[10px]">
               <Menu.Item>
                 {({ active }) => (
                   <>

@@ -47,7 +47,7 @@ const DropDown = (props: any) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute border border-[#545454] rounded-[8px] top-[0px] right-[20px] w-[230px] bg-[#111] h-auto p-[10px]">
+            <Menu.Items className="zindex absolute border border-[#545454] rounded-[8px] top-[0px] right-[20px] w-[230px] bg-[#111] h-auto p-[10px]">
               <div className="">
                 <Menu.Item>
                   <div
@@ -113,7 +113,19 @@ const DropDown = (props: any) => {
               </div>
               <div className="">
                 <Menu.Item>
-                  <div className="flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]">
+                  <div className="flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
+                  
+                  onClick={() => {
+
+                    const FileSaver = require("file-saver");
+
+                    FileSaver.saveAs(
+                      'https://mvssive-content.s3.amazonaws.com/BS_MD_100_chord_synth_loop_midi_handy_pluck_Dmin.mid',
+                      `'Sample-mid'-${props.sample.id}`
+                    );
+                  }}
+                  
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width={24}

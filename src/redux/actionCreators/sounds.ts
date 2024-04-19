@@ -46,6 +46,11 @@ export async function sampleLike(id: any) {
   return axios.post(`${config.defaults.api_url}/sounds/sample/${id}/like`);
 }
 
+export async function submitSplitSheetRequest(params: any) {
+  return axios.post(`${config.defaults.api_url}/sounds/request/sheet/submit`, params);
+}
+
+
 export async function sampleUnlike(id: any) {
   return axios.post(`${config.defaults.api_url}/sounds/sample/${id}/unlike`);
 }

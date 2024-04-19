@@ -148,7 +148,7 @@ const HomeFeed = () => {
                             >
                               <img
                                 src={sample.thumbnail}
-                                className="w-[150px] h-[150px]"
+                                className="w-[175px] h-[175px]"
                               />
                               <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
                                 {sample.name}
@@ -193,7 +193,7 @@ const HomeFeed = () => {
                             >
                               <img
                                 src={vocal.thumbnail}
-                                className="w-[150px] h-[150px]"
+                                className="w-[175px] h-[175px]"
                               />
                               <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
                                 {vocal.name}

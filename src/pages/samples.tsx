@@ -21,6 +21,7 @@ import DropDown from "components/theme/dropdown";
 import ConsideringModal from "components/modals/considering";
 import ReactPaginate from "react-paginate";
 import Player from "components/player";
+import Toggle from "components/toggle";
 
 interface RootState {
   auth: any;
@@ -53,8 +54,8 @@ const SamplesPage = () => {
   const [considering, setConsidering] = useState(false);
   const [sample, setSample] = useState({});
 
-  const [playlist,setPlaylist] = useState([]);
-  const [preview,setPreview]   = useState(false);
+  const [playlist, setPlaylist] = useState([]);
+  const [preview, setPreview] = useState(false);
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -112,7 +113,7 @@ const SamplesPage = () => {
   const getSoundData = async () => {
     setIsLoading(true);
 
-    const _sound:any = await getSound(id);
+    const _sound: any = await getSound(id);
 
     const list = [];
 
@@ -120,20 +121,20 @@ const SamplesPage = () => {
 
     for (let i = 0; i < _sound?.data?.results.samples.length; i++) {
 
-      const _item =  {
+      const _item = {
         name: _sound?.data?.results.samples[i].filename,
         writer: "SoundBoyz",
         img: _sound?.data?.results.thumbnail,
         src: _sound?.data?.results.samples[i].sample_src,
-        id: i+1
+        id: i + 1
       };
 
       list.push(_item);
 
     }
 
-   
-    setPlaylist(list);
+
+    // setPlaylist(list);
 
     await getSamples(id, current_page);
 
@@ -146,8 +147,7 @@ const SamplesPage = () => {
 
   console.log(sound);
 
-  console.log("Playlist: ",playlist);
-
+  console.log("Playlist: ", playlist);
 
   return (
     <React.Fragment>
@@ -199,7 +199,7 @@ const SamplesPage = () => {
                       Vintage loops are designed using only analog synthesizers
                       like the famous jupiter,, moog, etc.
                     </p>
-                    <button             
+                    {/* <button             
                     
                     onClick={() => {
                        setPreview(true);
@@ -235,7 +235,7 @@ const SamplesPage = () => {
                         />
                       </svg>
                       <span className="ml-[8px]">Preview</span>
-                    </button>
+                    </button> */}
                   </div>
                   <div className="border-x border-[#282828] border-y-0 my-[50px]"></div>
                 </div>
@@ -262,24 +262,7 @@ const SamplesPage = () => {
             <h3 className="text-[20px] text-[#fff] font-['Mona-Sans-M']">
               Samples
             </h3>
-            <div className="flex gap-[12px]">
-              <select
-                id="countries"
-                className=" text-[14px] mt-[8px] bg-[#161616] text-[14px] px-[16px] w-[90px] py-[8px] rounded-[8px] border border-[#5C5C5C] text-[#C9C9C9]"
-              >
-                <option>Key</option>
-                <option value="US">Armidale</option>
-                <option value="CA">Ballina</option>
-              </select>
-              <select
-                id="countries"
-                className=" text-[14px] mt-[8px] bg-[#161616] text-[14px] px-[16px] w-[90px] py-[8px] rounded-[8px] border border-[#5C5C5C] text-[#C9C9C9]"
-              >
-                <option>BPM</option>
-                <option value="US">Armidale</option>
-                <option value="CA">Ballina</option>
-              </select>
-            </div>
+
             <p className="text-[#9C9C9C] font-['Mona-Sans-M'] pt-[32px]">
               {total} Results
             </p>
@@ -308,14 +291,14 @@ const SamplesPage = () => {
             </>
           ) : (
             <>
-              <div className="bg-[#101010] pt-[10px]">
+              <div className="bg-[#101010] pt-[0px]">
                 <div className="bg-black-900">
                   <div className="mx-auto max-w-7xl">
                     <div className="bg-black-900 py-10">
                       <div className="px-4 sm:px-6 lg:px-8">
-                        <div className="mt-8 flow-root">
+                        <div className=" flow-root">
                           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                            <div className="inline-block min-w-full py-2 pl-[0px] align-middle sm:px-6 ">
                               <table className="-z-50 min-w-full divide-y divide-gray-700">
                                 <thead>
                                   <tr>
@@ -382,7 +365,7 @@ const SamplesPage = () => {
                                                 className=" cursor-pointer mr-[32px]"
                                                 src={
                                                   currentPlayerId == x.id &&
-                                                  playing === true
+                                                    playing === true
                                                     ? "https://mvssive-content.s3.amazonaws.com/pause-button.png"
                                                     : "https://mvssive-content.s3.amazonaws.com/play-button-2.png"
                                                 }
@@ -397,8 +380,20 @@ const SamplesPage = () => {
                                                       await stopSample(
                                                         currentPlayerId
                                                       );
+
                                                       await playSample(x.id);
+
                                                     } else {
+                                                      const item = {
+                                                        name: x.filename,
+                                                        writer: "SoundBoyz",
+                                                        img: sound?.thumbnail,
+                                                        src: x.sample_src,
+                                                        id: x + 1
+                                                      }
+                                                      console.log(item);
+                                                      // setPlaylist([item])
+                                                      // setPreview(true);
                                                       await playSample(x.id);
                                                     }
                                                   }
@@ -406,13 +401,13 @@ const SamplesPage = () => {
                                               />
                                             </td>
                                             <td className="">
-                                              {/* <img
-                                              src="https://mvssive-content.s3.amazonaws.com/audio-icon.png"
-                                              className="w-[50px] h-auto"
-                                            /> */}
+                                              <img
+                                                src="https://mvssive-content.s3.amazonaws.com/audio-icon.png"
+                                                className="w-[80px] h-[50px]"
+                                              />
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']">
-                                              {x.filename} 
+                                              {x.filename}
                                               <br />{" "}
                                               <span className="text-[12px] text-[#6f6f6f]">
                                                 SoundBoyz
@@ -450,42 +445,22 @@ const SamplesPage = () => {
                                               </span>
                                             </td>
                                             <td className="flex whitespace-nowrap px-3 py-4">
-                                              <div className="ml-[100px] cursor-pointer">
-                                                {parseInt(x.is_liked) === 1 ? (
-                                                  <>
-                                                    <svg
-                                                      xmlns="http://www.w3.org/2000/svg"
-                                                      width={20}
-                                                      height={20}
-                                                      viewBox="0 0 20 20"
-                                                      fill="none"
-                                                    >
-                                                      <path
-                                                        d="M15.8337 11.6667C17.0753 10.45 18.3337 8.99167 18.3337 7.08333C18.3337 5.86776 17.8508 4.70197 16.9912 3.84243C16.1317 2.98289 14.9659 2.5 13.7503 2.5C12.2837 2.5 11.2503 2.91667 10.0003 4.16667C8.75033 2.91667 7.71699 2.5 6.25033 2.5C5.03475 2.5 3.86896 2.98289 3.00942 3.84243C2.14988 4.70197 1.66699 5.86776 1.66699 7.08333C1.66699 9 2.91699 10.4583 4.16699 11.6667L10.0003 17.5L15.8337 11.6667Z"
-                                                        fill="#CECFDA"
-                                                      />
-                                                    </svg>
-                                                  </>
-                                                ) : (
-                                                  <>
-                                                    <svg
-                                                      xmlns="http://www.w3.org/2000/svg"
-                                                      width={20}
-                                                      height={20}
-                                                      viewBox="0 0 20 20"
-                                                      fill="none"
-                                                    >
-                                                      <path
-                                                        d="M15.8337 11.6667C17.0753 10.45 18.3337 8.99167 18.3337 7.08333C18.3337 5.86776 17.8508 4.70197 16.9912 3.84243C16.1317 2.98289 14.9659 2.5 13.7503 2.5C12.2837 2.5 11.2503 2.91667 10.0003 4.16667C8.75033 2.91667 7.71699 2.5 6.25033 2.5C5.03475 2.5 3.86896 2.98289 3.00942 3.84243C2.14988 4.70197 1.66699 5.86776 1.66699 7.08333C1.66699 9 2.91699 10.4583 4.16699 11.6667L10.0003 17.5L15.8337 11.6667Z"
-                                                        stroke="#E6E6E6"
-                                                        strokeWidth="1.5"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                      />
-                                                    </svg>
-                                                  </>
-                                                )}
-                                              </div>
+                                              {parseInt(x.is_liked) === 1 ? (
+                                                <>
+
+
+                                                    <Toggle is_liked={true}  sample={x} />
+
+
+                                                </>
+                                              ) : (
+                                                <>
+
+                                                    <Toggle is_liked={false} sample={x}/>
+
+
+                                                </>
+                                              )}
                                               <a
                                                 href="#"
                                                 onClick={async (e) => {
@@ -559,10 +534,10 @@ const SamplesPage = () => {
                 pageClassName="px-[10px] py-[5px] ml-[8px] text-[#757575]"
                 containerClassName="flex py-[20px] bg-[#141414] mx-[20px] items-center justify-center"
                 breakLabel="..."
-                nextLabel=">"
+                nextLabel=" >"
                 onPageChange={handlePageClick}
                 pageCount={Math.ceil(total / 10)}
-                previousLabel="<"
+                previousLabel="< "
                 renderOnZeroPageCount={null}
                 breakClassName="text-white"
                 activeLinkClassName="text-white"
@@ -572,7 +547,7 @@ const SamplesPage = () => {
 
           {/* End Pagination */}
 
-          <div className="bg-[#101010]">
+          {/* <div className="bg-[#101010]">
             <div className="mx-[20px] border border-x-0 border-y-[#222] py-[20px] px-[20px]">
               <p className="text-[16px] text-[#A7A7A7] pb-[12px] font-['Mona-Sans-M']">
                 Terms of Use
@@ -589,7 +564,7 @@ const SamplesPage = () => {
                 </a>
               </p>
             </div>
-          </div>
+          </div> */}
           {/* Recommended */}
         </div>
       </Theme>
@@ -602,11 +577,12 @@ const SamplesPage = () => {
           />
         </>
       )}
-      {preview && playlist.length > 0 && (
+      {preview && (
         <>
           <Player playlist={playlist} />
         </>
       )}
+
     </React.Fragment>
   );
 };
