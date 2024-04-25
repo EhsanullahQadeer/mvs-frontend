@@ -122,6 +122,7 @@ const Header = () => {
                 {({ active }) => (
                   <>
                     <div
+                      onClick={() => navigate("/")}
                       className={classNames(
                         active
                           ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"
