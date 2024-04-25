@@ -25,7 +25,7 @@ const Sidebar = () => {
             navigate('/my/downloads')
         })}
         
-        className={`${pathname === '/my/likes' ? "w-full bg-[#1E34F9] cursor-pointer py-[16px] font-['Mona-Sans-M'] flex px-[24px]" : "w-full  cursor-pointer py-[16px] font-['Mona-Sans-M'] flex px-[24px]"}`}>
+        className={`${pathname === '/my/downloads' ? "w-full bg-[#1E34F9] cursor-pointer py-[16px] font-['Mona-Sans-M'] flex px-[24px]" : "w-full  cursor-pointer py-[16px] font-['Mona-Sans-M'] flex px-[24px]"}`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={20}
