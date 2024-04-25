@@ -12,6 +12,7 @@ const RequestInfoPage = () => {
     producer_name: "",
     email: "",
     user_type: "",
+    phone:","
   });
 
   const handleChange = (e: any) => {
@@ -36,7 +37,8 @@ const RequestInfoPage = () => {
       user.instagram &&
       user.producer_name &&
       user.email &&
-      user.user_type
+      user.user_type &&
+      user.phone
     ) {
       const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
       if (!regEx.test(user.email)) {
@@ -125,6 +127,15 @@ const RequestInfoPage = () => {
               <input
                 onChange={handleChange}
                 name="email"
+                className="bg-transparent  shrink-0 mt-4 h-14 rounded-xl border border-solid border-stone-500 border-opacity-30 max-md:max-w-full"
+              />
+               <div className="mt-7 max-md:max-w-full">
+                Phone <span className="red">*</span>
+              </div>
+              <input
+                onChange={handleChange}
+                name="phone"
+                maxLength={10}
                 className="bg-transparent  shrink-0 mt-4 h-14 rounded-xl border border-solid border-stone-500 border-opacity-30 max-md:max-w-full"
               />
               <div className="mt-7 max-md:max-w-full">
