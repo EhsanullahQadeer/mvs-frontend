@@ -112,7 +112,8 @@ const SignupPage = () => {
       email: email,
       thumbnail: image,
       image_type: imageType,
-      image_name: imageName
+      image_name: imageName,
+      phone: user.phone
 
     }
 
@@ -182,7 +183,7 @@ const SignupPage = () => {
                     <>
                       <img
                         loading="lazy"
-                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/28c95bf027ae5a2b1a99151e3da454d9f23a6740b7283d02250d85cf109ee061?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/28c95bf027ae5a2b1a99151e3da454d9f23a6740b7283d02250d85cf109ee061?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/28c95bf027ae5a2b1a99151e3da454d9f23a6740b7283d02250d85cf109ee061?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/28c95bf027ae5a2b1a99151e3da454d9f23a6740b7283d02250d85cf109ee061?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/28c95bf027ae5a2b1a99151e3da454d9f23a6740b7283d02250d85cf109ee061?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/28c95bf027ae5a2b1a99151e3da454d9f23a6740b7283d02250d85cf109ee061?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/28c95bf027ae5a2b1a99151e3da454d9f23a6740b7283d02250d85cf109ee061?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/28c95bf027ae5a2b1a99151e3da454d9f23a6740b7283d02250d85cf109ee061?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                        src="http://www.gravatar.com/avatar/?d=mp"
                         className="self-center max-w-full rounded-full border-2 border-white border-solid aspect-square w-[100px]"
                       />
                     </>
