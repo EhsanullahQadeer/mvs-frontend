@@ -9,13 +9,15 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useSelector } from "react-redux";
 import { submitSplitSheetRequest } from "redux/actionCreators/sounds";
+import { ToastContainer, toast } from "react-toastify";
+
 
 const RequestSplitSheetModal = (props: any) => {
   const [submit_request, setSubmitRequest] = useState(false);
   const [submit_request_success, setSubmitRequestSuccess] = useState(false);
-  const [submitting,setSubmitting] = useState(false);
-  const [master_offer,setMasterOffer] = useState(null);
-  const [publisher_offer,setPublisherOffer] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [master_offer, setMasterOffer] = useState(null);
+  const [publisher_offer, setPublisherOffer] = useState(null);
 
   return (
     <React.Fragment>
@@ -113,31 +115,58 @@ const RequestSplitSheetModal = (props: any) => {
                                   </span>
                                 </div>
                                 <button
-                                 disabled={submitting}
-                                 onClick={async () => {
+                                  disabled={submitting}
+                                  onClick={async () => {
 
-                                     setSubmitting(true);
-                                    
-                                     if(master_offer && publisher_offer) {
+                                    setSubmitting(true);
 
-                                         await submitSplitSheetRequest({
-                                            publisher_offer,
-                                            master_offer,
-                                            sample_id: props.sample.id
-                                         })
+                                    if (master_offer && publisher_offer && parseInt(master_offer) > 0 && parseInt(publisher_offer) > 0) {
 
-                                         setSubmitRequestSuccess(true);
-                                         setSubmitting(false);
-                                     } else {
+                                      if (parseInt(master_offer) > 100) {
 
-                                         alert("Please fill all the required fields");
-                                         setSubmitting(false);
-                                     }
-                                 }}
-                                 className="text-center items-center p-4 mt-5 w-full text-white rounded-lg border border-white border-solid max-md:px-5 max-md:max-w-full">
+                                        toast.error("Master offer percentage can't be more than 100%");
+                                        setSubmitting(true);
+                                        return;
+
+                                      }
+
+                                      if (parseInt(publisher_offer) > 100) {
+
+                                        toast.error("Publisher offer percentage can't be more than 100%");
+                                        setSubmitting(true);
+                                        return;
+                                      }
+
+                                      await submitSplitSheetRequest({
+                                        publisher_offer,
+                                        master_offer,
+                                        sample_id: props.sample.id
+                                      })
+
+                                      props?.getSamples();
+
+                                      setSubmitRequestSuccess(true);
+                                      setSubmitting(false);
+                                    } else {
+
+                                      toast.error("Please fill all the required fields");
+                                      setSubmitting(false);
+                                    }
+                                  }}
+                                  className="text-center items-center p-4 mt-5 w-full text-white rounded-lg border border-white border-solid max-md:px-5 max-md:max-w-full">
                                   {submitting ? 'Submitting...' : 'Submit Request'}
                                 </button>
                               </div>
+                              <ToastContainer
+                                position="top-center"
+                                autoClose={5000}
+                                hideProgressBar
+                                newestOnTop={false}
+                                rtl={false}
+                                pauseOnFocusLoss
+                                pauseOnHover
+                                theme="dark"
+                              />
                             </>
                           ) : (
                             <>
@@ -193,6 +222,7 @@ const RequestSplitSheetModal = (props: any) => {
           </div>
         </Modal>
       </>
+
     </React.Fragment>
   );
 };

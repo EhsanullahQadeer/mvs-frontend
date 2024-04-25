@@ -9,6 +9,7 @@ import HomeFeed from "pages/home";
 import TermsOfService from "pages/terms";
 import SamplesPage from "pages/samples";
 import MyLikesPage from "pages/my-likes";
+import MyDownloadsPage from "pages/downloaded-samples";
 
 const routes: IRoute[] = [
   {
@@ -90,6 +91,12 @@ const routes: IRoute[] = [
     path: "/my/likes",
     name: "Likes",
     component: MyLikesPage,
+  },
+
+  {
+    path: "/my/downloads",
+    name: "Downloads",
+    component: MyDownloadsPage,
   },
 ];
 

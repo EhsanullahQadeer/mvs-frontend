@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ActionType from "redux/actionTypes";
 import wavesurfer from "wavesurfer.js";
 import {
-    getLikedSamples,
+  getLikedSamples,
   getSound,
   getSoundSamples,
   saveSampleDownload,
@@ -21,6 +21,8 @@ import AudioPlayer from "components/AudioPlayer";
 import DropDown from "components/theme/dropdown";
 import ConsideringModal from "components/modals/considering";
 import ReactPaginate from "react-paginate";
+import Avatar from 'react-avatar';
+
 
 interface RootState {
   auth: any;
@@ -159,24 +161,7 @@ const MyLikesPage = () => {
             <h3 className="text-[20px] text-[#fff] font-['Mona-Sans-M']">
               Samples
             </h3>
-            <div className="flex gap-[12px]">
-              <select
-                id="countries"
-                className=" text-[14px] mt-[8px] bg-[#161616] text-[14px] px-[16px] w-[90px] py-[8px] rounded-[8px] border border-[#5C5C5C] text-[#C9C9C9]"
-              >
-                <option>Key</option>
-                <option value="US">Armidale</option>
-                <option value="CA">Ballina</option>
-              </select>
-              <select
-                id="countries"
-                className=" text-[14px] mt-[8px] bg-[#161616] text-[14px] px-[16px] w-[90px] py-[8px] rounded-[8px] border border-[#5C5C5C] text-[#C9C9C9]"
-              >
-                <option>BPM</option>
-                <option value="US">Armidale</option>
-                <option value="CA">Ballina</option>
-              </select>
-            </div>
+          
             <p className="text-[#9C9C9C] font-['Mona-Sans-M'] pt-[32px]">
               {total} Results
             </p>
@@ -258,7 +243,7 @@ const MyLikesPage = () => {
                                       scope="col"
                                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                                     >
-                                      consdering
+                                      Considering
                                     </th>
                                     <th
                                       scope="col"
@@ -271,6 +256,8 @@ const MyLikesPage = () => {
                                 <tbody className="divide-y divide-gray-800">
                                   {sound_samples &&
                                     sound_samples.map((x: any) => {
+                                      const considering = x.considering?.split(',');
+
                                       return (
                                         <>
                                           <tr key={x.id}>
@@ -279,7 +266,7 @@ const MyLikesPage = () => {
                                                 className=" cursor-pointer mr-[32px]"
                                                 src={
                                                   currentPlayerId == x.id &&
-                                                  playing === true
+                                                    playing === true
                                                     ? "https://mvssive-content.s3.amazonaws.com/pause-button.png"
                                                     : "https://mvssive-content.s3.amazonaws.com/play-button-2.png"
                                                 }
@@ -332,10 +319,14 @@ const MyLikesPage = () => {
                                               122
                                             </td>
                                             <td className="whitespace-nowrap  text-sm text-gray-300">
-                                              <img
-                                                className="flex ml-[5px] mb-[3px]"
-                                                src="https://zahidlawoffice.com/wp-content/uploads/2024/04/images.png"
-                                              />{" "}
+                                              {considering && considering?.map((x: any) => {
+
+                                                return (
+                                                  <>
+                                                    <Avatar name={x} round={true} title={x} size="30" className="flex ml-[5px] mb-[3px]" />
+                                                  </>
+                                                )
+                                              })}
                                               <span
                                                 onClick={() => {
                                                   setSample(x);
@@ -469,24 +460,7 @@ const MyLikesPage = () => {
 
           {/* End Pagination */}
 
-          <div className="bg-[#101010]">
-            <div className="mx-[20px] border border-x-0 border-y-[#222] py-[20px] px-[20px]">
-              <p className="text-[16px] text-[#A7A7A7] pb-[12px] font-['Mona-Sans-M']">
-                Terms of Use
-              </p>
-              <p className="text-[14px] font-['Mona-Sans-M'] text-[#363636]">
-                By downloading any content from this Sample Pack, you agree to a
-                20%
-              </p>
-              <p className="text-[14px] font-['Mona-Sans-M'] text-[#363636]">
-                publishing and starting 1% master royalty for instrument loops
-                and ....{" "}
-                <a className="text-[#528FFF] underline" href="#">
-                  View More
-                </a>
-              </p>
-            </div>
-          </div>
+         
           {/* Recommended */}
         </div>
       </Theme>

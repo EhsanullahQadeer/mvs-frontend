@@ -34,6 +34,10 @@ export async function getLikedSamples(params:any) {
   return axios.get(`${config.defaults.api_url}/sounds/likes` , {params});
 }
 
+export async function getDownloadedSamples(params:any) {
+  return axios.get(`${config.defaults.api_url}/sounds/downloads` , {params});
+}
+
 export async function getSoundSamples(id: any,params:any) {
   return axios.get(`${config.defaults.api_url}/sounds/samples/${id}` , {params});
 }
