@@ -120,7 +120,7 @@ const DropDown = (props: any) => {
                     const FileSaver = require("file-saver");
 
                     FileSaver.saveAs(
-                      'https://mvssive-content.s3.amazonaws.com/BS_MD_100_chord_synth_loop_midi_handy_pluck_Dmin.mid',
+                      props.sample?.midi_src,
                       `'Sample-mid'-${props.sample.id}`
                     );
                   }}
@@ -173,7 +173,7 @@ const DropDown = (props: any) => {
                 </Menu.Item>
               </div>
               <div className="">
-                <Menu.Item>
+                {/* <Menu.Item>
                   <div className="flex hover:bg-[#0014CD] cursor-pointer border-x-0 border-t-0 border-b border-[#4E4E4E80] pt-[10px] pb-[15px] px-[12px]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +194,7 @@ const DropDown = (props: any) => {
                       Forward Sample
                     </p>
                   </div>
-                </Menu.Item>
+                </Menu.Item> */}
                 {/* <Menu.Item>
                   <div>
                     <p className="text-[14px] px-[12px] py-[8px] font-['Mona-Sans-M'] text-[#575757]">
@@ -266,6 +266,7 @@ const DropDown = (props: any) => {
           sample={props.sample}
           openModal={request_split_sheet}
           setModal={setRequestSplitSheet}
+          getSamples={props.getSamples}
         />
       )}
       {sample_info && (

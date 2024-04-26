@@ -22,6 +22,15 @@ import  config from "config/config"
     return axios.post(`${config.defaults.api_url}/auth/confirm`,data)
   }
 
+  export async function requestAccess(data:any) {
+    return axios.post(`${config.defaults.api_url}/users/request/access`,data)
+  }
+
+
+  export async function verifyCode(data:any) {
+    return axios.post(`${config.defaults.api_url}/users/verify/code`,data)
+  }
+
   export async function resendCode(data:any) {
     return axios.post(`${config.defaults.api_url}/auth/resend/code`,data)
   }
@@ -58,12 +67,12 @@ import  config from "config/config"
         return false;
       });
   }
-
-  
  
   export async function getAnncouncements(params) {
     return axios.get(`${config.defaults.api_url}/announcements`, { params })
   }
 
-
-
+  export async function createNewUser(params: any) {
+    return axios.post(`${config.defaults.api_url}/users/new`, params);
+  }
+  

@@ -13,7 +13,7 @@ const Sidebar = () => {
          onClick={(() => {
           navigate('/sounds')
          })}
-        className="hover:bg-[#1E34F9] cursor-pointer rounded-[8px] pl-[32px] text-left w-[100%] h-[52px] font-['Mona-Sans-S'] text-[#ddd] text-[14px]">
+        className={`${pathname === '/sounds' ? "bg-[#1E34F9] cursor-pointer rounded-[8px] pl-[32px] text-left w-[100%] h-[52px] font-['Mona-Sans-S'] text-[#ddd] text-[14px]" : "hover:bg-[#1E34F9] cursor-pointer rounded-[8px] pl-[32px] text-left w-[100%] h-[52px] font-['Mona-Sans-S'] text-[#ddd] text-[14px]"}`}>
           Browse
         </button>
         <div className="border border-x-0 border-t border-b-0 border-[#28282880] mt-[49px]"></div>
@@ -22,10 +22,10 @@ const Sidebar = () => {
         </div>
         <button 
         onClick={(() => {
-            navigate('/sounds')
+            navigate('/my/downloads')
         })}
         
-        className={`${pathname === '/sounds' ? "w-full bg-[#1E34F9] cursor-pointer py-[16px] font-['Mona-Sans-M'] flex px-[24px]" : "w-full  cursor-pointer py-[16px] font-['Mona-Sans-M'] flex px-[24px]"}`}>
+        className={`${pathname === '/my/downloads' ? "w-full bg-[#1E34F9] cursor-pointer py-[16px] font-['Mona-Sans-M'] flex px-[24px]" : "w-full  cursor-pointer py-[16px] font-['Mona-Sans-M'] flex px-[24px]"}`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={20}

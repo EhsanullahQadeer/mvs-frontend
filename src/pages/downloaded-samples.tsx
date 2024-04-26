@@ -6,17 +6,12 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { useNavigate, useParams } from "react-router-dom";
 import Theme from "components/theme";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import ActionType from "redux/actionTypes";
-import wavesurfer from "wavesurfer.js";
+import React, { useEffect,useState } from "react";
+import { useSelector } from "react-redux";
 import {
-  getLikedSamples,
-  getSound,
-  getSoundSamples,
+  getDownloadedSamples,
   saveSampleDownload,
 } from "redux/actionCreators/sounds";
-import useDynamicRefs from "use-dynamic-refs";
 import AudioPlayer from "components/AudioPlayer";
 import DropDown from "components/theme/dropdown";
 import ConsideringModal from "components/modals/considering";
@@ -29,7 +24,7 @@ interface RootState {
   sounds: any;
 }
 
-const MyLikesPage = () => {
+const MyDownloadsPage = () => {
   const navigate = useNavigate();
   const state = useSelector((state: RootState) => state);
   const [loading, setIsLoading] = useState(false);
@@ -95,7 +90,7 @@ const MyLikesPage = () => {
   }, []);
 
   const getSamples = async (page = current_page) => {
-    const _samples = await getLikedSamples({
+    const _samples = await getDownloadedSamples({
       skip: page,
       take,
     });
@@ -150,7 +145,7 @@ const MyLikesPage = () => {
               </div>
               <div className="text m-[20px]">
                 <p className="text-[40px] text-[#fff] font-['Mona-Sans-M']">
-                  Likes
+                  Downloads
                 </p>
               </div>
               <div className="border-x border-[#282828] border-y-0 my-[50px]"></div>
@@ -161,7 +156,7 @@ const MyLikesPage = () => {
             <h3 className="text-[20px] text-[#fff] font-['Mona-Sans-M']">
               Samples
             </h3>
-          
+           
             <p className="text-[#9C9C9C] font-['Mona-Sans-M'] pt-[32px]">
               {total} Results
             </p>
@@ -460,7 +455,7 @@ const MyLikesPage = () => {
 
           {/* End Pagination */}
 
-         
+     
           {/* Recommended */}
         </div>
       </Theme>
@@ -477,4 +472,4 @@ const MyLikesPage = () => {
   );
 };
 
-export default MyLikesPage;
+export default MyDownloadsPage;

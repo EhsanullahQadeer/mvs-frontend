@@ -23,13 +23,14 @@ import {
   getSoundSamples,
   saveSampleDownload,
 } from "redux/actionCreators/sounds";
-import useDynamicRefs from "use-dynamic-refs";
 import AudioPlayer from "components/AudioPlayer";
 import DropDown from "components/theme/dropdown";
 import ConsideringModal from "components/modals/considering";
 import ReactPaginate from "react-paginate";
 import Player from "components/player";
 import Toggle from "components/toggle";
+import Avatar from 'react-avatar';
+
 
 interface RootState {
   auth: any;
@@ -432,11 +433,10 @@ const reversedPlaylist = [...playlist].reverse();
                       {sound?.name}
                     </p>
                     <p className="text-[#878787] text-[14px] font-['Mona-Sans-M']">
-                      By: SoundBoyz
+                      By: {sound?.author}
                     </p>
                     <p className="text-[14px] text-[#bebebe] w-[315px] my-[24px]">
-                      Vintage loops are designed using only analog synthesizers
-                      like the famous jupiter,, moog, etc.
+                      {sound?.description}
                     </p>
                   </div>
                   <div className="border-x border-[#282828] border-y-0 my-[50px]"></div>
@@ -444,7 +444,7 @@ const reversedPlaylist = [...playlist].reverse();
               </>
             )}
           </div>
-          <div className="bg-[#151515] border border-x-0 border-y-[#222] p-[20px]">
+          {/* <div className="bg-[#151515] border border-x-0 border-y-[#222] p-[20px]">
             <p className="text-[16px] text-[#C2C2C2] pb-[12px] font-['Mona-Sans-M']">
               About
             </p>
@@ -459,7 +459,7 @@ const reversedPlaylist = [...playlist].reverse();
                 View More
               </a>
             </p>
-          </div>
+          </div> */}
           <div className="drop bg-[#101010] px-[20px] py-[10px]">
             <h3 className="text-[20px] text-[#fff] font-['Mona-Sans-M']">
               Samples
@@ -559,8 +559,8 @@ const reversedPlaylist = [...playlist].reverse();
                                 <tbody className="divide-y divide-gray-800">
                                   {sound_samples &&
                                     currentSamples.map((x: any, index) => {
+                                      const considering = x.considering?.split(',');
                                       const globalIndex = current_page * take + index; // Correctly compute the global index
-
                                       return (
                                         <>
                                           <tr key={x.id}
@@ -613,10 +613,14 @@ const reversedPlaylist = [...playlist].reverse();
                                               122
                                             </td>
                                             <td className="whitespace-nowrap  text-sm text-gray-300">
-                                              <img
-                                                className="flex ml-[5px] mb-[3px]"
-                                                src="https://zahidlawoffice.com/wp-content/uploads/2024/04/images.png"
-                                              />{" "}
+                                              {considering && considering?.map((x: any) => {
+
+                                                return (
+                                                  <>
+                                                    <Avatar name={x} round={true} title={x} size="30" className="flex ml-[5px] mb-[3px]" />
+                                                  </>
+                                                )
+                                              })}
                                               <span
                                                 onClick={() => {
                                                   setSample(x);
@@ -632,14 +636,14 @@ const reversedPlaylist = [...playlist].reverse();
                                                 <>
 
 
-                                                    <Toggle is_liked={true}  sample={x} />
+                                                  <Toggle is_liked={true} sample={x} />
 
 
                                                 </>
                                               ) : (
                                                 <>
 
-                                                    <Toggle is_liked={false} sample={x}/>
+                                                  <Toggle is_liked={false} sample={x} />
 
 
                                                 </>
@@ -730,24 +734,21 @@ const reversedPlaylist = [...playlist].reverse();
 
           {/* End Pagination */}
 
-          {/* <div className="bg-[#101010]">
-            <div className="mx-[20px] border border-x-0 border-y-[#222] py-[20px] px-[20px]">
-              <p className="text-[16px] text-[#A7A7A7] pb-[12px] font-['Mona-Sans-M']">
-                Terms of Use
-              </p>
-              <p className="text-[14px] font-['Mona-Sans-M'] text-[#363636]">
-                By downloading any content from this Sample Pack, you agree to a
-                20%
-              </p>
-              <p className="text-[14px] font-['Mona-Sans-M'] text-[#363636]">
-                publishing and starting 1% master royalty for instrument loops
-                and ....{" "}
-                <a className="text-[#528FFF] underline" href="#">
-                  View More
-                </a>
-              </p>
-            </div>
-          </div> */}
+          {sound?.terms && (
+
+            <>
+              <div className="bg-[#101010]">
+                <div className="mx-[20px] border border-x-0 border-y-[#222] py-[20px] px-[20px]">
+                  <p className="text-[16px] text-[#A7A7A7] pb-[12px] font-['Mona-Sans-M']">
+                    Terms of Use
+                  </p>
+                  <p className="text-[14px] font-['Mona-Sans-M'] text-[#363636]">
+                    {sound?.terms}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
           {/* Recommended */}
         </div>
       </Theme>

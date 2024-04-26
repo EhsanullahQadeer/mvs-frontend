@@ -9,6 +9,8 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useSelector } from "react-redux";
 import { getSampleDownloads } from "redux/actionCreators/sounds";
+import Avatar from 'react-avatar';
+
 
 const ConsideringModal = (props: any) => {
   const [downloads, setDownloads] = useState([]);
@@ -128,11 +130,9 @@ const ConsideringModal = (props: any) => {
                                 return (
                                   <>
                                     <div className="flex gap-2 py-2.5 border-b border-solid border-stone-900 max-md:flex-wrap">
-                                      <img
-                                        loading="lazy"
-                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/165893cb174ece7e04dc292311512d96da324d805d3347b74861b536c2ca063a?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/165893cb174ece7e04dc292311512d96da324d805d3347b74861b536c2ca063a?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/165893cb174ece7e04dc292311512d96da324d805d3347b74861b536c2ca063a?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/165893cb174ece7e04dc292311512d96da324d805d3347b74861b536c2ca063a?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/165893cb174ece7e04dc292311512d96da324d805d3347b74861b536c2ca063a?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/165893cb174ece7e04dc292311512d96da324d805d3347b74861b536c2ca063a?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/165893cb174ece7e04dc292311512d96da324d805d3347b74861b536c2ca063a?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/165893cb174ece7e04dc292311512d96da324d805d3347b74861b536c2ca063a?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                                        className="shrink-0 w-8 rounded-full border border-solid aspect-square border-neutral-300"
-                                      />
+                                      
+                                      <Avatar name={x?.user?.name} round={true} title={x?.user?.name} size="30" className="shrink-0 w-8  aspect-square "/>
+
                                       <div className="my-auto max-md:max-w-full">
                                         {x?.user?.name}
                                       </div>

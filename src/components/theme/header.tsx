@@ -11,6 +11,7 @@ import ContactModal from "components/modals/contact-us";
 import { useDispatch,useSelector } from "react-redux";
 import cookie from "js-cookie";
 import { fetchCurrentUser } from "redux/actionCreators/auth";
+import Avatar from 'react-avatar';
 
 
 interface RootState {
@@ -51,17 +52,22 @@ const Header = () => {
   }, [navigate, token]);
 
   useEffect(() => {
-    if (user && user.id) {
       dispatch(fetchCurrentUser());
-    }
-  }, [dispatch, user]);
+  }, [dispatch]);
+
+  useEffect(() => {
+
+     console.log("=== Header State ===");
+     setUser(state.auth.user);
+
+  },[state])
 
   return (
     <React.Fragment>
       <div className="topbar justify-between py-[12px] px-[40px] bg-[#141414] flex">
         <div className="space"></div>
         <div className="search">
-          <label htmlFor="simple-search" className="sr-only">
+          {/* <label htmlFor="simple-search" className="sr-only">
             Search
           </label>
           <div className="relative w-[750px]">
@@ -87,11 +93,19 @@ const Header = () => {
               className="bg-[#0F0F0F] font-['Mona-Sans-M'] border border-[#191919] text-[#4c4c4c] text-sm rounded-[100px] w-[750px] ps-10 p-2.5"
               placeholder="reggaeton guitar"
             />
-          </div>
+          </div> */}
         </div>
         <Menu as="div" className="user relative">
           <Menu.Button>
-            <img src="https://zahidlawoffice.com/wp-content/uploads/2024/04/user-setings.png" />
+             {state?.auth?.user?.thumbnail ? (
+                <>
+                   <Avatar src={state?.auth?.user?.thumbnail} size="30" round={true} />
+                </>
+             ): (
+                <>
+                  <Avatar name={state?.auth?.user?.name} size="40" round={true} />
+                </>
+             )}
           </Menu.Button>
 
           <Transition
@@ -108,6 +122,7 @@ const Header = () => {
                 {({ active }) => (
                   <>
                     <div
+                      onClick={() => navigate("/")}
                       className={classNames(
                         active
                           ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"
