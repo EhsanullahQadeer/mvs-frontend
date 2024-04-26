@@ -57,7 +57,7 @@ const AudioPlayer = (props: any) => {
 
     return (
         <div
-            style={{ minWidth: "100px" }}
+            style={{ minWidth: "175px" }}
             id={`id-${props.id}`}
             className="audio"
             ref={audioRef}

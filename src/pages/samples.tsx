@@ -559,7 +559,10 @@ const reversedPlaylist = [...playlist].reverse();
                                 <tbody className="divide-y divide-gray-800">
                                   {sound_samples &&
                                     currentSamples.map((x: any, index) => {
+
                                       const considering = x.considering?.split(',');
+                                      console.log("considering: ", considering);
+                                      console.log("considering: ", sound_samples);
                                       const globalIndex = current_page * take + index; // Correctly compute the global index
                                       return (
                                         <>
@@ -597,20 +600,19 @@ const reversedPlaylist = [...playlist].reverse();
                                               </span>{" "}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              {/* <AudioPlayer
+                                              <AudioPlayer
                                                 link={`${x.sample_src}`}
                                                 id={x.id}
-                                                setPlaying={setPlaying}
-                                              /> */}
+                                              />
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              0:35
+                                              {x?.length}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              BMinor
+                                              {x?.keys}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              122
+                                              {x?.bpm}
                                             </td>
                                             <td className="whitespace-nowrap  text-sm text-gray-300">
                                               {considering && considering?.map((x: any) => {
