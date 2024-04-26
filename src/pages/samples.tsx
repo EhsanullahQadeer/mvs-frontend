@@ -1,3 +1,11 @@
+/*
+  Author: Zohaib 
+  Desc:   
+  Date:   
+
+*/
+
+
 /* eslint-disable react/jsx-no-target-blank */
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -6,7 +14,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { useNavigate, useParams } from "react-router-dom";
 import Theme from "components/theme";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionType from "redux/actionTypes";
 import wavesurfer from "wavesurfer.js";
@@ -37,7 +45,11 @@ const SamplesPage = () => {
 
   const [playing, setPlaying] = useState(false);
 
-  const [current_sample, setCurrentSample] = useState(0);
+
+  const [currentSampleIndex, setCurrentSampleIndex] = useState(null);
+  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(null);
+
+  const [current_sample, setCurrentSample] = useState(null);
 
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
 
@@ -52,10 +64,106 @@ const SamplesPage = () => {
 
   const [sound, setSound]: any = useState({});
   const [considering, setConsidering] = useState(false);
+  const [samplePlayed, sampleControl] = useState(false);
   const [sample, setSample] = useState({});
 
   const [playlist, setPlaylist] = useState([]);
+  const [listForPlaylist, setListPlaylist] = useState([]);
   const [preview, setPreview] = useState(false);
+  const [selectedSample, setSelectedSample] = useState(null);
+  const [playButton, setPlayButton] = useState(null);  // State to hold the play button reference
+
+
+  useEffect(() => {
+    const audioElement = document.querySelector(`audio`);
+    console.log("PAUSE/PLAY?: ", audioElement);
+    if (!audioElement) return;
+  
+    // Handling play/pause based on state
+    const playAudio = async () => {
+      try {
+        await audioElement.play();
+      } catch (error) {
+        console.error('Error playing audio:', error);
+      }
+    };
+  
+    const pauseAudio = () => {
+      audioElement.pause();
+    };
+  
+    if (playing) {
+      playAudio();
+    } else {
+      pauseAudio();
+    }
+  
+  }, [playing]);
+
+
+  /* 
+   * useEffect()
+   * Desc: Handle Up/Down key hits; scan through list of samples
+   */ 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && currentSampleIndex !== null) {
+        event.preventDefault();  // Prevent the whole page from scrolling
+  
+        // // Pause the current sample if something is playing.
+        // if (playing) {
+        //   const audioElement = document.querySelector('audio');
+        //   if (audioElement) audioElement.pause();
+        // }
+  
+        // Calculate the start and end index for the current page
+        const startIndex = current_page * take;
+        const endIndex = Math.min(startIndex + take, total) - 1;  // Adjust endIndex to not exceed total
+  
+        setCurrentSampleIndex(prev => {
+          let newIndex = prev + (event.key === 'ArrowUp' ? -1 : 1);
+          if (newIndex >= 0 && newIndex < currentSamples.length) {
+            // Update within the local page bounds
+            return newIndex;
+          }
+          return prev;  // Return previous if out of bounds
+        });
+  
+        setCurrentPlayerIndex(prev => {
+          let newGlobalIndex = prev + (event.key === 'ArrowUp' ? -1 : 1);
+          if (newGlobalIndex >= startIndex && newGlobalIndex <= endIndex) {
+            // Ensure new index is within the page limits
+            const newSampleId = sound_samples[newGlobalIndex].id;
+            setCurrentPlayerId(newSampleId);
+  
+            // Schedule playback if needed
+            setTimeout(() => {
+              const audioElement = document.querySelector('audio');
+              if (audioElement) {
+                audioElement.play().catch(e => console.error('Error playing audio:', e));
+              }
+            }, 100);
+  
+            return newGlobalIndex;
+          }
+          return prev;  // Return previous if new index is out of bounds
+        });
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [current_sample, currentPlayerId, playing, current_page, take, total]);
+  
+  
+
+
+  // useEffect(() => {
+  //   if (sound_samples.length > 0) {
+  //     setCurrentSampleIndex(0); // Reset to the first item of the new page
+  //   }
+  // }, [current_page, sound_samples.length]);
+
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -63,64 +171,158 @@ const SamplesPage = () => {
 
   const handlePageClick = async (event) => {
     setIsLoading(true);
-
-    setCurrentPage(event.selected);
-    await getSamples(id, event.selected);
-
-    console.log("offset", event.selected);
-  };
-
-  const playSample = async (id: any) => {
-    setPlaying(true);
-    setCurrentPlayerId(id);
-    const searchModule = document.querySelector(`#id-${id} > div`);
-    searchModule.shadowRoot.querySelector("audio").currentTime = 9;
-    searchModule.shadowRoot
-      .querySelector("audio")
-      .play()
-      .then((x) => setCurrentPlayerId(id));
-  };
-
-  const stopSample = async (id: any) => {
     setPlaying(false);
-    setCurrentPlayerId(id);
-    const searchModule = document.querySelector(`#id-${id} > div`);
-    searchModule.shadowRoot.querySelector("audio").currentTime = 0;
-    searchModule.shadowRoot.querySelector("audio").pause();
+    setCurrentPage(event.selected);
+    const newCurrentSampleIndex = current_page * take;
+    setCurrentSampleIndex(null);
+    await getSamples(id, event.selected);
+    console.log("Page changed to:", event.selected);
   };
-
+  
   useEffect(() => {
     const init = async () => {
       await getSoundData();
       setLoadingData(false);
     };
-
     init();
   }, []);
 
+
+
+  
   const getSamples = async (id, page = current_page) => {
+    setIsLoading(true);
+    console.log("take: ", take);
+    const skip = current_page * take;
+
     const _samples = await getSoundSamples(id, {
       skip: page,
       take,
     });
     console.log("=== Samples ====");
-    console.log(_samples);
     setTotal(_samples?.data?.results?.total);
-    setSoundSamples(_samples?.data?.results?.samples);
+    // setSoundSamples(_samples?.data?.results?.samples);
     setIsLoading(false);
   };
+
+  /* 
+    CLICK PLAYER'S BUTTON TO SWITCH SAMPLE PLAYER ICONS
+  */ 
+  useEffect(() => {
+    const handlePlayButtonClick = (event) => {
+      if (event.target.classList.contains("play-button")) {
+        setPlaying(!playing); // Toggle the playing state
+      }
+    };
+
+    // Attach the event listener to the parent element
+    document.addEventListener("click", handlePlayButtonClick);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      document.removeEventListener("click", handlePlayButtonClick);
+    };
+  }, [playing]); // Include playing in the dependencies array
+
+  // useEffect(() => {
+  //   const audioElement = document.getElementById('editor-section') as HTMLAudioElement;
+  //   console.log('AUDIO ELEMENT: ', audioElement);
+  //   if (!audioElement) return;
+  
+  //   if (playing) {
+  //     console.log('Playing audio');
+  //     // audioElement.play()
+  //     //   .catch(e => console.error("Error trying to play the audio:", e));
+  //   } else {
+  //     console.log('Pausing audio');
+  //     audioElement.pause();
+  //   }
+  // }, [playing]);
+  
+  // document.querySelectorAll('.play-button').forEach(button => {
+  //   button.addEventListener('click', function() {
+  //       const currentlyPlaying = document.querySelector('audio') as HTMLAudioElement;; // Assume 'playing' class marks an active audio
+  //       console.log("currently playing: ", currentlyPlaying );
+  //       if (currentlyPlaying && currentlyPlaying !== this.nextElementSibling) {
+  //           currentlyPlaying.pause();
+  //           currentlyPlaying.classList.remove('playing');
+  //       }
+  //       const audio = this.nextElementSibling; // Assuming <audio> is right after <button>
+  //       if (audio.paused) {
+  //           audio.play();
+  //           audio.classList.add('playing');
+  //       } else {
+  //           audio.pause();
+  //           audio.classList.remove('playing');
+  //       }
+  //   });
+// });
+
+  const stopSample = async (id) => {
+    // Ensure the playback state is set to false
+    setPlaying(false);
+
+    // Find the container for the specific sample
+    const searchModule = document.querySelector(`audio`);
+    console.log("Search module found:", searchModule);
+    if (searchModule && searchModule.shadowRoot) {
+      const audio = searchModule.shadowRoot.querySelector("audio");
+      if (audio) {
+        // Reset the current time and pause the audio
+        audio.currentTime = 0;
+        audio.pause();
+      } else {
+        console.error("Audio element not found");
+      }
+    } else {
+      console.error("Sample container or shadow root not found");
+    }
+
+    // Update the current player ID
+    setCurrentPlayerId(id);
+  };
+
+  const handleSampleClick = useCallback(async (sample, index) => {
+    setCurrentSampleIndex(index);
+    // Check if the same sample is clicked and it is currently playing
+    if (currentPlayerId === sample.id) {
+      if (playing) {
+        console.log('Sample is already playing. Attempting to pause.');
+        await stopSample(sample.id);
+        setPlaying(false); // This will trigger the useEffect to pause the sample
+      } else {
+        console.log('Sample was paused. Resuming play.');
+        await stopSample(sample.id);
+        setPlaying(true); // Resume playing the current sample
+      }
+    } else {
+      // Different sample is clicked or nothing is playing
+      console.log('Switching or starting a new sample.');
+      if (playing) {
+        console.log('Stopping the currently playing sample.');
+        await stopSample(sample.id);
+        setPlaying(false); // Ensure the current sample is stopped
+        await new Promise(resolve => setTimeout(resolve, 100)); // Wait to ensure the audio is paused
+      }
+      
+      // Set up the new sample to be played
+      console.log('Setting up the new sample.');
+      setCurrentPlayerId(sample.id);
+      await stopSample(sample.id);
+      await new Promise(resolve => setTimeout(resolve, 100)); // Optional: Ensure the UI has time to update if needed
+      setPlaying(true); // Start playing the new sample
+    }
+  }, [currentPlayerId, playing, setPlaying, setCurrentPlayerId]);
 
   const getSoundData = async () => {
     setIsLoading(true);
 
-    const _sound: any = await getSound(id);
+    const _sound: any = await getSound( id );
 
     const list = [];
 
     console.log("=== Playlst ====")
-
     for (let i = 0; i < _sound?.data?.results.samples.length; i++) {
-
       const _item = {
         name: _sound?.data?.results.samples[i].filename,
         writer: "SoundBoyz",
@@ -128,27 +330,64 @@ const SamplesPage = () => {
         src: _sound?.data?.results.samples[i].sample_src,
         id: i + 1
       };
-
       list.push(_item);
-
     }
-
-
-    // setPlaylist(list);
-
-    await getSamples(id, current_page);
+    console.log("take: ", take);
+    const startIndex = current_page * take; // ensure current_page is zero-indexed, adjust if it starts from 1
+    const endIndex = startIndex + take;
+    
+    const pageItems = list.slice(startIndex, endIndex);
+    console.log("pageItems: ", pageItems);
+    setListPlaylist(list);
+    setPlaylist(list);
+    setSoundSamples(_sound?.data?.results?.samples);
+    await getSamples( id, current_page );
 
     console.log(_sound);
-
+    console.log("lkasdfjkl: ", _sound?.data?.results);
     setSound(_sound?.data?.results);
 
     setIsLoading(false);
   };
 
-  console.log(sound);
+  // useEffect(() => {
+  //   // Check if the playlist is not empty
+  //   if (playlist && playlist.length > 0) {
+  //     setPreview(true);
+  //   } else {
+  //     setPreview(false);
+  //   }
+  // }, [playlist]); // This effect runs whenever the playlist changes
 
-  console.log("Playlist: ", playlist);
 
+
+  // useEffect(() => {
+  //   // Calculate the starting index for the current page
+  //   const newCurrentSampleIndex = current_page * take;
+  //   setCurrentSampleIndex(newCurrentSampleIndex);
+  // }, [current_page, take]);
+
+
+
+  useEffect(() => {
+    console.log("curr index: ", currentSampleIndex);
+  }, []
+)
+
+
+
+
+// Create a reversed copy of the playlist for rendering
+const reversedPlaylist = [...playlist].reverse();
+
+
+  // Function to calculate the range of items to display based on the current page
+  const startIndex = current_page * take;
+  const endIndex = startIndex + take;
+
+  // Slice the sound_samples to get only the items for the current page
+  const currentSamples = sound_samples.slice(startIndex, endIndex);
+  
   return (
     <React.Fragment>
       <Theme>
@@ -199,43 +438,6 @@ const SamplesPage = () => {
                       Vintage loops are designed using only analog synthesizers
                       like the famous jupiter,, moog, etc.
                     </p>
-                    {/* <button             
-                    
-                    onClick={() => {
-                       setPreview(true);
-                       setTimeout(() => {
-
-                        let element:any = document.querySelector(`.play-button`)
-                        element.click();
-                        
-                       }, 1000);
-
-                    }}
-                    className="border cursor-pointer font-['Mona-Sans-S'] flex bg-[#C4FF48] px-[16px] py-[12px] border-[#5C5C5C] border-2px text-[#000] rounded-[8px]">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={24}
-                        height={24}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                          stroke="black"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M10 8L16 12L10 16V8Z"
-                          stroke="black"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span className="ml-[8px]">Preview</span>
-                    </button> */}
                   </div>
                   <div className="border-x border-[#282828] border-y-0 my-[50px]"></div>
                 </div>
@@ -344,7 +546,7 @@ const SamplesPage = () => {
                                       scope="col"
                                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                                     >
-                                      consdering
+                                      Considering
                                     </th>
                                     <th
                                       scope="col"
@@ -356,48 +558,29 @@ const SamplesPage = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-800">
                                   {sound_samples &&
-                                    sound_samples.map((x: any) => {
+                                    currentSamples.map((x: any, index) => {
+                                      const globalIndex = current_page * take + index; // Correctly compute the global index
+
                                       return (
                                         <>
-                                          <tr key={x.id}>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                                          <tr key={x.id}
+                                            id={`sample-item-${x.id}`}
+                                            className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 ${index === currentSampleIndex ? 'active-sample' : ''}`}>
+                                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                                               <img
                                                 className=" cursor-pointer mr-[32px]"
-                                                src={
+                                                src = {
                                                   currentPlayerId == x.id &&
-                                                    playing === true
+                                                    playing
                                                     ? "https://mvssive-content.s3.amazonaws.com/pause-button.png"
                                                     : "https://mvssive-content.s3.amazonaws.com/play-button-2.png"
                                                 }
                                                 onClick={async () => {
-                                                  if (
-                                                    currentPlayerId === x.id &&
-                                                    playing === true
-                                                  ) {
-                                                    await stopSample(x.id);
-                                                  } else {
-                                                    if (playing) {
-                                                      await stopSample(
-                                                        currentPlayerId
-                                                      );
-
-                                                      await playSample(x.id);
-
-                                                    } else {
-                                                      const item = {
-                                                        name: x.filename,
-                                                        writer: "SoundBoyz",
-                                                        img: sound?.thumbnail,
-                                                        src: x.sample_src,
-                                                        id: x + 1
-                                                      }
-                                                      console.log(item);
-                                                      // setPlaylist([item])
-                                                      // setPreview(true);
-                                                      await playSample(x.id);
-                                                    }
-                                                  }
+                                                  handleSampleClick(x, index);
+                                                  setCurrentPlayerIndex(globalIndex);
+                                                  setPreview(true);
                                                 }}
+
                                               />
                                             </td>
                                             <td className="">
@@ -414,11 +597,11 @@ const SamplesPage = () => {
                                               </span>{" "}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              <AudioPlayer
+                                              {/* <AudioPlayer
                                                 link={`${x.sample_src}`}
                                                 id={x.id}
                                                 setPlaying={setPlaying}
-                                              />
+                                              /> */}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                                               0:35
@@ -579,7 +762,12 @@ const SamplesPage = () => {
       )}
       {preview && (
         <>
-          <Player playlist={playlist} />
+          <Player
+            key={`${currentSampleIndex}-${current_page}`} // Change the key when currentSampleIndex or playlist changes
+            playlist={[...reversedPlaylist].reverse()} 
+            currentSampleIndex={currentPlayerIndex}
+            isPlaying={playing}
+            take={take} />
         </>
       )}
 

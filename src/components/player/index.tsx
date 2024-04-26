@@ -6,17 +6,26 @@ import AudioPlayer, {
   ProgressUI,
   VolumeSliderPlacement
 } from "react-modern-audio-player";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Editor from "./editor";
+import React from "react";
 
 type InitialStates = Omit<
   React.AudioHTMLAttributes<HTMLAudioElement>,
   "autoPlay"
 > & {
-	isPlaying?: true;
+	isPlaying?: false;
 };
 
-export default function Player(props: any) {
+interface PlayerProps {
+  playlist: any[]; // Replace `any` with a more specific type if possible
+  currentSampleIndex: number;
+  isPlaying: boolean;
+  take: number;
+}
+
+
+export default React.memo(function Player(props: PlayerProps) {
   const [progressType, setProgressType] = useState<ProgressUI>("waveform");
   const [playerPlacement, setPlayerPlacement] = useState<PlayerPlacement>(
     "bottom-left"
@@ -38,32 +47,58 @@ export default function Player(props: any) {
   >();
   const [theme, setTheme] = useState<"dark" | "light" | undefined>();
   const [width, setWidth] = useState("100%");
-  const [activeUI, setActiveUI] = useState<ActiveUI>({ all: true });
+  const [activeUI, setActiveUI] = useState<ActiveUI>();
+  const [audioKey, setAudioKey] = useState(props.currentSampleIndex);
+
+
+useEffect(() => {
+  console.log("Playlist or player state changed");
+  console.log("props.currentSampleIndex: ", props.currentSampleIndex );
+}, [props.playlist, props.currentSampleIndex, props.isPlaying]);
+
+  useEffect(() => {
+    // Code to handle updated playlist or reset the player state based on new data
+    console.log("Playlist updated", props.playlist);
+    // Perhaps reset the player or handle new playback logic here
+  }, [props.playlist]);
+  console.log('currentSampleIndex : ', props.currentSampleIndex+1);
 
   return (
     <div className="App">
       <div className="player-container">
         {props.playlist && (
-
           <AudioPlayer
-            playList={props.playlist}
-            
+          key={audioKey}
+          playList={props.playlist}
+            audioInitialState={{
+              repeatType: "ONE",
+              curPlayId: props.currentSampleIndex+1,
+            }}
             activeUI={{
               ...activeUI,
+              artwork: true,
+              playButton: true,
+              prevNnext: true,
+              volume: true,
+              volumeSlider: true,
+              trackTime: true,
+              trackInfo: true,
               progress: progressType
             }}
+
             placement={{
               player: playerPlacement,
               interface: {
                 templateArea: interfacePlacement
               },
-              playList: playListPlacement,
               volumeSlider: volumeSliderPlacement
             }}
+            
             rootContainerProps={{
               colorScheme: theme,
               width
             }}
+            
           />
         )}
       </div>
@@ -80,4 +115,13 @@ export default function Player(props: any) {
       />
     </div>
   );
+}, arePropsEqual);
+
+function arePropsEqual(prevProps: PlayerProps, nextProps: PlayerProps) {
+  return (
+    prevProps.currentSampleIndex === nextProps.currentSampleIndex &&
+    prevProps.isPlaying === nextProps.isPlaying &&
+    prevProps.playlist === nextProps.playlist
+  );
 }
+

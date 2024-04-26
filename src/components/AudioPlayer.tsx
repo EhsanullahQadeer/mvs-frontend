@@ -13,17 +13,14 @@ import wavesurfer from "wavesurfer.js";
 const AudioPlayer = (props: any) => {
 
 
-    const audioRef = useRef();
+    const audioRef = useRef(); 
     
-
-
     useEffect(() => {
-        const searchModule = document.querySelector(`#id-${props.id} > div`);
 
+        const searchModule = document.querySelector(`#id-${props.id} > div`);
         if(searchModule) return;
 
         if (audioRef.current) {
-
 
             let audioTrack = wavesurfer.create({
                 container: audioRef.current,
@@ -38,8 +35,7 @@ const AudioPlayer = (props: any) => {
                 backend: "MediaElement",
                 mediaControls: false,
             });
-
-            audioTrack.load(props.link);
+            var d = audioTrack.load(props.link);
 
             audioTrack.on("play", () => {
                 console.log(" === Start Play ===");
@@ -65,7 +61,10 @@ const AudioPlayer = (props: any) => {
             id={`id-${props.id}`}
             className="audio"
             ref={audioRef}
-        ></div>
+        >
+
+
+        </div>
     );
 
 }
