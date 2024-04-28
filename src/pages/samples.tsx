@@ -621,7 +621,7 @@ useEffect(() => {
                                               link={x.sample_src}
                                               id={x.id}
                                               setPlaying={false}
-                                              onPlayToggle={handlePlayToggle}
+                                              // onPlayToggle={handlePlayToggle}
                                               playerType={"sample"}
                                               volume={0}
                                               />
@@ -831,7 +831,7 @@ useEffect(() => {
             link={sound_samples[currentPlayerIndex].sample_src}
             id={sound_samples[currentPlayerIndex].id}
             setPlaying={playing}
-            onPlayToggle={handlePlayToggle}
+            // onPlayToggle={handlePlayToggle}
             playerType={"player"}
             volume={volume}
             />

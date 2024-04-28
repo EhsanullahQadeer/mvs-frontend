@@ -303,7 +303,7 @@ const MyDownloadsPage = () => {
                                                 link={`${x.sample_src}`}
                                                 id={x.id}
                                                 setPlaying={setPlaying}
-                                                onPlayToggle={null}
+                                                // onPlayToggle={null}
                                                 playerType={"sample"}
                                                 volume={0}
                                               />

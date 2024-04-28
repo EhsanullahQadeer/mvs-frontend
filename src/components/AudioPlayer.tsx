@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 
-const AudioPlayer = ({ link, id, setPlaying, onPlayToggle, playerType, volume}) => {
+const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
     const waveformRef = useRef(null);  // This ref should be used as the container for the waveform
     const wavesurfer = useRef(null);
     const [currentTime, setCurrentTime] = useState(0); // State for current playback time
     const [duration, setDuration] = useState(0);
-    const stableOnPlayToggle = useCallback(onPlayToggle, []);
     
     useEffect(() => {
         if (waveformRef.current) {  // Make sure you're checking waveformRef here
@@ -55,9 +54,6 @@ const AudioPlayer = ({ link, id, setPlaying, onPlayToggle, playerType, volume}) 
 
             wavesurfer.current.on("finish", () => {
                 wavesurfer.current.seekTo(0);
-                if (stableOnPlayToggle ) {
-                    stableOnPlayToggle();
-                }
             });
 
             wavesurfer.current.on('error', (error) => {
@@ -78,7 +74,7 @@ const AudioPlayer = ({ link, id, setPlaying, onPlayToggle, playerType, volume}) 
                 }
               };
         }
-    }, [link, stableOnPlayToggle, playerType]);
+    }, [link, playerType]);
 
     useEffect(() => {
         if (wavesurfer.current) {
