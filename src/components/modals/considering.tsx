@@ -19,11 +19,9 @@ const ConsideringModal = (props: any) => {
   useEffect(() => {
     const init = async () => {
       setLoading(true);
-
-      console.log("===== Sample Downloads =====");
       const _downloads = await getSampleDownloads(props.sample.id, {});
 
-      console.log(_downloads.data.results.data);
+      // console.log(_downloads.data.results.data);
 
       setDownloads(_downloads.data.results.data);
 

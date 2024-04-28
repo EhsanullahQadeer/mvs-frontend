@@ -52,7 +52,7 @@ const MyLikesPage = () => {
   const [sound, setSound]: any = useState({});
   const [considering, setConsidering] = useState(false);
   const [sample, setSample] = useState({});
-
+  const [currentTime, setCurrentTime] = useState(0);
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
@@ -307,6 +307,9 @@ const MyLikesPage = () => {
                                                 link={`${x.sample_src}`}
                                                 id={x.id}
                                                 setPlaying={setPlaying}
+                                                onPlayToggle={null}
+                                                playerType={"sample"}
+                                                volume={0}
                                               />
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">

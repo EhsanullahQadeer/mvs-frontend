@@ -55,6 +55,188 @@ body {
   z-index: 999 !important;
 }
 
+
+.bottom-audio-player {
+  display: flex;
+  justify-content: space-between; /* This will place the child containers on opposite ends */
+  align-items: center; /* To align items vertically in the center */
+  z-index: 1000; /* Ensure it stays above other content */
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 25px;
+  background-color: #1a1a1a; /* Dark background for visibility */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* Adds a shadow for better separation */
+  z-index: 1000; /* Ensure it stays above other content */
+}
+
+// .bottom-audio-player {
+//   display: flex;
+//   justify-content: center; /* Horizontally center the inner container */
+
+//   position: fixed;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   padding: 25px;
+//   background-color: #1a1a1a; /* Dark background for visibility */
+//   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* Adds a shadow for better separation */
+//   z-index: 1000; /* Ensure it stays above other content */
+// }\
+
+.sample-container {
+  flex: 2; /* This will make each container take half the width of the parent */
+  display: flex;
+  align-items: center; /* To align items vertically in the center */
+  justify-content: flex-start; /* For sample-container content alignment */
+  padding: 0 100px; /* Give some padding inside each container */
+}
+
+.volume-container {
+  display: flex;
+  align-items: center; /* Center items vertically */
+  gap: 0 10px; /* Space between the button and the slider */
+}
+
+.volume-button {
+  background: none;
+  border: none;
+  
+  padding: 5px; /* Optional, adjust as needed */
+}
+
+.volume-slider-wrapper {
+  position: relative;
+  flex-grow: 1; /* Allow the slider to take up the rest of the space */
+}
+
+.volume-input {
+  width: 100%; /* Full width of its container */
+  -webkit-appearance: none; /* Removes default styling */
+  appearance: none;
+  background: transparent;
+}
+
+.volume-input::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+.volume-input::-moz-range-thumb {
+  width: 0 !important;
+  height: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+
+.volume-slider {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  height: 10px;
+  background-color: #525252;
+}
+
+.volume-level {
+  height: 100%;
+  background-color: #fdfeff;
+}
+
+
+
+
+.audio-container {
+  flex: 2; /* This will make each container take half the width of the parent */
+  display: flex;
+  align-items: center; /* To align items vertically in the center */
+  justify-content: flex-start; /* For sample-container content alignment */
+  padding: 0 150px; /* Give some padding inside each container */
+  gap: 15px; /* Space between elements */
+}
+
+// .sample-container {
+//   display: flex; /* Enables flexbox layout */
+//   align-items: center; /* Vertically centers the children */
+//   justify-content: flex-start; /* Aligns children to the start of the container */
+//   width: 100%; /* Takes the full width of its parent */
+//   /* Other styling as needed */
+// }
+
+.album-info {
+  display: flex;
+  align-items: center;
+  margin-left: 40px;
+}
+
+.album-art img {
+  width: 75px;
+  height: 75px;
+  margin-right: auto; /* Pushes all other elements to the right */
+
+}
+
+.album-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.album-name {
+  font-weight: bold;
+  margin-bottom: 4px; /* Adds 4 pixels of space below the .album-name */
+  color: rgb(209, 209, 209);
+  /* Additional styling */
+}
+
+.album-author {
+  color: rgb(150, 150, 150);
+  /* Additional styling */
+}
+
+.audio-container {
+  justify-content: flex-end; /* For audio-container content alignment */
+}
+
+// .audio-container {
+//   display: flex;
+//   align-items: center; /* Center items vertically */
+//   justify-content: flex-start; /* Align items to the start */
+//   width: 100%;
+//   max-width: 600px;
+//   transform: translateX(200px); /* Adjust this if necessary */
+//   box-sizing: border-box;
+//   gap: 15px; /* Space between elements */
+// }
+
+.control-button {
+  padding: 1px 1px;
+  background-color: #007bff00;
+  color: white;
+  border: none;
+  cursor: pointer;
+  flex: 0 0 auto; /* Do not grow or shrink, use auto width */
+}
+
+.audio-player { /* Additional class or adjust your existing player CSS */
+  flex: 1 1 auto; /* Grow to use available space */
+  min-width: 0; /* Prevent flexbox from pushing out beyond max-width */
+}
+.volume-container {
+  justify-content: flex-end; /* Align to the end (right) */
+}
+
+
+.audio {
+  flex-grow: 1; /* Allows the audio player to take up any remaining space */
+}
+
+
 .red {
   color:red !important;
 }

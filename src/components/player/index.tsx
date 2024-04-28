@@ -10,12 +10,6 @@ import { useEffect, useRef, useState } from "react";
 import Editor from "./editor";
 import React from "react";
 
-type InitialStates = Omit<
-  React.AudioHTMLAttributes<HTMLAudioElement>,
-  "autoPlay"
-> & {
-	isPlaying?: false;
-};
 
 interface PlayerProps {
   playlist: any[]; // Replace `any` with a more specific type if possible
@@ -26,6 +20,7 @@ interface PlayerProps {
 
 
 export default React.memo(function Player(props: PlayerProps) {
+  
   const [progressType, setProgressType] = useState<ProgressUI>("waveform");
   const [playerPlacement, setPlayerPlacement] = useState<PlayerPlacement>(
     "bottom-left"
@@ -50,27 +45,76 @@ export default React.memo(function Player(props: PlayerProps) {
   const [activeUI, setActiveUI] = useState<ActiveUI>();
   const [audioKey, setAudioKey] = useState(props.currentSampleIndex);
 
+  const audioRef = useRef<HTMLAudioElement>(null); // Direct reference to the audio element
+  const [isPlaying, setIsPlaying] = useState(false);
+
+
+
+  interface ErrorBoundaryState {
+    hasError: boolean;
+  }
+  
+  class ErrorBoundary extends React.Component<any, ErrorBoundaryState> {
+    constructor(props: any) {
+      super(props);
+      this.state = { hasError: false };
+    }
+  
+    static getDerivedStateFromError(error: any) {
+      return { hasError: true };
+    }
+  
+    componentDidCatch(error: any, errorInfo: any) {
+      console.log(error, errorInfo);
+    }
+  
+    render() {
+      if (this.state.hasError) {
+        return <h1>Algo salió mal.</h1>;
+      }
+      return this.props.children;
+    }
+  }
+
+  const handlePlay = () => {
+    // Logic to start playing the music
+    console.log("Play button clicked");
+  };
+
+  type InitialStates = Omit<
+  React.AudioHTMLAttributes<HTMLAudioElement>,
+  "autoPlay"
+  > & {
+    isPlaying?: false;
+  };
+
+  const waveformRef = useRef(null);
+  const wavesurfer = useRef(null);
+  const [playing, setPlaying] = useState(false);
+
+  const handlePlayPause = () => {
+    setPlaying(!playing);
+    wavesurfer.current.playPause();
+};
 
 useEffect(() => {
   console.log("Playlist or player state changed");
   console.log("props.currentSampleIndex: ", props.currentSampleIndex );
 }, [props.playlist, props.currentSampleIndex, props.isPlaying]);
 
-  useEffect(() => {
-    // Code to handle updated playlist or reset the player state based on new data
-    console.log("Playlist updated", props.playlist);
-    // Perhaps reset the player or handle new playback logic here
-  }, [props.playlist]);
-  console.log('currentSampleIndex : ', props.currentSampleIndex+1);
-
+  console.log("is playing? ", props.isPlaying);
   return (
     <div className="App">
       <div className="player-container">
-        {props.playlist && (
+      <div className="audio-player-container" style={{ position: 'fixed', bottom: 0, width: '100%', padding: '10px', backgroundColor: '#282828' }}>
+            <div id={`https://mvssive-content.s3.amazonaws.com/1713051479.952-5eac5879-33c2-4e67-a1b8-c1478af18bdc.wav`} ref={waveformRef}></div>
+            <button onClick={handlePlayPause}>{playing ? 'Pause' : 'Play'}</button>
+        </div>
+        {/* {props.playlist && (
           <AudioPlayer
           key={audioKey}
           playList={props.playlist}
-            audioInitialState={{
+          audioInitialState={{
               repeatType: "ONE",
               curPlayId: props.currentSampleIndex+1,
             }}
@@ -85,7 +129,6 @@ useEffect(() => {
               trackInfo: true,
               progress: progressType
             }}
-
             placement={{
               player: playerPlacement,
               interface: {
@@ -93,14 +136,12 @@ useEffect(() => {
               },
               volumeSlider: volumeSliderPlacement
             }}
-            
             rootContainerProps={{
               colorScheme: theme,
               width
             }}
-            
           />
-        )}
+        )} */}
       </div>
 
       <Editor

@@ -14,10 +14,8 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { useNavigate, useParams } from "react-router-dom";
 import Theme from "components/theme";
-import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import ActionType from "redux/actionTypes";
-import wavesurfer from "wavesurfer.js";
+import React, { useCallback, useEffect, useState } from "react";
+
 import {
   getSound,
   getSoundSamples,
@@ -27,30 +25,36 @@ import AudioPlayer from "components/AudioPlayer";
 import DropDown from "components/theme/dropdown";
 import ConsideringModal from "components/modals/considering";
 import ReactPaginate from "react-paginate";
-import Player from "components/player";
+
 import Toggle from "components/toggle";
 import Avatar from 'react-avatar';
 
 
-interface RootState {
-  auth: any;
-  sounds: any;
-}
-
 const SamplesPage = () => {
-  const navigate = useNavigate();
-  const state = useSelector((state: RootState) => state);
+
   const [loading, setIsLoading] = useState(false);
-
-  const [loadingData, setLoadingData] = useState({});
-
   const [playing, setPlaying] = useState(false);
 
 
   const [currentSampleIndex, setCurrentSampleIndex] = useState(null);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(null);
 
-  const [current_sample, setCurrentSample] = useState(null);
+  const [manualToggle, setManualToggle] = useState(false);
+
+  const [startTimes, setStartTimes] = useState([]); // Initializes start times for each sample
+
+  // Function to update the start time for a specific player
+  const updateStartTime = (index, time) => {
+    setStartTimes(currentTimes => {
+      const newTimes = [...currentTimes];
+      newTimes[index] = time; // Update the start time at specific index
+      return newTimes;
+    });
+  };
+
+  
+  const [masterPlayerTime, masterCurrentTime] = useState(0); // External current time state, if needed
+
 
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
 
@@ -60,258 +64,289 @@ const SamplesPage = () => {
   const [current_page, setCurrentPage] = useState(0);
 
   const [take, setTake] = useState(10);
-  const [skip, setSkip] = useState(0);
   const [total, setTotal] = useState(0);
 
   const [sound, setSound]: any = useState({});
   const [considering, setConsidering] = useState(false);
-  const [samplePlayed, sampleControl] = useState(false);
+  const [considering_list, setConsideringList] = useState([]);
   const [sample, setSample] = useState({});
 
-  const [playlist, setPlaylist] = useState([]);
-  const [listForPlaylist, setListPlaylist] = useState([]);
   const [preview, setPreview] = useState(false);
-  const [selectedSample, setSelectedSample] = useState(null);
-  const [playButton, setPlayButton] = useState(null);  // State to hold the play button reference
+  const [currentTime, setCurrentTime] = useState(0);
 
 
-  useEffect(() => {
-    const audioElement = document.querySelector(`audio`);
-    console.log("PAUSE/PLAY?: ", audioElement);
-    if (!audioElement) return;
-  
-    // Handling play/pause based on state
-    const playAudio = async () => {
-      try {
-        await audioElement.play();
-      } catch (error) {
-        console.error('Error playing audio:', error);
-      }
-    };
-  
-    const pauseAudio = () => {
-      audioElement.pause();
-    };
-  
-    if (playing) {
-      playAudio();
-    } else {
-      pauseAudio();
-    }
-  
-  }, [playing]);
 
 
-  /* 
-   * useEffect()
-   * Desc: Handle Up/Down key hits; scan through list of samples
-   */ 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && currentSampleIndex !== null) {
-        event.preventDefault();  // Prevent the whole page from scrolling
-  
-        // // Pause the current sample if something is playing.
-        // if (playing) {
-        //   const audioElement = document.querySelector('audio');
-        //   if (audioElement) audioElement.pause();
-        // }
-  
-        // Calculate the start and end index for the current page
-        const startIndex = current_page * take;
-        const endIndex = Math.min(startIndex + take, total) - 1;  // Adjust endIndex to not exceed total
-  
-        setCurrentSampleIndex(prev => {
-          let newIndex = prev + (event.key === 'ArrowUp' ? -1 : 1);
-          if (newIndex >= 0 && newIndex < currentSamples.length) {
-            // Update within the local page bounds
-            return newIndex;
-          }
-          return prev;  // Return previous if out of bounds
-        });
-  
-        setCurrentPlayerIndex(prev => {
-          let newGlobalIndex = prev + (event.key === 'ArrowUp' ? -1 : 1);
-          if (newGlobalIndex >= startIndex && newGlobalIndex <= endIndex) {
-            // Ensure new index is within the page limits
-            const newSampleId = sound_samples[newGlobalIndex].id;
-            setCurrentPlayerId(newSampleId);
-  
-            // Schedule playback if needed
-            setTimeout(() => {
-              const audioElement = document.querySelector('audio');
-              if (audioElement) {
-                audioElement.play().catch(e => console.error('Error playing audio:', e));
-              }
-            }, 100);
-  
-            return newGlobalIndex;
-          }
-          return prev;  // Return previous if new index is out of bounds
-        });
-      }
-    };
-  
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [current_sample, currentPlayerId, playing, current_page, take, total]);
-  
-  
-
-
-  // useEffect(() => {
-  //   if (sound_samples.length > 0) {
-  //     setCurrentSampleIndex(0); // Reset to the first item of the new page
-  //   }
-  // }, [current_page, sound_samples.length]);
-
-
-  function classNames(...classes) {
-    return classes.filter(Boolean).join(" ");
-  }
-
-  const handlePageClick = async (event) => {
-    setIsLoading(true);
-    setPlaying(false);
-    setCurrentPage(event.selected);
-    const newCurrentSampleIndex = current_page * take;
-    setCurrentSampleIndex(null);
-    await getSamples(id, event.selected);
-    console.log("Page changed to:", event.selected);
-  };
-  
+  /*
+   * Initialization for sound data.
+   */
   useEffect(() => {
     const init = async () => {
       await getSoundData();
-      setLoadingData(false);
     };
     init();
   }, []);
 
 
-
+  useEffect(() => {
+    if (!playing && currentPlayerId && !manualToggle) { // Check if manualToggle is false
+      const timer = setTimeout(() => {
+        setPlaying(true);
+      }, 100); // Delay to avoid potential race conditions
   
+      return () => clearTimeout(timer);
+    }
+  }, [playing, currentPlayerId, manualToggle]);
+
+
+
+
+
+
+
+
+
+
+  const handleAudioProcess = (time) => {
+    setCurrentTime(time);
+};
+
+  const [isSetPlaying, setIsPlaying] = useState(false);
+
+    const handlePlayToggle = () => {
+      setPlaying(!playing);
+      setManualToggle(true); // Indicate that the toggle was manual
+
+  };
+
+  // State to hold the volume level
+  const [volume, setVolume] = useState(50); // Volume is between 0 (muted) and 100 (max)
+
+  // Handler for changes in the slider
+  const handleVolumeChange = (event) => {
+    setVolume(event.target.value);
+  };
+
+  const handleMouseDown = () => {
+    // Enable dragging
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseUp = () => {
+    // Remove the event listeners when dragging ends
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseMove = (event) => {
+    // Calculate the new volume based on the mouse position
+    const slider = document.querySelector('.volume-slider').getBoundingClientRect();
+    const newVolume = Math.max(0, Math.min(100, ((event.clientX - slider.left) / slider.width) * 100));
+    setVolume(newVolume);
+  };
+
+  useEffect(() => {
+    // Clean up the event listeners when the component unmounts
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
+
+  const updateIndices = (offset) => {
+    const newIndex = currentSampleIndex + offset;
+    const newGlobalIndex = currentPlayerIndex + offset;
+
+    if (newIndex < 0 && current_page > 0) {
+        // Move to the previous page and set to the last sample of that page
+        setCurrentPage(current_page - 1);
+        setCurrentSampleIndex(take - 1);
+        setCurrentPlayerIndex((current_page - 1) * take + (take - 1));
+    } else if (newIndex >= currentSamples.length && current_page < Math.ceil(total / take) - 1) {
+        // Move to the next page and set to the first sample of that page
+        setCurrentPage(current_page + 1);
+        setCurrentSampleIndex(0);
+        setCurrentPlayerIndex((current_page + 1) * take);
+    } else if (newIndex >= 0 && newIndex < currentSamples.length) {
+        // Update within the current page
+        setCurrentSampleIndex(newIndex);
+        setCurrentPlayerIndex(newGlobalIndex);
+    }
+
+    // Set the player ID and ensure playback starts if the index is valid
+    if (newGlobalIndex >= 0 && newGlobalIndex < total) {
+        const newSampleId = sound_samples[newGlobalIndex]?.id;
+        setCurrentPlayerId(newSampleId);
+        setPlaying(true);
+    }
+};
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+        console.log("Key pressed:", event.key);
+        if (event.key === ' ' && currentPlayerIndex !== null) {
+            event.preventDefault();
+            setPlaying(prev => !prev);
+            setManualToggle(true);
+        } else if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && currentSampleIndex !== null) {
+            event.preventDefault();
+            setPlaying(false);
+            setManualToggle(false);
+            const offset = event.key === 'ArrowUp' ? -1 : 1;
+            updateIndices(offset);
+        }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+}, [currentSampleIndex, currentPlayerIndex, current_page, take, total, sound_samples, playing]);
+
+  // useEffect(() => {
+  //   const handleKeyDown = (event) => {
+  //     console.log("Key pressed:", event.key); // Log the key to see if the event is firing
+  //     if (event.key === ' ' && currentPlayerIndex !== null) { // Make sure it's the space character
+  //       event.preventDefault(); // Stop the page from scrolling
+  //       setPlaying(prev => !prev); // Toggle playing state
+  //       setManualToggle(true); // Indicate that the toggle was manual
+  //       console.log("Toggling play state:", !playing); // Log the action
+  //     } else if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && currentSampleIndex !== null) {
+  //       event.preventDefault();  // Prevent the whole page from scrolling
+  //       setPlaying(false);
+  //       setManualToggle(false); // Reset manual toggle on key press
+  //       const offset = event.key === 'ArrowUp' ? -1 : 1;
+  //       const newIndex = currentSampleIndex + offset;
+  //       const newGlobalIndex = currentPlayerIndex + offset;
+  
+  //       if (newIndex < 0 && current_page > 0) {
+  //           setCurrentPage(current_page - 1);
+  //           setCurrentSampleIndex(take - 1);
+  //           setCurrentPlayerIndex((current_page - 1) * take + (take - 1));
+  //       } else if (newIndex >= currentSamples.length && current_page < Math.ceil(total / take) - 1) {
+  //           setCurrentPage(current_page + 1);
+  //           setCurrentSampleIndex(0);
+  //           setCurrentPlayerIndex((current_page + 1) * take);
+  //       } else if (newIndex >= 0 && newIndex < currentSamples.length) {
+  //           setCurrentSampleIndex(newIndex);
+  //           setCurrentPlayerIndex(newGlobalIndex);
+  //       }
+  //       if (newGlobalIndex >= 0 && newGlobalIndex < total) {
+  //           const newSampleId = sound_samples[newGlobalIndex]?.id;
+  //           setCurrentPlayerId(newSampleId);
+  //       }
+  //     }
+  //   };
+  
+  //   // Add event listener
+  //   window.addEventListener('keydown', handleKeyDown);
+  
+  //   // Cleanup the event listener on component unmount
+  //   return () => {
+  //     window.removeEventListener('keydown', handleKeyDown);
+  //   };
+  // }, [currentSampleIndex, currentPlayerIndex, current_page, take, total, sound_samples, playing, setPlaying]);
+  
+  
+
+
+  const handlePageClick = async (event) => {
+    setIsLoading(true);
+    setCurrentPage(event.selected);
+    setCurrentSampleIndex(null);
+    await getConsideringList(id, event.selected);
+    await getSamples(id, event.selected);
+  };
+
+  useEffect(() => {
+    // Clean up the event listeners when the component unmounts
+    console.log("con list: ", considering_list );
+  }, [considering_list]);
+
+
+
   const getSamples = async (id, page = current_page) => {
     setIsLoading(true);
-    console.log("take: ", take);
-    const skip = current_page * take;
-
     const _samples = await getSoundSamples(id, {
       skip: page,
       take,
     });
+
     console.log("=== Samples ====");
     setTotal(_samples?.data?.results?.total);
+    console.log("sample: ", _samples?.data?.results?.samples);
     // setSoundSamples(_samples?.data?.results?.samples);
     setIsLoading(false);
   };
 
-  /* 
-    CLICK PLAYER'S BUTTON TO SWITCH SAMPLE PLAYER ICONS
-  */ 
-  useEffect(() => {
-    const handlePlayButtonClick = (event) => {
-      if (event.target.classList.contains("play-button")) {
-        setPlaying(!playing); // Toggle the playing state
-      }
-    };
+  const getConsideringList = async (id, page = current_page) => {
+    setIsLoading(true);
+    const _samples = await getSoundSamples(id, {
+      skip: page,
+      take,
+    });
+    setConsideringList(_samples?.data?.results?.samples);
+  };
 
-    // Attach the event listener to the parent element
-    document.addEventListener("click", handlePlayButtonClick);
 
-    // Cleanup function to remove the event listener
-    return () => {
-      document.removeEventListener("click", handlePlayButtonClick);
-    };
-  }, [playing]); // Include playing in the dependencies array
-
-  // useEffect(() => {
-  //   const audioElement = document.getElementById('editor-section') as HTMLAudioElement;
-  //   console.log('AUDIO ELEMENT: ', audioElement);
-  //   if (!audioElement) return;
-  
-  //   if (playing) {
-  //     console.log('Playing audio');
-  //     // audioElement.play()
-  //     //   .catch(e => console.error("Error trying to play the audio:", e));
-  //   } else {
-  //     console.log('Pausing audio');
-  //     audioElement.pause();
-  //   }
-  // }, [playing]);
-  
-  // document.querySelectorAll('.play-button').forEach(button => {
-  //   button.addEventListener('click', function() {
-  //       const currentlyPlaying = document.querySelector('audio') as HTMLAudioElement;; // Assume 'playing' class marks an active audio
-  //       console.log("currently playing: ", currentlyPlaying );
-  //       if (currentlyPlaying && currentlyPlaying !== this.nextElementSibling) {
-  //           currentlyPlaying.pause();
-  //           currentlyPlaying.classList.remove('playing');
-  //       }
-  //       const audio = this.nextElementSibling; // Assuming <audio> is right after <button>
-  //       if (audio.paused) {
-  //           audio.play();
-  //           audio.classList.add('playing');
-  //       } else {
-  //           audio.pause();
-  //           audio.classList.remove('playing');
-  //       }
-  //   });
-// });
-
-  const stopSample = async (id) => {
-    // Ensure the playback state is set to false
-    setPlaying(false);
-
-    // Find the container for the specific sample
-    const searchModule = document.querySelector(`audio`);
-    console.log("Search module found:", searchModule);
-    if (searchModule && searchModule.shadowRoot) {
-      const audio = searchModule.shadowRoot.querySelector("audio");
-      if (audio) {
-        // Reset the current time and pause the audio
-        audio.currentTime = 0;
-        audio.pause();
+  const handleNext = () => {
+    const newIndex = currentSampleIndex + 1;
+    if (newIndex >= currentSamples.length) {
+      if (current_page < Math.ceil(total / take) - 1) {
+        setCurrentPage(prev => prev + 1);
+        setCurrentSampleIndex(0);
+        setCurrentPlayerIndex(prev => prev + 1);
       } else {
-        console.error("Audio element not found");
+        setCurrentPage(0);
+        setCurrentSampleIndex(0);
+        setCurrentPlayerIndex(0);
       }
     } else {
-      console.error("Sample container or shadow root not found");
+      setCurrentSampleIndex(newIndex);
+      setCurrentPlayerIndex(prev => prev + 1);
     }
-
-    // Update the current player ID
-    setCurrentPlayerId(id);
+    setTimeout(() => setPlaying(true), 100); // Add a slight delay before playing
   };
+
+const handlePrevious = () => {
+  const newIndex = currentSampleIndex - 1;
+  if (newIndex < 0) {
+    if (current_page > 0) {
+      setCurrentPage(prev => prev - 1);
+      const lastIndex = take - 1;
+      setCurrentSampleIndex(lastIndex);
+      setCurrentPlayerIndex(prev => prev - lastIndex - 1);
+    } else {
+      const lastPage = Math.ceil(total / take) - 1;
+      const lastSampleIndex = (total - 1) % take;
+      setCurrentPage(lastPage);
+      setCurrentSampleIndex(lastSampleIndex);
+      setCurrentPlayerIndex(total - 1);
+    }
+  } else {
+    setCurrentSampleIndex(newIndex);
+    setCurrentPlayerIndex(prev => prev - 1);
+  }
+  setTimeout(() => setPlaying(true), 100); // Add a slight delay before playing
+};
 
   const handleSampleClick = useCallback(async (sample, index) => {
     setCurrentSampleIndex(index);
+    // handlePlayToggle();
     // Check if the same sample is clicked and it is currently playing
     if (currentPlayerId === sample.id) {
-      if (playing) {
-        console.log('Sample is already playing. Attempting to pause.');
-        await stopSample(sample.id);
-        setPlaying(false); // This will trigger the useEffect to pause the sample
+      if ( playing ) {
+        setPlaying( false );
       } else {
-        console.log('Sample was paused. Resuming play.');
-        await stopSample(sample.id);
-        setPlaying(true); // Resume playing the current sample
+        setPlaying( true ); // Resume playing the current sample
       }
     } else {
-      // Different sample is clicked or nothing is playing
-      console.log('Switching or starting a new sample.');
-      if (playing) {
-        console.log('Stopping the currently playing sample.');
-        await stopSample(sample.id);
-        setPlaying(false); // Ensure the current sample is stopped
-        await new Promise(resolve => setTimeout(resolve, 100)); // Wait to ensure the audio is paused
-      }
       
       // Set up the new sample to be played
       console.log('Setting up the new sample.');
       setCurrentPlayerId(sample.id);
-      await stopSample(sample.id);
-      await new Promise(resolve => setTimeout(resolve, 100)); // Optional: Ensure the UI has time to update if needed
-      setPlaying(true); // Start playing the new sample
+      // setPlaying(true); // Start playing the new sample
     }
   }, [currentPlayerId, playing, setPlaying, setCurrentPlayerId]);
 
@@ -319,7 +354,7 @@ const SamplesPage = () => {
     setIsLoading(true);
 
     const _sound: any = await getSound( id );
-
+    console.log('sound data: ', _sound);
     const list = [];
 
     console.log("=== Playlst ====")
@@ -333,54 +368,16 @@ const SamplesPage = () => {
       };
       list.push(_item);
     }
-    console.log("take: ", take);
-    const startIndex = current_page * take; // ensure current_page is zero-indexed, adjust if it starts from 1
-    const endIndex = startIndex + take;
     
-    const pageItems = list.slice(startIndex, endIndex);
-    console.log("pageItems: ", pageItems);
-    setListPlaylist(list);
-    setPlaylist(list);
     setSoundSamples(_sound?.data?.results?.samples);
+    
     await getSamples( id, current_page );
+    await getConsideringList( id, current_page );
 
-    console.log(_sound);
-    console.log("lkasdfjkl: ", _sound?.data?.results);
     setSound(_sound?.data?.results);
 
     setIsLoading(false);
   };
-
-  // useEffect(() => {
-  //   // Check if the playlist is not empty
-  //   if (playlist && playlist.length > 0) {
-  //     setPreview(true);
-  //   } else {
-  //     setPreview(false);
-  //   }
-  // }, [playlist]); // This effect runs whenever the playlist changes
-
-
-
-  // useEffect(() => {
-  //   // Calculate the starting index for the current page
-  //   const newCurrentSampleIndex = current_page * take;
-  //   setCurrentSampleIndex(newCurrentSampleIndex);
-  // }, [current_page, take]);
-
-
-
-  useEffect(() => {
-    console.log("curr index: ", currentSampleIndex);
-  }, []
-)
-
-
-
-
-// Create a reversed copy of the playlist for rendering
-const reversedPlaylist = [...playlist].reverse();
-
 
   // Function to calculate the range of items to display based on the current page
   const startIndex = current_page * take;
@@ -560,10 +557,9 @@ const reversedPlaylist = [...playlist].reverse();
                                   {sound_samples &&
                                     currentSamples.map((x: any, index) => {
 
-                                      const considering = x.considering?.split(',');
-                                      console.log("considering: ", considering);
-                                      console.log("considering: ", sound_samples);
                                       const globalIndex = current_page * take + index; // Correctly compute the global index
+                                      // const considering = considering_list[index].considering?.split(',');
+                                      console.log("con test: ", sound_samples);
                                       return (
                                         <>
                                           <tr key={x.id}
@@ -579,11 +575,12 @@ const reversedPlaylist = [...playlist].reverse();
                                                     : "https://mvssive-content.s3.amazonaws.com/play-button-2.png"
                                                 }
                                                 onClick={async () => {
-                                                  handleSampleClick(x, index);
+                                                  handleSampleClick(x, globalIndex);
                                                   setCurrentPlayerIndex(globalIndex);
                                                   setPreview(true);
+                                                  setPlaying(false);
+                                                  handlePlayToggle();
                                                 }}
-
                                               />
                                             </td>
                                             <td className="">
@@ -596,13 +593,17 @@ const reversedPlaylist = [...playlist].reverse();
                                               {x.filename}
                                               <br />{" "}
                                               <span className="text-[12px] text-[#6f6f6f]">
-                                                SoundBoyz
+                                                {x?.sound.authors}
                                               </span>{" "}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              <AudioPlayer
-                                                link={`${x.sample_src}`}
-                                                id={x.id}
+                                            <AudioPlayer
+                                              link={x.sample_src}
+                                              id={x.id}
+                                              setPlaying={false}
+                                              onPlayToggle={handlePlayToggle}
+                                              playerType={"sample"}
+                                              volume={0}
                                               />
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
@@ -615,14 +616,14 @@ const reversedPlaylist = [...playlist].reverse();
                                               {x?.bpm}
                                             </td>
                                             <td className="whitespace-nowrap  text-sm text-gray-300">
-                                              {considering && considering?.map((x: any) => {
-
+                                              {/* {considering && considering?.map((x: any, index) => {
+                                                
                                                 return (
                                                   <>
                                                     <Avatar name={x} round={true} title={x} size="30" className="flex ml-[5px] mb-[3px]" />
                                                   </>
                                                 )
-                                              })}
+                                              })} */}
                                               <span
                                                 onClick={() => {
                                                   setSample(x);
@@ -730,6 +731,7 @@ const reversedPlaylist = [...playlist].reverse();
                 renderOnZeroPageCount={null}
                 breakClassName="text-white"
                 activeLinkClassName="text-white"
+                forcePage={current_page}
               />
             </>
           )}
@@ -763,17 +765,82 @@ const reversedPlaylist = [...playlist].reverse();
           />
         </>
       )}
-      {preview && (
-        <>
-          <Player
-            key={`${currentSampleIndex}-${current_page}`} // Change the key when currentSampleIndex or playlist changes
-            playlist={[...reversedPlaylist].reverse()} 
-            currentSampleIndex={currentPlayerIndex}
-            isPlaying={playing}
-            take={take} />
-        </>
-      )}
+      { preview && (
+    <>
+  <div className="bottom-audio-player">
 
+  <div className="sample-container">
+    <div className="album-art">
+      <img 
+        src={sound_samples[currentPlayerIndex]?.sound?.thumbnail || ''} 
+        alt="Album Art"
+      />
+    </div>
+    <div className="album-details">
+      <div className="album-name">
+        {sound_samples[currentPlayerIndex]?.filename ?? 'Album Name'}
+      </div>
+      <div className="album-author">
+        {sound_samples[currentPlayerIndex]?.sound?.author ?? 'Author Name'}
+      </div>
+    </div>
+  </div>
+
+  <div className="audio-container">
+        {/* Previous Button */}
+        <button className="control-button" onClick={() => updateIndices(-1)}>
+          <img src={require('../assets/img/prev.png')} />
+        </button>
+
+        {/* Pause/Play Button */}
+        <button className="control-button" onClick={handlePlayToggle}>
+            {playing ? (
+                <img src={require('../assets/img/pause.png')} alt="Pause" />
+            ) : (
+                <img src={require('../assets/img/play.png')} alt="Play" />
+            )}
+        </button>
+
+        {/* Next Button */}
+        <button className="control-button" onClick={() => updateIndices(1)}>
+          <img src={require('../assets/img/next.png') } />
+        </button>
+
+        {/* Audio Player Component */}
+        <AudioPlayer
+            link={sound_samples[currentPlayerIndex].sample_src}
+            id={sound_samples[currentPlayerIndex].id}
+            setPlaying={playing}
+            onPlayToggle={handlePlayToggle}
+            playerType={"player"}
+            volume={volume}
+            />
+    </div>
+
+
+    <div className="volume-container">
+    {/* Volume Button */}
+    <button className="volume-button">
+        <img src={require('../assets/img/volume.png')} alt="Volume"/>
+    </button>
+    <div className="volume-slider-wrapper">
+        <input 
+            type="range" 
+            min="0" 
+            max="100" 
+            className="volume-input" 
+            onChange={handleVolumeChange} 
+            value={volume}
+        />
+        <div className="volume-slider" onMouseDown={handleMouseDown}>
+          <div className="volume-level" style={{ width: `${volume}%` }}></div>
+        </div>
+    </div>
+    </div>
+  </div>
+  </>
+)}
+      
     </React.Fragment>
   );
 };

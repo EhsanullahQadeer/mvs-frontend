@@ -1,72 +1,138 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable jsx-a11y/alt-text */
-import { useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
-import wavesurfer from "wavesurfer.js";
+import WaveSurfer from "wavesurfer.js";
 
-
-
-
-const AudioPlayer = (props: any) => {
-
-
-    const audioRef = useRef(); 
+const AudioPlayer = ({ link, id, setPlaying, onPlayToggle, playerType, volume}) => {
+    const waveformRef = useRef(null);  // This ref should be used as the container for the waveform
+    const wavesurfer = useRef(null);
+    const [currentTime, setCurrentTime] = useState(0); // State for current playback time
+    const [duration, setDuration] = useState(0);
     
     useEffect(() => {
+        if (waveformRef.current) {  // Make sure you're checking waveformRef here
+            const createWaveSurfer = () => {
+                return WaveSurfer.create({
+                    container: waveformRef.current,  // Use waveformRef.current as the container
+                    waveColor: "grey",
+                    progressColor: "#c4ff48",
+                    height: playerType === "sample" ? 20 : 40,  // Simplified conditional logic
+                    cursorWidth: playerType === "sample" ? 0 : 3.5,
+                    cursorColor: "lightgray",
+                    barWidth: playerType === "sample" ? 3 : 3,
+                    normalize: true,
+                    fillParent: true,
+                    backend: "MediaElement",
+                    mediaControls: false,
+                });
+            };
 
-        const searchModule = document.querySelector(`#id-${props.id} > div`);
-        if(searchModule) return;
+            if (playerType === "sample") {
+                wavesurfer.current = createWaveSurfer();
+                wavesurfer.current.setVolume(0);
+            } else if (playerType === "player") {
+                wavesurfer.current = createWaveSurfer();
+            }
 
-        if (audioRef.current) {
+            const loadTrack = async () => {
+                try {
+                  await wavesurfer.current.load(link);
+                } catch (error) {
+                  if (error.name !== 'AbortError') {
+                    console.error("Failed to load the track:", error);
+                  }
+                }
+              };
+            loadTrack();
 
-            let audioTrack = wavesurfer.create({
-                container: audioRef.current,
-                waveColor: "grey",
-                progressColor: "#c4ff48",
-                height: 30,
-                cursorWidth: 0,
-                cursorColor: "lightgray",
-                barWidth: 2,
-                normalize: true,
-                fillParent: true,
-                backend: "MediaElement",
-                mediaControls: false,
+            wavesurfer.current.on("ready", () => {
+                setDuration(wavesurfer.current.getDuration());
             });
-            var d = audioTrack.load(props.link);
 
-            audioTrack.on("play", () => {
-                console.log(" === Start Play ===");
-                const searchModule = document.querySelector(`#id-${props.id} > div`);
-                searchModule.shadowRoot.querySelector("audio").currentTime = 0;
+            wavesurfer.current.on("audioprocess", () => {
+                const currentTime = wavesurfer.current.getCurrentTime();
+                setCurrentTime(currentTime);
             });
 
-            audioTrack.on("finish", () => {
-                console.log(" === Finished ===");
-                props.setPlaying(false);
-                const searchModule = document.querySelector(`#id-${props.id} > div`);
-                searchModule.shadowRoot.querySelector("audio").currentTime = 0;
-                searchModule.shadowRoot.querySelector("audio").pause();
-
+            wavesurfer.current.on("finish", () => {
+                wavesurfer.current.seekTo(0);
+                if (onPlayToggle) {
+                    onPlayToggle();
+                }
             });
 
+            wavesurfer.current.on('error', (error) => {
+                if (error.message === 'The user aborted a request.') {
+                  console.log('Load aborted');
+                } else {
+                  console.error('Error in WaveSurfer:', error);
+                }
+              });
+
+              return () => {
+                try {
+                    wavesurfer.current.destroy();
+                } catch (error) {
+                  if (error.message !== 'The user aborted a request.') {
+                    console.error('Error while destroying WaveSurfer:', error);
+                  }
+                }
+              };
         }
-    })
+    }, [link, playerType]);
+
+    useEffect(() => {
+        if (wavesurfer.current) {
+            wavesurfer.current.setVolume(volume / 100); // Set the volume based on the state
+        }
+    }, [volume]);
+    useEffect(() => {
+        if (setPlaying) {
+          console.log("Starting playback for sample ID:", id);
+        } else {
+          console.log("Stopping playback for sample ID:", id);
+        }
+      }, [setPlaying, id]); // Depend on playing state and ID to control playback
+
+
+      
+    useEffect(() => {
+        if (wavesurfer.current) {
+            const playAudio = async () => {
+                try {
+                    if (setPlaying) {
+                        await wavesurfer.current.play();
+                    } else {
+                        wavesurfer.current.pause();
+                    }
+                } catch (error) {
+                    console.error("Error playing audio:", error);
+                }
+            };
+            playAudio();
+        }
+    }, [setPlaying]);
+
+    function formatTime(seconds) {
+        const roundSeconds = Math.round(seconds);
+        const minutes = Math.floor(roundSeconds / 60);
+        const remainingSeconds = roundSeconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
 
     return (
-        <div
-            style={{ minWidth: "175px" }}
-            id={`id-${props.id}`}
-            className="audio"
-            ref={audioRef}
-        >
-
-
+        <div style={{ display: 'flex', alignItems: 'center', minWidth: "175px" }} id={`id-${id}`} className="audio">
+            {playerType === "player" && (
+                <div style={{ marginRight: '10px', marginLeft: '10px', color: 'white', fontWeight: 'bold' }}>
+                    <span>{formatTime(currentTime)}</span>
+                </div>
+            )}
+            <div ref={waveformRef} style={{ flexGrow: 1 }}></div>
+            {playerType === "player" && (
+                <div style={{ marginLeft: '10px', color: 'white', fontWeight: 'bold' }}>
+                    <span>{formatTime(duration)}</span>
+                </div>
+            )}
         </div>
     );
-
-}
+};
 
 export default AudioPlayer;
