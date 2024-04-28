@@ -96,8 +96,10 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
             const playAudio = async () => {
                 try {
                     if (setPlaying) {
+                        console.log("Current playing audio");
                         await wavesurfer.current.play();
                     } else {
+                        console.log("Current pausing audio");
                         wavesurfer.current.pause();
                     }
                 } catch (error) {

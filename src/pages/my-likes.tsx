@@ -306,8 +306,7 @@ const MyLikesPage = () => {
                                               <AudioPlayer
                                                 link={`${x.sample_src}`}
                                                 id={x.id}
-                                                setPlaying={setPlaying}
-                                                // onPlayToggle={null}
+                                                setPlaying={false}
                                                 playerType={"sample"}
                                                 volume={0}
                                               />

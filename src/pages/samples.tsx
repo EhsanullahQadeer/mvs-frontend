@@ -32,51 +32,29 @@ import Avatar from 'react-avatar';
 
 const SamplesPage = () => {
 
-  const [loading, setIsLoading] = useState(false);
-  const [playing, setPlaying] = useState(false);
-
-
+  const { id } = useParams();
+  
+  // States to indicate activity in sample player
+  const [current_page, setCurrentPage] = useState(0); // Holds the current page number
+  const [loading, setLoading]          = useState(false); // Indicates samples are being loaded
+  const [playing, setPlaying]          = useState(false); // Indicates audio is currently playing
+  const [preview, setPreview]          = useState(false); // Used to show the sample player
+  const [playlist, setPlaylist]        = useState([]); // Holds sample pack's data
+  const [sound_samples, setSoundSamples] = useState([]);
+  const [volume, setVolume] = useState(50);
   const [currentSampleIndex, setCurrentSampleIndex] = useState(null);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(null);
-
   const [manualToggle, setManualToggle] = useState(false);
-
-  const [startTimes, setStartTimes] = useState([]); // Initializes start times for each sample
-
-  // Function to update the start time for a specific player
-  const updateStartTime = (index, time) => {
-    setStartTimes(currentTimes => {
-      const newTimes = [...currentTimes];
-      newTimes[index] = time; // Update the start time at specific index
-      return newTimes;
-    });
-  };
-
-  
-  const [masterPlayerTime, masterCurrentTime] = useState(0); // External current time state, if needed
-
-
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
-
-  const { id } = useParams();
-
-  const [sound_samples, setSoundSamples] = useState([]);
-  const [current_page, setCurrentPage] = useState(0);
-
   const [take, setTake] = useState(10);
   const [total, setTotal] = useState(0);
-
   const [sound, setSound]: any = useState({});
   const [considering, setConsidering] = useState(false);
-  const [considering_list, setConsideringList] = useState([]);
   const [sample, setSample] = useState({});
-
-  const [preview, setPreview] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
 
 
   /*
-   * Initialization for sound data.
+   * Initialization of sample player
    */
   useEffect(() => {
     const init = async () => {
@@ -87,28 +65,19 @@ const SamplesPage = () => {
 
 
   useEffect(() => {
-    if (!playing && currentPlayerId && !manualToggle) { // Check if manualToggle is false
+    if (!playing && currentPlayerId && !manualToggle) {
       const timer = setTimeout(() => {
         setPlaying(true);
-      }, 100); // Delay to avoid potential race conditions
+      }, 100);
   
       return () => clearTimeout(timer);
     }
   }, [playing, currentPlayerId, manualToggle]);
 
-  const handleAudioProcess = (time) => {
-    setCurrentTime(time);
+  const handlePlayToggle = () => {
+    setPlaying(!playing);
+    setManualToggle(true); // Indicate that the toggle was manual
   };
-
-  const [isSetPlaying, setIsPlaying] = useState(false);
-
-    const handlePlayToggle = () => {
-      setPlaying(!playing);
-      setManualToggle(true); // Indicate that the toggle was manual
-  };
-
-  // State to hold the volume level
-  const [volume, setVolume] = useState(50); // Volume is between 0 (muted) and 100 (max)
 
   // Handler for changes in the slider
   const handleVolumeChange = (event) => {
@@ -143,8 +112,9 @@ const SamplesPage = () => {
   }, []);
 
 
+
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = async (event) => {
       console.log("Key pressed:", event.key); // Log the key to see if the event is firing
       if (event.key === ' ' && currentPlayerIndex !== null) { // Make sure it's the space character
         event.preventDefault(); // Stop the page from scrolling
@@ -158,22 +128,40 @@ const SamplesPage = () => {
         const offset = event.key === 'ArrowUp' ? -1 : 1;
         const newIndex = currentSampleIndex + offset;
         const newGlobalIndex = currentPlayerIndex + offset;
+        console.log("sound_samples", sound_samples );
 
         if (newIndex < 0 && current_page > 0) {
+            setLoading(true);
+
             setCurrentPage(current_page - 1);
             setCurrentSampleIndex(take - 1);
             setCurrentPlayerIndex((current_page - 1) * take + (take - 1));
-        } else if (newIndex >= currentSamples.length && current_page < Math.ceil(total / take) - 1) {
+            
+            await getSamples(id, current_page - 1);
+
+        } 
+        else if (newIndex >= sound_samples.length && current_page < Math.ceil(total / take) - 1) {
+            setLoading(true);
+
             setCurrentPage(current_page + 1);
             setCurrentSampleIndex(0);
             setCurrentPlayerIndex((current_page + 1) * take);
-        } else if (newIndex >= 0 && newIndex < currentSamples.length) {
+
+            await getSamples(id, current_page + 1);
+
+            setPlaying(true);
+
+
+        } 
+        else if (newIndex >= 0 && newIndex < sound_samples.length) {
             setCurrentSampleIndex(newIndex);
             setCurrentPlayerIndex(newGlobalIndex);
+            
         }
-        if (newGlobalIndex >= 0 && newGlobalIndex < total) {
-            const newSampleId = sound_samples[newGlobalIndex]?.id;
-            setCurrentPlayerId(newSampleId);
+
+        if (newGlobalIndex >= 0 && newGlobalIndex < sound_samples.length) {
+            const newSampleId = sound_samples[ newGlobalIndex ]?.id;
+            setCurrentPlayerId( newSampleId );
         }
       }
     };
@@ -187,158 +175,105 @@ const SamplesPage = () => {
     };
   }, [currentSampleIndex, currentPlayerIndex, current_page, take, total, sound_samples, playing, setPlaying]);
 
-    
-
-
   const handlePageClick = async (event) => {
-    setIsLoading(true);
+    setLoading(true);
     setCurrentPage(event.selected);
-    setCurrentSampleIndex(null);
-    await getConsideringList(id, event.selected);
+    setCurrentSampleIndex(0);
     await getSamples(id, event.selected);
   };
 
-  useEffect(() => {
-    // Clean up the event listeners when the component unmounts
-    console.log("con list: ", considering_list );
-  }, [considering_list]);
 
+  useEffect(() => {
+    console.log("playerindex: ", currentPlayerIndex);
+    console.log("sampleindex: ", currentSampleIndex);
+  }, [currentPlayerIndex, currentSampleIndex]);
 
 
   const getSamples = async (id, page = current_page) => {
-    setIsLoading(true);
+    setLoading(true);
     const _samples = await getSoundSamples(id, {
       skip: page,
       take,
     });
 
     console.log("=== Samples ====");
+    console.log("Fetched samples for page", page, _samples?.data?.results?.samples);
+
     setTotal(_samples?.data?.results?.total);
-    // setSoundSamples(_samples?.data?.results?.samples);
-    // setConsideringList(_samples?.data?.results?.samples);
-    setIsLoading(false);
+    setSoundSamples(_samples?.data?.results?.samples);
+    setLoading(false);
   };
 
-  const getConsideringList = async (id, page = current_page) => {
-    setIsLoading(true);
-    const _samples = await getSoundSamples(id, {
-      skip: page,
-      take,
+
+
+  const handleNextClick = () => {
+    const event = new KeyboardEvent('keydown', {
+      key: 'ArrowDown',
+      bubbles: true, // Ensure the event bubbles up through the DOM
     });
-    setConsideringList(_samples?.data?.results?.samples);
+    document.dispatchEvent(event);
+  };
+  
+  const handlePrevClick = () => {
+    const event = new KeyboardEvent('keydown', {
+      key: 'ArrowUp',
+      bubbles: true,
+    });
+    document.dispatchEvent(event);
   };
 
-  const handleIndexUpdate = (offset) => {
-    setPlaying(true);  // Ensure playback stops before updating the index
-    setManualToggle(false);  // Reset any toggle states
-    updateIndices(offset);  // Update indices to new values based on offset
-};
-
-
-  const updateIndices = (offset) => {
-    const newIndex = currentSampleIndex + offset;
-    const newGlobalIndex = currentPlayerIndex + offset;
-    setPlaying(false);
-    setManualToggle(false);
-
-    if (newIndex < 0 && current_page > 0) {
-        // Move to the previous page and set to the last sample of that page
-        setCurrentPage(current_page - 1);
-        setCurrentSampleIndex(take - 1);
-        setCurrentPlayerIndex((current_page - 1) * take + (take - 1));
-    } else if (newIndex >= currentSamples.length && current_page < Math.ceil(total / take) - 1) {
-        // Move to the next page and set to the first sample of that page
-        setCurrentPage(current_page + 1);
-        setCurrentSampleIndex(0);
-        setCurrentPlayerIndex((current_page + 1) * take);
-    } else if (newIndex >= 0 && newIndex < currentSamples.length) {
-        // Update within the current page
-        setCurrentSampleIndex(newIndex);
-        setCurrentPlayerIndex(newGlobalIndex);
-    }
-
-    // Set the player ID and ensure playback starts if the index is valid
-    if (newGlobalIndex >= 0 && newGlobalIndex < total) {
-        const newSampleId = sound_samples[newGlobalIndex]?.id;
-        setCurrentPlayerId(newSampleId);
-        setPlaying(true);
-    }
-};
-
-useEffect(() => {
-    const handleKeyDown = (event) => {
-        console.log("Key pressed:", event.key);
-        if (event.key === ' ' && currentPlayerIndex !== null) {
-            event.preventDefault();
-            setPlaying(prev => !prev);
-            setManualToggle(true);
-        } else if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && currentSampleIndex !== null) {
-            event.preventDefault();
-            const offset = event.key === 'ArrowUp' ? -1 : 1;
-            updateIndices(offset);
-        }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => window.removeEventListener('keydown', handleKeyDown);
-}, [currentSampleIndex, currentPlayerIndex, current_page, take, total, sound_samples, playing]);
+  // const handleNext = () => {
+  //   const newIndex = currentSampleIndex + 1;
+  //   if (newIndex >= sound_samples.length) {
+  //       if (current_page < Math.ceil(total / take) - 1) {
+  //           // Move to the next page and set to first sample of that page
+  //           setCurrentPage(current_page + 1);
+  //           setCurrentSampleIndex(0);
+  //           setCurrentPlayerIndex((current_page + 1) * take);
+            
+  //       } else {
+  //           // Wrap around to the first sample of the first page
+  //           setCurrentPage(0);
+  //           setCurrentSampleIndex(0);
+  //           setCurrentPlayerIndex(0);
+  //       }
+  //   } else {
+  //       // Update within the current page
+  //       setCurrentSampleIndex(newIndex);
+  //       setCurrentPlayerIndex(currentPlayerIndex + 1);
+  //   }
+  //   setPlaying(false);
+  //   setManualToggle(false);
+  // };
 
 
 
-  const isActiveSamplePlaying = (sampleIndex) => {
-    return currentPlayerIndex === sampleIndex && playing;
-  };
+  // const handlePrevious = () => {
+  //   const newIndex = currentSampleIndex - 1;
+  //   if (newIndex < 0) {
+  //       if (current_page > 0) {
+  //           // Move to the previous page and set to last sample of that page
+  //           setCurrentPage(current_page - 1);
+  //           const lastIndex = take - 1;
+  //           setCurrentSampleIndex(lastIndex);
+  //           setCurrentPlayerIndex((current_page - 1) * take + lastIndex);
+  //       } else {
+  //           // Wrap around to the last sample of the last page
+  //           const lastPage = Math.ceil(total / take) - 1;
+  //           const lastSampleIndex = (total - 1) % take;
+  //           setCurrentPage(lastPage);
+  //           setCurrentSampleIndex(lastSampleIndex);
+  //           setCurrentPlayerIndex(total - 1);
+  //       }
+  //   } else {
+  //       // Update within the current page
+  //       setCurrentSampleIndex(newIndex);
+  //       setCurrentPlayerIndex(currentPlayerIndex - 1);
+  //   }
+  //   setPlaying(false);
+  //   setManualToggle(false);
+  // };
 
-
-  const handleNext = () => {
-    const newIndex = currentSampleIndex + 1;
-    if (newIndex >= currentSamples.length) {
-        if (current_page < Math.ceil(total / take) - 1) {
-            // Move to the next page and set to first sample of that page
-            setCurrentPage(current_page + 1);
-            setCurrentSampleIndex(0);
-            setCurrentPlayerIndex((current_page + 1) * take);
-        } else {
-            // Wrap around to the first sample of the first page
-            setCurrentPage(0);
-            setCurrentSampleIndex(0);
-            setCurrentPlayerIndex(0);
-        }
-    } else {
-        // Update within the current page
-        setCurrentSampleIndex(newIndex);
-        setCurrentPlayerIndex(currentPlayerIndex + 1);
-    }
-    setPlaying(false);
-    setManualToggle(false);
-  };
-
-  const handlePrevious = () => {
-    const newIndex = currentSampleIndex - 1;
-    if (newIndex < 0) {
-        if (current_page > 0) {
-            // Move to the previous page and set to last sample of that page
-            setCurrentPage(current_page - 1);
-            const lastIndex = take - 1;
-            setCurrentSampleIndex(lastIndex);
-            setCurrentPlayerIndex((current_page - 1) * take + lastIndex);
-        } else {
-            // Wrap around to the last sample of the last page
-            const lastPage = Math.ceil(total / take) - 1;
-            const lastSampleIndex = (total - 1) % take;
-            setCurrentPage(lastPage);
-            setCurrentSampleIndex(lastSampleIndex);
-            setCurrentPlayerIndex(total - 1);
-        }
-    } else {
-        // Update within the current page
-        setCurrentSampleIndex(newIndex);
-        setCurrentPlayerIndex(currentPlayerIndex - 1);
-    }
-    setPlaying(false);
-    setManualToggle(false);
-  };
 
 
 
@@ -360,41 +295,43 @@ useEffect(() => {
 
 
 
-
   const getSoundData = async () => {
-    setIsLoading(true);
+    setLoading(true);
 
-    const _sound: any = await getSound( id );
-    console.log('sound data: ', _sound);
+    const _sound: any = await getSound( id );    
     const list = [];
 
     for (let i = 0; i < _sound?.data?.results.samples.length; i++) {
       const _item = {
-        name: _sound?.data?.results.samples[i].filename,
-        writer: "SoundBoyz",
-        img: _sound?.data?.results.thumbnail,
-        src: _sound?.data?.results.samples[i].sample_src,
+        filename: _sound?.data?.results.samples[i].filename,
+        author: "SoundBoyz",
+        thumbnail: _sound?.data?.results.thumbnail,
+        sample_src: _sound?.data?.results.samples[i].sample_src,
         id: i + 1
       };
       list.push(_item);
     }
-    
-    setSoundSamples(_sound?.data?.results?.samples.reverse());
-    
+    setPlaylist(list.reverse());
+    console.log("playlist", playlist);
     await getSamples( id, current_page );
-    await getConsideringList( id, current_page );
-
     setSound(_sound?.data?.results);
-
-    setIsLoading(false);
+    setLoading(false);
   };
 
-  // Function to calculate the range of items to display based on the current page
-  const startIndex = current_page * take + 1;
-  const endIndex = startIndex + take;
 
-  // Slice the sound_samples to get only the items for the current page
-  const currentSamples = sound_samples.slice(startIndex, endIndex);  
+
+  useEffect(() => {
+    console.log("Current Page:", current_page);
+    console.log("Current Sample Index:", currentSampleIndex);
+    console.log("Current Player Index:", currentPlayerIndex);
+    console.log("Current Playing:", playing);
+}, [current_page, currentSampleIndex, currentPlayerIndex, playing]);
+
+
+
+
+
+  //
   return (
     <React.Fragment>
       <Theme>
@@ -564,11 +501,12 @@ useEffect(() => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-800">
                                   {sound_samples &&
-                                    currentSamples.map((x: any, index) => {
+                                    sound_samples.map((x: any, index) => {
 
                                       const globalIndex = current_page * take + index; // Correctly compute the global index
-                                      const considerings = considering_list[index]?.considering?.split(',') || [];
-                                      console.log("conk: ", considerings);
+                                      console.log('cons', sound_samples[index]?.considering?.split(',') || []);
+                                      const considerings = sound_samples[index]?.considering?.split(',') || [];
+                                      console.log('x', currentSampleIndex);
                                       return (
                                         <>
                                           <tr key={x.id}
@@ -585,10 +523,10 @@ useEffect(() => {
                                                 ? "Pause" 
                                                 : "Play"}
                                               onClick={async () => {
+                                                  console.log( 'globalIndex', index );
                                                   handleSampleClick(x, globalIndex);
                                                   setCurrentPlayerIndex(globalIndex);
                                                   setPreview(true);
-                                                  setPlaying(false);
                                                   handlePlayToggle();
                                               }}
                                             />
@@ -603,7 +541,7 @@ useEffect(() => {
                                               {x.filename}
                                               <br />{" "}
                                               <span className="text-[12px] text-[#6f6f6f]">
-                                                {x?.sound.authors}
+                                                None
                                               </span>{" "}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
@@ -747,7 +685,6 @@ useEffect(() => {
           {/* End Pagination */}
 
           {sound?.terms && (
-
             <>
               <div className="bg-[#101010]">
                 <div className="mx-[20px] border border-x-0 border-y-[#222] py-[20px] px-[20px]">
@@ -780,16 +717,16 @@ useEffect(() => {
   <div className="sample-container">
     <div className="album-art">
       <img 
-        src={sound_samples[currentPlayerIndex]?.sound?.thumbnail || ''} 
+        src={playlist[currentPlayerIndex]?.thumbnail || ''} 
         alt="Album Art"
       />
     </div>
     <div className="album-details">
       <div className="album-name">
-        {sound_samples[currentPlayerIndex]?.filename ?? 'Album Name'}
+        {playlist[currentPlayerIndex]?.filename ?? 'Album Name'}
       </div>
       <div className="album-author">
-        {sound_samples[currentPlayerIndex]?.sound?.author ?? 'Author Name'}
+        {playlist[currentPlayerIndex]?.author ?? 'Author Name'}
       </div>
     </div>
   </div>
@@ -797,7 +734,7 @@ useEffect(() => {
   <div className="audio-container">
 
     {/* Previous Button */}
-    <button className="control-button" onClick={handlePrevious}>
+    <button className="control-button" onClick={handlePrevClick}>
       <img src={require('../assets/img/prev.png')} />
     </button>
 
@@ -811,20 +748,19 @@ useEffect(() => {
     </button>
 
     {/* Next Button */}
-    <button className="control-button" onClick={handleNext}>
+    <button className="control-button" onClick={handleNextClick}>
       <img src={require('../assets/img/next.png') } />
     </button>
 
     {/* Audio Player Component */}
     <AudioPlayer
-        link={sound_samples[currentPlayerIndex].sample_src}
-        id={sound_samples[currentPlayerIndex].id}
-        setPlaying={playing}
-        // onPlayToggle={handlePlayToggle}
-        playerType={"player"}
-        volume={volume}
+        link={ playlist[currentPlayerIndex].sample_src }
+        id={ playlist[currentPlayerIndex].id }
+        setPlaying={ playing }
+        playerType={ "player" }
+        volume={ volume }
         />
-  </div>
+    </div>
 
 
     <div className="volume-container">
