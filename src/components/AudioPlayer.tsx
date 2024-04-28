@@ -77,7 +77,7 @@ const AudioPlayer = ({ link, id, setPlaying, onPlayToggle, playerType, volume}) 
                 }
               };
         }
-    }, [link, playerType]);
+    }, [link, onPlayToggle, playerType]);
 
     useEffect(() => {
         if (wavesurfer.current) {
