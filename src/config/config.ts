@@ -11,7 +11,7 @@ const config = {
   defaults: {
     namespace: "Application",
     api_url: isLocalhost
-      ? "https://api.mvssive.net"
+      ? "http://localhost:4000"
       : isDev
       ? "https://api.mvssive.net"
       : isStaging

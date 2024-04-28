@@ -769,22 +769,22 @@ const handlePrevious = () => {
     <>
   <div className="bottom-audio-player">
 
-  <div className="sample-container">
-    <div className="album-art">
-      <img 
-        src={sound_samples[currentPlayerIndex]?.sound?.thumbnail || ''} 
-        alt="Album Art"
-      />
-    </div>
-    <div className="album-details">
-      <div className="album-name">
-        {sound_samples[currentPlayerIndex]?.filename ?? 'Album Name'}
+    <div className="sample-container">
+      <div className="album-art">
+        <img 
+          src={sound_samples[currentPlayerIndex]?.sound?.thumbnail || ''} 
+          alt="Album Art"
+        />
       </div>
-      <div className="album-author">
-        {sound_samples[currentPlayerIndex]?.sound?.author ?? 'Author Name'}
+      <div className="album-details">
+        <div className="album-name">
+          {sound_samples[currentPlayerIndex]?.filename ?? 'Album Name'}
+        </div>
+        <div className="album-author">
+          {sound_samples[currentPlayerIndex]?.sound?.author ?? 'Author Name'}
+        </div>
       </div>
     </div>
-  </div>
 
   <div className="audio-container">
         {/* Previous Button */}
