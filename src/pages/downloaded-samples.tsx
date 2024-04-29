@@ -420,7 +420,7 @@ const MyLikesPage = () => {
                                     sound_samples.map((x: any, index) => {
                                       const globalIndex = current_page * take + index; // Correctly compute the global index
                                       const considering = x.considering?.split(',');
-                                      console.log("equis", getSound(x.id));
+                                      console.log("authors", sampleDetails[index]?.author);
                                       return (
                                         <>
                                           <tr key={x.id}
@@ -447,7 +447,7 @@ const MyLikesPage = () => {
                                               {x.filename}
                                               <br />{" "}
                                               <span className="text-[12px] text-[#6f6f6f]">
-                                                SoundBoyz
+                                                {sampleDetails[index]?.author}
                                               </span>{" "}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
@@ -460,13 +460,13 @@ const MyLikesPage = () => {
                                               />
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              0:35
+                                              {x?.length}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              BMinor
+                                              {x?.keys}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              122
+                                              {x?.bpm}
                                             </td>
                                             <td className="whitespace-nowrap  text-sm text-gray-300">
                                               {considering && considering?.map((x: any) => {

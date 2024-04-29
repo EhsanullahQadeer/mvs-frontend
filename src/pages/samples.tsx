@@ -442,7 +442,7 @@ const SamplesPage = () => {
                                               {x.filename}
                                               <br />{" "}
                                               <span className="text-[12px] text-[#6f6f6f]">
-                                                None
+                                                {sound?.author}
                                               </span>{" "}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
