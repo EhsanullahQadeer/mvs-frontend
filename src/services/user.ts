@@ -76,3 +76,6 @@ import  config from "config/config"
     return axios.post(`${config.defaults.api_url}/users/new`, params);
   }
   
+  export async function updateUser(params: any, id: any) {
+    return axios.post(`${config.defaults.api_url}/users/update/${id}`, params);
+  }

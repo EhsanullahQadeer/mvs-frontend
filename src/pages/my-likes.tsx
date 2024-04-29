@@ -6,7 +6,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { useNavigate, useParams } from "react-router-dom";
 import Theme from "components/theme";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionType from "redux/actionTypes";
 import wavesurfer from "wavesurfer.js";
@@ -30,14 +30,16 @@ interface RootState {
 }
 
 const MyLikesPage = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const state = useSelector((state: RootState) => state);
   const [loading, setIsLoading] = useState(false);
 
-  const [loadingData, setLoadingData] = useState({});
-
+  const [loadingData, setIsLoadingData] = useState({});
+  const [currentSampleIndex, setCurrentSampleIndex] = useState(null);
+  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(null);
   const [playing, setPlaying] = useState(false);
-
+  const [preview, setPreview]          = useState(false); // Used to show the sample player
   const [current_sample, setCurrentSample] = useState(0);
 
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
@@ -53,42 +55,175 @@ const MyLikesPage = () => {
   const [considering, setConsidering] = useState(false);
   const [sample, setSample] = useState({});
   const [currentTime, setCurrentTime] = useState(0);
+  const [sampleDetails, setSampleDetails] = useState([]);
+
+
+  const [manualToggle, setManualToggle] = useState(false); // Manual toggle
+
+  const [volume, setVolume] = useState(50);                // Volume control
+
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
 
+
+
+
+  useEffect(() => {
+    if (!playing && currentPlayerId && !manualToggle) {
+      const timer = setTimeout(() => {
+        setPlaying(true);
+      }, 100);
+  
+      return () => clearTimeout(timer);
+    }
+  }, [playing, currentPlayerId, manualToggle]);
+
+  const handlePlayToggle = () => {
+    setPlaying(!playing);
+    setManualToggle(true); // Indicate that the toggle was manual
+  };
+
+  // Handler for changes in the slider
+  const handleVolumeChange = (event) => {
+    setVolume(event.target.value);
+  };
+
+  const handleMouseDown = () => {
+    // Enable dragging
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseUp = () => {
+    // Remove the event listeners when dragging ends
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseMove = (event) => {
+    // Calculate the new volume based on the mouse position
+    const slider = document.querySelector('.volume-slider').getBoundingClientRect();
+    const newVolume = Math.max(0, Math.min(100, ((event.clientX - slider.left) / slider.width) * 100));
+    setVolume(newVolume);
+  };
+
+  useEffect(() => {
+    // Clean up the event listeners when the component unmounts
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
+
+
+  useEffect(() => {
+    const handleKeyDown = async (event) => {
+      if (event.key === ' ' && currentSampleIndex !== null) { // Make sure it's the space character
+        event.preventDefault(); // Stop the page from scrolling
+        setPlaying(prev => !prev); // Toggle playing state
+        setManualToggle(true); // Indicate that the toggle was manual
+      } else if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && currentSampleIndex !== null) {
+        event.preventDefault();  // Prevent the whole page from scrolling
+        setPlaying(false);
+        setManualToggle(false); // Reset manual toggle on key press
+        const offset = event.key === 'ArrowUp' ? -1 : 1;
+        const newIndex = currentSampleIndex + offset;
+
+        if (newIndex < 0 && current_page > 0) {
+            setIsLoading(true);
+
+            setCurrentPage(current_page - 1);
+            setCurrentSampleIndex(take - 1);
+            
+            await getSamples(current_page - 1);
+
+            setPlaying(true);
+        } 
+        else if (newIndex >= sound_samples.length && current_page < Math.ceil(total / take) - 1) {
+          setIsLoading(true);
+
+            setCurrentPage(current_page + 1);
+            setCurrentSampleIndex(0);
+
+            await getSamples(current_page + 1);
+
+            setPlaying(true);
+        } 
+        else if (newIndex >= 0 && newIndex < sound_samples.length) {
+            setCurrentSampleIndex(newIndex);
+        }
+
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [currentSampleIndex, current_page, take, total, sound_samples, playing, setPlaying]);
+
   const handlePageClick = async (event) => {
     setIsLoading(true);
-
     setCurrentPage(event.selected);
+    setCurrentSampleIndex(0);
     await getSamples(event.selected);
-
-    console.log("offset", event.selected);
   };
 
-  const playSample = async (id: any) => {
-    setPlaying(true);
-    setCurrentPlayerId(id);
-    const searchModule = document.querySelector(`#id-${id} > div`);
-    searchModule.shadowRoot.querySelector("audio").currentTime = 9;
-    searchModule.shadowRoot
-      .querySelector("audio")
-      .play()
-      .then((x) => setCurrentPlayerId(id));
+  const handleNextClick = () => {
+    const event = new KeyboardEvent('keydown', {
+      key: 'ArrowDown',
+      bubbles: true, // Ensure the event bubbles up through the DOM
+    });
+    document.dispatchEvent(event);
+  };
+  
+  const handlePrevClick = () => {
+    const event = new KeyboardEvent('keydown', {
+      key: 'ArrowUp',
+      bubbles: true,
+    });
+    document.dispatchEvent(event);
   };
 
-  const stopSample = async (id: any) => {
-    setPlaying(false);
-    setCurrentPlayerId(id);
-    const searchModule = document.querySelector(`#id-${id} > div`);
-    searchModule.shadowRoot.querySelector("audio").currentTime = 0;
-    searchModule.shadowRoot.querySelector("audio").pause();
-  };
+
+  /*
+   * Name: handleSampleClick()
+   * Desc: Handles functionality when clicking directly on a sample
+   * 
+   */
+  const handleSampleClick = useCallback(async (sample, index) => {
+    setCurrentSampleIndex(index);
+    // Check if the same sample is clicked and it is currently playing
+    if (currentPlayerId === sample.id) {
+      if ( playing ) {
+        setPlaying( false );
+      } else {
+        setPlaying( true ); // Resume playing the current sample
+      }
+    } else {
+      
+      setCurrentPlayerId(sample.id);
+    }
+  }, [currentPlayerId, playing, setPlaying, setCurrentPlayerId]);
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     const init = async () => {
       await getSoundData();
-      setLoadingData(false);
+      setIsLoadingData(false);
     };
 
     init();
@@ -107,15 +242,41 @@ const MyLikesPage = () => {
   };
 
   const getSoundData = async () => {
-    setIsLoading(true);
-
-    await getSamples(current_page);
-
-
+    setIsLoading(true); 
+    const _sound: any = await getSound( id );
+    console.log("sound", _sound);
+    await getSamples( current_page );
     setIsLoading(false);
   };
 
-  console.log(sound);
+  useEffect(() => {
+    const fetchSampleDetails = async () => {
+      const details = await Promise.all(
+        sound_samples.map(async (sample) => {
+          if (!sample.sound_id) return { thumbnail: null, author: null }; // Handle cases where sound_id might be undefined
+  
+          try {
+            const result = await getSound(sample.sound_id);
+            return {
+              thumbnail: result.data.results.thumbnail, // Assuming this is the correct path
+              author: result.data.results.author // Assuming this is the correct path
+            };
+          } catch (error) {
+            console.error('Failed to fetch details for sound_id:', sample.sound_id, error);
+            return { thumbnail: null, author: null };
+          }
+        })
+      );
+      setSampleDetails(details);
+    };
+  
+    if (sound_samples.length > 0) {
+      fetchSampleDetails();
+    }
+  }, [sound_samples]); // Dependency on sound_samples
+  
+
+
 
   return (
     <React.Fragment>
@@ -255,45 +416,31 @@ const MyLikesPage = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-800">
                                   {sound_samples &&
-                                    sound_samples.map((x: any) => {
+                                    sound_samples.map((x: any, index) => {
+                                      const globalIndex = current_page * take + index; // Correctly compute the global index
                                       const considering = x.considering?.split(',');
-
+                                      console.log("equis", getSound(x.id));
                                       return (
                                         <>
-                                          <tr key={x.id}>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                                          <tr key={x.id}
+                                            id={`sample-item-${x.id}`}
+                                            className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 ${index === currentSampleIndex ? 'active-sample' : ''}`}>
+                                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                                               <img
-                                                className=" cursor-pointer mr-[32px]"
-                                                src={
-                                                  currentPlayerId == x.id &&
-                                                    playing === true
-                                                    ? "https://mvssive-content.s3.amazonaws.com/pause-button.png"
+                                                className="cursor-pointer mr-[32px]"
+                                                src={ index === currentSampleIndex && playing
+                                                    ? "https://mvssive-content.s3.amazonaws.com/pause-button.png" 
                                                     : "https://mvssive-content.s3.amazonaws.com/play-button-2.png"
                                                 }
+                                                alt={index === currentSampleIndex && playing
+                                                  ? "Pause" 
+                                                  : "Play"}
                                                 onClick={async () => {
-                                                  if (
-                                                    currentPlayerId === x.id &&
-                                                    playing === true
-                                                  ) {
-                                                    await stopSample(x.id);
-                                                  } else {
-                                                    if (playing) {
-                                                      await stopSample(
-                                                        currentPlayerId
-                                                      );
-                                                      await playSample(x.id);
-                                                    } else {
-                                                      await playSample(x.id);
-                                                    }
-                                                  }
+                                                  handleSampleClick(x, index);
+                                                  setPreview(true);
+                                                  handlePlayToggle();
                                                 }}
                                               />
-                                            </td>
-                                            <td className="">
-                                              {/* <img
-                                              src="https://mvssive-content.s3.amazonaws.com/audio-icon.png"
-                                              className="w-[50px] h-auto"
-                                            /> */}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']">
                                               {x.filename}
@@ -303,12 +450,12 @@ const MyLikesPage = () => {
                                               </span>{" "}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              <AudioPlayer
-                                                link={`${x.sample_src}`}
-                                                id={x.id}
-                                                setPlaying={false}
-                                                playerType={"sample"}
-                                                volume={0}
+                                            <AudioPlayer
+                                              link={x?.sample_src}
+                                              id={x?.id}
+                                              setPlaying={false}
+                                              playerType={"sample"}
+                                              volume={0}
                                               />
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
@@ -456,6 +603,7 @@ const MyLikesPage = () => {
                 renderOnZeroPageCount={null}
                 breakClassName="text-white"
                 activeLinkClassName="text-white"
+                forcePage={current_page}
               />
             </>
           )}
@@ -475,6 +623,81 @@ const MyLikesPage = () => {
           />
         </>
       )}
+      { preview && (
+    <>
+  <div className="bottom-audio-player">
+
+  <div className="sample-container">
+    <div className="album-art">
+      <img 
+        src={sampleDetails[currentSampleIndex]?.thumbnail || ''} 
+        alt="Album Art"
+      />
+    </div>
+    <div className="album-details">
+      <div className="album-name">
+        {sound_samples[currentSampleIndex]?.filename ?? 'Album Name'}
+      </div>
+      <div className="album-author">
+        {sampleDetails[currentSampleIndex]?.author ?? 'Author Name'}
+      </div>
+    </div>
+  </div>
+
+  <div className="audio-container">
+
+    {/* Previous Button */}
+    <button className="control-button" onClick={handlePrevClick}>
+      <img src={require('../assets/img/prev.png')} />
+    </button>
+
+    {/* Pause/Play Button */}
+    <button className="control-button" onClick={handlePlayToggle}>
+      {playing ? (
+          <img src={require('../assets/img/pause.png')} alt="Pause" />
+      ) : (
+          <img src={require('../assets/img/play.png')} alt="Play" />
+      )}
+    </button>
+
+    {/* Next Button */}
+    <button className="control-button" onClick={handleNextClick}>
+      <img src={require('../assets/img/next.png') } />
+    </button>
+
+    {/* Audio Player Component */}
+    <AudioPlayer
+        link={ sound_samples[currentSampleIndex]?.sample_src }
+        id={ sound_samples[currentSampleIndex]?.id }
+        setPlaying={ playing }
+        playerType={ "player" }
+        volume={ volume }
+        />
+    </div>
+
+
+    <div className="volume-container">
+    {/* Volume Button */}
+    <button className="volume-button">
+        <img src={require('../assets/img/volume.png')} alt="Volume"/>
+    </button>
+    <div className="volume-slider-wrapper">
+        <input 
+            type="range" 
+            min="0" 
+            max="100" 
+            className="volume-input" 
+            onChange={handleVolumeChange} 
+            value={volume}
+        />
+        <div className="volume-slider" onMouseDown={handleMouseDown}>
+          <div className="volume-level" style={{ width: `${volume}%` }}></div>
+        </div>
+    </div>
+    </div>
+  </div>
+  </>
+)}
     </React.Fragment>
   );
 };

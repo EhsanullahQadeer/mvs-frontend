@@ -12,6 +12,7 @@ import { useDispatch,useSelector } from "react-redux";
 import cookie from "js-cookie";
 import { fetchCurrentUser } from "redux/actionCreators/auth";
 import Avatar from 'react-avatar';
+import UserSettingsModal from "components/modals/user-settings";
 
 
 interface RootState {
@@ -30,6 +31,7 @@ const Header = () => {
   const [user, setUser]: any = useState({});
 
   const [contact_us, setContactUs] = useState(false);
+  const [user_settings, setUserSettings] = useState(false);
 
   const dispatch: any = useDispatch();
 
@@ -194,6 +196,7 @@ const Header = () => {
                           ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"
                           : "hover:bg-[#0014CD] rounded-[8px]  flex items-center px-[12px] py-[8px] cursor-pointer"
                       )}
+                      onClick={() => setUserSettings(true)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -335,6 +338,12 @@ const Header = () => {
       {contact_us && (
         <>
           <ContactModal openModal={contact_us} setModal={setContactUs} />
+        </>
+      )}
+
+      {user_settings && (
+        <>
+          <UserSettingsModal openModal={user_settings} setModal={setUserSettings} />
         </>
       )}
     </React.Fragment>

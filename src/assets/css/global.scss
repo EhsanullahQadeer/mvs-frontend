@@ -55,6 +55,9 @@ body {
   z-index: 999 !important;
 }
 
+.modal-overlay {
+  backdrop-filter: blur(10px); /* Adjust blur value as needed */
+}
 
 .bottom-audio-player {
   display: flex;
@@ -69,6 +72,11 @@ body {
   background-color: #1a1a1a; /* Dark background for visibility */
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* Adds a shadow for better separation */
   z-index: 1000; /* Ensure it stays above other content */
+}
+
+
+.second-div {
+  padding-bottom: 70px; /* Adjust based on the height of your audio player */
 }
 
 // .bottom-audio-player {
@@ -331,6 +339,251 @@ body {
 .track-info-container {
 
   width: 500px !important;
+}
+
+.user-settings-modal {
+  width: 50%; /* Adjust width as needed */
+  max-width: 300px; /* Or whatever maximum you prefer */
+  min-height: 300px; /* Adjust height as needed */
+  margin: 0 auto; /* This will center the modal horizontally */
+  /* ... other styles */
+}
+
+
+.modal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75); /* Darken the background */
+  backdrop-filter: blur(10px); /* Blur the background */
+  z-index: 1040; /* Example z-index for modal */
+
+}
+
+.modal-overlay-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.051); /* Darken the background */
+  backdrop-filter: blur(10px); /* Blur the background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px); /* This will create the blur effect */
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0); /* This darkens the background */
+  }
+
+  .account-details-header {
+    font-size: 1rem; /* Smaller font size */
+    background-color: #9ab91d; /* Green background color */
+    color: rgb(0, 0, 0); /* White text color */
+    padding: 8px 16px; /* Padding around the text */
+    border-top-left-radius: 10px; /* Rounded corners on the top left */
+    border-top-right-radius: 10px; /* Rounded corners on the top right */
+    margin-bottom: 0; /* No margin below the header */
+  }
+
+.account-details-form {
+  border-radius: 10px; /* Rounded corners of the form */
+  overflow: hidden; /* Ensures the children don't overflow */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.058); /* Shadow effect for the form */
+}
+
+.account-detail-row:first-child {
+  border-top: none; /* No border on top of the first row */
+}
+.account-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color:#ffffff; /* Black background color for rows */
+  background-color: #101010; /* Black background color for rows */
+  border-bottom: .5px solid #a4a4a42d; /* Border between rows */
+  padding: 30px; /* Padding for each row */
+  border-right: .5px solid #a4a4a42d; /* Border between rows */
+  border-left: .5px solid #a4a4a42d; /* Border between rows */
+  width: 500px
+}
+
+.row-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the left */
+}
+.detail-title {
+  font-size: 0.75rem; /* Smaller font size for the title */
+  color: #888; /* Light grey color, adjust as needed */
+  margin-bottom: 8px; /* Space between title and thumbnail */
+}
+.account-detail-row:last-child {
+  border-bottom: .5px solid #a4a4a42d; /* Border between rows */
+}
+
+
+
+
+
+.edit-phone-modal {
+  background: #1a1a1a;
+  border-radius: 10px;
+  color: white;
+    /* Adjust width and height as needed */
+    width: 350px; /* Set a new width */
+    
+  padding: 20px;
+}
+
+
+.edit-password-modal {
+  background: #1a1a1a;
+  border-radius: 10px;
+  color: white;
+    /* Adjust width and height as needed */
+    width: 350px; /* Set a new width */
+    
+  padding: 20px;
+}
+
+.edit-state-modal {
+  background: #1a1a1a;
+  border-radius: 10px;
+  color: white;
+    /* Adjust width and height as needed */
+    width: 350px; /* Set a new width */
+    
+  padding: 20px;
+}
+
+.edit-city-modal {
+  background: #1a1a1a;
+  border-radius: 10px;
+  color: white;
+    /* Adjust width and height as needed */
+    width: 350px; /* Set a new width */
+    
+  padding: 20px;
+}
+
+.edit-username-modal {
+  background: #1a1a1a;
+  border-radius: 10px;
+  color: white;
+    /* Adjust width and height as needed */
+    width: 350px; /* Set a new width */
+    
+  padding: 20px;
+}
+
+.edit-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4C9AFF; /* Color of the edit icon/button */
+  font-size: 1.2rem; /* Size of the edit icon/button */
+}
+
+.profile-thumbnail {
+  width: 150px; /* Width of the thumbnail */
+  height: 150px; /* Height of the thumbnail */
+  border-radius: 50%; /* Makes the image round */
+  object-fit: cover; /* Ensures the image covers the area without distortion */
+}
+.Toastify__toast-container {
+  z-index: 1050
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  color: #858585; /* Replace with your desired color */
+}
+
+.modal-content {
+  background-color: #333333;
+  padding: 0px;
+  border-radius: 10px;
+  color: white;
+  position: relative; /* To position the close button */
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  color: rgb(151, 151, 151);
+  padding: 10px;
+  cursor: pointer;
+}
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the left */
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #555;
+  border-radius: 15px;
+  background: #222 !important; /* Overriding other styles */
+  color: rgb(190, 190, 190);
+}
+
+.submit-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #6C0;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.submit-button:hover {
+  background-color: #7D0;
 }
 
 

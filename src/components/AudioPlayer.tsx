@@ -57,7 +57,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
             });
 
             wavesurfer.current.on('error', (error) => {
-                if (error.message === 'The user aborted a request.') {
+                if (error?.message === 'The user aborted a request.') {
                   console.log('Load aborted');
                 } else {
                   console.error('Error in WaveSurfer:', error);
