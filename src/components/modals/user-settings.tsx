@@ -55,7 +55,6 @@ const UserSettingsModal = (props: any) => {
 
 
 
-    {/* HANDLE OPEN/CLOSE EDITORS */}
     const openEditUsernameModal = () => {
         setIsEditUsernameModalOpen(true);
     };
@@ -97,8 +96,6 @@ const UserSettingsModal = (props: any) => {
     };
 
 
-
-      {/* HANDLE INPUT CHANGES */}
       const handleNameChange = (event) => {
         setName(event.target.value);
       };
