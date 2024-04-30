@@ -267,8 +267,8 @@ body {
 }
 
 .album-art {
-  width: 100px;  /* or the fixed size you want */
-  height: 100px; /* make height equal to width for a square */
+  width: 64px;  /* or the fixed size you want */
+  height: 64px; /* make height equal to width for a square */
   display: flex; /* to center the image within the wrapper */
   align-items: center;
   justify-content: center;
@@ -291,8 +291,13 @@ body {
   font-weight: bold;
   margin-bottom: 4px; /* Adds 4 pixels of space below the .album-name */
   color: rgb(209, 209, 209);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   /* Additional styling */
 }
+
+
 
 .album-author {
   color: rgb(150, 150, 150);
@@ -300,7 +305,9 @@ body {
 }
 
 .audio-container {
-  justify-content: flex-end; /* For audio-container content alignment */
+  display: flex;
+  align-items: center; /* Aligns items vertically in the center */
+  justify-content: flex-end; /* Aligns container content to the end */
 }
 
 // .audio-container {

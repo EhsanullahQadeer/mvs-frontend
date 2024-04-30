@@ -248,7 +248,7 @@ const SamplesPage = () => {
     <React.Fragment>
       <Theme>
         <div className="second-div w-full  min-h-screen flex flex-col z-0 pb-[130px]">
-          <div className="bg-[#101010] p-[40px]">
+          <div className="bg-[#101010] p-[20px] flex justify-start">
             {loading ? (
               <>
                 <div
@@ -279,9 +279,9 @@ const SamplesPage = () => {
               </>
             ) : (
               <>
-                <div className="mt-[16px] gap-[22px] flex">
+                <div className="mt-[16px] gap-[22px] flex justify-start">
                   <div>
-                    <img className="h-[250px]" src={sound?.thumbnail} />
+                  <img className="h-[250px]" src={sound?.thumbnail} style={{ minHeight: '250px', minWidth: '250px' }} />
                   </div>
                   <div className="text">
                     <p className="text-[40px] text-[#fff] font-['Mona-Sans-M']">
@@ -424,19 +424,32 @@ const SamplesPage = () => {
                                             id={`sample-item-${x.id}`}
                                             className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 ${index === currentSampleIndex ? 'active-sample' : ''}`}>
                                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            <img
-                                              className="cursor-pointer mr-[32px]"
-                                              style={{ width: '32px', height: '32px', borderRadius: '4px'  }}
-                                              src={sound?.thumbnail}
-                                              alt={index === currentSampleIndex && playing
-                                                ? "Pause" 
-                                                : "Play"}
+                                            <div style={{
+                                              display: 'flex',       // Enable flexbox
+                                              justifyContent: 'center', // Center horizontally
+                                              alignItems: 'center',
+                                            }}>
+                                              <img
+                                                className="cursor-pointer mr-[32px]"
+                                                style={
+                                                  index !== currentSampleIndex
+                                                    ? { width: '32px', height: '32px', borderRadius: '4px'  }
+                                                    : {}
+                                                }
+                                                src={
+                                                  index === currentSampleIndex
+                                                    ? (playing
+                                                        ? "https://mvssive-content.s3.amazonaws.com/pause-button.png" 
+                                                        : "https://mvssive-content.s3.amazonaws.com/play-button-2.png")
+                                                    : sound?.thumbnail
+                                                }
                                               onClick={async () => {
                                                   handleSampleClick(x, index);
                                                   setPreview(true);
                                                   handlePlayToggle();
                                               }}
                                             />
+                                          </div>
                                           </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']">
                                               {x.filename}
@@ -655,13 +668,16 @@ const SamplesPage = () => {
     </button>
 
     {/* Audio Player Component */}
-    <AudioPlayer
-        link={ sound_samples[currentSampleIndex]?.sample_src }
-        id={ sound_samples[currentSampleIndex]?.id }
-        setPlaying={ playing }
-        playerType={ "player" }
-        volume={ volume }
-        />
+    <div style={{ width: '500px' }}>
+      <AudioPlayer
+          link={ sound_samples[currentSampleIndex]?.sample_src }
+          id={ sound_samples[currentSampleIndex]?.id }
+          setPlaying={ playing }
+          playerType={ "player" }
+          volume={ volume }
+      />
+    </div>
+
     </div>
 
 

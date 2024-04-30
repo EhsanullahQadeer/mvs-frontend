@@ -427,16 +427,32 @@ const MyDownloadsPage = () => {
                                             id={`sample-item-${x.id}`}
                                             className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 ${index === currentSampleIndex ? 'active-sample' : ''}`}>
                                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                                            <div style={{
+                                              display: 'flex',       // Enable flexbox
+                                              justifyContent: 'center', // Center horizontally
+                                              alignItems: 'center',
+                                            }}>
                                               <img
-                                              className="cursor-pointer mr-[32px]"
-                                              style={{ width: '32px', height: '32px', borderRadius: '4px'  }}
-                                              src={sampleDetails[index]?.thumbnail}
-                                                onClick={async () => {
-                                                  handleSampleClick(x, index);
-                                                  setPreview(true);
-                                                  handlePlayToggle();
-                                                }}
-                                              />
+                                                className="cursor-pointer mr-[32px]"
+                                                style={
+                                                  index !== currentSampleIndex
+                                                    ? { width: '32px', height: '32px', borderRadius: '4px'  }
+                                                    : {}
+                                                }
+                                                src={
+                                                  index === currentSampleIndex
+                                                    ? (playing
+                                                        ? "https://mvssive-content.s3.amazonaws.com/pause-button.png" 
+                                                        : "https://mvssive-content.s3.amazonaws.com/play-button-2.png")
+                                                    : sampleDetails[index]?.thumbnail
+                                                }
+                                                  onClick={async () => {
+                                                    handleSampleClick(x, index);
+                                                    setPreview(true);
+                                                    handlePlayToggle();
+                                                  }}
+                                                />
+                                            </div>
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']">
                                               {x.filename}
