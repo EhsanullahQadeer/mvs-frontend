@@ -238,7 +238,9 @@ body {
   background-color: #fdfeff;
 }
 
-
+.container {
+  width: 100vw; /* This might not be ideal when zooming */
+}
 
 
 .audio-container {
@@ -515,8 +517,28 @@ body {
   border-bottom: .5px solid #a4a4a42d; /* Border between rows */
 }
 
+.image-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
 
+.profile-thumbnail-preview {
+  width: 100px; /* Adjust size as needed */
+  height: 100px; /* Adjust size as needed */
+  border-radius: 50%; /* Makes the image circular */
+  object-fit: cover; /* Ensures the image covers the area without being distorted */
+}
 
+.edit-image-modal {
+  background: #1a1a1a;
+  border-radius: 10px;
+  color: white;
+    /* Adjust width and height as needed */
+    width: 350px; /* Set a new width */
+    
+  padding: 20px;
+}
 
 
 .edit-phone-modal {

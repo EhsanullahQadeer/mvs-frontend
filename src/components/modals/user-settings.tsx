@@ -134,19 +134,19 @@ const UserSettingsModal = (props: any) => {
             }
         };
 
-      const handlePhoneChange = (event) => {
-        const value = event.target.value;
-        const regex = /^[0-9]*$/;
-        if (value === '' || regex.test(value)) {
-            setPhone(value);
-            setIsInvalid(false);  // Reset the invalid state if the input is valid
-        } else {
-            setIsInvalid(true);
-            if (!toast.isActive('invalid-phone')) {
-                toast.error("Please enter only numbers.", { toastId: 'invalid-phone' });
+        const handlePhoneChange = (event) => {
+            const value = event.target.value;
+            const regex = /^[0-9]*$/;
+            if (value === '' || regex.test(value)) {
+                setPhone(value);
+                setIsInvalid(false);  // Reset the invalid state if the input is valid
+            } else {
+                setIsInvalid(true);
+                if (!toast.isActive('invalid-phone')) {
+                    toast.error("Please enter only numbers.", { toastId: 'invalid-phone' });
+                }
             }
-        }
-    };
+        };
 
 
 
@@ -181,28 +181,47 @@ const UserSettingsModal = (props: any) => {
     // setImageName(file.name);
     // setImageType(file.type);
 
+    const [previewUrl, setPreviewUrl] = useState('');
+
+        // Function to handle file selection
+        const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+            if (event.target.files && event.target.files[0]) {
+                const file = event.target.files[0];
+        
+                const fileURL = URL.createObjectURL(file);
+                setPreviewUrl(fileURL);
+                setImageName(file.name);
+                setImageType(file.type);
+        
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // Assert reader.result as a string
+                    const result = reader.result as string;
+                    console.log("Reader result:", result);
+                    setImage(result);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
 
     const [updating, setUpdate] = useState(false);
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevents the default form submission action
         setUpdate(true);
-        console.log("user: ", name);
-      
+
         // Construct the payload with user data
         const payload = {
           name: name,
           city: city,
           state: stateLoc,
           phone: phone,
-        //   thumbnail: image, // Assuming 'image' holds the base64 or FormData for the image
-          // Image Data Info
-        //   image_type: imageType,
-        //   image_name: imageName
+          thumbnail: image,
+          image_type: imageType,
+          image_name: imageName
         };
-        console.log("payload", payload);
+
         try {
           const update_user = await updateUser(payload, user?.id);
-          console.log("updated user: ", update_user);
           if (update_user.data.error) {
             toast.error(update_user.data.message);
           } else {
@@ -223,10 +242,39 @@ const UserSettingsModal = (props: any) => {
         setState( user?.state );
         setPhone( user?.phone );
         setEmail( user?.email );
-    }, [ user]);
+        setImagePreview( user?.thumbnail );
+    }, [ user ]);
 
 
+        // Additional state for image upload
+        const [isEditImageModalOpen, setIsEditImageModalOpen] = useState(false);
+        const [image, setImage] = useState('');
+        const [imagePreview, setImagePreview] = useState(user?.thumbnail || '');
+    
+    
+        useEffect(() => {
+            dispatch(fetchCurrentUser());
+        }, [dispatch]);
+    
+        // Handle image changes
+        const handleImageChange = (event) => {
+            if (event.target.files && event.target.files[0]) {
+                const file = event.target.files[0]; // Get the selected file
+                setImageName(file.name); // Set the file name
+                setImageType(file.type); // Set the file type
 
+                const fileReader = new FileReader();
+                fileReader.onload = function (e) {
+                    setImagePreview(e.target.result);
+                };
+                fileReader.readAsDataURL(event.target.files[0]);
+                console.log(' thumbnail' , event.target.files[0]);
+                setImage(event.target.files[0]);
+            }
+        };
+    
+        const openEditImageModal = () => setIsEditImageModalOpen(true);
+        const closeEditImageModal = () => setIsEditImageModalOpen(false);
 
 
     return (
@@ -312,14 +360,10 @@ const UserSettingsModal = (props: any) => {
                 {/* Repeat the structure below for each input row */}
                 <div className="account-detail-row">
                     <div className="row-content">
-                        <span className="detail-title">Profile Picture</span> {/* Title for the detail */}
-                        <img 
-                        src={user?.thumbnail} 
-                        alt="Profile" 
-                        className="profile-thumbnail"
-                        />
+                        <span className="detail-title">Profile Picture</span>
+                        <img src={imagePreview} alt="Profile" className="profile-thumbnail" />
                     </div>
-                    <button className="edit-button">
+                    <button className="edit-button" onClick={openEditImageModal}>
                         <img src={editIcon} alt="Edit" />
                     </button>
                 </div>
@@ -503,6 +547,39 @@ const UserSettingsModal = (props: any) => {
             </form>
         </div>
     </Modal>
+
+            {/* UPLOAD PROFILE PICTURE MODAL */}
+            <Modal
+    isOpen={isEditImageModalOpen}
+    onRequestClose={closeEditImageModal}
+    className="modal-overlay"
+    overlayClassName="modal-overlay-background"
+>
+    <div className="edit-image-modal">
+        <div className="modal-header">
+            <h2>Change Profile Picture</h2>
+            <button className="close-button" onClick={closeEditImageModal}>X</button>
+        </div>
+        <form onSubmit={handleSubmit} className="modal-form">
+            {image && (
+                <div className="image-preview">
+                    <img src={image} alt="Profile Preview" className="profile-thumbnail-preview" />
+                </div>
+            )}
+            <div className="input-row">
+                <label htmlFor="profile-picture" className="input-label">Profile Picture</label>
+                <input
+                    id="profile-picture"
+                    type="file"
+                    className="input-field"
+                    onChange={handleFileChange}
+                />
+            </div>
+            <button type="submit" className="submit-button">Submit</button>
+        </form>
+    </div>
+</Modal>
+
 
 
         {/* Toast container to display toast messages */}

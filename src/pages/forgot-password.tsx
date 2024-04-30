@@ -98,7 +98,7 @@ const ForgotPasswordPage: React.FunctionComponent<IPage> = (props) => {
         <React.Fragment>
             {pathname === "/forgot-password" && (
                 <>
-                    <div className="flex justify-center items-center px-16 py-20 font-medium bg-stone-950 max-md:px-5">
+                    <div className="flex justify-center items-center px-16 py-20 font-medium max-md:px-5">
                         <div className="flex flex-col p-8 mt-10 max-w-full rounded-3xl border border-solid bg-zinc-900 border-neutral-800 w-[460px] max-md:px-5 max-md:mt-10">
                             <img
                                 loading="lazy"
@@ -159,8 +159,8 @@ const ForgotPasswordPage: React.FunctionComponent<IPage> = (props) => {
 
             {pathname === "/forgot-password/reset" && (
                 <>
-                    <div className="flex justify-center items-center px-16 py-20 text-sm bg-stone-950 max-md:px-5">
-                        <div className="flex flex-col p-8  max-w-full rounded-3xl border border-solid bg-zinc-900 border-neutral-800 w-[460px] max-md:px-5 max-md:mt-10">
+                    <div className="flex justify-center items-center px-16 py-20 text-sm  max-md:px-5">
+                        <div className="flex flex-col p-8  max-w-full rounded-3xl border border-solid bg-stone-950 border-neutral-800 w-[460px] max-md:px-5 max-md:mt-10">
                             <img
                                 loading="lazy"
                                 srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/26056c48587334bc0a23d16c25c7a8b2ce106574cb9d69dc83a1bf732faa9e81?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/26056c48587334bc0a23d16c25c7a8b2ce106574cb9d69dc83a1bf732faa9e81?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/26056c48587334bc0a23d16c25c7a8b2ce106574cb9d69dc83a1bf732faa9e81?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/26056c48587334bc0a23d16c25c7a8b2ce106574cb9d69dc83a1bf732faa9e81?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/26056c48587334bc0a23d16c25c7a8b2ce106574cb9d69dc83a1bf732faa9e81?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/26056c48587334bc0a23d16c25c7a8b2ce106574cb9d69dc83a1bf732faa9e81?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/26056c48587334bc0a23d16c25c7a8b2ce106574cb9d69dc83a1bf732faa9e81?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/26056c48587334bc0a23d16c25c7a8b2ce106574cb9d69dc83a1bf732faa9e81?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"

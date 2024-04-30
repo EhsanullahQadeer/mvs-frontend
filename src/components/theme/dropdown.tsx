@@ -27,8 +27,8 @@ const DropDown = (props: any) => {
 
   return (
     <React.Fragment>
-      <div className="bg-[#141414]">
-        <Menu as="div" className="relative ml-[15px] bg-black text-white">
+      <div className="bg-transparent">
+        <Menu as="div" className="relative ml-[15px] bg-transparent text-white">
           <div>
             <Menu.Button>
               <EllipsisVerticalIcon

@@ -448,13 +448,15 @@ const SamplesPage = () => {
                                               </span>{" "}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            <AudioPlayer
-                                              link={x.sample_src}
-                                              id={x.id}
-                                              setPlaying={false}
-                                              playerType={"sample"}
-                                              volume={0}
-                                              />
+                                            <div className="w-[300px] min-w-0">
+                                              <AudioPlayer
+                                                link={x.sample_src}
+                                                id={x.id}
+                                                setPlaying={false}
+                                                playerType={"sample"}
+                                                volume={0}
+                                                />
+                                              </div>
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                                               {x?.length}
@@ -482,7 +484,7 @@ const SamplesPage = () => {
                                                 View All
                                               </span>
                                             </td>
-                                            <td className="flex whitespace-nowrap px-3 py-4">
+                                            <td className="flex whitespace-nowrap px-3 py-4 items-center">
                                               {parseInt(x.is_liked) === 1 ? (
                                                 <>
 

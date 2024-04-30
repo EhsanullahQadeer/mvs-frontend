@@ -79,10 +79,10 @@ const ConsideringModal = (props: any) => {
 
                       {/* start */}
 
-                      <div className="mt-1 text-xl font-semibold text-zinc-100 max-md:max-w-full">
+                      <div className="mt-1 text-xl font-semibold text-zinc-100 max-md:max-w-full font-[Mona-Sans-M]">
                         Spark Creativity, Claim Exclusivity 🧑‍🎨
                       </div>
-                      <div className="mt-4 text-sm italic leading-6 text-justify text-stone-300 max-md:max-w-full">
+                      <div className="mt-4 text-sm italic leading-6 text-justify text-stone-300 max-md:max-w-full font-[Mona-Sans-M]">
                         This platform isn't just about finding amazing samples –
                         it's about pushing boundaries. See exactly who else in
                         our exclusive producer network is using the same sounds
@@ -92,19 +92,19 @@ const ConsideringModal = (props: any) => {
                         <br />
                         We want to empower your creative vision. Whoever
                         requests a{" "}
-                        <span className="italic font-semibold text-stone-300">
+                        <span className="italic font-semibold text-stone-300 font-[Mona-Sans-M]">
                           Split-Agreement
                         </span>{" "}
                         or{" "}
-                        <span className="italic font-semibold text-stone-300">
+                        <span className="italic font-semibold text-stone-300 font-[Mona-Sans-M]">
                           Master-Agreement{" "}
                         </span>
                         first for a particular{" "}
-                        <span className="italic font-semibold text-stone-300">
+                        <span className="italic font-semibold text-stone-300 font-[Mona-Sans-M]">
                           sample
                         </span>{" "}
                         or{" "}
-                        <span className="italic font-semibold text-stone-300">
+                        <span className="italic font-semibold text-stone-300 font-[Mona-Sans-M]">
                           instrumental
                         </span>{" "}
                         gets to claim it exclusively for their track. That's
@@ -114,11 +114,11 @@ const ConsideringModal = (props: any) => {
                         available. This innovative feature gives you the power
                         to truly own your sound and stand out from the crowd.
                       </div>
-                      <div className="self-start mt-3.5 ml-2.5 text-base font-semibold text-white">
+                      <div className="self-start mt-3.5 ml-2.5 text-base font-semibold text-white font-[Mona-Sans-M]">
                         Who is currently considering:
                       </div>
 
-                      <div className="flex flex-col px-2.5 pt-2.5 mt-3.5 text-xs text-white rounded-lg border border-solid bg-neutral-900 border-neutral-800 max-md:max-w-full">
+                      <div className="flex flex-col px-2.5 pt-2.5 mt-3.5 text-xs text-white rounded-lg border border-solid bg-neutral-900 border-neutral-800 max-md:max-w-full font-[Mona-Sans-M]">
                         {loading ? (
                           <>Loading...</>
                         ) : (
@@ -127,7 +127,7 @@ const ConsideringModal = (props: any) => {
                               downloads.map((x) => {
                                 return (
                                   <>
-                                    <div className="flex gap-2 py-2.5 border-b border-solid border-stone-900 max-md:flex-wrap">
+                                    <div className="flex gap-2 py-2.5 border-b border-solid border-stone-900 max-md:flex-wrap font-[Mona-Sans-M]">
                                       
                                       <Avatar name={x?.user?.name} round={true} title={x?.user?.name} size="30" className="shrink-0 w-8  aspect-square "/>
 

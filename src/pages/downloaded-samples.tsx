@@ -487,7 +487,7 @@ const MyDownloadsPage = () => {
                                                 View All
                                               </span>
                                             </td>
-                                            <td className="flex whitespace-nowrap px-3 py-4">
+                                            <td className="flex whitespace-nowrap px-3 py-4 items-center">
                                               <div className="ml-[100px] cursor-pointer">
                                                 {parseInt(x.is_liked) === 1 ? (
                                                   <>
