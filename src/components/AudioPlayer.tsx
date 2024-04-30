@@ -124,7 +124,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
                     <span>{formatTime(currentTime)}</span>
                 </div>
             )}
-            <div ref={waveformRef} style={{ flexGrow: 1 }}></div>
+            <div ref={waveformRef} style={{  width: '450px', flexGrow: 0 }}></div>
             {playerType === "player" && (
                 <div style={{ marginLeft: '10px', color: 'white', fontWeight: 'bold' }}>
                     <span>{formatTime(duration)}</span>

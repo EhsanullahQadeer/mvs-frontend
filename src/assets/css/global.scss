@@ -142,19 +142,27 @@ body {
 
 .bottom-audio-player {
   display: flex;
-  justify-content: space-between; /* This will place the child containers on opposite ends */
+  min-width: 0; /* Allows shrinking below content size without overflow */
   align-items: center; /* To align items vertically in the center */
   z-index: 1000; /* Ensure it stays above other content */
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 25px;
+  padding: 5px;
   background-color: #1a1a1a; /* Dark background for visibility */
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* Adds a shadow for better separation */
   z-index: 1000; /* Ensure it stays above other content */
 }
+/* Specific control to make the first container not to take more than needed */
+.bottom-audio-player > div:first-child {
+  flex: 0 1 auto; /* Do not grow beyond content size, allow shrink */
+}
 
+/* If the middle container needs to be bigger */
+.bottom-audio-player > div:nth-child(3) {
+  flex: 2; /* Allows the middle container to take twice the space of the other two */
+}
 
 .second-div {
   padding-bottom: 70px; /* Adjust based on the height of your audio player */
@@ -191,7 +199,7 @@ body {
 .volume-button {
   background: none;
   border: none;
-  
+  color: white;
   padding: 5px; /* Optional, adjust as needed */
 }
 
@@ -243,14 +251,11 @@ body {
 }
 
 
-.audio-container {
-  flex: 2; /* This will make each container take half the width of the parent */
-  display: flex;
-  align-items: center; /* To align items vertically in the center */
-  justify-content: flex-start; /* For sample-container content alignment */
-  padding: 0 150px; /* Give some padding inside each container */
-  gap: 15px; /* Space between elements */
-}
+// .audio-container {
+//   display: flex;
+//   align-items: center; /* To align items vertically in the center */
+//   flex-wrap: wrap;                /* Allows items to wrap if not enough space */
+// }
 
 // .sample-container {
 //   display: flex; /* Enables flexbox layout */
@@ -297,8 +302,6 @@ body {
   /* Additional styling */
 }
 
-
-
 .album-author {
   color: rgb(150, 150, 150);
   /* Additional styling */
@@ -307,7 +310,15 @@ body {
 .audio-container {
   display: flex;
   align-items: center; /* Aligns items vertically in the center */
-  justify-content: flex-end; /* Aligns container content to the end */
+  justify-content: flex-start; /* Aligns container content to the end */
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.control-container {
+  display: flex;
+  align-items: center; /* Aligns items vertically in the center */
+  justify-content: flex-start; /* Aligns container content to the end */
 }
 
 // .audio-container {
@@ -334,6 +345,7 @@ body {
   flex: 1 1 auto; /* Grow to use available space */
   min-width: 0; /* Prevent flexbox from pushing out beyond max-width */
 }
+
 .volume-container {
   justify-content: flex-end; /* Align to the end (right) */
 }

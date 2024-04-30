@@ -55,12 +55,12 @@ const DropDown = (props: any) => {
                       if (parseInt(props.sample.is_liked) === 1) {
                         await sampleUnlike(props.sample.id);
                         props.getSamples(props.sound.id, props.page);
-                        toast.success(`${props.sample.filename} is removed from your likes`, { className:"bg-[#C4FF48] text-[#000]"});
+                        toast.success(`${props.sample.filename} was removed from your likes`, { className:"bg-[#C4FF48] text-[#000]"});
 
                       } else {
                         await sampleLike(props.sample.id);
                         props.getSamples(props.sound.id, props.page);
-                        toast.success(`${props.sample.filename} is added your likes`,{ className:"bg-[#C4FF48] text-[#000]"});
+                        toast.success(`${props.sample.filename} was added your likes`,{ className:"bg-[#C4FF48] text-[#000]"});
 
                       }
                     }}
