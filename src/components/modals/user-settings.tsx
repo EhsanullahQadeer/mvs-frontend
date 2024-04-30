@@ -34,17 +34,6 @@ const UserSettingsModal = (props: any) => {
     const [isInvalid, setIsInvalid] = useState(false);
 
 
-    // Set default values of user
-    useEffect(() => {
-        console.log('user: ', user);
-        setName(  user?.name );
-        setCity(  user?.city );
-        setState( user?.state );
-        setPhone( user?.phone );
-        setEmail( user?.email );
-    }, [ user ]);
-
-
 
     // When the modal opens, initialize the 'name' state with the user's current name
     useEffect(() => {
@@ -224,6 +213,21 @@ const UserSettingsModal = (props: any) => {
           console.error("Error updating user:", error);
         }
       };
+
+
+    // Set default values of user
+    useEffect(() => {
+        console.log('user: ', user);
+        setName(  user?.name );
+        setCity(  user?.city );
+        setState( user?.state );
+        setPhone( user?.phone );
+        setEmail( user?.email );
+    }, [ user]);
+
+
+
+
 
     return (
         <React.Fragment>

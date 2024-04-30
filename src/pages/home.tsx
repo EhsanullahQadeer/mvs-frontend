@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getSounds } from "redux/actionCreators/sounds";
 import ActionType from "redux/actionTypes";
+import ScrollableContainer from "util/ScrollableContainer";
 
 interface RootState {
   auth: any;
@@ -87,7 +88,8 @@ const HomeFeed = () => {
   return (
     <React.Fragment>
       <Theme>
-        <div className="second-div w-[85%] flex flex-col">
+        <div className="flex flex-col min-h-screen w-full bg-[#101010]" >
+          
           <div className="bg-[#151515] p-[40px]">
             <p className="text-[#B9B9B9] text-[32px] font-['Mona-Sans-S']">
               Browse
@@ -121,99 +123,87 @@ const HomeFeed = () => {
               </button>
             </div>
           </div>
-          <div className="bg-[#101010] p-[40px]">
-            {sample === true && vocal === true ? (
-              <>
-                <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
-                  New This Week
-                </p>
-                <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
-                  Packs and sounds crafted just for you. Updated Weekly.
-                </p>
-                <div className="flex gap-[6px]">
-                  {loading ? (
-                    <>
-                      <Loader />
-                    </>
-                  ) : (
-                    <>
-                      {samples.map((sample: any) => {
-                        return (
-                          <>
-                            <div
-                              onClick={() =>
-                                navigate(`/sound/samples/${sample.id}`)
-                              }
-                              className="cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] card"
-                            >
-                              <img
-                                src={sample.thumbnail}
-                                className="w-[175px] h-[175px]"
-                              />
-                              <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
-                                {sample.name}
-                              </p>
-                              <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777]">
-                                {sample?.genre}
-                              </p>
-                              <p className="text-[12px] font-['Mona-Sans-M'] text-[#777]">
-                                MVSSIVE
-                              </p>
-                            </div>
-                          </>
-                        );
-                      })}
-                    </>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
-                  New This Week
-                </p>
-                <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
-                  Packs and sounds crafted just for you. Updated Weekly.
-                </p>
-                <div className="flex gap-[6px]">
-                  {loading ? (
-                    <>
-                      <Loader />
-                    </>
-                  ) : (
-                    <>
-                      {vocals.map((vocal: any) => {
-                        return (
-                          <>
-                            <div
-                              onClick={() =>
-                                navigate(`/sound/samples/${vocal.id}`)
-                              }
-                              className="cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] card"
-                            >
-                              <img
-                                src={vocal.thumbnail}
-                                className="w-[175px] h-[175px]"
-                              />
-                              <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
-                                {vocal.name}
-                              </p>
-                              <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777]">
-                                {vocal?.genre}
-                              </p>
-                              <p className="text-[12px] font-['Mona-Sans-M'] text-[#777]">
-                                MVSSIVE
-                              </p>
-                            </div>
-                          </>
-                        );
-                      })}
-                    </>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
+
+
+
+
+    <div className="bg-[#101010] p-[40px]">
+      {sample === true && vocal === true ? (
+        <>
+          <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
+            New This Week
+          </p>
+          <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
+            Packs and sounds crafted just for you. Updated Weekly.
+          </p>
+          <ScrollableContainer>
+          {loading ? (
+            <Loader />
+          ) : (
+          samples.map((sample: any) => (
+            <div
+              key={sample.id}
+              onClick={() => navigate(`/sound/samples/${sample.id}`)}
+              className="cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-[0] card"
+              >
+              <img
+                src={sample.thumbnail}
+                alt={`Sample named ${sample.name}`}
+                className="w-[150px] h-[150px]"
+              />
+              <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
+                {sample?.name}
+              </p>
+              <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777]">
+                {sample?.genre}
+              </p>
+              <p className="text-[12px] font-['Mona-Sans-M'] text-[#777]">
+                {sample?.author}
+              </p>
+            </div>
+          ))
+        )}
+      </ScrollableContainer>
+    </>
+  ) : (
+    <>
+      <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
+        New This Week
+      </p>
+      <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
+        Packs and sounds crafted just for you. Updated Weekly.
+      </p>
+      <div className="flex overflow-x-auto gap-[6px]">
+        {loading ? (
+          <Loader />
+        ) : (
+          vocals.map((vocal: any) => (
+            <div
+              key={vocal.id}
+              onClick={() => navigate(`/sound/vocals/${vocal.id}`)}
+              className="cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] card"
+            >
+              <img
+                src={vocal.thumbnail}
+                alt={`Vocal named ${vocal.name}`}
+                className="w-[175px] h-[175px]"
+              />
+              <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
+                {vocal.name}
+              </p>
+              <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777]">
+                {vocal?.genre}
+              </p>
+              <p className="text-[12px] font-['Mona-Sans-M'] text-[#777]">
+                MVSSIVE
+              </p>
+            </div>
+          ))
+        )}
+      </div>
+    </>
+  )}
+</div>
         </div>
       </Theme>
     </React.Fragment>

@@ -93,8 +93,9 @@ const LoginPage = () => {
 
   return (
     <React.Fragment>
-      <div className="flex flex-col justify-end items-start  pr-8 pb-9 pl-20 bg-stone-950 max-md:px-5">
-        <div className="flex flex-col pt-8 self-center  mt-44 max-w-full rounded-3xl border border-solid bg-zinc-900 border-neutral-800 w-[460px] max-md:px-5 max-md:mt-10">
+      <div className="flex flex-col min-h-screen w-full bg-stone-950">
+        <div className="flex flex-col pt-8 self-center  mt-44 max-w-full rounded-3xl border border-solid bg-zinc-900 bor
+        der-neutral-800 w-[460px] max-md:px-5 max-md:mt-10">
           <img
             loading="lazy"
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/26056c48587334bc0a23d16c25c7a8b2ce106574cb9d69dc83a1bf732faa9e81?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"

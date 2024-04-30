@@ -281,13 +281,13 @@ const MyLikesPage = () => {
   return (
     <React.Fragment>
       <Theme>
-        <div className="second-div w-[85%] flex flex-col z-0">
+        <div className="second-div w-[85%] flex flex-col pb-[130px] z-0">
           <div className="bg-[#101010] p-[40px]">
             <div className="mt-[16px] gap-[22px] flex">
               <div>
                 <svg
-                  width="270"
-                  height="270"
+                  width="170"
+                  height="170"
                   viewBox="0 0 270 270"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -314,7 +314,6 @@ const MyLikesPage = () => {
                   Likes
                 </p>
               </div>
-              <div className="border-x border-[#282828] border-y-0 my-[50px]"></div>
             </div>
           </div>
 
@@ -351,27 +350,24 @@ const MyLikesPage = () => {
             </>
           ) : (
             <>
-              <div className="bg-[#101010] pt-[10px]">
+              {/* <div className="custom-background">
                 <div className="bg-black-900">
-                  <div className="mx-auto max-w-7xl">
+                  <div className="custom-width">
                     <div className="bg-black-900 py-10">
-                      <div className="px-4 sm:px-6 lg:px-8">
-                        <div className="mt-8 flow-root">
+                      <div className="custom-padding"> */}
+                        <div className="bg-[#101010] p-[10px]"> {/* Ensure this is the correct class and location */}
                           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                              <table className="-z-50 min-w-full divide-y divide-gray-700">
+                            <div className="inline-block min-w-full py-2 align-middle sm:px-6">
+                            <div style={{ borderTop: "2px solid #333", margin: "0 0px" }}></div>
+                              <table className="min-w-full divide-y divide-gray-700">
                                 <thead>
-                                  <tr>
+                                <tr>
                                     <th
                                       scope="col"
-                                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0"
+                                      className="py-3.5 pl-4 pr-3 text-left  text-sm font-semibold text-white sm:pl-0"
                                     >
                                       Sample
                                     </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    ></th>
                                     <th
                                       scope="col"
                                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
@@ -380,17 +376,17 @@ const MyLikesPage = () => {
                                     </th>
                                     <th
                                       scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
                                     ></th>
                                     <th
                                       scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
                                     >
                                       Time
                                     </th>
                                     <th
                                       scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
                                     >
                                       Key
                                     </th>
@@ -405,6 +401,11 @@ const MyLikesPage = () => {
                                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                                     >
                                       Considering
+                                    </th>
+                                    <th
+                                      scope="col"
+                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                                    >
                                     </th>
                                     <th
                                       scope="col"
@@ -576,11 +577,11 @@ const MyLikesPage = () => {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      {/* </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </>
           )}
 

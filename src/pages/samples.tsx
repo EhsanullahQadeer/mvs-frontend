@@ -247,7 +247,7 @@ const SamplesPage = () => {
   return (
     <React.Fragment>
       <Theme>
-        <div className="second-div w-[85%] flex flex-col z-0">
+        <div className="second-div w-full  min-h-screen flex flex-col z-0 pb-[130px]">
           <div className="bg-[#101010] p-[40px]">
             {loading ? (
               <>
@@ -255,7 +255,7 @@ const SamplesPage = () => {
                   role="status"
                   className="space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center"
                 >
-                  <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
+                  <div className="flex items-center justify-center w-full h-full bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
                     <svg
                       className="w-10 h-10 text-gray-200 dark:text-gray-600"
                       aria-hidden="true"
@@ -348,27 +348,24 @@ const SamplesPage = () => {
             </>
           ) : (
             <>
-              <div className="bg-[#101010] pt-[0px]">
+              {/* <div className="custom-background">
                 <div className="bg-black-900">
-                  <div className="mx-auto max-w-7xl">
+                  <div className="custom-width">
                     <div className="bg-black-900 py-10">
-                      <div className="px-4 sm:px-6 lg:px-8">
-                        <div className=" flow-root">
+                      <div className="custom-padding"> */}
+                        <div className="bg-[#101010] p-[10px]"> {/* Ensure this is the correct class and location */}
                           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="inline-block min-w-full py-2 pl-[0px] align-middle sm:px-6 ">
-                              <table className="-z-50 min-w-full divide-y divide-gray-700">
+                            <div className="inline-block min-w-full py-2 align-middle sm:px-6">
+                            <div style={{ borderTop: "2px solid #333", margin: "0 0px" }}></div>
+                              <table className="min-w-full divide-y divide-gray-700">
                                 <thead>
                                   <tr>
                                     <th
                                       scope="col"
-                                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0"
+                                      className="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-white sm:pl-0"
                                     >
                                       Sample
                                     </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    ></th>
                                     <th
                                       scope="col"
                                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
@@ -377,17 +374,17 @@ const SamplesPage = () => {
                                     </th>
                                     <th
                                       scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
                                     ></th>
                                     <th
                                       scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
                                     >
                                       Time
                                     </th>
                                     <th
                                       scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
                                     >
                                       Key
                                     </th>
@@ -405,13 +402,18 @@ const SamplesPage = () => {
                                     </th>
                                     <th
                                       scope="col"
+                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                                    >
+                                    </th>
+                                    <th
+                                      scope="col"
                                       className="relative py-3.5 pl-3 pr-4 sm:pr-0"
                                     >
                                       <span className="sr-only">Edit</span>
                                     </th>
                                   </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-800">
+                                <tbody className="container">
                                   {sound_samples &&
                                     sound_samples.map((x: any, index) => {
                                       const globalIndex = current_page * take + index; // Correctly compute the global index
@@ -551,11 +553,11 @@ const SamplesPage = () => {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      {/* </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </>
           )}
 
@@ -586,7 +588,7 @@ const SamplesPage = () => {
 
           {sound?.terms && (
             <>
-              <div className="bg-[#101010]">
+              <div className="bg-[#101010]  h-full">
                 <div className="mx-[20px] border border-x-0 border-y-[#222] py-[20px] px-[20px]">
                   <p className="text-[16px] text-[#A7A7A7] pb-[12px] font-['Mona-Sans-M']">
                     Terms of Use

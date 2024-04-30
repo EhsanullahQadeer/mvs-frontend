@@ -38,9 +38,90 @@
 }
 
 
+.horizontal-scroll-wrapper {
+  display: flex; /* Align card items in a row */
+  overflow-x: auto;
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  padding-bottom: 10px; /* Creates space for the scrollbar */
+  margin-bottom: -10px; /* Negatively offsets the added padding */
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For IE and Edge */
+    overflow-x: auto;
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For IE and Edge */
+  }
+  
+  .horizontal-scroll-wrapper::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+  }
+
+
+/* Show the scrollbar when hovering */
+.horizontal-scroll-wrapper:hover {
+  scrollbar-width: auto; /* For Firefox */
+  -ms-overflow-style: auto; /* For IE and Edge */
+}
+
+.horizontal-scroll-wrapper:hover::-webkit-scrollbar {
+  display: block; /* Chrome, Safari, and Opera */
+}
+
+/* Optional: Style the scrollbar to make it more modern-looking */
+.horizontal-scroll-wrapper::-webkit-scrollbar {
+  height: 0px;
+}
+
+.horizontal-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.horizontal-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Last card doesn't need a margin to the right */
+.card:last-child {
+  margin-right: 0;
+}
+
+.custom-background {
+  background-color: #101010; /* hex code needs to be defined in a valid CSS way */
+}
+
+.custom-width {
+  max-width: 1128px; /* Example conversion of Tailwind's max-w-7xl */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.custom-padding {
+  padding-left: 16px; /* px-4 */
+  padding-right: 16px; /* px-4 */
+  padding-top: 40px; /* py-10 */
+  padding-bottom: 40px; /* py-10 */
+}
+
+.card {
+  flex-shrink: 0;
+  cursor: pointer;
+  padding: 12px;
+  background-color: #232426;
+  border: 1px solid #494949;
+  border-radius: 4px;
+  margin-right: 6px; /* Adjust this value to get the desired space between cards */
+}
+
+
+.scrollable-container {
+  display: flex;
+  gap: 6px; /* this replaces your 'gap-[6px]' class */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* for smooth scrolling on iOS */
+}
 
 body {
-  background-color: #000;
+  background-color: #101010;
 }
 
 .InputElement {
@@ -258,7 +339,7 @@ body {
 }
 
 .active-sample {
-  background-color: #ffffff90; /* Light grey background, or choose your color */
+  background-color: #ffffff11; /* Light grey background, or choose your color */
   color: #ffffff; /* Darker text color for better readability */
 }
 
