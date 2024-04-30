@@ -451,9 +451,9 @@ const MyDownloadsPage = () => {
                                                   }
                                                   src={
                                                     index === currentSampleIndex
-                                                      ? (playing
-                                                          ? playButton
-                                                          : pauseButton )
+                                                    ? (playing
+                                                      ? pauseButton
+                                                      : playButton )
                                                       : sampleDetails[index]?.thumbnail
                                                   }
                                                   alt={
@@ -703,9 +703,9 @@ const MyDownloadsPage = () => {
       <button className="control-button" onClick={handlePlayToggle}>
         {playing ? 
           (
-            <img src={playButton} alt="Play" /> ) :
+            <img src={pauseButton} alt="Play" /> ) :
           (
-            <img src={pauseButton} alt="Play" />
+            <img src={playButton} alt="Play" />
           )
         }
       </button>
