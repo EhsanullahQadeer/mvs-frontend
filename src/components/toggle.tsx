@@ -51,7 +51,7 @@ const Toggle = (props) => {
 
             setToggle(!toggle);
 
-            toast.success(`${props.sample.filename} is added your likes`,{ className:"bg-[#C4FF48] text-[#000]"});
+            toast.success(`${props.sample.filename} was added your likes`,{ className:"bg-[#C4FF48] text-[#000]"});
             await sampleLike(props.sample.id);
 
           }}

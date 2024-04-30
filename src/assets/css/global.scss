@@ -266,16 +266,25 @@ body {
   margin-left: 40px;
 }
 
-.album-art img {
-  width: 75px;
-  height: 75px;
-  margin-right: auto; /* Pushes all other elements to the right */
+.album-art {
+  width: 100px;  /* or the fixed size you want */
+  height: 100px; /* make height equal to width for a square */
+  display: flex; /* to center the image within the wrapper */
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* hides the overflowed part of the image */
+}
 
+.album-art img {
+  height: 100%; /* sets the image height to the height of the wrapper */
+  min-width: 100%; /* ensures minimum width is always the full width of the wrapper */
+  object-fit: cover; /* covers the wrapper area without distorting aspect ratio */
 }
 
 .album-details {
   display: flex;
   flex-direction: column;
+  margin-left: 20px
 }
 
 .album-name {

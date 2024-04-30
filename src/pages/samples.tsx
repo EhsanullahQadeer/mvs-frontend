@@ -426,10 +426,8 @@ const SamplesPage = () => {
                                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                                             <img
                                               className="cursor-pointer mr-[32px]"
-                                              src={ index === currentSampleIndex && playing
-                                                  ? "https://mvssive-content.s3.amazonaws.com/pause-button.png" 
-                                                  : "https://mvssive-content.s3.amazonaws.com/play-button-2.png"
-                                              }
+                                              style={{ width: '32px', height: '32px', borderRadius: '4px'  }}
+                                              src={sound?.thumbnail}
                                               alt={index === currentSampleIndex && playing
                                                 ? "Pause" 
                                                 : "Play"}
@@ -620,11 +618,11 @@ const SamplesPage = () => {
 
   <div className="sample-container">
     <div className="album-art">
-      <img 
-        src={sound?.thumbnail || ''} 
-        alt="Album Art"
-      />
-    </div>
+        <img 
+          src={sound?.thumbnail || ''} 
+          alt="Album Art"
+        />
+      </div>
     <div className="album-details">
       <div className="album-name">
         {sound_samples[currentSampleIndex]?.filename ?? 'Album Name'}

@@ -428,14 +428,9 @@ const MyDownloadsPage = () => {
                                             className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 ${index === currentSampleIndex ? 'active-sample' : ''}`}>
                                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                                               <img
-                                                className="cursor-pointer mr-[32px]"
-                                                src={ index === currentSampleIndex && playing
-                                                    ? "https://mvssive-content.s3.amazonaws.com/pause-button.png" 
-                                                    : "https://mvssive-content.s3.amazonaws.com/play-button-2.png"
-                                                }
-                                                alt={index === currentSampleIndex && playing
-                                                  ? "Pause" 
-                                                  : "Play"}
+                                              className="cursor-pointer mr-[32px]"
+                                              style={{ width: '32px', height: '32px', borderRadius: '4px'  }}
+                                              src={sampleDetails[index]?.thumbnail}
                                                 onClick={async () => {
                                                   handleSampleClick(x, index);
                                                   setPreview(true);

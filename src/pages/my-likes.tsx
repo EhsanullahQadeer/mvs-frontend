@@ -416,10 +416,11 @@ const MyLikesPage = () => {
                                   </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-800">
-                                  {sound_samples &&
+                                  {sound_samples && sampleDetails &&
                                     sound_samples.map((x: any, index) => {
                                       const globalIndex = current_page * take + index; // Correctly compute the global index
                                       const considering = x.considering?.split(',');
+                                      console.log('dd: ', sampleDetails[currentSampleIndex]?.thumbnail);
                                       return (
                                         <>
                                           <tr key={x.id}
@@ -428,13 +429,8 @@ const MyLikesPage = () => {
                                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                                               <img
                                                 className="cursor-pointer mr-[32px]"
-                                                src={ index === currentSampleIndex && playing
-                                                    ? "https://mvssive-content.s3.amazonaws.com/pause-button.png" 
-                                                    : "https://mvssive-content.s3.amazonaws.com/play-button-2.png"
-                                                }
-                                                alt={index === currentSampleIndex && playing
-                                                  ? "Pause" 
-                                                  : "Play"}
+                                                style={{ width: '32px', height: '32px', borderRadius: '4px'  }}
+                                                src={sampleDetails[index]?.thumbnail}
                                                 onClick={async () => {
                                                   handleSampleClick(x, index);
                                                   setPreview(true);
