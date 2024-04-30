@@ -247,7 +247,11 @@ body {
 }
 
 .container {
-  width: 100vw; /* This might not be ideal when zooming */
+  width: 100%; /* Take up full width of viewport */
+  max-width: 1200px; /* Maximum width to prevent content from becoming too wide */
+  margin: 0 auto; /* Center the container horizontally */
+  padding: 20px; /* Add some padding */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 
@@ -299,7 +303,15 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 200px;  // Set a fixed width that fits your layout
   /* Additional styling */
+}
+
+.album-name {
+  width: 300px;  // Set a fixed width that fits your layout
+  overflow: hidden;  // Prevents overflow of text outside the container
+  text-overflow: ellipsis;  // Adds ellipsis if text is too long to fit
+  white-space: nowrap;  // Keeps the text on a single line
 }
 
 .album-author {
@@ -709,12 +721,67 @@ body {
   color: #000;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
   width: 100%;
 }
 
-.submit-button:hover {
-  background-color: #7D0;
+/* Updated CSS */
+.row-hover {
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.row-hover:hover {
+  background-color: #282828; /* Darken the row on hover */
+}
+.row-hover:hover .thumbnail {
+  opacity: 0; /* Hide the thumbnail on hover for regular rows */
+}
+
+.active-sample:hover .thumbnail {
+  opacity: 1 !important; /* Ensure thumbnail stays visible on hover for active samples */
+}
+
+.row-hover:hover .play-icon {
+  opacity: 1; /* Show the play icon on hover for regular rows */
+}
+
+.active-sample:hover .play-icon {
+  opacity: 0 !important; /* Hide the play icon on hover for active samples */
+}
+
+.thumbnail {
+  border-radius: 4px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.play-pause-icon {
+  transform: translate(-50%, -50%) scale(2); // Scale up by 50%
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;  // Ensure visibility
+}
+
+.play-icon {
+  opacity: 0; /* Start with play icon hidden */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(2); /* Correct centering */
+  z-index: 3; /* Higher z-index to ensure it's above thumbnail */
+}
+
+.thumbnail-container {
+  position: relative; /* This sets up a new stacking context */
+  width: 32px;
+  height: 32px;
+  margin-right: 32px; /* Instead of adding margin in the class */
+}
+
+/* CSS for hiding the play icon on active samples */
+.active-sample .play-icon {
+  display: none !important; /* Force hide the play button on active samples */
 }
 
 
