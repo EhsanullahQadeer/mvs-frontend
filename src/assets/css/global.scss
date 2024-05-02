@@ -918,12 +918,34 @@ body {
   }
 }
 
+/* CSS */
+@media (max-width: 1200px) {
+  .wave-sample {
+    display: none;
+  }
+}
 
+/* CSS */
+@media (max-width: 900px) {
+  .meta-sample {
+    display: none;
+  }
+}
 
+/* CSS */
+@media (max-width: 1000px) {
+  .toggle-container {
+    display: none; /* Hides Toggle at <= 768px */
+  }
+  .download-link {
+    display: none; /* Hides Download link at <= 768px */
+  }
+}
 
+.dropdown-container {
 
-
-
+  z-index: 1000; /* Ensures it stays above other content */
+}
 
 @tailwind base;
 @tailwind components;

@@ -258,7 +258,8 @@ const handleMouseUp = () => {
   return (
     <React.Fragment>
       <Theme>
-        <div className="second-div w-full flex flex-col z-0 pb-[130px]">
+        <div className="second-div w-[100%] flex flex-col z-0 pb-[130px]">
+          
           <div className="bg-[#101010] p-[20px] flex justify-start">
             {loading ? (
               <>
@@ -365,23 +366,23 @@ const handleMouseUp = () => {
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                    className="wave-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
                   ></th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                    className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
                   >
                     Time
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                    className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
                   >
                     Key
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                    className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
                   >
                     BPM
                   </th>
@@ -485,7 +486,7 @@ const handleMouseUp = () => {
                             {sound?.author}
                           </span>
                         </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 w-[267px]">
+                          <td className="wave-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 w-[267px]">
                             <AudioPlayer
                               link={x.sample_src}
                               id={x.id}
@@ -494,22 +495,32 @@ const handleMouseUp = () => {
                               volume={0}
                             />
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                          <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
                             {x?.length}
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                          <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
                             {x?.keys}
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                          <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
                             {x?.bpm}
                           </td>
                           <td className="whitespace-nowrap  text-sm text-gray-300 text-center">
 
-                          {considerings.length > 0 && considerings.map((person, idx) => {
-                              return (
-                                <Avatar key={idx} name={person} round={true} title={person} size="30" className="flex ml-[5px] mb-[3px]" />
-                              );
-                          })}
+                          {
+                            considerings.length > 0 &&
+                              considerings.slice(0, 3).map((person, idx) => {
+                                return (
+                                  <Avatar
+                                    key={idx}
+                                    name={person}
+                                    round={true}
+                                    title={person}
+                                    size="30"
+                                    className="flex ml-[5px] mb-[3px]"
+                                  />
+                                );
+                              })
+                          }
                             <span
                               onClick={() => {
                                 setSample(x);
@@ -521,43 +532,28 @@ const handleMouseUp = () => {
                             </span>
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 flex justify-end items-center">
-
-                            {parseInt(x.is_liked) === 1 ? (
-                              <>
-
-
+                            <div className="toggle-container">
+                              {parseInt(x.is_liked) === 1 ? (
                                 <Toggle is_liked={true} sample={x} />
-
-
-                              </>
-                            ) : (
-                              <>
-
+                              ) : (
                                 <Toggle is_liked={false} sample={x} />
-
-
-                              </>
-                            )}
+                              )}
+                            </div>
                             <a
                               href="#"
+                              className="download-link cursor-pointer ml-[15px]"
                               onClick={async (e) => {
                                 e.preventDefault();
 
                                 const FileSaver = require("file-saver");
 
-                                await saveSampleDownload(
-                                  x.id
-                                );
+                                await saveSampleDownload(x.id);
 
-                                FileSaver.saveAs(
-                                  x.sample_src,
-                                  x.filename
-                                );
+                                FileSaver.saveAs(x.sample_src, x.filename);
                               }}
                               rel="noreferrer"
                               download
                               target="_blank"
-                              className="cursor-pointer ml-[15px]"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -575,13 +571,9 @@ const handleMouseUp = () => {
                                 />
                               </svg>
                             </a>
-
-                            <DropDown
-                              sample={x}
-                              getSamples={getSamples}
-                              page={current_page}
-                              sound={sound}
-                            />
+                            <div className="dropdown-container">
+                              <DropDown sample={x} getSamples={getSamples} page={current_page} sound={sound} />
+                            </div>
                           </td>
                         </tr>
                       </>
