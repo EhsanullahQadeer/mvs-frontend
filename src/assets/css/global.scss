@@ -95,9 +95,16 @@
 
 /* Last card doesn't need a margin to the right */
 .card:last-child {
-  margin-right: 0;
+  margin-right: 5;
 }
 
+
+.truncate-text {
+  width: 150px; /* Adjust to match the image width */
+  overflow: hidden; /* Hide overflowed text */
+  white-space: nowrap; /* Prevent text wrapping */
+  text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+}
 
 .card {
   flex-shrink: 0;
