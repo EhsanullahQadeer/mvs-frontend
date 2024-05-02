@@ -6,8 +6,6 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
     const wavesurfer = useRef(null);
     const [currentTime, setCurrentTime] = useState(0); // State for current playback time
     const [duration, setDuration] = useState(0);
-    const [repeat, setRepeat] = useState(true);
-
     
     useEffect(() => {
         if (waveformRef.current) {  // Make sure you're checking waveformRef here
