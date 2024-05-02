@@ -24,10 +24,11 @@ import ConsideringModal from "components/modals/considering";
 import ReactPaginate from "react-paginate";
 import Avatar from 'react-avatar';
 
-import skipBack from '../assets/img/skip-back.svg'
-import skipNext from '../assets/img/skip-forward.svg'
-import playButton from '../assets/img/play-circle.svg'
-import pauseButton from '../assets/img/pause-circle.svg'
+import skipBack from '../assets/img/player/skip-back.svg'
+import skipNext from '../assets/img/player/skip-forward.svg'
+import playButton from '../assets/img/player/play-circle.svg'
+import pauseButton from '../assets/img/player/pause-circle.svg'
+import Toggle from "components/toggle";
 
 interface RootState {
   auth: any;
@@ -355,11 +356,6 @@ const MyDownloadsPage = () => {
             </>
           ) : (
             <>
-              {/* <div className="custom-background">
-                <div className="bg-black-900">
-                  <div className="custom-width">
-                    <div className="bg-black-900 py-10">
-                      <div className="custom-padding"> */}
                         <div className="bg-[#101010] p-[10px]"> {/* Ensure this is the correct class and location */}
                           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="inline-block min-w-full py-2 align-middle sm:px-6">
@@ -420,11 +416,12 @@ const MyDownloadsPage = () => {
                                     </th>
                                   </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-800">
+                                <tbody className="container">
                                   {sound_samples &&
                                     sound_samples.map((x: any, index) => {
                                       const globalIndex = current_page * take + index; // Correctly compute the global index
                                       const considering = x.considering?.split(',');
+                                      console.log('test downloaded: ', x.is_liked);
                                       return (
                                         <>
                                           <tr key={x.id}
@@ -493,22 +490,22 @@ const MyDownloadsPage = () => {
                                               </span>{" "}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            <AudioPlayer
-                                              link={x?.sample_src}
-                                              id={x?.id}
-                                              setPlaying={false}
-                                              playerType={"sample"}
-                                              volume={0}
-                                              />
+                                              <AudioPlayer
+                                                link={x?.sample_src}
+                                                id={x?.id}
+                                                setPlaying={false}
+                                                playerType={"sample"}
+                                                volume={0}
+                                                />
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            {x?.length}
+                                              {x?.length}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            {x?.keys}
+                                              {x?.keys}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            {x?.bpm}
+                                              {x?.bpm}
                                             </td>
                                             <td className="whitespace-nowrap  text-sm text-gray-300">
                                               {considering && considering?.map((x: any) => {
@@ -531,40 +528,15 @@ const MyDownloadsPage = () => {
                                             </td>
                                             <td className="flex whitespace-nowrap px-3 py-4 items-center">
                                               <div className="ml-[100px] cursor-pointer">
-                                                {parseInt(x.is_liked) === 1 ? (
-                                                  <>
-                                                    <svg
-                                                      xmlns="http://www.w3.org/2000/svg"
-                                                      width={20}
-                                                      height={20}
-                                                      viewBox="0 0 20 20"
-                                                      fill="none"
-                                                    >
-                                                      <path
-                                                        d="M15.8337 11.6667C17.0753 10.45 18.3337 8.99167 18.3337 7.08333C18.3337 5.86776 17.8508 4.70197 16.9912 3.84243C16.1317 2.98289 14.9659 2.5 13.7503 2.5C12.2837 2.5 11.2503 2.91667 10.0003 4.16667C8.75033 2.91667 7.71699 2.5 6.25033 2.5C5.03475 2.5 3.86896 2.98289 3.00942 3.84243C2.14988 4.70197 1.66699 5.86776 1.66699 7.08333C1.66699 9 2.91699 10.4583 4.16699 11.6667L10.0003 17.5L15.8337 11.6667Z"
-                                                        fill="#CECFDA"
-                                                      />
-                                                    </svg>
-                                                  </>
-                                                ) : (
-                                                  <>
-                                                    <svg
-                                                      xmlns="http://www.w3.org/2000/svg"
-                                                      width={20}
-                                                      height={20}
-                                                      viewBox="0 0 20 20"
-                                                      fill="none"
-                                                    >
-                                                      <path
-                                                        d="M15.8337 11.6667C17.0753 10.45 18.3337 8.99167 18.3337 7.08333C18.3337 5.86776 17.8508 4.70197 16.9912 3.84243C16.1317 2.98289 14.9659 2.5 13.7503 2.5C12.2837 2.5 11.2503 2.91667 10.0003 4.16667C8.75033 2.91667 7.71699 2.5 6.25033 2.5C5.03475 2.5 3.86896 2.98289 3.00942 3.84243C2.14988 4.70197 1.66699 5.86776 1.66699 7.08333C1.66699 9 2.91699 10.4583 4.16699 11.6667L10.0003 17.5L15.8337 11.6667Z"
-                                                        stroke="#E6E6E6"
-                                                        strokeWidth="1.5"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                      />
-                                                    </svg>
-                                                  </>
-                                                )}
+                                              {parseInt(x.is_liked) === 1 ? (
+                                                <>
+                                                  <Toggle is_liked={true} sample={x} />
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <Toggle is_liked={false} sample={x} />
+                                                </>
+                                              )}
                                               </div>
                                               <a
                                                 href="#"
@@ -620,11 +592,6 @@ const MyDownloadsPage = () => {
                             </div>
                           </div>
                         </div>
-                      {/* </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
             </>
           )}
 
@@ -680,7 +647,7 @@ const MyDownloadsPage = () => {
         />
       </div>
       <div className="album-details">
-        <div className="album-name">
+      <div className="album-name" title={sound_samples[currentSampleIndex]?.filename}>
           {sound_samples[currentSampleIndex]?.filename ?? 'Album Name'}
         </div>
         <div className="album-author">

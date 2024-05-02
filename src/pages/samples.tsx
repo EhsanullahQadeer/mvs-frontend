@@ -1,9 +1,8 @@
 /*
-  Author: Zohaib 
-  Desc:   
-  Date:   
-
-*/
+ * Author: Zohaib 
+ * Desc:   
+ * Date:   
+ */
 
 
 /* eslint-disable react/jsx-no-target-blank */
@@ -21,6 +20,7 @@ import {
   getSoundSamples,
   saveSampleDownload,
 } from "redux/actionCreators/sounds";
+
 import AudioPlayer from "components/AudioPlayer";
 import DropDown from "components/theme/dropdown";
 import ConsideringModal from "components/modals/considering";
@@ -29,10 +29,10 @@ import ReactPaginate from "react-paginate";
 import Toggle from "components/toggle";
 import Avatar from 'react-avatar';
 
-import skipBack from '../assets/img/skip-back.svg'
-import skipNext from '../assets/img/skip-forward.svg'
-import playButton from '../assets/img/play-circle.svg'
-import pauseButton from '../assets/img/pause-circle.svg'
+import skipBack from '../assets/img/player/skip-back.svg'
+import skipNext from '../assets/img/player/skip-forward.svg'
+import playButton from '../assets/img/player/play-circle.svg'
+import pauseButton from '../assets/img/player/pause-circle.svg'
 
 
 const SamplesPage = () => {
@@ -72,29 +72,35 @@ const SamplesPage = () => {
     setManualToggle(true); // Indicate that the toggle was manual
   };
 
-  // Handler for changes in the slider
-  const handleVolumeChange = (event) => {
-    setVolume(event.target.value);
-  };
+// Handler for changes in the slider
+const handleVolumeChange = (event) => {
+  setVolume(event.target.value);
+};
 
-  const handleMouseDown = () => {
-    // Enable dragging
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-  };
+// Initialize the volume slider dragging state
+let isVolumeDragging = false;
+const handleMouseMove = (event) => {
+  // Calculate the new volume based on the mouse position
+  const slider = document.querySelector('.volume-slider').getBoundingClientRect();
+  const newVolume = Math.max(0, Math.min(100, ((event.clientX - slider.left) / slider.width) * 100));
+  setVolume(newVolume);
+};
 
-  const handleMouseUp = () => {
-    // Remove the event listeners when dragging ends
-    window.removeEventListener('mousemove', handleMouseMove);
-    window.removeEventListener('mouseup', handleMouseUp);
-  };
+const handleMouseDown = () => {
+  // Enable dragging
+  isVolumeDragging = true;
+  window.addEventListener('mousemove', handleMouseMove);
+  window.addEventListener('mouseup', handleMouseUp);
+};
 
-  const handleMouseMove = (event) => {
-    // Calculate the new volume based on the mouse position
-    const slider = document.querySelector('.volume-slider').getBoundingClientRect();
-    const newVolume = Math.max(0, Math.min(100, ((event.clientX - slider.left) / slider.width) * 100));
-    setVolume(newVolume);
-  };
+const handleMouseUp = () => {
+  // Remove the event listeners when dragging ends
+  isVolumeDragging = false;
+  window.removeEventListener('mousemove', handleMouseMove);
+  window.removeEventListener('mouseup', handleMouseUp);
+};
+
+
 
   useEffect(() => {
     // Clean up the event listeners when the component unmounts
@@ -252,7 +258,7 @@ const SamplesPage = () => {
   return (
     <React.Fragment>
       <Theme>
-        <div className="second-div w-full  min-h-screen flex flex-col z-0 pb-[130px]">
+        <div className="second-div w-full flex flex-col z-0 pb-[130px]">
           <div className="bg-[#101010] p-[20px] flex justify-start">
             {loading ? (
               <>
@@ -304,22 +310,7 @@ const SamplesPage = () => {
               </>
             )}
           </div>
-          {/* <div className="bg-[#151515] border border-x-0 border-y-[#222] p-[20px]">
-            <p className="text-[16px] text-[#C2C2C2] pb-[12px] font-['Mona-Sans-M']">
-              About
-            </p>
-            <p className="text-[14px] font-[400] font-['Mona-Sans-M'] text-[#a1a1a1]">
-              By downloading any content from this Sample Pack, you agree to a
-              20%{" "}
-            </p>
-            <p className="text-[14px] font-['Mona-Sans-M'] text-[#a1a1a1]">
-              publishing and starting 1% master royalty for instrument loops
-              and...{" "}
-              <a className="text-[#528FFF] underline" href="#">
-                View More
-              </a>
-            </p>
-          </div> */}
+
           <div className="drop bg-[#101010] px-[20px] py-[10px]">
             <h3 className="text-[20px] text-[#fff] font-['Mona-Sans-M']">
               Samples
@@ -329,6 +320,7 @@ const SamplesPage = () => {
               {total} Results
             </p>
           </div>
+
           {loading ? (
             <>
               <div role="status" className="text-center">
@@ -353,262 +345,255 @@ const SamplesPage = () => {
             </>
           ) : (
             <>
-              {/* <div className="custom-background">
-                <div className="bg-black-900">
-                  <div className="custom-width">
-                    <div className="bg-black-900 py-10">
-                      <div className="custom-padding"> */}
-                        <div className="bg-[#101010] p-[10px]"> {/* Ensure this is the correct class and location */}
-                          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="inline-block min-w-full py-2 align-middle sm:px-6">
-                            <div style={{ borderTop: "2px solid #333", margin: "0 0px" }}></div>
-                              <table className="min-w-full divide-y divide-gray-700">
-                                <thead>
-                                  <tr>
-                                    <th
-                                      scope="col"
-                                      className="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-white sm:pl-0"
-                                    >
-                                      Sample
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    >
-                                      Filename
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
-                                    ></th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
-                                    >
-                                      Time
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
-                                    >
-                                      Key
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    >
-                                      BPM
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    >
-                                      Considering
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    >
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="relative py-3.5 pl-3 pr-4 sm:pr-0"
-                                    >
-                                      <span className="sr-only">Edit</span>
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody className="container">
-                                  {sound_samples &&
-                                    sound_samples.map((x: any, index) => {
-                                      const globalIndex = current_page * take + index; // Correctly compute the global index
-                                      const considerings = sound_samples[index]?.considering?.split(',') || [];
-                                      return (
-                                        <>
-                                          <tr 
-                                            key={x.id}
-                                            id={`sample-item-${x.id}`}
-                                            className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${index === currentSampleIndex ? 'active-sample' : ''}`}>
-                                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            <div style={{
-                                              display: 'flex',
-                                              justifyContent: 'center',
-                                              alignItems: 'center',
-                                            }}>
-                                              <div className="thumbnail-container">
-                                                <img
-                                                  
-                                                  className={
-                                                    index !== currentSampleIndex
-                                                      ? "thumbnail cursor-pointer mr-[32px]" 
-                                                      : "play-pause-icon cursor-pointer mr-[32px]"
-                                                  }
-                                                  style={
-                                                    index !== currentSampleIndex
-                                                      ? { width: '32px', height: '32px', borderRadius: '4px'  }
-                                                      : { width: '20px', height: '20px', borderRadius: '4px'  }
-                                                  }
-                                                  src={
-                                                    index === currentSampleIndex
-                                                      ? (playing
-                                                          ? pauseButton
-                                                          : playButton )
-                                                      : sound?.thumbnail
-                                                  }
-                                                  alt={
-                                                    index === currentSampleIndex
-                                                      ? "Playing"
-                                                      : "Thumbnail"
-                                                  }
-                                                  onClick={async (e) => {
-                                                    e.stopPropagation();
-                                                    handleSampleClick(x, index);
-                                                    setPreview(true);
-                                                    handlePlayToggle();
-                                                }}
-                                              />
-                                              <img
-                                                  src={playButton}
-                                                  className="play-icon"
-                                                  alt="Play Button"
-                                                  style={
-                                                    { width: '20px', height: '20px', borderRadius: '4px'  }
-                                                  }                                                  
-                                                  onClick={async (e) => {
-                                                    e.stopPropagation();
-                                                    handleSampleClick(x, index);
-                                                    setPreview(true);
-                                                    handlePlayToggle();
-                                                }}
-                                              />
-                                            </div>
-                                          </div>
-                                          </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']">
-                                              {x.filename}
-                                              <br />{" "}
-                                              <span className="text-[12px] text-[#6f6f6f]">
-                                                {sound?.author}
-                                              </span>{" "}
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            <div className="w-[300px] min-w-0">
-                                              <AudioPlayer
-                                                link={x.sample_src}
-                                                id={x.id}
-                                                setPlaying={false}
-                                                playerType={"sample"}
-                                                volume={0}
-                                                />
-                                              </div>
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              {x?.length}
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              {x?.keys}
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                              {x?.bpm}
-                                            </td>
-                                            <td className="whitespace-nowrap  text-sm text-gray-300">
-
-                                            {considerings.length > 0 && considerings.map((person, idx) => {
-                                                return (
-                                                  <Avatar key={idx} name={person} round={true} title={person} size="30" className="flex ml-[5px] mb-[3px]" />
-                                                );
-                                            })}
-                                              <span
-                                                onClick={() => {
-                                                  setSample(x);
-                                                  setConsidering(true);
-                                                }}
-                                                className="cursor-pointer text-[10px] ml-[10px] mt-[10px] text-[#929292] underline font-['Mona-Sans-M']"
-                                              >
-                                                View All
-                                              </span>
-                                            </td>
-                                            <td className="flex whitespace-nowrap px-3 py-4 items-center">
-                                              {parseInt(x.is_liked) === 1 ? (
-                                                <>
-
-
-                                                  <Toggle is_liked={true} sample={x} />
-
-
-                                                </>
-                                              ) : (
-                                                <>
-
-                                                  <Toggle is_liked={false} sample={x} />
-
-
-                                                </>
-                                              )}
-                                              <a
-                                                href="#"
-                                                onClick={async (e) => {
-                                                  e.preventDefault();
-
-                                                  const FileSaver = require("file-saver");
-
-                                                  await saveSampleDownload(
-                                                    x.id
-                                                  );
-
-                                                  FileSaver.saveAs(
-                                                    x.sample_src,
-                                                    x.filename
-                                                  );
-                                                }}
-                                                rel="noreferrer"
-                                                download
-                                                target="_blank"
-                                                className="cursor-pointer ml-[15px]"
-                                              >
-                                                <svg
-                                                  xmlns="http://www.w3.org/2000/svg"
-                                                  width={24}
-                                                  height={24}
-                                                  viewBox="0 0 24 24"
-                                                  fill="none"
-                                                >
-                                                  <path
-                                                    d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-                                                    stroke="#CDCDCD"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                  />
-                                                </svg>
-                                              </a>
-
-                                              <DropDown
-                                                sample={x}
-                                                getSamples={getSamples}
-                                                page={current_page}
-                                                sound={sound}
-                                              />
-                                            </td>
-                                          </tr>
-                                        </>
-                                      );
-                                    })}
-                                </tbody>
-                              </table>
-                            </div>
+          <table
+            className="divide-y divide-gray-700"
+            style={{ width: '100%' }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    scope="col"
+                    className="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-white sm:pl-0"
+                  >
+                    Sample
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                  >
+                    Filename
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                  ></th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                  >
+                    Time
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                  >
+                    Key
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                  >
+                    BPM
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                  >
+                    Considering
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-right text-sm font-semibold text-white"
+                  >
+                  </th>
+                  <th
+                    scope="col"
+                    className="relative py-3.5 pl-3 pr-4 sm:pr-0"
+                  >
+                    <span className="sr-only">Edit</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="">
+                {sound_samples &&
+                  sound_samples.map((x: any, index) => {
+                    const globalIndex = current_page * take + index; // Correctly compute the global index
+                    const considerings = sound_samples[index]?.considering?.split(',') || [];
+                    return (
+                      <>
+                        <tr 
+                          key={x.id}
+                          id={`sample-item-${x.id}`}
+                          className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${index === currentSampleIndex ? 'active-sample' : ''}`}>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                            <div className="thumbnail-container">
+                              <img
+                                
+                                className={
+                                  index !== currentSampleIndex
+                                    ? "thumbnail cursor-pointer mr-[32px]" 
+                                    : "play-pause-icon cursor-pointer mr-[32px]"
+                                }
+                                style={
+                                  index !== currentSampleIndex
+                                    ? { width: '32px', height: '32px', borderRadius: '4px'  }
+                                    : { width: '20px', height: '20px', borderRadius: '4px'  }
+                                }
+                                src={
+                                  index === currentSampleIndex
+                                    ? (playing
+                                        ? pauseButton
+                                        : playButton )
+                                    : sound?.thumbnail
+                                }
+                                alt={
+                                  index === currentSampleIndex
+                                    ? "Playing"
+                                    : "Thumbnail"
+                                }
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  handleSampleClick(x, index);
+                                  setPreview(true);
+                                  handlePlayToggle();
+                              }}
+                            />
+                            <img
+                                src={playButton}
+                                className="play-icon"
+                                alt="Play Button"
+                                style={
+                                  { width: '20px', height: '20px', borderRadius: '4px'  }
+                                }                                                  
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  handleSampleClick(x, index);
+                                  setPreview(true);
+                                  handlePlayToggle();
+                              }}
+                            />
                           </div>
                         </div>
-                      {/* </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
+                        </td>
+                        <td
+                          className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']"
+                          style={{
+                            maxWidth: '252px', // Adjust as per your requirement
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {x.filename}
+                          <br />
+                          <span className="text-[12px] text-[#6f6f6f]">
+                            {sound?.author}
+                          </span>
+                        </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 w-[267px]">
+                            <AudioPlayer
+                              link={x.sample_src}
+                              id={x.id}
+                              setPlaying={false}
+                              playerType={"sample"}
+                              volume={0}
+                            />
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                            {x?.length}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                            {x?.keys}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                            {x?.bpm}
+                          </td>
+                          <td className="whitespace-nowrap  text-sm text-gray-300 text-center">
+
+                          {considerings.length > 0 && considerings.map((person, idx) => {
+                              return (
+                                <Avatar key={idx} name={person} round={true} title={person} size="30" className="flex ml-[5px] mb-[3px]" />
+                              );
+                          })}
+                            <span
+                              onClick={() => {
+                                setSample(x);
+                                setConsidering(true);
+                              }}
+                              className="cursor-pointer text-[10px] ml-[10px] mt-[10px] text-[#929292] underline font-['Mona-Sans-M']"
+                            >
+                              View All
+                            </span>
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 flex justify-end items-center">
+
+                            {parseInt(x.is_liked) === 1 ? (
+                              <>
+
+
+                                <Toggle is_liked={true} sample={x} />
+
+
+                              </>
+                            ) : (
+                              <>
+
+                                <Toggle is_liked={false} sample={x} />
+
+
+                              </>
+                            )}
+                            <a
+                              href="#"
+                              onClick={async (e) => {
+                                e.preventDefault();
+
+                                const FileSaver = require("file-saver");
+
+                                await saveSampleDownload(
+                                  x.id
+                                );
+
+                                FileSaver.saveAs(
+                                  x.sample_src,
+                                  x.filename
+                                );
+                              }}
+                              rel="noreferrer"
+                              download
+                              target="_blank"
+                              className="cursor-pointer ml-[15px]"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width={24}
+                                height={24}
+                                viewBox="0 0 24 24"
+                                fill="none"
+                              >
+                                <path
+                                  d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                                  stroke="#CDCDCD"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </a>
+
+                            <DropDown
+                              sample={x}
+                              getSamples={getSamples}
+                              page={current_page}
+                              sound={sound}
+                            />
+                          </td>
+                        </tr>
+                      </>
+                    );
+                  })}
+              </tbody>
+            </table>
             </>
           )}
 
-          {/* Start Pagination */}
-
+          
+          {/* PAGINATION */}
           {total > 0 && (
             <>
               <ReactPaginate
@@ -629,8 +614,7 @@ const SamplesPage = () => {
               />
             </>
           )}
-
-          {/* End Pagination */}
+          {/* End PAGINATION */}
 
           {sound?.terms && (
             <>
@@ -672,7 +656,7 @@ const SamplesPage = () => {
         />
       </div>
       <div className="album-details">
-        <div className="album-name">
+        <div className="album-name" title={sound_samples[currentSampleIndex]?.filename}>
           {sound_samples[currentSampleIndex]?.filename ?? 'Album Name'}
         </div>
         <div className="album-author">

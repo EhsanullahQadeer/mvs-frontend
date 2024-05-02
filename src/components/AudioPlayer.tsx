@@ -6,6 +6,8 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
     const wavesurfer = useRef(null);
     const [currentTime, setCurrentTime] = useState(0); // State for current playback time
     const [duration, setDuration] = useState(0);
+    const [repeat, setRepeat] = useState(true);
+
     
     useEffect(() => {
         if (waveformRef.current) {  // Make sure you're checking waveformRef here
@@ -24,6 +26,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
                     mediaControls: false,
                 });
             };
+        
 
             if (playerType === "sample") {
                 wavesurfer.current = createWaveSurfer();
@@ -31,6 +34,31 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
             } else if (playerType === "player") {
                 wavesurfer.current = createWaveSurfer();
             }
+
+            const handleKeyDown = (event) => {
+                if (event.key === "ArrowLeft") {
+                  // Go back 2 seconds
+                  event.preventDefault();
+                  if (wavesurfer.current && wavesurfer.current.isPlaying()) {
+                    const currentTime = wavesurfer.current.getCurrentTime();
+                    const newTime = Math.max(0, currentTime - 2);  // Ensure time doesn't go below 0
+                    wavesurfer.current.seekTo(newTime / wavesurfer.current.getDuration());  // Calculate the ratio for seeking
+                    console.log("newTime: ", newTime);
+                  }
+                } else if (event.key === "ArrowRight") {
+                  // Go forward 2 seconds
+                  event.preventDefault();
+                  if (wavesurfer.current && wavesurfer.current.isPlaying()) {
+                    const currentTime = wavesurfer.current.getCurrentTime();
+                    const duration = wavesurfer.current.getDuration();
+                    const newTime = Math.min(duration, currentTime + 2);  // Ensure time doesn't exceed the duration
+                    wavesurfer.current.seekTo(newTime / duration);  // Calculate the ratio for seeking
+                    console.log("newTime: ", newTime);
+                  }
+                }
+              };
+
+            window.addEventListener("keydown", handleKeyDown);
 
             const loadTrack = async () => {
                 try {
@@ -65,6 +93,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
               });
 
               return () => {
+                window.removeEventListener("keydown", handleKeyDown); // Remove the event listener
                 try {
                     wavesurfer.current.destroy();
                 } catch (error) {
@@ -75,6 +104,15 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
               };
         }
     }, [link, playerType]);
+
+    useEffect(() => {
+        if (wavesurfer.current) {
+          wavesurfer.current.on("finish", () => {
+            wavesurfer.current.seekTo(0);
+            wavesurfer.current.play();
+          });
+        }
+      }, [setPlaying]);
 
     useEffect(() => {
         if (wavesurfer.current) {
@@ -118,20 +156,31 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
     }
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center', minWidth: "175px" }} id={`id-${id}`} className="audio">
-            {playerType === "player" && (
-                <div style={{ marginRight: '10px', marginLeft: '10px', color: 'white', fontWeight: 'bold' }}>
-                    <span>{formatTime(currentTime)}</span>
-                </div>
-            )}
-            <div ref={waveformRef} style={{  width: '450px', flexGrow: 0 }}></div>
-            {playerType === "player" && (
-                <div style={{ marginLeft: '10px', color: 'white', fontWeight: 'bold' }}>
-                    <span>{formatTime(duration)}</span>
-                </div>
-            )}
-        </div>
-    );
+          <div
+            style={
+              playerType !== 'sample'
+                ? { display: 'flex', alignItems: 'center' }
+                : {}
+            }
+            id={`id-${id}`}
+            className="audio"
+          >
+          {playerType === "player" && (
+              <div style={{ marginRight: '10px', marginLeft: '10px', color: 'white', fontWeight: 'bold' }}>
+                  <span>{formatTime(currentTime)}</span>
+              </div>
+          )}
+          <div
+            ref={waveformRef}
+            className={playerType === 'player' ? 'w-[450px] flex-grow-0' : ''}
+          ></div>
+          {playerType === "player" && (
+              <div style={{ marginLeft: '10px', color: 'white', fontWeight: 'bold' }}>
+                  <span>{formatTime(duration)}</span>
+              </div>
+          )}
+      </div>
+  );
 };
 
 export default AudioPlayer;

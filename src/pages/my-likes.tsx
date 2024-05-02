@@ -23,10 +23,10 @@ import ConsideringModal from "components/modals/considering";
 import ReactPaginate from "react-paginate";
 import Avatar from 'react-avatar';
 
-import skipBack from '../assets/img/skip-back.svg'
-import skipNext from '../assets/img/skip-forward.svg'
-import playButton from '../assets/img/play-circle.svg'
-import pauseButton from '../assets/img/pause-circle.svg'
+import skipBack from '../assets/img/player/skip-back.svg'
+import skipNext from '../assets/img/player/skip-forward.svg'
+import playButton from '../assets/img/player/play-circle.svg'
+import pauseButton from '../assets/img/player/pause-circle.svg'
 
 interface RootState {
   auth: any;
@@ -285,7 +285,8 @@ const MyLikesPage = () => {
   return (
     <React.Fragment>
       <Theme>
-        <div className="second-div w-[85%] flex flex-col pb-[130px] z-0">
+        <div className="second-div w-[100%] flex flex-col pb-[130px] z-0">
+
           <div className="bg-[#101010] p-[20px] flex justify-start">
             <div className="mt-[16px] gap-[22px] flex">
               <div>
@@ -354,278 +355,263 @@ const MyLikesPage = () => {
             </>
           ) : (
             <>
-              {/* <div className="custom-background">
-                <div className="bg-black-900">
-                  <div className="custom-width">
-                    <div className="bg-black-900 py-10">
-                      <div className="custom-padding"> */}
-                        <div className="bg-[#101010] p-[10px]"> {/* Ensure this is the correct class and location */}
-                          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="inline-block min-w-full py-2 align-middle sm:px-6">
-                            <div style={{ borderTop: "2px solid #333", margin: "0 0px" }}></div>
-                              <table className="min-w-full divide-y divide-gray-700">
-                                <thead>
-                                <tr>
-                                    <th
-                                      scope="col"
-                                      className="py-3.5 pl-4 pr-3 text-left  text-sm font-semibold text-white sm:pl-0"
-                                    >
-                                      Sample
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    >
-                                      Filename
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
-                                    ></th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
-                                    >
-                                      Time
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-center text-sm font-semibold text-white"
-                                    >
-                                      Key
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    >
-                                      BPM
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    >
-                                      Considering
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                                    >
-                                    </th>
-                                    <th
-                                      scope="col"
-                                      className="relative py-3.5 pl-3 pr-4 sm:pr-0"
-                                    >
-                                      <span className="sr-only">Edit</span>
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-800">
-                                  {sound_samples && sampleDetails &&
-                                    sound_samples.map((x: any, index) => {
-                                      const globalIndex = current_page * take + index; // Correctly compute the global index
-                                      const considering = x.considering?.split(',');
-                                      console.log('dd: ', sampleDetails[currentSampleIndex]?.thumbnail);
-                                      return (
-                                        <>
-                                          <tr key={x.id}
-                                            id={`sample-item-${x.id}`}
-                                            className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${index === currentSampleIndex ? 'active-sample' : ''}`}>
-                                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            <div style={{
-                                              display: 'flex',
-                                              justifyContent: 'center',
-                                              alignItems: 'center',
-                                            }}>
-                                              <div className="thumbnail-container">
-                                                <img
-                                                  
-                                                  className={
-                                                    index !== currentSampleIndex
-                                                      ? "thumbnail cursor-pointer mr-[32px]" 
-                                                      : "play-pause-icon cursor-pointer mr-[32px]"
-                                                  }
-                                                  style={
-                                                    index !== currentSampleIndex
-                                                      ? { width: '32px', height: '32px', borderRadius: '4px'  }
-                                                      : { width: '20px', height: '20px', borderRadius: '4px'  }
-                                                  }
-                                                  src={
-                                                    index === currentSampleIndex
-                                                    ? (playing
-                                                      ? pauseButton
-                                                      : playButton )
-                                                      : sampleDetails[index]?.thumbnail
-                                                  }
-                                                  alt={
-                                                    index === currentSampleIndex
-                                                      ? "Playing"
-                                                      : "Thumbnail"
-                                                  }
-                                                  onClick={async (e) => {
-                                                    e.stopPropagation();
-                                                    handleSampleClick(x, index);
-                                                    setPreview(true);
-                                                    handlePlayToggle();
-                                                }}
-                                              />
-                                              <img
-                                                  src={playButton}
-                                                  className="play-icon"
-                                                  alt="Play Button"
-                                                  style={
-                                                    { width: '20px', height: '20px', borderRadius: '4px'  }
-                                                  }                                                  
-                                                  onClick={async (e) => {
-                                                    e.stopPropagation();
-                                                    handleSampleClick(x, index);
-                                                    setPreview(true);
-                                                    handlePlayToggle();
-                                                }}
-                                              />
-                                            </div>
-                                          </div>
-
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']">
-                                              {x.filename}
-                                              <br />{" "}
-                                              <span className="text-[12px] text-[#6f6f6f]">
-                                              {sampleDetails[index]?.author}
-                                              </span>{" "}
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            <AudioPlayer
-                                              link={x?.sample_src}
-                                              id={x?.id}
-                                              setPlaying={false}
-                                              playerType={"sample"}
-                                              volume={0}
-                                              />
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            {x?.length}
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            {x?.keys}
-                                            </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                                            {x?.bpm}
-                                            </td>
-                                            <td className="whitespace-nowrap  text-sm text-gray-300">
-                                              {considering && considering?.map((x: any) => {
-
-                                                return (
-                                                  <>
-                                                    <Avatar name={x} round={true} title={x} size="30" className="flex ml-[5px] mb-[3px]" />
-                                                  </>
-                                                )
-                                              })}
-                                              <span
-                                                onClick={() => {
-                                                  setSample(x);
-                                                  setConsidering(true);
-                                                }}
-                                                className="cursor-pointer text-[10px] ml-[10px] mt-[10px] text-[#929292] underline font-['Mona-Sans-M']"
-                                              >
-                                                View All
-                                              </span>
-                                            </td>
-                                            <td className="flex whitespace-nowrap px-3 py-4 items-center">
-                                              <div className="ml-[100px] cursor-pointer">
-                                                {parseInt(x.is_liked) === 1 ? (
-                                                  <>
-                                                    <svg
-                                                      xmlns="http://www.w3.org/2000/svg"
-                                                      width={20}
-                                                      height={20}
-                                                      viewBox="0 0 20 20"
-                                                      fill="none"
-                                                    >
-                                                      <path
-                                                        d="M15.8337 11.6667C17.0753 10.45 18.3337 8.99167 18.3337 7.08333C18.3337 5.86776 17.8508 4.70197 16.9912 3.84243C16.1317 2.98289 14.9659 2.5 13.7503 2.5C12.2837 2.5 11.2503 2.91667 10.0003 4.16667C8.75033 2.91667 7.71699 2.5 6.25033 2.5C5.03475 2.5 3.86896 2.98289 3.00942 3.84243C2.14988 4.70197 1.66699 5.86776 1.66699 7.08333C1.66699 9 2.91699 10.4583 4.16699 11.6667L10.0003 17.5L15.8337 11.6667Z"
-                                                        fill="#CECFDA"
-                                                      />
-                                                    </svg>
-                                                  </>
-                                                ) : (
-                                                  <>
-                                                    <svg
-                                                      xmlns="http://www.w3.org/2000/svg"
-                                                      width={20}
-                                                      height={20}
-                                                      viewBox="0 0 20 20"
-                                                      fill="none"
-                                                    >
-                                                      <path
-                                                        d="M15.8337 11.6667C17.0753 10.45 18.3337 8.99167 18.3337 7.08333C18.3337 5.86776 17.8508 4.70197 16.9912 3.84243C16.1317 2.98289 14.9659 2.5 13.7503 2.5C12.2837 2.5 11.2503 2.91667 10.0003 4.16667C8.75033 2.91667 7.71699 2.5 6.25033 2.5C5.03475 2.5 3.86896 2.98289 3.00942 3.84243C2.14988 4.70197 1.66699 5.86776 1.66699 7.08333C1.66699 9 2.91699 10.4583 4.16699 11.6667L10.0003 17.5L15.8337 11.6667Z"
-                                                        stroke="#E6E6E6"
-                                                        strokeWidth="1.5"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                      />
-                                                    </svg>
-                                                  </>
-                                                )}
-                                              </div>
-                                              <a
-                                                href="#"
-                                                onClick={async (e) => {
-                                                  e.preventDefault();
-
-                                                  const FileSaver = require("file-saver");
-
-                                                  await saveSampleDownload(
-                                                    x.id
-                                                  );
-
-                                                  FileSaver.saveAs(
-                                                    x.sample_src,
-                                                    x.filename
-                                                  );
-                                                }}
-                                                rel="noreferrer"
-                                                download
-                                                target="_blank"
-                                                className="cursor-pointer ml-[15px]"
-                                              >
-                                                <svg
-                                                  xmlns="http://www.w3.org/2000/svg"
-                                                  width={24}
-                                                  height={24}
-                                                  viewBox="0 0 24 24"
-                                                  fill="none"
-                                                >
-                                                  <path
-                                                    d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-                                                    stroke="#CDCDCD"
-                                                    strokeWidth="1.5"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                  />
-                                                </svg>
-                                              </a>
-
-                                              <DropDown
-                                                sample={x}
-                                                getSamples={getSamples}
-                                                page={current_page}
-                                                sound={sound}
-                                              />
-                                            </td>
-                                          </tr>
-                                        </>
-                                      );
-                                    })}
-                                </tbody>
-                              </table>
+              <div className="table-responsive">
+                <table className="min-w-full divide- divide-gray-700">
+                  <thead>
+                    <tr>
+                      <th
+                        scope="col"
+                        className="py-3.5 pl-4 pr-3 text-center  text-sm font-semibold text-white sm:pl-0"
+                      >
+                        Sample
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                      >
+                        Filename
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                      ></th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                      >
+                        Time
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                      >
+                        Key
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                      >
+                        BPM
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                      >
+                        Considering
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                      >
+                      </th>
+                      <th
+                        scope="col"
+                        className="relative py-3.5 pl-3 pr-4 sm:pr-0"
+                      >
+                        <span className="sr-only">Edit</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-800">
+                    {sound_samples && sampleDetails &&
+                      sound_samples.map((x: any, index) => {
+                        const globalIndex = current_page * take + index; // Correctly compute the global index
+                        const considering = x.considering?.split(',');
+                        console.log('test: ', x.is_liked);
+                        return (
+                          <>
+                            <tr key={x.id}
+                              id={`sample-item-${x.id}`}
+                              className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${index === currentSampleIndex ? 'active-sample' : ''}`}>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                              <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                              }}>
+                                <div className="thumbnail-container">
+                                  <img
+                                    
+                                    className={
+                                      index !== currentSampleIndex
+                                        ? "thumbnail cursor-pointer mr-[32px]" 
+                                        : "play-pause-icon cursor-pointer mr-[32px]"
+                                    }
+                                    style={
+                                      index !== currentSampleIndex
+                                        ? { width: '32px', height: '32px', borderRadius: '4px'  }
+                                        : { width: '20px', height: '20px', borderRadius: '4px'  }
+                                    }
+                                    src={
+                                      index === currentSampleIndex
+                                      ? (playing
+                                        ? pauseButton
+                                        : playButton )
+                                        : sampleDetails[index]?.thumbnail
+                                    }
+                                    alt={
+                                      index === currentSampleIndex
+                                        ? "Playing"
+                                        : "Thumbnail"
+                                    }
+                                    onClick={async (e) => {
+                                      e.stopPropagation();
+                                      handleSampleClick(x, index);
+                                      setPreview(true);
+                                      handlePlayToggle();
+                                  }}
+                                />
+                                <img
+                                    src={playButton}
+                                    className="play-icon"
+                                    alt="Play Button"
+                                    style={
+                                      { width: '20px', height: '20px', borderRadius: '4px'  }
+                                    }                                                  
+                                    onClick={async (e) => {
+                                      e.stopPropagation();
+                                      handleSampleClick(x, index);
+                                      setPreview(true);
+                                      handlePlayToggle();
+                                  }}
+                                />
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      {/* </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
+
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-R'] max-w-[300px] overflow-hidden">
+                                  {x.filename}
+                                <br />{" "}
+                                <span className="text-[12px] text-[#6f6f6f]">
+                                  {sampleDetails[index]?.author}
+                                </span>{" "}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M'] max-w-[150px] overflow-hidden">
+                                <AudioPlayer
+                                  link={x?.sample_src}
+                                  id={x?.id}
+                                  setPlaying={false}
+                                  playerType={"sample"}
+                                  volume={0}
+                                  />
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                                {x?.length}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 max-w-[100px]">
+                                {x?.keys}
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                                {x?.bpm}
+                              </td>
+                              <td className="whitespace-nowrap  text-sm text-gray-300">
+                                {considering && considering?.map((x: any) => {
+
+                                  return (
+                                    <>
+                                      <Avatar name={x} round={true} title={x} size="30" className="flex ml-[5px] mb-[3px]" />
+                                    </>
+                                  )
+                                })}
+                                <span
+                                  onClick={() => {
+                                    setSample(x);
+                                    setConsidering(true);
+                                  }}
+                                  className="cursor-pointer text-[10px] ml-[10px] mt-[10px] text-[#929292] underline font-['Mona-Sans-M']"
+                                >
+                                  View All
+                                </span>
+                              </td>
+                              <td className="flex whitespace-nowrap px-3 py-4 items-center max-w-[200px]">
+                                <div className="ml-[100px] cursor-pointer">
+                                  {parseInt(x.is_liked) === 1 ? (
+                                    <>
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width={20}
+                                        height={20}
+                                        viewBox="0 0 20 20"
+                                        fill="none"
+                                      >
+                                        <path
+                                          d="M15.8337 11.6667C17.0753 10.45 18.3337 8.99167 18.3337 7.08333C18.3337 5.86776 17.8508 4.70197 16.9912 3.84243C16.1317 2.98289 14.9659 2.5 13.7503 2.5C12.2837 2.5 11.2503 2.91667 10.0003 4.16667C8.75033 2.91667 7.71699 2.5 6.25033 2.5C5.03475 2.5 3.86896 2.98289 3.00942 3.84243C2.14988 4.70197 1.66699 5.86776 1.66699 7.08333C1.66699 9 2.91699 10.4583 4.16699 11.6667L10.0003 17.5L15.8337 11.6667Z"
+                                          fill="#CECFDA"
+                                        />
+                                      </svg>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width={20}
+                                        height={20}
+                                        viewBox="0 0 20 20"
+                                        fill="none"
+                                      >
+                                        <path
+                                          d="M15.8337 11.6667C17.0753 10.45 18.3337 8.99167 18.3337 7.08333C18.3337 5.86776 17.8508 4.70197 16.9912 3.84243C16.1317 2.98289 14.9659 2.5 13.7503 2.5C12.2837 2.5 11.2503 2.91667 10.0003 4.16667C8.75033 2.91667 7.71699 2.5 6.25033 2.5C5.03475 2.5 3.86896 2.98289 3.00942 3.84243C2.14988 4.70197 1.66699 5.86776 1.66699 7.08333C1.66699 9 2.91699 10.4583 4.16699 11.6667L10.0003 17.5L15.8337 11.6667Z"
+                                          stroke="#E6E6E6"
+                                          strokeWidth="1.5"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
+                                      </svg>
+                                    </>
+                                  )}
+                                </div>
+                                <a
+                                  href="#"
+                                  onClick={async (e) => {
+                                    e.preventDefault();
+
+                                    const FileSaver = require("file-saver");
+
+                                    await saveSampleDownload(
+                                      x.id
+                                    );
+
+                                    FileSaver.saveAs(
+                                      x.sample_src,
+                                      x.filename
+                                    );
+                                  }}
+                                  rel="noreferrer"
+                                  download
+                                  target="_blank"
+                                  className="cursor-pointer ml-[15px]"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={24}
+                                    height={24}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                                      stroke="#CDCDCD"
+                                      strokeWidth="1.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                  </svg>
+                                </a>
+
+                                <DropDown
+                                  sample={x}
+                                  getSamples={getSamples}
+                                  page={current_page}
+                                  sound={sound}
+                                />
+                              </td>
+                            </tr>
+                          </>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
             </>
           )}
 
@@ -670,7 +656,7 @@ const MyLikesPage = () => {
       { preview && (
     <>
     
-    <div className="bottom-audio-player" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <div className="bottom-audio-player" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
   <div style={{ paddingLeft: '60px' }}></div>
   <div>
     <div className="sample-container">
@@ -681,7 +667,7 @@ const MyLikesPage = () => {
         />
       </div>
       <div className="album-details">
-        <div className="album-name">
+        <div className="album-name" title={sound_samples[currentSampleIndex]?.filename}>
           {sound_samples[currentSampleIndex]?.filename ?? 'Album Name'}
         </div>
         <div className="album-author">

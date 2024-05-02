@@ -26,7 +26,6 @@ import  config from "config/config"
     return axios.post(`${config.defaults.api_url}/users/request/access`,data)
   }
 
-
   export async function verifyCode(data:any) {
     return axios.post(`${config.defaults.api_url}/users/verify/code`,data)
   }
@@ -51,7 +50,6 @@ import  config from "config/config"
   export async function redirectUser(data:any) {
     return axios.post(`${config.defaults.api_url}/users/redirect`,data)
   }
-
 
   export async function verifyEmail(data:any) {
     return axios.put(`${config.defaults.api_url}/api/auth/verify-email`,data)
@@ -78,4 +76,8 @@ import  config from "config/config"
   
   export async function updateUser(params: any, id: any) {
     return axios.post(`${config.defaults.api_url}/users/update/${id}`, params);
+  }
+
+  export async function updateUserPassword(params: any) {
+    return axios.post(`${config.defaults.api_url}/users/update/password/`, params);
   }

@@ -38,6 +38,19 @@
 }
 
 
+@font-face {
+  font-family: "Mona-Sans-R";
+  src: url("../fonts/Mona-Sans-SemiBold.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/Mona-Sans-SemiBold.woff2") format("woff2"),
+    url("../fonts/Mona-Sans-SemiBold.woff") format("woff"),
+    url("../fonts/Mona-Sans-SemiBold.ttf") format("truetype"),
+    url("../fonts/Mona-Sans-SemiBold.svg#Mona-Sans-SemiBold") format("svg");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+
 .horizontal-scroll-wrapper {
   display: flex; /* Align card items in a row */
   overflow-x: auto;
@@ -85,22 +98,6 @@
   margin-right: 0;
 }
 
-.custom-background {
-  background-color: #101010; /* hex code needs to be defined in a valid CSS way */
-}
-
-.custom-width {
-  max-width: 1128px; /* Example conversion of Tailwind's max-w-7xl */
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.custom-padding {
-  padding-left: 16px; /* px-4 */
-  padding-right: 16px; /* px-4 */
-  padding-top: 40px; /* py-10 */
-  padding-bottom: 40px; /* py-10 */
-}
 
 .card {
   flex-shrink: 0;
@@ -120,6 +117,9 @@
   -webkit-overflow-scrolling: touch; /* for smooth scrolling on iOS */
 }
 
+
+
+/* Set the background color */
 body {
   background-color: #101010;
 }
@@ -128,9 +128,6 @@ body {
   margin: 0 auto;
 }
 
-.StripeElement--focus {
-  box-shadow: 0 1px 3px 0 #cfd7df;
-}
 
 .zindex {
   z-index: 999 !important;
@@ -159,13 +156,66 @@ body {
   flex: 0 1 auto; /* Do not grow beyond content size, allow shrink */
 }
 
+.two-divs {
+  max-width: 100vw; /* Make sure the element doesn't exceed the viewport width */
+  width: 100%; /* Take up 100% of the container width */
+  box-sizing: border-box; /* Include padding and borders in the element's width */
+  padding: 0 10px; /* Adjust horizontal padding as needed */
+}
+@media (max-width: 600px) {
+  .two-divs {
+    padding: 0 5px; /* Decrease padding for smaller screens */
+  }
+}
+
 /* If the middle container needs to be bigger */
 .bottom-audio-player > div:nth-child(3) {
   flex: 2; /* Allows the middle container to take twice the space of the other two */
 }
 
+/* Apply styles for the custom dropdown class */
+.custom-dropdown::-webkit-scrollbar {
+  width: 10px;
+}
+.custom-input {
+  outline: none !important; /* Ensure no outline appears */
+}
+.custom-dropdown::-webkit-scrollbar-track {
+  background: #1e1e1e; /* Track background */
+  border-radius: 5px;
+}
+
+.custom-dropdown::-webkit-scrollbar-thumb {
+  background: #3f3f3f; /* Scrollbar thumb color */
+  border-radius: 5px;
+  border: 2px solid #1e1e1e; /* Space around the thumb */
+}
+
+/* Specific styles for highlighted country items */
+.country-list .country.highlight {
+  background-color: rgba(70, 70, 70, 0.5) !important; /* Transparent grey */
+  border-radius: 5px !important; /* Adjust the border radius */
+  padding: 7px 9px !important; /* Adjust padding to fit your design */
+  cursor: pointer; /* Ensure it's recognizable as clickable */
+}
+
+.country .dial-code {
+  color: #ffffff !important; /* Replace with your desired bright color */
+}
+
+/* Optional: Change the hover style for the highlighted items */
+.country-list .country:hover {
+  background-color: rgba(128, 128, 128, 0.7) !important; /* Darker grey on hover */  
+}
+
+.custom-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #3f3f3f; /* Scrollbar thumb color */
+}
+
 .second-div {
   padding-bottom: 70px; /* Adjust based on the height of your audio player */
+  display: block;  
+  width: 100%;
 }
 
 // .bottom-audio-player {
@@ -239,35 +289,14 @@ body {
   transform: translateY(-50%);
   height: 10px;
   background-color: #525252;
+  border-radius: 10px; /* Round the slider by 5px */
 }
 
 .volume-level {
   height: 100%;
   background-color: #fdfeff;
+  border-radius: 10px; /* Round the slider by 5px */
 }
-
-.container {
-  width: 100%; /* Take up full width of viewport */
-  max-width: 1200px; /* Maximum width to prevent content from becoming too wide */
-  margin: 0 auto; /* Center the container horizontally */
-  padding: 20px; /* Add some padding */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-
-
-// .audio-container {
-//   display: flex;
-//   align-items: center; /* To align items vertically in the center */
-//   flex-wrap: wrap;                /* Allows items to wrap if not enough space */
-// }
-
-// .sample-container {
-//   display: flex; /* Enables flexbox layout */
-//   align-items: center; /* Vertically centers the children */
-//   justify-content: flex-start; /* Aligns children to the start of the container */
-//   width: 100%; /* Takes the full width of its parent */
-//   /* Other styling as needed */
-// }
 
 .album-info {
   display: flex;
@@ -295,6 +324,9 @@ body {
   flex-direction: column;
   margin-left: 20px
 }
+
+
+
 
 .album-name {
   font-weight: bold;
@@ -363,9 +395,9 @@ body {
 }
 
 
-.audio {
-  flex-grow: 1; /* Allows the audio player to take up any remaining space */
-}
+// .audio {
+//   flex-grow: 1; /* Allows the audio player to take up any remaining space */
+// }
 
 
 .red {
@@ -783,6 +815,106 @@ body {
 .active-sample .play-icon {
   display: none !important; /* Force hide the play button on active samples */
 }
+
+
+
+
+// /* Ensure no fixed widths on table cells; use max-width instead if needed */
+// th, td {
+//   white-space: nowrap;
+//   overflow: hidden;
+//   text-overflow: ellipsis; /* This will help to manage text overflow in table cells */
+//   max-width: 100%; /* Restrict maximum width to prevent overflow */
+// }
+
+/* Responsive text size */
+@media (max-width: 768px) {
+  th, td {
+    font-size: smaller; /* Reduce font size on smaller screens */
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+
+@media screen and (max-width: 800px) {
+  .sidebar {
+      display: none;
+  }
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto; /* Scroll table inside div when necessary */
+  -webkit-overflow-scrolling: touch; /* For smooth scrolling on mobile devices */
+}
+
+
+/* Hide Time, Key, BPM columns on smaller screens */
+@media (max-width: 600px) {  /* Adjust this value based on your needs */
+  .time-header, .time-data,
+  .key-header, .key-data,
+  .bpm-header, .bpm-data {
+      display: none;
+  }
+}
+
+
+
+/* PhoneNumberModal.css */
+.phone-input-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.phone-input-container {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+
+  .middle-container > * {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+  .middle-container > * {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+
+
+  .sample-container {
+    flex-direction: column; /* Stack the album art and album details vertically */
+  }
+  .album-art {
+    width: 100%; /* Make the album art take up full width */
+    height: auto; /* Adjust the height to maintain aspect ratio */
+  }
+  .album-details {
+    margin-top: 10px; /* Add some margin between the album art and album details */
+  }
+  .control-container {
+    flex-direction: column; /* Stack the control buttons vertically */
+  }
+  .control-button {
+    margin-bottom: 10px; /* Add some margin between the control buttons */
+  }
+  .volume-container {
+    display: none; /* Hide the volume controls on smaller screens */
+  }
+}
+
+
+
+
+
 
 
 
