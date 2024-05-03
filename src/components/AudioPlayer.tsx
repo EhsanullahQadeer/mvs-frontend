@@ -113,7 +113,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
 
 
   useEffect(() => {
-    if (wavesurfer.current && playerType != "sample") {
+    if (wavesurfer.current && playerType !== "sample") {
       const playAudio = async () => {
         try {
           if (setPlaying) { // Changed `setPlaying` to `playing`
@@ -131,7 +131,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
       
       playAudio();
     }
-  }, [setPlaying, id]); // Use `playing` as the dependency
+  }, [setPlaying, id, playerType]); // Use `playing` as the dependency
 
 
 
