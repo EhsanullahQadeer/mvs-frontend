@@ -11,7 +11,6 @@ import { useSelector } from "react-redux";
 import { submitSplitSheetRequest } from "redux/actionCreators/sounds";
 import { ToastContainer, toast } from "react-toastify";
 
-import "../../constants";
 import { DEF_MASTER_OFFER, DEF_PUBLISHING_OFFER } from "../../constants";
 
 const RequestSplitSheetModal = (props: any) => {
