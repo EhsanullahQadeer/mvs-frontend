@@ -88,7 +88,7 @@ const HomeFeed = () => {
   return (
     <React.Fragment>
       <Theme>
-        <div className="flex flex-col min-h-screen w-full bg-[#101010]">
+        <div className="flex flex-col min-h-screen w-full bg-[#101010] h-full">
           
           <div className="bg-[#151515] p-[40px]">
             <p className="text-[#B9B9B9] text-[32px] font-['Mona-Sans-S']">

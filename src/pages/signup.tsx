@@ -300,9 +300,13 @@ const SignupPage = () => {
                     </span>
                     <br />
                   </div>
-                  <input onChange={(e: any) => setCode(e.target.value)} name="code" className="bg-[#66666659] border-solid border-[#66666659] mt-6 ml-6 text-neutral-300 max-md:max-w-full" placeholder="Invite Code" />
-
-                  <div className="shrink-0 self-end mt-4 max-w-full h-14 rounded-xl border border-solid border-stone-500 border-opacity-30 w-[546px]" />
+                  
+                  <input 
+                    onChange={(e: any) => setCode(e.target.value)} 
+                    name="code"
+                    className="shrink-0 self-end mt-4 max-w-full h-14 rounded-xl border border-solid border-stone-500 border-opacity-30 w-[546px] bg-[#101010]" // Add bg color
+                    placeholder="Invite Code" 
+                  />
                   <div className="mt-7 ml-6 text-lime-300 max-md:max-w-full">
                     <span className="text-neutral-300">
                       Dont have an invite-code?

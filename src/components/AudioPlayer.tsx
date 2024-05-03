@@ -80,6 +80,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
 
             wavesurfer.current.on("finish", () => {
                 wavesurfer.current.seekTo(0);
+                wavesurfer.current.play();
             });
 
             wavesurfer.current.on('error', (error) => {
@@ -103,48 +104,36 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
         }
     }, [link, playerType]);
 
-    useEffect(() => {
-        if (wavesurfer.current) {
-          wavesurfer.current.on("finish", () => {
-            wavesurfer.current.seekTo(0);
-            wavesurfer.current.play();
-          });
-        }
-      }, [setPlaying]);
 
     useEffect(() => {
-        if (wavesurfer.current) {
-            wavesurfer.current.setVolume(volume / 100); // Set the volume based on the state
-        }
-    }, [volume]);
-    useEffect(() => {
-        if (setPlaying) {
-          console.log("Starting playback for sample ID:", id);
-        } else {
-          console.log("Stopping playback for sample ID:", id);
-        }
-      }, [setPlaying, id]); // Depend on playing state and ID to control playback
+      if (wavesurfer.current) {
+          wavesurfer.current.setVolume(volume / 100); // Set the volume based on the state
+      }
+  }, [volume]);
 
 
+  useEffect(() => {
+    if (wavesurfer.current && playerType != "sample") {
+      const playAudio = async () => {
+        try {
+          if (setPlaying) { // Changed `setPlaying` to `playing`
+            console.log("Current playing audio");
+            await wavesurfer.current.play();
+          } else {
+            console.log("Current pausing audio");
+            wavesurfer.current.pause();
+            setPlaying(false);
+          }
+        } catch (error) {
+          console.error("Error playing audio:", error);
+        }
+      };
       
-    useEffect(() => {
-        if (wavesurfer.current) {
-            const playAudio = async () => {
-                try {
-                    if (setPlaying) {
-                        console.log("Current playing audio");
-                        await wavesurfer.current.play();
-                    } else {
-                        console.log("Current pausing audio");
-                        wavesurfer.current.pause();
-                    }
-                } catch (error) {
-                    console.error("Error playing audio:", error);
-                }
-            };
-            playAudio();
-        }
-    }, [setPlaying]);
+      playAudio();
+    }
+  }, [setPlaying, id]); // Use `playing` as the dependency
+
+
 
     function formatTime(seconds) {
         const roundSeconds = Math.round(seconds);
@@ -160,7 +149,6 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
                 ? { display: 'flex', alignItems: 'center' }
                 : {}
             }
-            id={`id-${id}`}
             className="audio"
           >
           {playerType === "player" && (
