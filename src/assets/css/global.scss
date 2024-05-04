@@ -926,6 +926,13 @@ body {
 }
 
 /* CSS */
+@media (max-width: 800px) {
+  .considering-avatar {
+    display: none;
+  }
+}
+
+/* CSS */
 @media (max-width: 900px) {
   .meta-sample {
     display: none;

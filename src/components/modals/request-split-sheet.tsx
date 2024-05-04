@@ -11,7 +11,9 @@ import { useSelector } from "react-redux";
 import { submitSplitSheetRequest } from "redux/actionCreators/sounds";
 import { ToastContainer, toast } from "react-toastify";
 
-import { DEF_MASTER_OFFER, DEF_PUBLISHING_OFFER } from "../../constants";
+import { DEF_MASTER_OFFER, DEF_PUBLISHING_OFFER } from "../../constants"
+import config from "config/config";
+import axios from "util/axios";
 
 const RequestSplitSheetModal = (props: any) => {
   const [submit_request, setSubmitRequest]  = useState(false);
@@ -20,6 +22,14 @@ const RequestSplitSheetModal = (props: any) => {
   const [submitting, setSubmitting] = useState(false);
   const [master_offer, setMasterOffer] = useState(null);
   const [publisher_offer, setPublisherOffer] = useState(null);
+  const [sample_file_name, setSampleFileName] = useState(null);
+  const [sample_file_type, setSampleFileType] = useState(null);
+  const [sample_file_size, setSampleFileSize]: any = useState(0);
+  const [sample_file_loaded, setSampleFileLoaded]: any = useState(0);
+  const [sample_file_progress, setSampleFileProgress] = useState(false);
+  const [sample_file, setSampleFile]: any = useState(null);
+
+
 
   // File handler
   const fileInputRef = useRef(null);
@@ -31,21 +41,59 @@ const RequestSplitSheetModal = (props: any) => {
     fileInputRef.current.click(); // Simulate a click on the file input
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if( file ){
-      if (file.size > MAX_FILE_SIZE) {
-        alert(`File size exceeds the ${MAX_FILE_SIZE_MB} MB limit. Please upload a smaller file.`);
-        fileInputRef.current.value = ''; // Clear the file input
-      } else {
-        // Handle the uploaded file (e.g., upload to server)
-
-
-        setSubmitRequestSuccess(true);
-      }
+  const handleFileChange = async (event) => {
+    setSubmitting(true);
+    const payload = {
+      "sample_id": props.sample.id,
+      "master_offer": null,
+      "publisher_offer": null,
+      "document": null
     }
-  };
+    
+    const file = event.target.files[0];
 
+    // Calculate file size in MB
+    const fileSizeMB = file.size / (1024 * 1024);
+
+    // Check if the file size exceeds the maximum limit
+    if (fileSizeMB > MAX_FILE_SIZE_MB) {
+        alert(`File is too large! Please upload a file smaller than ${MAX_FILE_SIZE_MB} MB.`);
+        return; // Stop further execution
+    }
+
+    // Set file details
+    setSampleFileName(file.name);
+    setSampleFileType(file.type);
+    setSampleFileSize(fileSizeMB.toFixed(2));
+
+    // Prepare form data
+    const formData = new FormData();
+    formData.append("file", file);
+
+    await axios.post(`${config.defaults.api_url}/sounds/upload/sample`, formData, {
+      onUploadProgress(progressEvent: any) {
+
+            setSampleFileLoaded((progressEvent.loaded / (1024 * 1024)).toFixed(2))
+
+            setSampleFileProgress(true)
+        },
+    }).then((data: any) => {
+        setSampleFileProgress(false);
+
+        toast.success("Sample file uploaded to storage successfully!");
+
+        console.log("DATA: ", data.data.Location);
+        payload.document = data.data.Location;
+        setSampleFile(data.data.Location);
+    }).catch((error) => {
+        alert("There is some error uploading sample file. please try again later");
+        return;
+    });
+  await submitSplitSheetRequest(payload);
+  setSubmitRequestSuccess(true);
+  setSubmitting(false);
+  
+  };
 
   return (
     <React.Fragment>
@@ -107,7 +155,7 @@ const RequestSplitSheetModal = (props: any) => {
                         </>
                       ) : (
                         <>
-                          {/* SUBMIT PROPOSAL */}
+                          {/* SUBMIT REQUEST */}
                           {submit_proposal ? (
                             <>
                               <div className="flex flex-col self-stretch text-sm font-medium max-w-[495px] text-zinc-400">
@@ -152,7 +200,7 @@ const RequestSplitSheetModal = (props: any) => {
                                   </span>
                                 </div>
 
-                                {/* SUBMIT REQUEST */}
+                                {/* SUBMIT PROPOSAL */}
                                 <>
                                   <div className="flex justify-center">
                                     <button
@@ -169,9 +217,10 @@ const RequestSplitSheetModal = (props: any) => {
                                         setSubmitting(false);
                                       }}
                                       className="text-center items-center p-4 mt-5 w-full text-white rounded-lg border border-gray border-solid max-md:px-5 max-md:max-w-full bg-lime-800 mr-4">
-                                      {submitting ? 'Submitting...' : 'Submit Proposal'}
+                                      {submitting ? 'Submitting...' : 'Submit Request'}
                                     </button>
 
+                                    {/* RETURN BUTTON */}
                                     <button
                                       disabled={submitting}
                                       onClick={() => setSubmitProposal(false)}
@@ -180,7 +229,6 @@ const RequestSplitSheetModal = (props: any) => {
                                     </button>
                                   </div>
                                 </>
-
                               </div>
                               <ToastContainer
                                 position="top-center"
@@ -259,7 +307,7 @@ const RequestSplitSheetModal = (props: any) => {
                                             publisher_offer,
                                             master_offer,
                                           })
-                                          props?.getSamples();
+                                          // props?.getSamples();
                                           setSubmitRequestSuccess(true);
                                           setSubmitting(false);
                                         } else {
@@ -268,7 +316,7 @@ const RequestSplitSheetModal = (props: any) => {
                                         }
                                       }}
                                       className="text-center items-center p-4 mt-5 w-full text-white rounded-lg border border-white border-solid max-md:px-5 max-md:max-w-full bg-lime-800 mr-4">
-                                      {submitting ? 'Submitting...' : 'Submit Request'}
+                                      {submitting ? 'Submitting...' : 'Submit Proposal'}
                                     </button>
 
                                     <button
@@ -281,7 +329,6 @@ const RequestSplitSheetModal = (props: any) => {
                                 </>
                               </div>
                               
-
                               <ToastContainer
                                 position="top-center"
                                 autoClose={5000}
@@ -298,35 +345,41 @@ const RequestSplitSheetModal = (props: any) => {
                                 Split Agreement 📝
                               </div>
                               <div className="mt-4 text-sm leading-6 text-justify text-stone-300 max-md:max-w-full">
-                                To secure exclusive use of our samples in your
-                                track, a split agreement is required. We
-                                typically request a starting point of {DEF_MASTER_OFFER}% of the
-                                master recording royalty and {DEF_PUBLISHING_OFFER}% of the
-                                publishing royalty. However, we're open to
-                                negotiation to ensure a mutually beneficial
-                                agreement. <br />
-                                <br />
-                                Simply fill out this form or attach your
-                                split-sheet for us to review and sign with your
-                                preferred royalty split for both master and
-                                publishing. Once finalized, we'll send over the
-                                signed copy for your records. Feel free to reach
-                                out if you have any questions!
+                              Submit Request: Submitting a split sheet confirms your agreement to standard terms for 
+                              exclusive sample use. A split agreement is required. Our composers typically request a 
+                              minimum of 1% master royalty, 15% writer's share, and 15% publisher's share, but we're 
+                              open to negotiation for a fair deal. <br/>
+                              <br/>
+
+                              Submit Proposal: Click the button to fill the form or attach your split sheet 
+                              (preferred royalty split included). We'll review, sign, & send back your copy! 
+                              Questions? We're here to help. <br/>
+                              <br/>
+
+                              Attach File: To expedite approval, please submit a completed split sheet outlining 
+                              the agreed-upon ownership percentages for all collaborators. Ensure all parties have 
+                              signed the document before sending it for our review and final signature. We recommend 
+                              finalizing terms with collaborators beforehand. <br/>
+                              <br/>
+
                               </div>
                               <div className="flex gap-2 mt-5 text-sm font-medium text-white max-md:flex-wrap">
 
+                                {/* SUBMIT REQUEST */}
                                 <button
-                                onClick={() => setSubmitProposal(true)}
+                                onClick={() => setSubmitRequest(true)}
                                 className="flex-1 text-[13px] justify-center p-4 text-black bg-[#C4FF48] rounded-lg w-[156px] h-[49px]">
-                                  Submit Request
-                                </button>
-
-                                <button
-                                  onClick={() => setSubmitRequest(true)}
-                                  className="flex-1 text-[13px] justify-center p-4 text-black bg-[#FFEB3B] rounded-lg w-[156px] h-[49px]">
                                   Submit Proposal
                                 </button>
 
+                                {/* SUBMIT PROPOSAL */}
+                                <button
+                                  onClick={() => setSubmitProposal(true)}
+                                  className="flex-1 text-[13px] justify-center p-4 text-black bg-[#FFEB3B] rounded-lg w-[156px] h-[49px]">
+                                  Submit Request
+                                </button>
+
+                                {/* ATTACH FILE */}
                                 <button
                                   className="flex items-center text-[13px] justify-center p-4 text-gray-900 bg-gray-500 rounded-lg w-[156px] h-[49px]"
                                   onClick={handleButtonClick}

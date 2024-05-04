@@ -342,7 +342,7 @@ const SignupPage = () => {
                   </button>
                   <div className="mt-6 ml-6 text-lime-300  max-md:max-w-full">
                     <span className="text-neutral-300">
-                      Already have an ccount?
+                      Already have an account?
                     </span>{" "}
                     <span onClick={() => navigate('/login')} className="cursor-pointer text-lime-300 underline">Log in </span>
                   </div>
