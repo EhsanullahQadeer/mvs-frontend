@@ -6,14 +6,60 @@ const ScrollableContainer = ({
   scrollInterval = 2000,
   scrollDuration = 600,
   scrollAutomatically = false,
+  showScrollArrows = false,
+  title = null,
+  desc = null,
 }) => {
   const ref = useRef(null);
+  const [isScrollable, setIsScrollable] = useState(false);
+
   const [scrolling, setScrolling] = useState(false);
   const [wrapToStart, setWrapToStart] = useState(false);
+
+
+
+  useEffect(() => {
+    // Function to handle resizing
+    const handleResize = () => {
+      if (ref.current) {
+        setIsScrollable(
+          ref.current.scrollWidth > ref.current.clientWidth
+        );
+      }
+    };
+
+    // Initial check on mount
+    handleResize();
+
+    // Add event listener for window resizing
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // Only run once
+
+  const scrollLeft = () => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: -100, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: 100, behavior: 'smooth' });
+    }
+  };
+
+
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+
+    
 
     // Add manual scrolling
     const onPointerDown = (e) => {
@@ -109,13 +155,69 @@ const ScrollableContainer = ({
   }, [jumpAmount, scrollInterval, scrollDuration, scrollAutomatically, scrolling, wrapToStart]);
 
   return (
-    <div
-      ref={ref}
-      className="horizontal-scroll-wrapper overflow-auto whitespace-nowrap"
-    >
-      {children}
+    <div>
+      {(title || showScrollArrows) && (
+        <div className="flex justify-between items-center mb-4">
+          {title && (
+            <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
+              {title}
+            </p>
+          )}
+
+          {showScrollArrows && (
+            <div className="flex space-x-2">
+              {isScrollable && (
+                <button onClick={scrollLeft}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="#C4FF48"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 19.5 8.25 12l7.5-7.5"
+                    />
+                  </svg>
+                </button>
+              )}
+              {isScrollable && (
+                <button onClick={scrollRight}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="#C4FF48"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {desc && (
+        <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">{desc}</p>
+      )}
+
+      <div
+        ref={ref}
+        className="horizontal-scroll-wrapper overflow-auto whitespace-nowrap"
+      >
+        {children}
+      </div>
     </div>
   );
 };
-
 export default ScrollableContainer;

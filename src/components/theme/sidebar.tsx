@@ -14,10 +14,12 @@ const Sidebar = () => {
     onClick={() => {
       navigate('/sounds');
     }}
-    className={`${pathname === '/sounds'
-      ? 'bg-[#C4FF48] cursor-pointer rounded-[8px] pl-[32px] text-left w-[100%] h-[52px] font-["Mona-Sans-S"] text-[#000] text-[16px]'
-      : 'hover:bg-[#B4FF15] cursor-pointer rounded-[8px] pl-[32px] text-left w-[100%] h-[52px] font-["Mona-Sans-S"] text-[#CECFDA] hover:text-[#000] text-[16px]'
-      }`}>
+    className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center justify-start ${
+      pathname === '/sounds'
+        ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
+        : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
+    }`}
+  >
     Browse
   </button>
 
@@ -31,10 +33,12 @@ const Sidebar = () => {
     onClick={() => {
       navigate('/my/downloads');
     }}
-    className={`${pathname === '/my/downloads'
-      ? 'bg-[#C4FF48] cursor-pointer rounded-[8px] w-[100%] py-[16px] font-["Mona-Sans-M"] text-[#000] flex px-[24px]'
-      : 'w-[100%] hover:bg-[#B4FF15] cursor-pointer rounded-[8px] py-[16px] font-["Mona-Sans-M"] flex px-[24px] text-[#CECFDA] hover:text-[#000]'
-      }`}>
+    className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center justify-start ${
+      pathname === '/my/downloads'
+        ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-M"]'
+        : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
+    }`}
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={20}
@@ -57,10 +61,12 @@ const Sidebar = () => {
     onClick={() => {
       navigate('/my/likes');
     }}
-    className={`${pathname === '/my/likes'
-      ? 'bg-[#C4FF48] cursor-pointer rounded-[8px] w-[100%] py-[16px] font-["Mona-Sans-M"] text-[#000] flex px-[24px]'
-      : 'w-[100%] hover:bg-[#B4FF15] cursor-pointer rounded-[8px] py-[16px] font-["Mona-Sans-M"] flex px-[24px] text-[#CECFDA] hover:text-[#000]'
-      }`}>
+    className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center justify-start ${
+      pathname === '/my/likes'
+        ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-M"]'
+        : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
+    }`}
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={20}

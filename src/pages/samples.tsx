@@ -523,7 +523,8 @@ const handleSampleClick = useCallback((sample, index) => {
                             <AudioPlayer
                               link={x.sample_src}
                               id={x.id}
-                              setPlaying={false}
+                              playing={playing}
+                              setPlaying={setPlaying}
                               playerType={"sample"}
                               volume={0}
                             />
@@ -720,7 +721,8 @@ const handleSampleClick = useCallback((sample, index) => {
       <AudioPlayer
         link={sound_samples[currentSampleIndex]?.sample_src}
         id={sound_samples[currentSampleIndex]?.id}
-        setPlaying={playing}
+        playing={playing}
+        setPlaying={setPlaying}
         playerType={"player"}
         volume={volume}
       />

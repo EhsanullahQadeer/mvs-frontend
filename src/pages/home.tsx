@@ -142,27 +142,12 @@ const HomeFeed = () => {
     <div className="bg-[#101010] p-[16px]">
       {sample === true && vocal === true ? (
         <>
-          <div className="flex justify-between items-center">
-            <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
-              New This Week
-            </p>
-            <div className="flex space-x-2"> {/* Adjust `space-x-2` for desired spacing */}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#C4FF48" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-              </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#C4FF48" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </div>
-          </div>
-
-          <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
-            Packs and sounds crafted just for you. Updated Weekly.
-          </p>
-          <ScrollableContainer>
-            {loading ? (
-              <Loader />
-            ) : (
+          <ScrollableContainer
+            showScrollArrows={true}
+            title="New This Week"
+            desc="Packs and sounds crafted just for you. Updated Weekly."
+          >
+            {loading ? (<Loader/>) : (
               samples.map((sample, index) => (
                 <div
                   key={sample.id}
@@ -190,61 +175,93 @@ const HomeFeed = () => {
             )}
           </ScrollableContainer>
 
-        <div className="flex justify-between items-center">
-            <p className="text-[#fff] text-[24px]  mt-[16px] font-['Mona-Sans-S']">
-              Guitar Loops
-            </p>
-            <div className="flex space-x-2"> {/* Adjust `space-x-2` for desired spacing */}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#C4FF48" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-              </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="#C4FF48" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </div>
-          </div>
-          <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
-            Discover our hottest guitar loops updated weekly.
-          </p>
-          <ScrollableContainer>
-            {loading ? (
-              <Loader />
-            ) : (
-              samples.map((sample: any, index) => {
-                // Convert the tag to lowercase to make the search case-insensitive
+          <div className="m-[40px]"></div>
+
+          <ScrollableContainer
+            showScrollArrows={true}
+            title="Guitar Loops"
+            desc="Discover our hottest guitar loops updated weekly."
+          >
+            {loading ? (<Loader/>) : (
+              samples.map((sample, index) => {
                 const tagLowercase = sample.tags.toLowerCase();
 
                 if (!tagLowercase.includes('guitar')) {
                   return null;
                 }
-              
-                return (
+                return(
                   <div
-                    key={sample.id}
-                    onClick={() => navigate(`/sound/samples/${sample.id}`)}
-                    className={`cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
-                      index !== 0 ? 'ml-[8px]' : ''}`}
+                  key={sample.id}
+                  onClick={() => navigate(`/sound/samples/${sample.id}`)}
+                  className={`cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
+                    index !== 0 ? 'ml-[8px]' : ''
+                  }`}
                   >
-                    <img
-                      src={sample.thumbnail}
-                      alt={`Sample named ${sample.name}`}
-                      className="w-[150px] h-[150px]"
-                    />
-                    <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff] truncate-text"
-                      title={sample?.name}>
-                      {sample?.name}
-                    </p>
-                    <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777] truncate-text">
-                      {sample?.genre}
-                    </p>
-                    <p className="text-[12px] font-['Mona-Sans-M'] text-[#777] truncate-text">
-                      {sample?.author}
-                    </p>
-                  </div>
-                );
+                  <img
+                    src={sample.thumbnail}
+                    alt={`Sample named ${sample.name}`}
+                    className="w-[150px] h-[150px]"
+                  />
+                  <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff] truncate-text" title={sample?.name}>
+                    {sample?.name}
+                  </p>
+                  <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                    {sample?.genre}
+                  </p>
+                  <p className="text-[12px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                    {sample?.author}
+                  </p>
+                </div>
+                )
+
               })
-          )}
-        </ScrollableContainer>
+            )}
+          </ScrollableContainer>
+
+          <div className="m-[40px]"></div>
+
+          <ScrollableContainer
+            showScrollArrows={true}
+            title="Synths & Reggaeton"
+            desc="Fresh synths and reggaeton loops, updated weekly."
+          >
+            {loading ? (<Loader/>) : (
+              samples.map((sample, index) => {
+                const tagLowercase = sample.tags.toLowerCase();
+
+                if (!tagLowercase.includes('synth') || !tagLowercase.includes('reggaeton')) {
+                  return null;
+                }
+                return(
+                  <div
+                  key={sample.id}
+                  onClick={() => navigate(`/sound/samples/${sample.id}`)}
+                  className={`cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
+                    index !== 0 ? 'ml-[8px]' : ''
+                  }`}
+                  >
+                  <img
+                    src={sample.thumbnail}
+                    alt={`Sample named ${sample.name}`}
+                    className="w-[150px] h-[150px]"
+                  />
+                  <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff] truncate-text" title={sample?.name}>
+                    {sample?.name}
+                  </p>
+                  <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                    {sample?.genre}
+                  </p>
+                  <p className="text-[12px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                    {sample?.author}
+                  </p>
+                </div>
+                )
+
+              })
+            )}
+          </ScrollableContainer>
+
+
         </>
         
   ) : (

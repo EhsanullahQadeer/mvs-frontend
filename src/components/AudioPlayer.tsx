@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 
-const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
+const AudioPlayer = ({ link, id, playing, setPlaying, playerType, volume}) => {
     const waveformRef = useRef(null);  // This ref should be used as the container for the waveform
     const wavesurfer = useRef(null);
     const [currentTime, setCurrentTime] = useState(0); // State for current playback time
@@ -17,7 +17,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
                     height: playerType === "sample" ? 20 : 35,  // Simplified conditional logic
                     cursorWidth: playerType === "sample" ? 0 : 3,
                     cursorColor: "lightgray",
-                    barWidth: playerType === "sample" ? 3 : 1.5,
+                    barWidth: playerType === "sample" ? 1.5 : 1.5,
                     normalize: true,
                     fillParent: true,
                     backend: "MediaElement",
@@ -80,7 +80,8 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
 
             wavesurfer.current.on("finish", () => {
                 wavesurfer.current.seekTo(0);
-                wavesurfer.current.play();
+                wavesurfer.current.pause();
+                setPlaying(false);
             });
 
             wavesurfer.current.on('error', (error) => {
@@ -102,7 +103,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
                 }
               };
         }
-    }, [link, playerType]);
+    }, [link, playerType, setPlaying]);
 
 
     useEffect(() => {
@@ -116,13 +117,13 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
     if (wavesurfer.current && playerType !== "sample") {
       const playAudio = async () => {
         try {
-          if (setPlaying) { // Changed `setPlaying` to `playing`
+          if (playing) { // Changed `setPlaying` to `playing`
             console.log("Current playing audio");
             await wavesurfer.current.play();
           } else {
             console.log("Current pausing audio");
             wavesurfer.current.pause();
-            setPlaying(false);
+            // setPlaying(false);
           }
         } catch (error) {
           console.error("Error playing audio:", error);
@@ -131,7 +132,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
       
       playAudio();
     }
-  }, [setPlaying, id, playerType]); // Use `playing` as the dependency
+  }, [playing, id, playerType]); // Use `playing` as the dependency
 
 
 
