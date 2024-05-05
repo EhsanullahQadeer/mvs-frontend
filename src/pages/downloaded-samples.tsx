@@ -434,7 +434,6 @@ const MyDownloadsPage = () => {
                           }}>
                             <div className="thumbnail-container">
                               <img
-                                
                                 className={
                                   index !== currentSampleIndex
                                     ? "thumbnail cursor-pointer mr-[32px]" 
@@ -493,14 +492,15 @@ const MyDownloadsPage = () => {
                           {x.filename}
                           <br />
                           <span className="text-[12px] text-[#6f6f6f]">
-                            {sound?.author}
+                            {sampleDetails[index]?.author}
                           </span>
                         </td>
                           <td className="wave-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 w-[267px]">
                             <AudioPlayer
                               link={x.sample_src}
                               id={x.id}
-                              setPlaying={false}
+                              playing={playing}
+                              setPlaying={setPlaying}
                               playerType={"sample"}
                               volume={0}
                             />
@@ -515,7 +515,6 @@ const MyDownloadsPage = () => {
                             {x?.bpm}
                           </td>
                           <td className="whitespace-nowrap  text-sm text-gray-300 text-center">
-
                           {
                             considerings.length > 0 &&
                               considerings.slice(0, 3).map((person, idx) => {
@@ -570,15 +569,13 @@ const MyDownloadsPage = () => {
                                 width={24}
                                 height={24}
                                 viewBox="0 0 24 24"
-                                fill="none"
-                              >
+                                fill="none">
                                 <path
                                   d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
                                   stroke="#CDCDCD"
                                   strokeWidth="1.5"
                                   strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
+                                  strokeLinejoin="round"/>
                               </svg>
                             </a>
                             <div className="dropdown-container">
@@ -688,7 +685,8 @@ const MyDownloadsPage = () => {
       <AudioPlayer
         link={sound_samples[currentSampleIndex]?.sample_src}
         id={sound_samples[currentSampleIndex]?.id}
-        setPlaying={playing}
+        playing={playing}
+        setPlaying={setPlaying}
         playerType={"player"}
         volume={volume}
       />

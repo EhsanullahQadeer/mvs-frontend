@@ -493,14 +493,15 @@ const MyLikesPage = () => {
                           {x.filename}
                           <br />
                           <span className="text-[12px] text-[#6f6f6f]">
-                            {sound?.author}
+                            {sampleDetails[index]?.author}
                           </span>
                         </td>
                           <td className="wave-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 w-[267px]">
                             <AudioPlayer
                               link={x.sample_src}
                               id={x.id}
-                              setPlaying={false}
+                              playing={playing}
+                              setPlaying={setPlaying}
                               playerType={"sample"}
                               volume={0}
                             />
@@ -687,7 +688,8 @@ const MyLikesPage = () => {
       <AudioPlayer
         link={sound_samples[currentSampleIndex]?.sample_src}
         id={sound_samples[currentSampleIndex]?.id}
-        setPlaying={playing}
+        playing={playing}
+        setPlaying={setPlaying}
         playerType={"player"}
         volume={volume}
       />
