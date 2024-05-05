@@ -8,11 +8,18 @@ import { getSounds } from "redux/actionCreators/sounds";
 import ActionType from "redux/actionTypes";
 import ScrollableContainer from "util/ScrollableContainer";
 
-import pic1 from "../assets/img/pic1.png";
-import pic2 from "../assets/img/pic2.png";
-import pic3 from "../assets/img/pic3.png";
-import pic4 from "../assets/img/pic4.png";
+declare const require: {
+  context: (directory: string, useSubdirectories?: boolean, regExp?: RegExp) => {
+    keys: () => string[];
+    <T>(id: string): T;
+  };
+};
 
+const importAll = (requireContext) => {
+  return requireContext.keys().map(requireContext);
+};
+
+const images = importAll(require.context('../assets/img/partners', false, /\.(png|jpe?g|svg)$/));
 
 interface RootState {
   auth: any;
@@ -97,10 +104,19 @@ const HomeFeed = () => {
 
       <ScrollableContainer scrollAutomatically={true}>
         <div className="carousel-inner flex transition-transform duration-1000 ease-linear">
-          <img src={pic3} alt="First" style={{ borderRadius: 4, width: 500, height: 200, margin: '4px' }} />
-          <img src={pic3} alt="Second" style={{ borderRadius: 4, width: 500, height: 200, margin: '4px' }} />
-          <img src={pic3} alt="Third" style={{ borderRadius: 4, width: 500, height: 200, margin: '4px' }} />
-          <img src={pic3} alt="Fourth" style={{ borderRadius: 4, width: 500, height: 200, margin: '4px' }} />
+        {images.map((image, index) => (
+          <img
+            key={index} // Use the index as the key
+            src={image} // Use the image from the array
+            alt={`Slide ${index + 1}`}
+            style={{
+              borderRadius: 4,
+              width: 500,
+              height: 200,
+              margin: '4px'
+            }}
+          />
+        ))}
         </div>
       </ScrollableContainer>
 
