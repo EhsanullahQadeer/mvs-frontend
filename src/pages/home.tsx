@@ -102,7 +102,11 @@ const HomeFeed = () => {
     <React.Fragment>
       <Theme>
 
-      <ScrollableContainer scrollAutomatically={true}>
+    <div className="m-2">
+      <ScrollableContainer 
+      scrollAutomatically={true}
+      title="Our Partners"
+      desc="The Engine of Our Success | Empowering Our Growth: Meet Our Partners.">
         <div className="carousel-inner flex transition-transform duration-1000 ease-linear">
         {images.map((image, index) => (
           <img
@@ -119,207 +123,244 @@ const HomeFeed = () => {
         ))}
         </div>
       </ScrollableContainer>
+    </div>
 
-  <div className="flex flex-col w-full bg-[#101010] h-full">
-  <div className="bg-[#101010] p-[12px] border-b-2 border-t-2 border-[#1F1F1F]">
-  <div className="flex items-center space-x-4 font-['Mona-Sans-M'] font-[12px]">
-    <button
-      onClick={() => {
-        setSample(true);
-        setVocal(true);
-      }}
-      className={`${
-        sample === true
-          ? "border h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
-          : "border h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
-      }`}
-    >
-      Sample Loops
-    </button>
-    <button
-      onClick={() => {
-        setVocal(false);
-        setSample(false);
-      }}
-      className={`${
-        vocal === false
-          ? "border w-[96px] h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
-          : "border w-[96px] h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
-      }`}
-    >
-      Vocals Loops
-    </button>
-  </div>
-</div>
-
-
-
-
-    <div className="bg-[#101010] p-[16px]">
-      {sample === true && vocal === true ? (
-        <>
-          <ScrollableContainer
-            showScrollArrows={true}
-            title="New This Week"
-            desc="Packs and sounds crafted just for you. Updated Weekly."
-          >
-            {loading ? (<Loader/>) : (
-              samples.map((sample, index) => (
-                <div
-                  key={sample.id}
-                  onClick={() => navigate(`/sound/samples/${sample.id}`)}
-                  className={`cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
-                    index !== 0 ? 'ml-[8px]' : ''
-                  }`}
-                >
-                  <img
-                    src={sample.thumbnail}
-                    alt={`Sample named ${sample.name}`}
-                    className="w-[150px] h-[150px]"
-                  />
-                  <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff] truncate-text" title={sample?.name}>
-                    {sample?.name}
-                  </p>
-                  <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777] truncate-text">
-                    {sample?.genre}
-                  </p>
-                  <p className="text-[12px] font-['Mona-Sans-M'] text-[#777] truncate-text">
-                    {sample?.author}
-                  </p>
-                </div>
-              ))
-            )}
-          </ScrollableContainer>
-
-          <div className="m-[40px]"></div>
-
-          <ScrollableContainer
-            showScrollArrows={true}
-            title="Guitar Loops"
-            desc="Discover our hottest guitar loops updated weekly."
-          >
-            {loading ? (<Loader/>) : (
-              samples.map((sample, index) => {
-                const tagLowercase = sample.tags.toLowerCase();
-
-                if (!tagLowercase.includes('guitar')) {
-                  return null;
-                }
-                return(
-                  <div
-                  key={sample.id}
-                  onClick={() => navigate(`/sound/samples/${sample.id}`)}
-                  className={`cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
-                    index !== 0 ? 'ml-[8px]' : ''
-                  }`}
-                  >
-                  <img
-                    src={sample.thumbnail}
-                    alt={`Sample named ${sample.name}`}
-                    className="w-[150px] h-[150px]"
-                  />
-                  <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff] truncate-text" title={sample?.name}>
-                    {sample?.name}
-                  </p>
-                  <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777] truncate-text">
-                    {sample?.genre}
-                  </p>
-                  <p className="text-[12px] font-['Mona-Sans-M'] text-[#777] truncate-text">
-                    {sample?.author}
-                  </p>
-                </div>
-                )
-
-              })
-            )}
-          </ScrollableContainer>
-
-          <div className="m-[40px]"></div>
-
-          <ScrollableContainer
-            showScrollArrows={true}
-            title="Synths & Reggaeton"
-            desc="Fresh synths and reggaeton loops, updated weekly."
-          >
-            {loading ? (<Loader/>) : (
-              samples.map((sample, index) => {
-                const tagLowercase = sample.tags.toLowerCase();
-
-                if (!tagLowercase.includes('synth') || !tagLowercase.includes('reggaeton')) {
-                  return null;
-                }
-                return(
-                  <div
-                  key={sample.id}
-                  onClick={() => navigate(`/sound/samples/${sample.id}`)}
-                  className={`cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
-                    index !== 0 ? 'ml-[8px]' : ''
-                  }`}
-                  >
-                  <img
-                    src={sample.thumbnail}
-                    alt={`Sample named ${sample.name}`}
-                    className="w-[150px] h-[150px]"
-                  />
-                  <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff] truncate-text" title={sample?.name}>
-                    {sample?.name}
-                  </p>
-                  <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777] truncate-text">
-                    {sample?.genre}
-                  </p>
-                  <p className="text-[12px] font-['Mona-Sans-M'] text-[#777] truncate-text">
-                    {sample?.author}
-                  </p>
-                </div>
-                )
-
-              })
-            )}
-          </ScrollableContainer>
-
-
-        </>
-        
-  ) : (
-    <>
-      <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
-        New This Week
-      </p>
-      <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
-        Packs and sounds crafted just for you. Updated Weekly.
-      </p>
-      <div className="flex overflow-x-auto gap-[8px]">
-        {loading ? (
-          <Loader />
-        ) : (
-          vocals.map((vocal: any) => (
-            <div
-              key={vocal.id}
-              onClick={() => navigate(`/sound/vocals/${vocal.id}`)}
-              className="cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] card"
+    <div className="bg-[#101010] p-[12px] border-b-2 border-t-2 border-[#1F1F1F]">
+        <div className="flex items-center space-x-4 font-['Mona-Sans-M'] font-[12px]">
+          <button
+            onClick={() => {
+              setSample(true);
+              setVocal(true);
+            }}
+            className={`${
+              sample === true
+                ? "border h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
+                : "border h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
+              }`}
             >
-              <img
-                src={vocal.thumbnail}
-                alt={`Vocal named ${vocal.name}`}
-                className="w-[175px] h-[175px]"
-              />
-              <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
-                {vocal.name}
-              </p>
-              <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777]">
-                {vocal?.genre}
-              </p>
-              <p className="text-[12px] font-['Mona-Sans-M'] text-[#777]">
-                MVSSIVE
-              </p>
-            </div>
-          ))
-        )}
+              Sample Loops
+          </button>
+
+      <button
+        onClick={() => {
+          setVocal(false);
+          setSample(false);
+        }}
+        className={`${
+          vocal === false
+            ? "border w-[96px] h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
+            : "border w-[96px] h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
+        }`}
+        >
+          Vocals Loops
+        </button>
       </div>
-    </>
-  )}
-</div>
+    </div>
+
+    <div className="flex flex-col w-full bg-[#101010] p-[16px] h-full">
+
+        {sample === true && vocal === true ? (
+          <>
+            <ScrollableContainer
+              showScrollArrows={true}
+              title="New This Week"
+              desc="Packs and sounds crafted just for you. Updated Weekly."
+            >
+              {loading ? (<Loader/>) : (
+                (() => {
+                  let isFirstItem = true;
+                  // const sortedSamples = samples
+                  //   .sort((a, b) => a.updated_at.localeCompare(b.name));
+
+                  return samples.map((sample, index) => {
+                    const cardClassName = `cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
+                      isFirstItem ? '' : 'ml-[4px]'
+                    }`;
+
+                    // After handling the first item, update the flag
+                    isFirstItem = false;
+
+                    return (
+                      <div
+                        key={sample.id}
+                        onClick={() => navigate(`/sound/samples/${sample.id}`)}
+                        className={cardClassName}
+                      >
+                        <img
+                          src={sample.thumbnail}
+                          alt={`Sample named ${sample.name}`}
+                          className="w-[150px] h-[150px]"
+                        />
+                        <p
+                          className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff] truncate-text"
+                          title={sample?.name}
+                        >
+                          {sample?.name}
+                        </p>
+                        <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                          {sample?.genre}
+                        </p>
+                        <p className="text-[12px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                          {sample?.author}
+                        </p>
+                      </div>
+                    );
+                  });
+                })()
+              )}
+            </ScrollableContainer>
+
+            <div className="m-[4px]"></div>
+
+            <ScrollableContainer
+              showScrollArrows={true}
+              title="Guitar Loops"
+              desc="Discover our hottest guitar loops updated weekly."
+            >
+              {loading ? (<Loader/>) : (
+                (() => {
+                  let isFirstItem = true;
+                  return samples.map((sample, index) => {
+                    const tagLowercase = sample.tags.toLowerCase();
+
+                    if (!tagLowercase.includes('guitar')) {
+                      return null;
+                    }
+
+                    const cardClassName = `cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
+                      isFirstItem ? '' : 'ml-[4px]'
+                    }`;
+
+                    // After handling the first item, update the flag
+                    isFirstItem = false;
+
+                    return (
+                      <div
+                        key={sample.id}
+                        onClick={() => navigate(`/sound/samples/${sample.id}`)}
+                        className={cardClassName}
+                      >
+                        <img
+                          src={sample.thumbnail}
+                          alt={`Sample named ${sample.name}`}
+                          className="w-[150px] h-[150px]"
+                        />
+                        <p
+                          className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff] truncate-text"
+                          title={sample?.name}
+                        >
+                          {sample?.name}
+                        </p>
+                        <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                          {sample?.genre}
+                        </p>
+                        <p className="text-[12px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                          {sample?.author}
+                        </p>
+                      </div>
+                    );
+                  });
+                })()
+              )}
+            </ScrollableContainer>
+
+            <div className="m-[4px]"></div>
+
+            <ScrollableContainer
+              showScrollArrows={true}
+              title="Synths & Reggaeton"
+              desc="Fresh synths and reggaeton loops, updated weekly."
+            >
+              {loading ? (<Loader/>) : (
+                (() => {
+                  let isFirstItem = true;
+                  return samples.map((sample, index) => {
+                    const tagLowercase = sample.tags.toLowerCase();
+
+                    if (!tagLowercase.includes('synth') || !tagLowercase.includes('reggaeton')) {
+                      return null;
+                    }
+
+                    const cardClassName = `cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
+                      isFirstItem ? '' : 'ml-[4px]'
+                    }`;
+
+                    // After handling the first item, update the flag
+                    isFirstItem = false;
+
+                    return (
+                      <div
+                        key={sample.id}
+                        onClick={() => navigate(`/sound/samples/${sample.id}`)}
+                        className={cardClassName}
+                      >
+                        <img
+                          src={sample.thumbnail}
+                          alt={`Sample named ${sample.name}`}
+                          className="w-[150px] h-[150px]"
+                        />
+                        <p
+                          className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff] truncate-text"
+                          title={sample?.name}
+                        >
+                          {sample?.name}
+                        </p>
+                        <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                          {sample?.genre}
+                        </p>
+                        <p className="text-[12px] font-['Mona-Sans-M'] text-[#777] truncate-text">
+                          {sample?.author}
+                        </p>
+                      </div>
+                    );
+                  });
+                })()
+              )}
+            </ScrollableContainer>
+
+
+          </>
+          
+    ) : (
+      <>
+        <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
+          New This Week
+        </p>
+        <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
+          Packs and sounds crafted just for you. Updated Weekly.
+        </p>
+        <div className="flex overflow-x-auto gap-[8px]">
+          {loading ? (
+            <Loader />
+          ) : (
+            vocals.map((vocal: any) => (
+              <div
+                key={vocal.id}
+                onClick={() => navigate(`/sound/vocals/${vocal.id}`)}
+                className="cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] card"
+              >
+                <img
+                  src={vocal.thumbnail}
+                  alt={`Vocal named ${vocal.name}`}
+                  className="w-[175px] h-[175px]"
+                />
+                <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
+                  {vocal.name}
+                </p>
+                <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777]">
+                  {vocal?.genre}
+                </p>
+                <p className="text-[12px] font-['Mona-Sans-M'] text-[#777]">
+                  MVSSIVE
+                </p>
+              </div>
+            ))
+          )}
         </div>
+      </>
+    )}
+
+    </div>
       </Theme>
     </React.Fragment>
   );

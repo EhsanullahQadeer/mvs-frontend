@@ -28,11 +28,11 @@ const DropDown = (props: any) => {
   return (
     <React.Fragment>
       <div className="bg-transparent">
-        <Menu as="div" className="relative ml-[15px] bg-transparent text-white">
+        <Menu as="div" className="relative bg-transparent text-white">
           <div>
             <Menu.Button>
               <EllipsisVerticalIcon
-                className="-mr-1 h-5 w-5 text-gray-400"
+                className="-mr-5 h-5 w-5 mt-[4px] text-gray-400"
                 aria-hidden="true"
               />
             </Menu.Button>

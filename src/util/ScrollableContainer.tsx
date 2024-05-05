@@ -59,8 +59,6 @@ const ScrollableContainer = ({
     if (!el) return;
 
 
-    
-
     // Add manual scrolling
     const onPointerDown = (e) => {
       e.preventDefault();
@@ -157,9 +155,9 @@ const ScrollableContainer = ({
   return (
     <div>
       {(title || showScrollArrows) && (
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center">
           {title && (
-            <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
+            <p className="text-[#fff] text-[20px] font-['Mona-Sans-B']">
               {title}
             </p>
           )}
@@ -208,7 +206,7 @@ const ScrollableContainer = ({
       )}
 
       {desc && (
-        <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">{desc}</p>
+        <p className="text-[#6e6e6e] pb-[14px] font-['Mona-Sans-R']">{desc}</p>
       )}
 
       <div

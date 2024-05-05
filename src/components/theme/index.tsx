@@ -29,7 +29,11 @@ const Theme = (props:any) => {
 
         
         {/* New top-left container */}
-        <div className="row-start-1 col-start-1 bg-[#141414] w-[240px] border-b-2 border-r-2 border-[#1F1F1F] flex items-center justify-center">
+        <div
+            className="row-start-1 col-start-1 bg-[#141414] w-[240px] border-b-2 border-r-2 border-[#1F1F1F] flex items-center justify-center"
+            onClick={() => window.location.href = "/sounds"}
+            style={{ cursor: "pointer" }}
+            >
             {/* Adjust the content inside the new container */}
             <img src={logo} alt="Site Logo" className="h-auto" />
         </div>

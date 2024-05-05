@@ -830,13 +830,10 @@ body {
 
 
 
-// /* Ensure no fixed widths on table cells; use max-width instead if needed */
-// th, td {
-//   white-space: nowrap;
-//   overflow: hidden;
-//   text-overflow: ellipsis; /* This will help to manage text overflow in table cells */
-//   max-width: 100%; /* Restrict maximum width to prevent overflow */
-// }
+th, td {
+  border-bottom: 1px solid #1F1F1F; /* Add your desired border thickness and color */
+  max-width: 100%; /* Example of max-width instead of fixed width */
+}
 
 /* Responsive text size */
 @media (max-width: 768px) {
@@ -944,6 +941,12 @@ body {
   .meta-sample {
     display: none;
   }
+}
+
+.toggle-container, .download-link, .dropdown-container {
+  display: inline-block; /* or inline-flex */
+  margin-right: 4px; /* Adjust spacing as needed */
+  vertical-align: middle; /* Aligns vertically */
 }
 
 /* CSS */
