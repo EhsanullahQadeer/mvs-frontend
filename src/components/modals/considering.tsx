@@ -36,24 +36,26 @@ const ConsideringModal = (props: any) => {
       <>
         <Modal
           ariaHideApp={false}
-          className=""
+          className="bg-transparent"
           isOpen={props.openModal}
           onRequestClose={() => props.setModal(false)}
           style={{
             overlay: {
-              position: "relative",
+              zIndex: 1000,
+              position: "fixed",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
               opacity: 1,
-              backgroundColor: "rgba(0, 0, 0, 0.4)",
+              backgroundColor: "rgba(0, 0, 0, .3)",
+              backdropFilter: "blur(12px)",
               overflow: "hidden",
             },
           }}
         >
           <div>
-            <div className="bg-black z-modal animate-fade-in fixed left-0 top-0 flex flex-col items-stretch w-full h-screen overflow-y-auto">
+            <div className="z-modal animate-fade-in fixed left-0 top-0 flex flex-col items-stretch w-full h-screen overflow-y-auto">
               <div className="flex flex-grow items-center justify-center py-4 w-full">
                 <div
                   role="dialog"

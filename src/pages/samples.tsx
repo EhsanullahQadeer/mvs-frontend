@@ -1,7 +1,7 @@
-/*
- * Author: Zohaib 
+/**
+ * Author: Zohaib Ahmed
  * Desc:   
- * Date:   
+ *   
  */
 
 
@@ -38,7 +38,6 @@ import pauseButton from '../assets/img/player/pause-circle.svg'
 const SamplesPage = () => {
 
   const { id } = useParams();
-  const [current_page, setCurrentPage] = useState(0); // Holds the current page number
   const [loading, setLoading]          = useState(false); // Indicates samples are being loaded
   const [playing, setPlaying]          = useState(false); // Indicates audio is currently playing
   const [preview, setPreview]          = useState(false); // Used to show the sample player
@@ -55,6 +54,25 @@ const SamplesPage = () => {
   const [currentSampleIndex, setCurrentSampleIndex] = useState(null);
   const [manualToggle, setManualToggle] = useState(false); // Manual toggle
   const [currentPlayerId, setCurrentPlayerId] = useState(null);
+  const [current_page, setCurrentPage] = useState(0);
+
+
+  useEffect(() => {
+    // Use a unique key for each page
+    const pageKey = `${window.location.pathname}_current_page`;
+  
+    // Retrieve page from local storage, default to 0 if not found
+    const savedPage = localStorage.getItem(pageKey);
+    console.log("current page", savedPage);
+    setCurrentPage(savedPage !== null ? parseInt(savedPage, 10) : 0);
+  
+    // Cleanup function to reset page number when component unmounts
+    return () => {
+      localStorage.setItem(pageKey, '0');
+    };
+  }, []); // Run once on component mount
+
+
 
 
   useEffect(() => {
@@ -67,40 +85,41 @@ const SamplesPage = () => {
     }
   }, [playing, currentPlayerId, manualToggle]);
 
-  const handlePlayToggle = () => {
-    setPlaying(!playing);
-    setManualToggle(true); // Indicate that the toggle was manual
+  const handlePlayToggle = (sampleIndex) => {
+    if (currentSampleIndex === sampleIndex) {
+      // Toggle playing state if the same sample is clicked
+      setPlaying(!playing);
+    }
+    setManualToggle(true); // Mark the toggle as manual
   };
 
-// Handler for changes in the slider
-const handleVolumeChange = (event) => {
-  setVolume(event.target.value);
-};
+  // Handler for changes in the slider
+  const handleVolumeChange = (event) => {
+    setVolume(event.target.value);
+  };
 
-// Initialize the volume slider dragging state
-let isVolumeDragging = false;
-const handleMouseMove = (event) => {
-  // Calculate the new volume based on the mouse position
-  const slider = document.querySelector('.volume-slider').getBoundingClientRect();
-  const newVolume = Math.max(0, Math.min(100, ((event.clientX - slider.left) / slider.width) * 100));
-  setVolume(newVolume);
-};
+  // Initialize the volume slider dragging state
+  let isVolumeDragging = false;
+  const handleMouseMove = (event) => {
+    // Calculate the new volume based on the mouse position
+    const slider = document.querySelector('.volume-slider').getBoundingClientRect();
+    const newVolume = Math.max(0, Math.min(100, ((event.clientX - slider.left) / slider.width) * 100));
+    setVolume(newVolume);
+  };
 
-const handleMouseDown = () => {
-  // Enable dragging
-  isVolumeDragging = true;
-  window.addEventListener('mousemove', handleMouseMove);
-  window.addEventListener('mouseup', handleMouseUp);
-};
+  const handleMouseDown = () => {
+    // Enable dragging
+    isVolumeDragging = true;
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
 
-const handleMouseUp = () => {
-  // Remove the event listeners when dragging ends
-  isVolumeDragging = false;
-  window.removeEventListener('mousemove', handleMouseMove);
-  window.removeEventListener('mouseup', handleMouseUp);
-};
-
-
+  const handleMouseUp = () => {
+    // Remove the event listeners when dragging ends
+    isVolumeDragging = false;
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleMouseUp);
+  };
 
   useEffect(() => {
     // Clean up the event listeners when the component unmounts
@@ -110,60 +129,67 @@ const handleMouseUp = () => {
     };
   }, []);
 
-
-
   useEffect(() => {
+    console.log("use effects - handle keys");
     const handleKeyDown = async (event) => {
-      if (event.key === ' ' && currentSampleIndex !== null) { // Make sure it's the space character
-        event.preventDefault(); // Stop the page from scrolling
-        setPlaying(prev => !prev); // Toggle playing state
-        setManualToggle(true); // Indicate that the toggle was manual
-      } else if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && currentSampleIndex !== null) {
-        event.preventDefault();  // Prevent the whole page from scrolling
-        setPlaying(false);
-        setManualToggle(false); // Reset manual toggle on key press
+      if (event.key === ' ' && currentSampleIndex !== null) {
+        // Toggle playing state with space key
+        event.preventDefault(); // Prevent page scrolling
+        setPlaying((prev) => !prev); // Toggle playing state
+        setManualToggle(true); // Mark toggle as manual
+      } else if (
+        (event.key === 'ArrowUp' || event.key === 'ArrowDown') &&
+        currentSampleIndex !== null
+      ) {
+        event.preventDefault(); // Prevent page scrolling
         const offset = event.key === 'ArrowUp' ? -1 : 1;
         const newIndex = currentSampleIndex + offset;
-
+  
+        // Inside handleKeyDown function
         if (newIndex < 0 && current_page > 0) {
-            setLoading(true);
+          // Handle moving to the previous page
+          setLoading(true);
+          const newPage = current_page - 1;
+          setCurrentPage(newPage);
+          setCurrentSampleIndex(take - 1);
+          await getSamples(id, newPage);
+          setPlaying(true); // Ensure audio plays
+        } else if (
+          newIndex >= sound_samples.length &&
+          current_page < Math.ceil(total / take) - 1
+        ) {
+          // Handle moving to the next page
+          setLoading(true);
+          const newPage = current_page + 1;
+          setCurrentPage(newPage);
+          setCurrentSampleIndex(0);
+          await getSamples(id, newPage);
+          setPlaying(true); // Ensure audio plays
 
-            setCurrentPage(current_page - 1);
-            setCurrentSampleIndex(take - 1);
-            
-            await getSamples(id, current_page - 1);
-
-            setPlaying(true);
-        } 
-        else if (newIndex >= sound_samples.length && current_page < Math.ceil(total / take) - 1) {
-            setLoading(true);
-
-            setCurrentPage(current_page + 1);
-            setCurrentSampleIndex(0);
-
-            await getSamples(id, current_page + 1);
-
-            setPlaying(true);
-        } 
-        else if (newIndex >= 0 && newIndex < sound_samples.length) {
-            setCurrentSampleIndex(newIndex);
+        } else if (newIndex >= 0 && newIndex < sound_samples.length) {
+          // Move within the current page
+          setCurrentSampleIndex(newIndex);
+          console.log('currentSampleIndex: ', currentSampleIndex);
+          setPlaying(true); // Ensure audio plays
         }
-
       }
     };
-
+  
     // Add event listener
     window.addEventListener('keydown', handleKeyDown);
-
+  
     // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentSampleIndex, current_page, take, total, sound_samples, playing, setPlaying]);
+  }, [currentSampleIndex, current_page, take, total, sound_samples, id]);
+
 
   const handlePageClick = async (event) => {
+    
     setLoading(true);
-    setCurrentPage(event.selected);
+    const pageKey = `${window.location.pathname}_current_page`;
+    localStorage.setItem(pageKey, event.selected.toString());
     setCurrentSampleIndex(0);
     await getSamples(id, event.selected);
   };
@@ -190,23 +216,25 @@ const handleMouseUp = () => {
    * Desc: Handles functionality when clicking directly on a sample
    * 
    */
-  const handleSampleClick = useCallback(async (sample, index) => {
-    setCurrentSampleIndex(index);
-    // Check if the same sample is clicked and it is currently playing
-    if (currentPlayerId === sample.id) {
-      if ( playing ) {
-        setPlaying( false );
-      } else {
-        setPlaying( true ); // Resume playing the current sample
-      }
-    } else {
-      
-      setCurrentPlayerId(sample.id);
+const handleSampleClick = useCallback((sample, index) => {
+  if (currentSampleIndex !== index) {
+    // If the clicked sample is different from the current one
+    setCurrentSampleIndex(index); // Update the current sample index
+    if (!playing) {
+      setPlaying(true); // Ensure audio is playing if not already playing
     }
-  }, [currentPlayerId, playing, setPlaying, setCurrentPlayerId]);
+  } else {
+    // Call the toggle function if it's the same sample
+    handlePlayToggle(index);
+  }
+}, [currentSampleIndex, playing]);
 
-
-
+  /*
+   * Initialization of sample player
+   */
+  useEffect(() => {
+    console.log('playing: ', playing);
+  }, [playing]);
 
 
 
@@ -220,13 +248,13 @@ const handleMouseUp = () => {
     init();
   }, []);
 
-  const getSamples = async (id, page = current_page) => {
+  const getSamples = async (id, page) => {
     setLoading(true);
     const _samples = await getSoundSamples(id, {
       skip: page,
       take,
     });
-
+    console.log('page: ', page);
     setTotal(_samples?.data?.results?.total);
     setSoundSamples(_samples?.data?.results?.samples);
     setLoading(false);
@@ -234,33 +262,22 @@ const handleMouseUp = () => {
 
   const getSoundData = async () => {
     setLoading(true);
-
-    const _sound: any = await getSound( id );
-    const list = [];
-
-    for (let i = 0; i < _sound?.data?.results.samples.length; i++) {
-      const _item = {
-        filename: _sound?.data?.results.samples[i].filename,
-        author: "SoundBoyz",
-        thumbnail: _sound?.data?.results.thumbnail,
-        sample_src: _sound?.data?.results.samples[i].sample_src,
-        id: i + 1
-      };
-      list.push(_item);
-    }
-    await getSamples( id, current_page );
+    const _sound: any = await getSound(id);
+    setCurrentPage((currentPage) => {
+      getSamples(id, currentPage);
+      return currentPage;
+    });
     setSound(_sound?.data?.results);
+    console.log('sound : ', _sound?.data?.results);
     setLoading(false);
   };
-
-
 
   return (
     <React.Fragment>
       <Theme>
         <div className="second-div w-[100%] flex flex-col z-0 pb-[130px]">
           
-          <div className="bg-[#101010] p-[20px] flex justify-start">
+          <div className="bg-[#101010] p-[20px] flex justify-start border-b-2 border-[#1F1F1F]">
             {loading ? (
               <>
                 <div
@@ -291,23 +308,28 @@ const handleMouseUp = () => {
               </>
             ) : (
               <>
-                <div className="mt-[16px] gap-[22px] flex justify-start">
-                  <div>
-                  <img className="h-[250px]" src={sound?.thumbnail} style={{ minHeight: '250px', minWidth: '250px' }} />
+                <div className="mt-0 gap-3 flex justify-start ">
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <img className="h-[250px]" src={sound?.thumbnail} style={{ minHeight: '175px', minWidth: '175px', borderRadius: '4px' }} />
+                    </div>
+
+                    <div className="text flex-grow max-w-[335px]">
+                      <p className="text-[28px] text-[#fff] font-['Mona-Sans-M']">
+                        {sound?.name}
+                      </p>
+                      <p className="text-[#878787] text-[12px] font-['Mona-Sans-M']">
+                        By: {sound?.author}
+                      </p>
+                      <p className="text-[14px] font-['Mona-Sans-R'] text-[#bebebe]">
+                        {sound?.description}
+                      </p>
+                    </div>
+
                   </div>
-                  <div className="text">
-                    <p className="text-[40px] text-[#fff] font-['Mona-Sans-M']">
-                      {sound?.name}
-                    </p>
-                    <p className="text-[#878787] text-[14px] font-['Mona-Sans-M']">
-                      By: {sound?.author}
-                    </p>
-                    <p className="text-[14px] text-[#bebebe] w-[315px] my-[24px]">
-                      {sound?.description}
-                    </p>
-                  </div>
-                  <div className="border-x border-[#282828] border-y-0 my-[50px]"></div>
-                </div>
+                  <div className="border-x border-[#282828] border-y-0 my-[50px] h-[145px]"></div>
+                
+              </div>
               </>
             )}
           </div>
@@ -316,8 +338,7 @@ const handleMouseUp = () => {
             <h3 className="text-[20px] text-[#fff] font-['Mona-Sans-M']">
               Samples
             </h3>
-
-            <p className="text-[#9C9C9C] font-['Mona-Sans-M'] pt-[32px]">
+            <p className="text-[#9C9C9C] text-[14px] font-['Mona-Sans-M'] pt-[4px]">
               {total} Results
             </p>
           </div>
@@ -347,14 +368,14 @@ const handleMouseUp = () => {
           ) : (
             <>
           <table
-            className="divide-y divide-gray-700"
+            className="divide-y divide-[#1F1F1F] border-t border-[#1F1F1F] w-full"
             style={{ width: '100%' }}
             >
               <thead>
                 <tr>
                   <th
                     scope="col"
-                    className="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-white sm:pl-0"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-2"
                   >
                     Sample
                   </th>
@@ -388,7 +409,7 @@ const handleMouseUp = () => {
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-center text-sm font-semibold text-white"
+                    className="considering-avatar px-3 py-3.5 text-center text-sm font-semibold text-white"
                   >
                     Considering
                   </th>
@@ -408,7 +429,6 @@ const handleMouseUp = () => {
               <tbody className="">
                 {sound_samples &&
                   sound_samples.map((x: any, index) => {
-                    const globalIndex = current_page * take + index; // Correctly compute the global index
                     const considerings = sound_samples[index]?.considering?.split(',') || [];
                     return (
                       <>
@@ -424,7 +444,6 @@ const handleMouseUp = () => {
                           }}>
                             <div className="thumbnail-container">
                               <img
-                                
                                 className={
                                   index !== currentSampleIndex
                                     ? "thumbnail cursor-pointer mr-[32px]" 
@@ -433,7 +452,7 @@ const handleMouseUp = () => {
                                 style={
                                   index !== currentSampleIndex
                                     ? { width: '32px', height: '32px', borderRadius: '4px'  }
-                                    : { width: '20px', height: '20px', borderRadius: '4px'  }
+                                    : { width: '15px', height: '15px', borderRadius: '4px'  }
                                 }
                                 src={
                                   index === currentSampleIndex
@@ -451,7 +470,7 @@ const handleMouseUp = () => {
                                   e.stopPropagation();
                                   handleSampleClick(x, index);
                                   setPreview(true);
-                                  handlePlayToggle();
+                                  handlePlayToggle(index);
                               }}
                             />
                             <img
@@ -459,16 +478,30 @@ const handleMouseUp = () => {
                                 className="play-icon"
                                 alt="Play Button"
                                 style={
-                                  { width: '20px', height: '20px', borderRadius: '4px'  }
+                                  { width: '15px', height: '15px', borderRadius: '4px'  }
                                 }                                                  
                                 onClick={async (e) => {
                                   e.stopPropagation();
                                   handleSampleClick(x, index);
                                   setPreview(true);
-                                  handlePlayToggle();
+                                  handlePlayToggle(index);
                               }}
                             />
                           </div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={20}
+                            height={20}
+                            viewBox="0 0 20 20"
+                            fill="none">
+                            <path
+                              d="M1.66675 8.33333V10.8333M5.00008 5V14.1667M8.33342 2.5V17.5M11.6667 6.66667V12.5M15.0001 4.16667V15M18.3334 8.33333V10.8333"
+                              stroke="#CECFDA"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
                         </div>
                         </td>
                         <td
@@ -504,8 +537,7 @@ const handleMouseUp = () => {
                           <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
                             {x?.bpm}
                           </td>
-                          <td className="whitespace-nowrap  text-sm text-gray-300 text-center">
-
+                          <td className="considering-avatar whitespace-nowrap  text-sm text-gray-300 text-center">
                           {
                             considerings.length > 0 &&
                               considerings.slice(0, 3).map((person, idx) => {
@@ -584,7 +616,6 @@ const handleMouseUp = () => {
             </>
           )}
 
-          
           {/* PAGINATION */}
           {total > 0 && (
             <>
@@ -663,12 +694,12 @@ const handleMouseUp = () => {
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
     <div className="control-container">
       {/* Previous Button */}
-      <button className="control-button" onClick={handlePrevClick}>
+      <button className="control-button pr-2" onClick={handlePrevClick}>
         <img src={skipBack} alt="Play" />
       </button>
 
       {/* Pause/Play Button */}
-      <button className="control-button" onClick={handlePlayToggle}>
+      <button className="control-button" onClick={() => handlePlayToggle(currentSampleIndex)}>
         {playing ? 
           (
             <img src={pauseButton} alt="Play" /> ) :
@@ -679,7 +710,7 @@ const handleMouseUp = () => {
       </button>
 
       {/* Next Button */}
-      <button className="control-button" onClick={handleNextClick}>
+      <button className="control-button pl-2" onClick={handleNextClick}>
       <img src={skipNext} alt="Play" />
       </button>
     </div>
@@ -697,10 +728,10 @@ const handleMouseUp = () => {
   </div>
   
   <div>
-    <div className="volume-container" style={{ paddingLeft: '100px', paddingRight: '200px', minWidth: '500px' }}>
+    <div className="volume-container" style={{ paddingLeft: '100px', paddingRight: '250px', minWidth: '500px' }}>
       {/* Volume Button */}
       <button className="volume-button">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
       </svg>
 
@@ -712,8 +743,7 @@ const handleMouseUp = () => {
           max="100" 
           className="volume-input" 
           onChange={handleVolumeChange} 
-          value={volume}
-        />
+          value={volume}/>
         <div className="volume-slider" onMouseDown={handleMouseDown}>
           <div className="volume-level" style={{ width: `${volume}%` }}></div>
         </div>

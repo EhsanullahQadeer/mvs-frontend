@@ -14,10 +14,10 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
                     container: waveformRef.current,  // Use waveformRef.current as the container
                     waveColor: "grey",
                     progressColor: "#c4ff48",
-                    height: playerType === "sample" ? 20 : 40,  // Simplified conditional logic
-                    cursorWidth: playerType === "sample" ? 0 : 3.5,
+                    height: playerType === "sample" ? 20 : 35,  // Simplified conditional logic
+                    cursorWidth: playerType === "sample" ? 0 : 3,
                     cursorColor: "lightgray",
-                    barWidth: playerType === "sample" ? 3 : 3,
+                    barWidth: playerType === "sample" ? 3 : 1.5,
                     normalize: true,
                     fillParent: true,
                     backend: "MediaElement",
@@ -158,7 +158,7 @@ const AudioPlayer = ({ link, id, setPlaying, playerType, volume}) => {
           )}
           <div
             ref={waveformRef}
-            className={playerType === 'player' ? 'w-[450px] flex-grow-0' : ''}
+            className={playerType === 'player' ? 'w-[250px] flex-grow-0' : ''}
           ></div>
           {playerType === "player" && (
               <div style={{ marginLeft: '10px', color: 'white', fontWeight: 'bold' }}>

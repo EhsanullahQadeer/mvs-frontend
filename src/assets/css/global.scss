@@ -51,6 +51,7 @@
 }
 
 
+
 .horizontal-scroll-wrapper {
   display: flex; /* Align card items in a row */
   overflow-x: auto;
@@ -294,7 +295,7 @@ body {
   left: 0;
   right: 0;
   transform: translateY(-50%);
-  height: 10px;
+  height: 6px;
   background-color: #525252;
   border-radius: 10px; /* Round the slider by 5px */
 }
@@ -312,8 +313,8 @@ body {
 }
 
 .album-art {
-  width: 64px;  /* or the fixed size you want */
-  height: 64px; /* make height equal to width for a square */
+  width: 50px;  /* or the fixed size you want */
+  height: 50px; /* make height equal to width for a square */
   display: flex; /* to center the image within the wrapper */
   align-items: center;
   justify-content: center;
@@ -324,6 +325,7 @@ body {
   height: 100%; /* sets the image height to the height of the wrapper */
   min-width: 100%; /* ensures minimum width is always the full width of the wrapper */
   object-fit: cover; /* covers the wrapper area without distorting aspect ratio */
+  border-radius: 4px
 }
 
 .album-details {
@@ -472,6 +474,8 @@ body {
 
 ._modal {
   backdrop-filter: blur(15px);
+  z-index: 1000;
+
 }
 
 .main-container {
@@ -851,6 +855,9 @@ body {
   .sidebar {
       display: none;
   }
+  .logo-text {
+    display: none;
+}
 }
 
 .table-responsive {
@@ -950,7 +957,6 @@ body {
 }
 
 .dropdown-container {
-
   z-index: 1000; /* Ensures it stays above other content */
 }
 

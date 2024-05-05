@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PhoneInput from "react-phone-input-2";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { requestAccess } from "services/user";
@@ -12,13 +13,24 @@ const RequestInfoPage = () => {
     producer_name: "",
     email: "",
     user_type: "",
-    phone:","
+    phone:""
   });
+
+  // Phone input change handler
+  const handlePhoneChange = (value) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      phone: value, // Directly update the phone number
+    }));
+
+    console.log('info:', value); // Log only the phone number value
+  };
 
   const handleChange = (e: any) => {
     const data: any = {
       ...user,
     };
+    console.log('info: ', e);
 
     data[e.target.name] = e.target.value;
 
@@ -40,6 +52,7 @@ const RequestInfoPage = () => {
       user.user_type &&
       user.phone
     ) {
+
       const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
       if (!regEx.test(user.email)) {
         toast.error("Invalid email");
@@ -129,15 +142,46 @@ const RequestInfoPage = () => {
                 name="email"
                 className="bg-transparent  shrink-0 mt-4 h-14 rounded-xl border border-solid border-stone-500 border-opacity-30 max-md:max-w-full"
               />
-               <div className="mt-7 max-md:max-w-full">
+              <div className="mt-7 max-md:max-w-full">
                 Phone <span className="red">*</span>
               </div>
-              <input
-                onChange={handleChange}
-                name="phone"
-                maxLength={10}
-                className="bg-transparent  shrink-0 mt-4 h-14 rounded-xl border border-solid border-stone-500 border-opacity-30 max-md:max-w-full"
-              />
+              <div className="bg-transparent shrink-0 mt-4 h-14 rounded-xl border border-solid border-stone-500 border-opacity-30 max-md:max-w-full">
+                <PhoneInput
+                  country={'us'}
+                  value={''}
+                  onChange={handlePhoneChange} // Update phone number
+                  containerStyle={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    backgroundColor: 'transparent', // Match other input background
+                    borderRadius: '0.75rem', // Match other input border radius (rounded-xl)
+                    height: '56px', // Match other input height (h-14)
+                    padding: '0', // Remove padding
+                    border: 'none', // Match other input border
+                  }}
+                  dropdownClass="custom-dropdown"
+                  dropdownStyle={{
+                    backgroundColor: '#1e1e1e', // Custom dropdown background color
+                    borderRadius: '5px',
+                    border: '1px solid #1E34F9',
+                  }}
+                  inputStyle={{
+                    width: '100%',
+                    backgroundColor: 'transparent', // Match other input background
+                    color: '#d3d3d3',
+                    border: 'none',
+                    outline: 'none',
+                    paddingLeft: '0px', // Adjust padding
+                    height: '56px', // Match other input height (h-14)
+                    textAlign: 'center', // Center the text
+                  }}
+                  buttonStyle={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                  }}
+                />
+              </div>
               <div className="mt-7 max-md:max-w-full">
                 User Type <span className="red">*</span>
               </div>
@@ -180,7 +224,7 @@ const RequestInfoPage = () => {
               </button>
               <div className="mt-6 text-lime-300  max-md:max-w-full">
                 <span className="text-neutral-300">
-                  Already have an ccount?
+                  Already have an account?
                 </span>{" "}
                 <span
                   onClick={() => navigate("/login")}
