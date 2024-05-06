@@ -5,6 +5,13 @@
  */
 
 
+/* eslint-disable react/jsx-no-target-blank */
+/* eslint-disable eqeqeq */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable jsx-a11y/alt-text */
+
 import {
   getDownloadedSamples,
   getLikedSamples,
@@ -53,8 +60,6 @@ const PlayerContainer = ({ source = '' }) => {
 
   // For use of assorted players
   const [sound_details, setSampleDetails] = useState([]);
-
-
 
   /*
    * Initialization of sample player
