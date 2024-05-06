@@ -38,10 +38,8 @@ const PlayerContainer = ({ source = '' }) => {
   const { id } = useParams();
   const [currentSampleIndex, setCurrentSampleIndex] = useState(null);
   const [playing, setPlaying]                       = useState(false); 
-  const [manualToggle, setManualToggle]             = useState(false); 
   const [current_page, setCurrentPage]              = useState(0);
   const [volume, setVolume]                         = useState(50);
-  const [isVolumeDragging, setIsVolumeDragging]     = useState(false);
   const [loading, setLoading]                       = useState(false); 
   const [sound_samples, setSoundSamples] = useState([]);
   const [take, setTake] = useState(10);
@@ -75,7 +73,6 @@ const PlayerContainer = ({ source = '' }) => {
       return currentPage;
     });
     setSound(_sound?.data?.results);
-    console.log('sound : ', _sound?.data?.results);
     setLoading(false);
   };
 
