@@ -98,6 +98,11 @@ const routes: IRoute[] = [
     name: "Downloads",
     component: MyDownloadsPage,
   },
+  {
+    path: "/sound/vocals/:id",
+    name: "Vocals",
+    component: SamplesPage,
+  },
 ];
 
 export default routes;
