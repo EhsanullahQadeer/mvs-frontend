@@ -18,7 +18,7 @@ const Toggle = (props) => {
     <React.Fragment>
       {toggle ? (
         <>
-          <div className="ml-[100px] cursor-pointer"
+          <div className="cursor-pointer"
           
           onClick={ async () => {
             

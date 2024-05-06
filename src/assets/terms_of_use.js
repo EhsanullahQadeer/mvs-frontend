@@ -11,7 +11,7 @@ const TermsOfUse = () => {
         if (isExpanded) {
             setMaxHeight(contentRef.current.scrollHeight + 'px');
         } else {
-            setMaxHeight('50px');
+            setMaxHeight('49px');
         }
     }, [isExpanded]);
 
@@ -79,7 +79,7 @@ signed Split-Sheet, the original vocal creator will be designated as the "Main A
     return (
         <div className="bg-[#101010] h-full">
             <div className="mx-[20px] border border-x-0 border-y-[#222] py-[20px] px-[20px]">
-                <p className="text-[16px] text-[#858585] pb-[12px] font-['Mona-Sans-M']">
+                <p className="text-[12px] text-[#626262] pb-[12px] font-['Mona-Sans-M']">
                     Terms of Use
                 </p>
                 <div>
@@ -98,7 +98,7 @@ signed Split-Sheet, the original vocal creator will be designated as the "Main A
 
                     <button
                         onClick={toggleExpansion}
-                        className="text-[#A7A7A7] underline cursor-pointer mt-2"
+                        className="text-[#173C5F] text-[12px] underline cursor-pointer mt-2"
                     >
                         {isExpanded ? 'View Less' : 'View More'}
                     </button>

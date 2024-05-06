@@ -29,14 +29,14 @@ const ContactModal = (props: any) => {
                     }}
                 >
                     <div>
-                        <div className="z-modal animate-fade-in bg-black fixed left-0 top-0 flex flex-col items-stretch w-full h-screen bg-opacity-90 overflow-y-auto">
+                        <div className="modal-overlay animate-fade-in bg-black fixed left-0 top-0 flex flex-col items-stretch w-full h-screen bg-opacity-90 overflow-y-auto">
                             <div className="flex flex-grow items-center justify-center py-4 w-full">
                                 <div
                                     role="dialog"
                                     tabIndex={-1}
                                     data-ismodal="true"
                                     className="focus:outline-none "
-                                    style={{ width: 598 }}
+                                    style={{ width: 500 }}
                                 >
                                     <div className="bg-black rounded-4xl relative py-8 px-8 ml-[80px]">
                                         <button

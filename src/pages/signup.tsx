@@ -304,7 +304,7 @@ const SignupPage = () => {
                   <input 
                     onChange={(e: any) => setCode(e.target.value)} 
                     name="code"
-                    className="shrink-0 self-end mt-4 max-w-full h-14 rounded-xl border border-solid border-stone-500 border-opacity-30 w-[546px] bg-[#101010]" // Add bg color
+                    className="shrink-0 self-end mt-4 max-w-full h-14 rounded-xl border border-solid border-stone-500 border-opacity-30 w-[546px] bg-[#101010] text-white"
                     placeholder="Invite Code" 
                   />
                   <div className="mt-7 ml-6 text-lime-300 max-md:max-w-full">
