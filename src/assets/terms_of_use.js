@@ -79,7 +79,7 @@ signed Split-Sheet, the original vocal creator will be designated as the "Main A
     return (
         <div className="bg-[#101010] h-full">
             <div className="mx-[20px] border border-x-0 border-y-[#222] py-[20px] px-[20px]">
-                <p className="text-[16px] text-[#A7A7A7] pb-[12px] font-['Mona-Sans-M']">
+                <p className="text-[16px] text-[#858585] pb-[12px] font-['Mona-Sans-M']">
                     Terms of Use
                 </p>
                 <div>
@@ -89,7 +89,8 @@ signed Split-Sheet, the original vocal creator will be designated as the "Main A
                             maxHeight: maxHeight,
                             overflow: 'hidden',
                             transition: 'max-height 0.3s ease',
-                            color: '#7B7B7B',
+                            color: '#3D3D3D',
+                            fontSize: '10px', // Adjust the size value according to your needs
                         }}
                     >
                         <p>{termsOfUseText}</p>

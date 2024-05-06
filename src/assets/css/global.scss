@@ -527,7 +527,7 @@ body {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.75); /* Darken the background */
   backdrop-filter: blur(10px); /* Blur the background */
-  z-index: 1040; /* Example z-index for modal */
+  z-index: 2000; /* Example z-index for modal */
 
 }
 
@@ -538,6 +538,7 @@ body {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.051); /* Darken the background */
+  z-index: 2000; /* Example z-index for modal */
   backdrop-filter: blur(10px); /* Blur the background */
     display: flex;
     justify-content: center;

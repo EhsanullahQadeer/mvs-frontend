@@ -62,7 +62,6 @@ const UserSettingsModal = (props: any) => {
     }, [user, isEditUsernameModalOpen]);
 
 
-
     const openEditUsernameModal = () => {
         setIsEditUsernameModalOpen(true);
     };
@@ -294,7 +293,7 @@ const UserSettingsModal = (props: any) => {
           <Modal
             isOpen={props.openModal}
             onRequestClose={() => props.setModal(false)}
-            className="modal-overlay"
+            className="bg-transparent"
             overlayClassName="modal-overlay-background"
           >
             <div
