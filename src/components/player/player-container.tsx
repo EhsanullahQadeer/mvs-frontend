@@ -28,6 +28,9 @@ import skipBack from '../../assets/img/player/skip-back.svg'
 import skipNext from '../../assets/img/player/skip-forward.svg'
 import playButton from '../../assets/img/player/play-circle.svg'
 import pauseButton from '../../assets/img/player/pause-circle.svg'
+import downloadPicture from '../../assets/img/download-image.svg'
+import lockImage from '../../assets/img/lock-image.svg'
+
 import TermsOfUse from "assets/terms_of_use";
 
 import AudioPlayer from "components/AudioPlayer";
@@ -348,40 +351,26 @@ const PlayerContainer = ({ source = '' }) => {
                   switch (source) {
                     case "likes":
                       return (
-                        <div className="bg-[#101010] p-[20px] flex justify-start">
-                          <div className="mt-[16px] gap-[22px] flex">
-                            <div>
-                              <svg
-                                width="170"
-                                height="170"
-                                viewBox="0 0 270 270"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                              <rect
-                                x="10"
-                                y="10"
-                                width="250"
-                                height="250"
-                                rx="4"
-                                fill="#C4FF48"
-                              />
-                              <path
-                                d="M124.167 132.833V124.167C124.167 121.294 125.308 118.538 127.34 116.506C129.371 114.475 132.127 113.333 135 113.333C137.873 113.333 140.629 114.475 142.66 116.506C144.692 118.538 145.833 121.294 145.833 124.167V132.833M119.833 132.833H150.167C152.56 132.833 154.5 134.773 154.5 137.167V152.333C154.5 154.727 152.56 156.667 150.167 156.667H119.833C117.44 156.667 115.5 154.727 115.5 152.333V137.167C115.5 134.773 117.44 132.833 119.833 132.833Z"
-                                stroke="#000000"
-                                stroke-width="4"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              />
-                            </svg>
-                          </div>
-                          <div className="text m-[20px]">
-                            <p className="text-[40px] text-[#fff] font-['Mona-Sans-M']">
-                              Likes
-                            </p>
+                        <div>
+                          <div className="bg-[#101010] p-[20px] flex justify-start">
+                            <div className="mt-[16px] gap-[22px] flex">
+                              <div>
+                                <img
+                                  src={lockImage}
+                                  alt="Download"
+                                  width="250"
+                                  height="250"
+                                  style={{ display: 'block', margin: 'auto' }} // Center image
+                                />
+                              </div>
+                              <div className="text m-[20px]">
+                                <p className="text-[40px] text-[#fff] font-['Mona-Sans-M']">
+                                  Downloads
+                                </p>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
                     );
 
                     case "downloads":
@@ -390,31 +379,13 @@ const PlayerContainer = ({ source = '' }) => {
                           <div className="bg-[#101010] p-[20px] flex justify-start">
                             <div className="mt-[16px] gap-[22px] flex">
                               <div>
-                                <svg
-                                  width="170"
-                                  height="170"
-                                  viewBox="0 0 270 270"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <rect
-                                    x="10"
-                                    y="10"
-                                    width="250"
-                                    height="250"
-                                    rx="4"
-                                    fill="#C4FF48"
-                                  />
-                                  <g transform="translate(100, 100) scale(3)">
-                                    <path
-                                      d="M9 12.75l3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                      stroke="#000000"
-                                      strokeWidth="1.5"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    />
-                                  </g>
-                                </svg>
+                                <img
+                                  src={downloadPicture}
+                                  alt="Download"
+                                  width="250"
+                                  height="250"
+                                  style={{ display: 'block', margin: 'auto' }} // Center image
+                                />
                               </div>
                               <div className="text m-[20px]">
                                 <p className="text-[40px] text-[#fff] font-['Mona-Sans-M']">
