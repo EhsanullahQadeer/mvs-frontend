@@ -17,27 +17,31 @@ const ScrollableContainer = ({
   const [wrapToStart, setWrapToStart] = useState(false);
 
 
-
   useEffect(() => {
+    const element = ref.current;
+  
+    // Function to handle resizing
     const handleResize = () => {
-      if (ref.current) {
-        setIsScrollable(ref.current.scrollWidth > ref.current.clientWidth);
+      if (element) {
+        setIsScrollable(element.scrollWidth > element.clientWidth);
       }
     };
   
-    // Initial check and window resize
+    // Initial check on mount
     handleResize();
+  
+    // Add event listener for window resizing
     window.addEventListener('resize', handleResize);
   
     // Mutation observer to watch for content changes
     const observer = new MutationObserver(handleResize);
-    if (ref.current) {
-      observer.observe(ref.current, { childList: true, subtree: true });
+    if (element) {
+      observer.observe(element, { childList: true, subtree: true });
     }
   
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (ref.current) {
+      if (element) {
         observer.disconnect();
       }
     };
