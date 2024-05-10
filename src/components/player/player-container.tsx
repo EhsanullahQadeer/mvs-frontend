@@ -365,7 +365,7 @@ const PlayerContainer = ({ source = '' }) => {
                               </div>
                               <div className="text m-[20px]">
                                 <p className="text-[40px] text-[#fff] font-['Mona-Sans-M']">
-                                  Downloads
+                                  Likes
                                 </p>
                               </div>
                             </div>
@@ -472,7 +472,7 @@ const PlayerContainer = ({ source = '' }) => {
                 <tr>
                   <th
                     scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-2"
+                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-4"
                   >
                     Sample
                   </th>
@@ -512,14 +512,9 @@ const PlayerContainer = ({ source = '' }) => {
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-right text-sm font-semibold text-white"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                   >
-                  </th>
-                  <th
-                    scope="col"
-                    className="relative py-3.5 pl-3 pr-4 sm:pr-0"
-                  >
-                    <span className="sr-only">Edit</span>
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -538,7 +533,7 @@ const PlayerContainer = ({ source = '' }) => {
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                             <div style={{
                               display: 'flex',
-                              justifyContent: 'center',
+                              justifyContent: 'start',
                               alignItems: 'center',
                             }}>
                               <div className="thumbnail-container">
@@ -677,50 +672,58 @@ const PlayerContainer = ({ source = '' }) => {
                           </td>
 
                           {/* TOOLS COLUMN */}
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-right">
-                            
-                            {/* LIKE BUTTON */}
-                            <div className="toggle-container">
-                              {parseInt(x.is_liked) === 1 ? (
-                                <Toggle is_liked={true} sample={x} />
-                              ) : (
-                                <Toggle is_liked={false} sample={x} />
-                              )}
-                            </div>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
 
-                            {/* DOWNLOAD BUTTON */}
-                            <a
-                              href="#"
-                              className="download-link cursor-pointer pl-[4px]"
-                              onClick={async (e) => {
-                                e.preventDefault();
-                                const FileSaver = require("file-saver");
-                                await saveSampleDownload(x.id);
-                                FileSaver.saveAs(x.sample_src, x.filename);
-                              }}
-                              rel="noreferrer"
-                              download
-                              target="_blank">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width={24}
-                                height={24}
-                                viewBox="0 0 24 24"
-                                fill="none">
-                              <path
-                                d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-                                stroke="#CDCDCD"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"/>
-                              </svg>
-                            </a>
+  {/* Wrapper Div */}
+  <div className="flex items-center gap-4">
 
-                            {/* DROPDOWN BUTTON */}
-                            <div className="dropdown-container">
-                              <DropDown sample={x} getSamples={getSamples} page={current_page} sound={sound} />
-                            </div>
-                          </td>
+    {/* LIKE BUTTON */}
+    <div className="toggle-container">
+      {parseInt(x.is_liked) === 1 ? (
+        <Toggle is_liked={true} sample={x} />
+      ) : (
+        <Toggle is_liked={false} sample={x} />
+      )}
+    </div>
+
+    {/* DOWNLOAD BUTTON */}
+    <a
+      href="#"
+      className="download-link cursor-pointer"
+      onClick={async (e) => {
+        e.preventDefault();
+        const FileSaver = require("file-saver");
+        await saveSampleDownload(x.id);
+        FileSaver.saveAs(x.sample_src, x.filename);
+      }}
+      rel="noreferrer"
+      download
+      target="_blank">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={24}
+        height={24}
+        viewBox="0 0 24 24"
+        fill="none">
+        <path
+          d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+          stroke="#CDCDCD"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"/>
+      </svg>
+    </a>
+
+    {/* DROPDOWN BUTTON */}
+    <div className="dropdown-container">
+      <DropDown sample={x} getSamples={getSamples} page={current_page} sound={sound} />
+    </div>
+
+  </div> {/* End of Wrapper Div */}
+
+</td>
+
+
                         </tr>
                       </>
                     );

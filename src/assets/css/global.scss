@@ -344,12 +344,12 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 200px;  // Set a fixed width that fits your layout
+  width: 300px;  // Set a fixed width that fits your layout
   /* Additional styling */
 }
 
 .album-name {
-  width: 300px;  // Set a fixed width that fits your layout
+  width: 500px;  // Set a fixed width that fits your layout
   overflow: hidden;  // Prevents overflow of text outside the container
   text-overflow: ellipsis;  // Adds ellipsis if text is too long to fit
   white-space: nowrap;  // Keeps the text on a single line
@@ -946,8 +946,8 @@ th, td {
 
 .toggle-container, .download-link, .dropdown-container {
   display: inline-block; /* or inline-flex */
-  margin-right: 4px; /* Adjust spacing as needed */
-  vertical-align: middle; /* Aligns vertically */
+  // margin-right: 4px; /* Adjust spacing as needed */
+  // vertical-align: middle; /* Aligns vertically */
 }
 
 /* CSS */
