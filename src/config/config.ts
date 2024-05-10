@@ -15,7 +15,7 @@ const config = {
       : isDev
       ? "https://api.mvssive.net"
       : isStaging
-      ? "https://api.mvssive.net"
+      ? "https://staging-api.mvssive.net"
       : "https://api.mvssive.net",
   },
 };
