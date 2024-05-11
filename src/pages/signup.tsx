@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { createNewUser, verifyCode } from "services/user";
 import { FileUploader } from "react-drag-drop-files";
-
+import PhoneInput from "react-phone-input-2";
 
 
 const SignupPage = () => {
@@ -26,7 +26,19 @@ const SignupPage = () => {
     phone: ""
   });
 
-  const handleChange = (e: any) => {
+
+  const handlePhoneChange = (value) => {
+    // Create a simulated event object
+    const event = {
+      target: {
+        name: 'phone',
+        value: value,
+      }
+    };
+    handleChange(event);
+  };
+
+  const handleChange = (e) => {
     const data: any = {
       ...user,
     };
@@ -217,8 +229,42 @@ const SignupPage = () => {
               <input onChange={handleChange} type="password" name="password" className="justify-center focus:border-[#ACD7FF] items-start p-2 mt-4 text-xl font-medium text-blue-200 whitespace-nowrap rounded-lg border border-solid  max-md:pr-5 bg-transparent" />
 
               <div className="mt-4 text-base text-neutral-400">Phone</div>
-              <input type="tel" maxLength={10} id="phone" onChange={handleChange} placeholder="(555) 555-5555" name="phone" className="justify-center focus:border-[#ACD7FF] items-start p-2 mt-4 text-xl font-medium text-blue-200 whitespace-nowrap rounded-lg border border-solid  max-md:pr-5 bg-transparent" />
-
+              <PhoneInput
+                  country={'us'}
+                  value={''}
+                  onChange={handlePhoneChange} // Update phone number using the wrapped handler
+                  containerStyle={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    backgroundColor: 'transparent', // Match other input background
+                    borderRadius: '0.75rem', // Match other input border radius (rounded-xl)
+                    height: '56px', // Match other input height (h-14)
+                    padding: '0', // Remove padding
+                    border: 'none', // Match other input border
+                  }}
+                  dropdownClass="custom-dropdown"
+                  dropdownStyle={{
+                    backgroundColor: '#1e1e1e', // Custom dropdown background color
+                    borderRadius: '5px',
+                    border: '1px solid #1E34F9',
+                    color: '#d3d3d3',
+                  }}
+                  inputStyle={{
+                    width: '100%',
+                    backgroundColor: 'transparent', // Match other input background
+                    color: '#d3d3d3',
+                    border: 'none',
+                    outline: 'none',
+                    paddingLeft: '0px', // Adjust padding
+                    height: '56px', // Match other input height (h-14)
+                    textAlign: 'center', // Center the text
+                  }}
+                  buttonStyle={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                  }}
+                />
               <button disabled={isSubmitting} onClick={signup} className="text-center items-center p-4 mt-3 text-sm font-medium text-black bg-lime-300 rounded-lg max-md:px-5">
                 {isSubmitting ? (
                   <>
