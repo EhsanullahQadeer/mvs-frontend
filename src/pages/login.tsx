@@ -196,7 +196,7 @@ const LoginPage = () => {
                 )}
               </button>
               <div className="flex gap-2.5 py-0.5 mt-3 text-base">
-                <span className="text-stone-500">Don't have an account?</span>
+                <span className="text-stone-500">Request account or use invitation code.</span>
                 <button onClick={() => navigate("/signup")} className="underline text-stone-300">
                   Sign Up
                 </button>
