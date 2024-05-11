@@ -3,9 +3,9 @@ const isLocalhost =
   window.location.hostname === "127.0.0.1"
     ? true
     : false;
-const isDev = window.location.hostname === "admin-dev.mvssive.com" ? true : false;
+const isDev = window.location.hostname === "dev.mvssive.com" ? true : false;
 const isStaging =
-  window.location.hostname === "admin-staging.mvssive.com" ? true : false;
+  window.location.hostname === "staging.mvssive.com" ? true : false;
 
 const config = {
   defaults: {
