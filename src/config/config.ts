@@ -5,7 +5,7 @@ const isLocalhost =
     : false;
 const isDev = window.location.hostname === "dev.mvssive.com" ? true : false;
 const isStaging =
-  window.location.hostname === "staging.mvssive.com" ? true : false;
+  window.location.hostname === "staging.mvssive.net" ? true : false;
 
 const config = {
   defaults: {
