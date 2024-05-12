@@ -75,6 +75,23 @@ const PlayerContainer = ({ source = '' }) => {
   }, []);
 
 
+  const handleRowPlayClick = (e) => {
+    // This function finds the closest parent with the given class or returns the element itself if it matches
+    const target = e.target.closest('.row-play');
+  
+    if (target) {
+      // Extract necessary data from the target or use data attributes
+      const index = target.getAttribute('data-index');  // Assuming data-index is an attribute on the row-play elements
+      const x = sound_samples[index];  // Assuming you have access to sound_samples array
+  
+      // Now call the functions as needed
+      handleSampleClick(x, parseInt(index));
+      setPreview(true);
+      handlePlayToggle(parseInt(index));
+    }
+  };
+
+
   const getSoundData = async () => {
     setLoading(true);
     const _sound: any = await getSound(id);
@@ -425,12 +442,6 @@ const PlayerContainer = ({ source = '' }) => {
             )}
           </div>
 
-
-
-
-
-
-
           <div className="drop bg-[#101010] px-[20px] py-[10px]">
             <h3 className="text-[20px] text-[#fff] font-['Mona-Sans-M']">
               Samples
@@ -467,268 +478,271 @@ const PlayerContainer = ({ source = '' }) => {
             <table
             className="divide-y divide-[#1F1F1F] border-t border-[#1F1F1F] w-full"
             style={{ width: '100%' }}
+            onClick={handleRowPlayClick}
             >
-              <thead>
-                <tr>
-                  <th
-                    scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-4"
-                  >
-                    Sample
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                  >
-                    Filename
-                  </th>
-                  <th
-                    scope="col"
-                    className="wave-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
-                  ></th>
-                  <th
-                    scope="col"
-                    className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
-                  >
-                    Time
-                  </th>
-                  <th
-                    scope="col"
-                    className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
-                  >
-                    Key
-                  </th>
-                  <th
-                    scope="col"
-                    className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
-                  >
-                    BPM
-                  </th>
-                  <th
-                    scope="col"
-                    className="considering-avatar px-3 py-3.5 text-center text-sm font-semibold text-white"
-                  >
-                    Considering
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                  >
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="">
-                {sound_samples &&
-                  sound_samples.map((x: any, index) => {
-                    const considerings = sound_samples[index]?.considering?.split(',') || [];
-                    return (
-                      <>
-                        <tr
-                          key={x.id}
-                          id={`sample-item-${x.id}`}
-                          className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${index === currentSampleIndex ? 'active-sample' : ''}`}>
+            <thead>
+              <tr>
+                <th
+                  scope="col"
+                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-4"
+                >
+                  Sample
+                </th>
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                >
+                  Filename
+                </th>
+                <th
+                  scope="col"
+                  className="wave-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
+                ></th>
+                <th
+                  scope="col"
+                  className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
+                >
+                  Time
+                </th>
+                <th
+                  scope="col"
+                  className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
+                >
+                  Key
+                </th>
+                <th
+                  scope="col"
+                  className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white"
+                >
+                  BPM
+                </th>
+                <th
+                  scope="col"
+                  className="considering-avatar px-3 py-3.5 text-center text-sm font-semibold text-white"
+                >
+                  Considering
+                </th>
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="">
+              {sound_samples &&
+                sound_samples.map((x: any, index) => {
+                  const considerings = sound_samples[index]?.considering?.split(',') || [];
+                  return (
+                    <>
+                      <tr
+                        key={x.id}
+                        id={`sample-item-${x.id}`}
+                        className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${index === currentSampleIndex ? 'active-sample' : ''}`}>
 
-                          {/* SAMPLE COLUMN */}
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                            <div style={{
-                              display: 'flex',
-                              justifyContent: 'start',
-                              alignItems: 'center',
-                            }}>
-                              <div className="thumbnail-container">
-                                <img
-                                  className={
-                                    index !== currentSampleIndex
-                                      ? "thumbnail cursor-pointer mr-[32px]" 
-                                      : "play-pause-icon cursor-pointer mr-[32px]"
-                                  }
-                                  style={
-                                    index !== currentSampleIndex
-                                      ? { width: '32px', height: '32px', borderRadius: '4px'  }
-                                      : { width: '15px', height: '15px', borderRadius: '4px'  }
-                                  }
-                                  src={
-                                    index === currentSampleIndex
-                                      ? (playing
-                                          ? pauseButton
-                                          : playButton )
-                                      : sound_details[index]?.thumbnail
-                                  }
-                                  alt={
-                                    index === currentSampleIndex
-                                      ? "Playing"
-                                      : "Thumbnail"
-                                  }
-                                  onClick={async (e) => {
-                                    e.stopPropagation();
-                                    handleSampleClick(x, index);
-                                    setPreview(true);
-                                    handlePlayToggle(index);
-                                }}
-                              />
+                        {/* SAMPLE COLUMN */}
+                        <td 
+                          className="row-play  row-hover whitespace-nowrap px-3 py-4 text-sm text-gray-300"
+                          data-index={index}>
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'start',
+                            alignItems: 'center',
+                          }}>
+                          <div className="thumbnail-container">
                               <img
-                                  src={playButton}
-                                  className="play-icon"
-                                  alt="Play Button"
-                                  style={
-                                    { width: '15px', height: '15px', borderRadius: '4px'  }
-                                  }                                                  
-                                  onClick={async (e) => {
-                                    e.stopPropagation();
-                                    handleSampleClick(x, index);
-                                    setPreview(true);
-                                    handlePlayToggle(index);
+                                className={
+                                  index !== currentSampleIndex
+                                    ? "thumbnail cursor-pointer mr-[32px]" 
+                                    : "play-pause-icon cursor-pointer mr-[32px]"
+                                }
+                                style={
+                                  index !== currentSampleIndex
+                                    ? { width: '32px', height: '32px', borderRadius: '4px'  }
+                                    : { width: '15px', height: '15px', borderRadius: '4px'  }
+                                }
+                                src={
+                                  index === currentSampleIndex
+                                    ? (playing
+                                        ? pauseButton
+                                        : playButton )
+                                    : sound_details[index]?.thumbnail
+                                }
+                                alt={
+                                  index === currentSampleIndex
+                                    ? "Playing"
+                                    : "Thumbnail"
+                                }
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  handleSampleClick(x, index);
+                                  setPreview(true);
+                                  handlePlayToggle(index);
+                              }}
+                            />
+                            <img
+                                src={playButton}
+                                className="play-icon"
+                                alt="Play Button"
+                                style={
+                                  { width: '15px', height: '15px', borderRadius: '4px'  }
+                                }                                                  
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  handleSampleClick(x, index);
+                                  setPreview(true);
+                                  handlePlayToggle(index);
+                              }}
+                            />
+                          </div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={20}
+                            height={20}
+                            viewBox="0 0 20 20"
+                            fill="none">
+                            <path
+                              d="M1.66675 8.33333V10.8333M5.00008 5V14.1667M8.33342 2.5V17.5M11.6667 6.66667V12.5M15.0001 4.16667V15M18.3334 8.33333V10.8333"
+                              stroke="#CECFDA"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          </div>
+                        </td> 
+
+                        {/* FILENAME COLUMN */}
+                        <td
+                          className="row-play whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']"
+                          data-index={index}
+                          style={{
+                            maxWidth: '252px', // Adjust as per your requirement
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {x.filename}
+                          <br />
+                          <span className="text-[12px] text-[#6f6f6f]">
+                            {sound_details[index]?.author}
+                          </span>
+                        </td>
+
+                        {/* WAVEFORM COLUMN */}
+                        <td className="wave-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 w-[267px]">
+                            <AudioPlayer
+                              link={x.sample_src}
+                              id={x.id}
+                              playing={playing}
+                              setPlaying={setPlaying}
+                              playerType={"sample"}
+                              volume={0}
+                            />
+                        </td>
+
+                        {/* SAMPLE DURATION COLUMN */}
+                        <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                          {x?.length}
+                        </td>
+
+                        {/* SAMPLE KEY COLUMN */}
+                        <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                          {x?.keys}
+                        </td>
+
+                        {/* SAMPLE BPM COLUMN */}
+                        <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                          {x?.bpm}
+                        </td>
+
+                        {/* CONSIDERING COLUMN */}
+                        <td className="considering-avatar whitespace-nowrap text-sm text-gray-300 text-center">
+                        {
+                          considerings.length > 0 &&
+                          considerings.slice(0, 3).map((person, idx) => {
+                            return (
+                              <Avatar
+                                key={idx}
+                                name={person}
+                                round={true}
+                                title={person}
+                                size="30"
+                                className="flex ml-[5px] mb-[3px] cursor-pointer"
+                                onClick={() => {
+                                  setSample(x);
+                                  setConsidering(true);
                                 }}
                               />
-                            </div>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width={20}
-                              height={20}
-                              viewBox="0 0 20 20"
-                              fill="none">
-                              <path
-                                d="M1.66675 8.33333V10.8333M5.00008 5V14.1667M8.33342 2.5V17.5M11.6667 6.66667V12.5M15.0001 4.16667V15M18.3334 8.33333V10.8333"
-                                stroke="#CECFDA"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </div>
-                          </td>
-
-                          {/* FILENAME COLUMN */}
-                          <td
-                            className="whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']"
-                            style={{
-                              maxWidth: '252px', // Adjust as per your requirement
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                            }}
+                            );
+                          })
+                        }
+                        <span
+                          onClick={() => {
+                            setSample(x);
+                            setConsidering(true);
+                          }}
+                          className="cursor-pointer text-[10px] ml-[10px] mt-[10px] text-[#929292] underline font-['Mona-Sans-M']"
                           >
-                            {x.filename}
-                            <br />
-                            <span className="text-[12px] text-[#6f6f6f]">
-                              {sound_details[index]?.author}
-                            </span>
-                          </td>
+                            View All
+                          </span>
+                        </td>
 
-                          {/* WAVEFORM COLUMN */}
-                          <td className="wave-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 w-[267px]">
-                              <AudioPlayer
-                                link={x.sample_src}
-                                id={x.id}
-                                playing={playing}
-                                setPlaying={setPlaying}
-                                playerType={"sample"}
-                                volume={0}
-                              />
-                          </td>
+                        {/* TOOLS COLUMN */}
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                          <div className="flex items-center gap-4">
 
-                          {/* SAMPLE DURATION COLUMN */}
-                          <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
-                            {x?.length}
-                          </td>
+                            {/* LIKE BUTTON */}
+                            <div className="toggle-container">
+                              {parseInt(x.is_liked) === 1 ? (
+                                <Toggle is_liked={true} sample={x} />
+                              ) : (
+                                <Toggle is_liked={false} sample={x} />
+                              )}
+                            </div>
 
-                          {/* SAMPLE KEY COLUMN */}
-                          <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
-                            {x?.keys}
-                          </td>
+                            {/* DOWNLOAD BUTTON */}
+                            <a
+                              href="#"
+                              className="download-link cursor-pointer"
+                              onClick={async (e) => {
+                                e.preventDefault();
+                                const FileSaver = require("file-saver");
+                                await saveSampleDownload(x.id);
+                                FileSaver.saveAs(x.sample_src, x.filename);
+                              }}
+                              rel="noreferrer"
+                              download
+                              target="_blank">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width={24}
+                                height={24}
+                                viewBox="0 0 24 24"
+                                fill="none">
+                                <path
+                                  d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                                  stroke="#CDCDCD"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"/>
+                              </svg>
+                            </a>
 
-                          {/* SAMPLE BPM COLUMN */}
-                          <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
-                            {x?.bpm}
-                          </td>
+                            {/* DROPDOWN BUTTON */}
+                            <div className="dropdown-container">
+                              <DropDown sample={x} getSamples={getSamples} page={current_page} sound={sound} />
+                            </div>
 
-                          {/* CONSIDERING COLUMN */}
-                          <td className="considering-avatar whitespace-nowrap text-sm text-gray-300 text-center">
-                          {
-                            considerings.length > 0 &&
-                            considerings.slice(0, 3).map((person, idx) => {
-                              return (
-                                <Avatar
-                                  key={idx}
-                                  name={person}
-                                  round={true}
-                                  title={person}
-                                  size="30"
-                                  className="flex ml-[5px] mb-[3px]"
-                                />
-                              );
-                            })
-                          }
-                          <span
-                            onClick={() => {
-                              setSample(x);
-                              setConsidering(true);
-                            }}
-                            className="cursor-pointer text-[10px] ml-[10px] mt-[10px] text-[#929292] underline font-['Mona-Sans-M']"
-                            >
-                              View All
-                            </span>
-                          </td>
-
-                          {/* TOOLS COLUMN */}
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-
-  {/* Wrapper Div */}
-  <div className="flex items-center gap-4">
-
-    {/* LIKE BUTTON */}
-    <div className="toggle-container">
-      {parseInt(x.is_liked) === 1 ? (
-        <Toggle is_liked={true} sample={x} />
-      ) : (
-        <Toggle is_liked={false} sample={x} />
-      )}
-    </div>
-
-    {/* DOWNLOAD BUTTON */}
-    <a
-      href="#"
-      className="download-link cursor-pointer"
-      onClick={async (e) => {
-        e.preventDefault();
-        const FileSaver = require("file-saver");
-        await saveSampleDownload(x.id);
-        FileSaver.saveAs(x.sample_src, x.filename);
-      }}
-      rel="noreferrer"
-      download
-      target="_blank">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={24}
-        height={24}
-        viewBox="0 0 24 24"
-        fill="none">
-        <path
-          d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-          stroke="#CDCDCD"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"/>
-      </svg>
-    </a>
-
-    {/* DROPDOWN BUTTON */}
-    <div className="dropdown-container">
-      <DropDown sample={x} getSamples={getSamples} page={current_page} sound={sound} />
-    </div>
-
-  </div> {/* End of Wrapper Div */}
-
-</td>
-
-
-                        </tr>
-                      </>
-                    );
-                  })}
-              </tbody>
+                          </div>
+                        </td>
+                      </tr>
+                    </>
+                  );
+                })}
+            </tbody>
             </table>
           </>
           )}
