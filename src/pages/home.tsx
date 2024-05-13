@@ -158,7 +158,7 @@ const HomeFeed = () => {
         </div>
       </div>
 
-      <div className="onboard-3 flex flex-col w-full bg-[#101010] p-[16px] h-100%-">
+      <div className="onboard-3 flex flex-col w-full bg-[#101010] p-[16px] h-full overflow-auto">
         {sample === true && vocal === true ? (
           <>
             <ScrollableContainer
@@ -224,7 +224,7 @@ const HomeFeed = () => {
                       console.log("returning null"); 
                       return null;
                     }
-                    
+
                     if (!tagLowercase.includes('guitar')) {
                       return null;
                     }

@@ -98,7 +98,7 @@ const Onboarding = (props:any) => {
             </div>
             <p style={{fontSize: '16px'}}>
               Lets walk you through the site to get you started!
-              Click next to continue, or click exit to skip the tour and go straight to the site.
+              Click next to continue.
             </p>
           </div>
         ),
