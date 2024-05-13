@@ -221,9 +221,9 @@ const HomeFeed = () => {
                 (() => {
                   let isFirstItem = true;
                   return samples.map((sample, index) => {
-                    const tagLowercase = sample.tags.toLowerCase();
+                    const tagLowercase = sample.tags?.toLowerCase();
 
-                    if (!tagLowercase.includes('guitar')) {
+                    if (tagLowercase && !tagLowercase.includes('guitar')) {
                       return null;
                     }
 
@@ -275,9 +275,9 @@ const HomeFeed = () => {
                 (() => {
                   let isFirstItem = true;
                   return samples.map((sample, index) => {
-                    const tagLowercase = sample.tags.toLowerCase();
+                    const tagLowercase = sample.tags?.toLowerCase();
 
-                    if (!tagLowercase.includes('synth') || !tagLowercase.includes('reggaeton')) {
+                    if (tagLowercase && (!tagLowercase.includes('synth') || !tagLowercase.includes('reggaeton'))) {
                       return null;
                     }
 
