@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Theme from "components/theme";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,6 +24,10 @@ const DropDown = (props: any) => {
   const state = useSelector((state: RootState) => state);
   const [request_split_sheet, setRequestSplitSheet] = useState(false);
   const [sample_info, setSampleInfo] = useState(false);
+  
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const shouldOpenDropdown = queryParams.get('view') === 'secondStep';
 
   return (
     <React.Fragment>
@@ -32,7 +36,7 @@ const DropDown = (props: any) => {
           <div>
             <Menu.Button>
               <EllipsisVerticalIcon
-                className="-mr-5 h-5 w-5 mt-[4px] text-gray-400"
+                className="onboard-9 -mr-5 h-5 w-5 mt-[4px] text-gray-400"
                 aria-hidden="true"
               />
             </Menu.Button>
@@ -40,6 +44,7 @@ const DropDown = (props: any) => {
 
           <Transition
             as={Fragment}
+            show={(shouldOpenDropdown && props.index === 0) || undefined}
             enter="transition ease-out duration-100"
             enterFrom="transform opacity-0 scale-95"
             enterTo="transform opacity-100 scale-100"
@@ -47,7 +52,7 @@ const DropDown = (props: any) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="zindex absolute border border-[#545454] rounded-[8px] top-[0px] right-[20px] w-[230px] bg-[#111] h-auto p-[10px]">
+            <Menu.Items className="onboard-9 zindex absolute border border-[#545454] rounded-[8px] top-[0px] right-[20px] w-[230px] bg-[#111] h-auto p-[10px]">
               <div className="">
                 <Menu.Item>
                   <div
@@ -64,7 +69,7 @@ const DropDown = (props: any) => {
 
                       }
                     }}
-                    className="flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
+                    className="onboard-10 flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +93,7 @@ const DropDown = (props: any) => {
                 <Menu.Item>
                   <div
                     onClick={() => setSampleInfo(true)}
-                    className="flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
+                    className="onboard-11 flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +118,7 @@ const DropDown = (props: any) => {
               </div>
               <div className="">
                 <Menu.Item>
-                  <div className="flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
+                  <div className="onboard-12 flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
                   
                   onClick={() => {
 
@@ -149,7 +154,7 @@ const DropDown = (props: any) => {
                 <Menu.Item>
                   <div
                     onClick={() => setRequestSplitSheet(true)}
-                    className="flex items-center cursor-pointer hover:bg-[#0014CD] rounded-[4px] py-[8px] px-[12px]"
+                    className="onboard-13 flex items-center cursor-pointer hover:bg-[#0014CD] rounded-[4px] py-[8px] px-[12px]"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

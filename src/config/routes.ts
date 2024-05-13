@@ -10,6 +10,7 @@ import TermsOfService from "pages/terms";
 import SamplesPage from "pages/samples";
 import MyLikesPage from "pages/my-likes";
 import MyDownloadsPage from "pages/downloaded-samples";
+import DummyPlayerContainer from "components/player/dummy-player-container";
 
 const routes: IRoute[] = [
   {

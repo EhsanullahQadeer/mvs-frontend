@@ -971,6 +971,33 @@ th, td {
   z-index: 1000; /* Ensures it stays above other content */
 }
 
+
+@keyframes flickerBorder {
+  0%, 100% { border-color: rgba(255, 255, 255, 1); }
+  50% { border-color: rgba(255, 255, 255, 0); }
+}
+
+.react-joyride__spotlight {
+  animation: flickerBorder 1s infinite;
+  border: 4px solid white; /* Set the border color and width */
+  box-shadow: none; /* Optional: remove any existing box shadow if it interferes */
+}
+
+
+.onboard-body {
+  position: fixed;
+  left: 50%;
+  width: 900px;
+  height: 550px;
+  top: 50%;
+  // transform: translateX(-50%);
+  height: 1px; /* Minimal height to keep it unobtrusive */
+  width: 1px; /* Minimal width to keep it unobtrusive */
+}
+
+
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

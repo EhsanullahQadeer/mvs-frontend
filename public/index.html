@@ -12,6 +12,16 @@
           a.appendChild(r);
       })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
   </script>
+    <script>
+      // Prevent ESC key from triggering default actions
+      document.addEventListener('keydown', function(event) {
+          if (event.keyCode === 27) { // ESC key's keycode is 27
+              event.preventDefault();
+              event.stopPropagation();
+              return false;
+          }
+      }, true); // Use capture phase to ensure it runs before any other keydown events
+  </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
