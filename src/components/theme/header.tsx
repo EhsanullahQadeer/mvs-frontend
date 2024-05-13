@@ -13,6 +13,7 @@ import cookie from "js-cookie";
 import { fetchCurrentUser } from "redux/actionCreators/auth";
 import Avatar from 'react-avatar';
 import UserSettingsModal from "components/modals/user-settings";
+import { updateUser } from "services/user";
 
 interface RootState {
     auth: any;
@@ -41,6 +42,31 @@ const Header = () => {
     navigate('/login');
     return;
   };
+
+
+
+  const onboardGuide = async () => {
+    // Construct the payload with user data
+    const payload = {
+      ...user,
+      first_visit: true
+    };
+
+    try {
+      const update_user = await updateUser(payload, user?.id);
+      if (update_user.data.error) {
+        console.error("Error updating user:", update_user.data.error);
+      } else {
+        await dispatch(fetchCurrentUser());
+        console.log("User updated successfully:", update_user.data);
+        navigate('/');
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
+
+
 
   useEffect(() => {
     if (!token) {
@@ -287,6 +313,7 @@ const Header = () => {
                   {({ active }) => (
                     <>
                       <div
+                        onClick={onboardGuide}
                         className={classNames(
                           active
                             ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"
