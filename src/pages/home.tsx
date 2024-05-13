@@ -89,7 +89,7 @@ const HomeFeed = () => {
     if (sounds.length !== stateSamples.length && loading) {
       populateSamples();
     }
-  }, [loading, sounds, stateSamples]);
+  }, [loading, sounds, stateSamples, populateSamples]);
 
   useEffect(() => {
     setLoading(true);
