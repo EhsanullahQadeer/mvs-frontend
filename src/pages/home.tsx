@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 import Theme from "components/theme";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getSounds } from "redux/actionCreators/sounds";
@@ -74,22 +74,22 @@ const HomeFeed = () => {
   const navigate = useNavigate();
 
   const state = useSelector((state: RootState) => state);
+  const stateSamples = state.sounds.sounds;
+
+  const populateSamples = useCallback(() => {
+    if (sounds.length !== stateSamples.length) {
+      setSounds(stateSamples);
+      setVocals(stateSamples.filter((x: any) => x.type === "Vocal"));
+      setSamples(stateSamples.filter((x: any) => x.type === "Sample"));
+    }
+    setLoading(false);
+  }, [sounds, setSounds, stateSamples, setVocals, setLoading, setSamples]);
 
   useEffect(() => {
-    console.log("==== STATE ====");
-    if (state.sounds.type === ActionType.GET_SOUNDS) {
-      setSounds(state.sounds.sounds);
-
-      const data = state.sounds.sounds;
-
-      setVocals(data.filter((x: any) => x.type === "Vocal"));
-      setSamples(data.filter((x: any) => x.type === "Sample"));
-
-      setLoading(false);
-    } else {
-      setLoading(false);
+    if (sounds.length !== stateSamples.length && loading) {
+      populateSamples();
     }
-  }, [state]);
+  }, [loading, sounds, stateSamples]);
 
   useEffect(() => {
     setLoading(true);
