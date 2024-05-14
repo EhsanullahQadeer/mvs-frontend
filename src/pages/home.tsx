@@ -158,7 +158,22 @@ const HomeFeed = () => {
         </div>
       </div>
 
-      <div className="onboard-3 flex flex-col w-full bg-[#101010] p-[16px] h-full overflow-auto">
+      <div
+        style={{
+          overflow: 'auto',
+          msOverflowStyle: 'none',  // IE 10+
+          scrollbarWidth: 'none',   // Firefox
+        }}
+        className="onboard-3 flex flex-col w-full bg-[#101010] p-[16px] h-full"
+      >
+        <style>
+          {`
+            .onboard-3::-webkit-scrollbar {
+              display: none;  /* Chrome, Safari, Opera */
+            }
+          `}
+        </style>
+
         {sample === true && vocal === true ? (
           <>
             <ScrollableContainer
