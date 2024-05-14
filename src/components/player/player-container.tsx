@@ -40,9 +40,6 @@ import DropDown from "components/theme/dropdown";
 import ReactPaginate from "react-paginate";
 import ConsideringModal from "components/modals/considering";
 
-
-
-
 const PlayerContainer = ({ source = '' }) => {
 
   const { id } = useParams();
@@ -318,18 +315,10 @@ const PlayerContainer = ({ source = '' }) => {
   }, []);
 
 
-
-  useEffect(() => {
-      console.log("sound_sampels", sound_samples);
-      console.log("sampledetails", sound_details);
-  }, [sound_samples, sound_details]); // Dependency on sound_samples
-
-
-
   return (
     <React.Fragment>
       <Theme>
-        <div className="second-div w-[100%] flex flex-col z-0 pb-[130px]">
+        <div className="onboard-4 second-div w-[100%] flex flex-col z-0 pb-[130px]">
           
 
           {/* TOP BANNER */}
@@ -541,16 +530,44 @@ const PlayerContainer = ({ source = '' }) => {
                         id={`sample-item-${x.id}`}
                         className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${index === currentSampleIndex ? 'active-sample' : ''}`}>
 
-                        {/* SAMPLE COLUMN */}
-                        <td 
-                          className="row-play  row-hover whitespace-nowrap px-3 py-4 text-sm text-gray-300"
-                          data-index={index}>
-                          <div style={{
-                            display: 'flex',
-                            justifyContent: 'start',
-                            alignItems: 'center',
-                          }}>
-                          <div className="thumbnail-container">
+                          {/* SAMPLE COLUMN */}
+                          <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                            <div style={{
+                              display: 'flex',
+                              justifyContent: 'start',
+                              alignItems: 'center',
+                            }}>
+                              <div className="thumbnail-container">
+                                <img
+                                  className={
+                                    index !== currentSampleIndex
+                                      ? "thumbnail cursor-pointer mr-[32px]" 
+                                      : "play-pause-icon cursor-pointer mr-[32px]"
+                                  }
+                                  style={
+                                    index !== currentSampleIndex
+                                      ? { width: '32px', height: '32px', borderRadius: '4px'  }
+                                      : { width: '15px', height: '15px', borderRadius: '4px'  }
+                                  }
+                                  src={
+                                    index === currentSampleIndex
+                                      ? (playing
+                                          ? pauseButton
+                                          : playButton )
+                                      : sound_details[index]?.thumbnail
+                                  }
+                                  alt={
+                                    index === currentSampleIndex
+                                      ? "Playing"
+                                      : "Thumbnail"
+                                  }
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+                                    handleSampleClick(x, index);
+                                    setPreview(true);
+                                    handlePlayToggle(index);
+                                }}
+                              />
                               <img
                                 className={
                                   index !== currentSampleIndex
@@ -689,60 +706,61 @@ const PlayerContainer = ({ source = '' }) => {
                             View All
                           </span>
                         </td>
+                        
+                          {/* TOOLS COLUMN */}
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
 
-                        {/* TOOLS COLUMN */}
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                          <div className="flex items-center gap-4">
+                            {/* Wrapper Div */}
+                            <div className="flex items-center gap-4">
 
-                            {/* LIKE BUTTON */}
-                            <div className="toggle-container">
-                              {parseInt(x.is_liked) === 1 ? (
-                                <Toggle is_liked={true} sample={x} />
-                              ) : (
-                                <Toggle is_liked={false} sample={x} />
-                              )}
+                              {/* LIKE BUTTON */}
+                              <div className="onboard-7 toggle-container">
+                                {parseInt(x.is_liked) === 1 ? (
+                                  <Toggle is_liked={true} sample={x} />
+                                ) : (
+                                  <Toggle is_liked={false} sample={x} />
+                                )}
+                              </div>
+
+                              {/* DOWNLOAD BUTTON */}
+                              <a
+                                href="#"
+                                className="onboard-8 download-link cursor-pointer"
+                                onClick={async (e) => {
+                                  e.preventDefault();
+                                  const FileSaver = require("file-saver");
+                                  await saveSampleDownload(x.id);
+                                  FileSaver.saveAs(x.sample_src, x.filename);
+                                }}
+                                rel="noreferrer"
+                                download
+                                target="_blank">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  fill="none">
+                                  <path
+                                    d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                                    stroke="#CDCDCD"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"/>
+                                </svg>
+                              </a>
+
+                              {/* DROPDOWN BUTTON */}
+                              <div className="dropdown-container">
+                                <DropDown sample={x} index={index} getSamples={getSamples} page={current_page} sound={sound} />
+                              </div>
                             </div>
-
-                            {/* DOWNLOAD BUTTON */}
-                            <a
-                              href="#"
-                              className="download-link cursor-pointer"
-                              onClick={async (e) => {
-                                e.preventDefault();
-                                const FileSaver = require("file-saver");
-                                await saveSampleDownload(x.id);
-                                FileSaver.saveAs(x.sample_src, x.filename);
-                              }}
-                              rel="noreferrer"
-                              download
-                              target="_blank">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width={24}
-                                height={24}
-                                viewBox="0 0 24 24"
-                                fill="none">
-                                <path
-                                  d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-                                  stroke="#CDCDCD"
-                                  strokeWidth="1.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"/>
-                              </svg>
-                            </a>
-
-                            {/* DROPDOWN BUTTON */}
-                            <div className="dropdown-container">
-                              <DropDown sample={x} getSamples={getSamples} page={current_page} sound={sound} />
-                            </div>
-
-                          </div>
-                        </td>
+                          </td>
                       </tr>
                     </>
-                  );
-                })}
-            </tbody>
+                    );
+                  })}
+              </tbody>
             </table>
           </>
           )}

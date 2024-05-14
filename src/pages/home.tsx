@@ -60,6 +60,7 @@ const Loader = () => {
 const HomeFeed = () => {
   const [sample, setSample] = useState(true);
   const [vocal, setVocal] = useState(true);
+  const [run, setRun] = useState(true); // Automatically start the tour
 
   const [loading, setLoading] = useState(false);
 
@@ -96,68 +97,82 @@ const HomeFeed = () => {
     dispatch(getSounds());
   }, [dispatch]);
 
-  console.log(sounds);
-
   return (
     <React.Fragment>
       <Theme>
+      <div className="onboard-body"></div>
+      <div className="onboard-terms"></div>
 
-    <div className="m-2">
-      <ScrollableContainer 
-      scrollAutomatically={true}
-      title="Our Partners"
-      desc="The Engine of Our Success | Empowering Our Growth: Meet Our Partners.">
-        <div className="carousel-inner flex transition-transform duration-1000 ease-linear">
-        {images.map((image, index) => (
-          <img
-            key={index} // Use the index as the key
-            src={image} // Use the image from the array
-            alt={`Slide ${index + 1}`}
-            style={{
-              borderRadius: 4,
-              width: 500,
-              height: 200,
-              margin: '4px'
-            }}
-          />
-        ))}
-        </div>
-      </ScrollableContainer>
-    </div>
+      <div className="m-2">
+        <ScrollableContainer
+          scrollAutomatically={true}
+          title="Our Partners"
+          desc="The Engine of Our Success | Empowering Our Growth: Meet Our Partners.">
+            <div className="carousel-inner flex transition-transform duration-1000 ease-linear">
+            {images.map((image, index) => (
+              <img
+                key={index} // Use the index as the key
+                src={image} // Use the image from the array
+                alt={`Slide ${index + 1}`}
+                style={{
+                  borderRadius: 4,
+                  width: 500,
+                  height: 200,
+                  margin: '4px'
+                }}
+              />
+            ))}
+          </div>
+        </ScrollableContainer>
+      </div>
 
-    <div className="bg-[#101010] p-[12px] border-b-2 border-t-2 border-[#1F1F1F]">
-        <div className="flex items-center space-x-4 font-['Mona-Sans-M'] font-[12px]">
+      <div className="bg-[#101010] p-[12px] border-b-2 border-t-2 border-[#1F1F1F]">
+          <div className="flex items-center space-x-4 font-['Mona-Sans-M'] font-[12px]">
+            <button
+              onClick={() => {
+                setSample(true);
+                setVocal(true);
+              }}
+              className={`${
+                sample === true
+                  ? "border h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
+                  : "border h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
+                }`}
+              >
+                Sample Loops
+            </button>
+
           <button
             onClick={() => {
-              setSample(true);
-              setVocal(true);
+              setVocal(false);
+              setSample(false);
             }}
             className={`${
-              sample === true
-                ? "border h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
-                : "border h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
-              }`}
+              vocal === false
+                ? "border w-[96px] h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
+                : "border w-[96px] h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
+            }`}
             >
-              Sample Loops
+            Vocals Loops
           </button>
-
-      <button
-        onClick={() => {
-          setVocal(false);
-          setSample(false);
-        }}
-        className={`${
-          vocal === false
-            ? "border w-[96px] h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
-            : "border w-[96px] h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
-        }`}
-        >
-          Vocals Loops
-        </button>
+        </div>
       </div>
-    </div>
 
-    <div className="flex flex-col w-full bg-[#101010] p-[16px] h-full">
+      <div
+        style={{
+          overflow: 'auto',
+          msOverflowStyle: 'none',  // IE 10+
+          scrollbarWidth: 'none',   // Firefox
+        }}
+        className="onboard-3 flex flex-col w-full bg-[#101010] p-[16px] h-full"
+      >
+        <style>
+          {`
+            .onboard-3::-webkit-scrollbar {
+              display: none;  /* Chrome, Safari, Opera */
+            }
+          `}
+        </style>
 
         {sample === true && vocal === true ? (
           <>
@@ -169,8 +184,6 @@ const HomeFeed = () => {
               {loading ? (<Loader/>) : (
                 (() => {
                   let isFirstItem = true;
-                  // const sortedSamples = samples
-                  //   .sort((a, b) => a.updated_at.localeCompare(b.name));
 
                   return samples.map((sample, index) => {
                     const cardClassName = `cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] flex-shrink-0 card ${
@@ -222,8 +235,12 @@ const HomeFeed = () => {
                   let isFirstItem = true;
                   return samples.map((sample, index) => {
                     const tagLowercase = sample.tags?.toLowerCase();
+                    if (!tagLowercase){
+                      console.log("returning null"); 
+                      return null;
+                    }
 
-                    if (tagLowercase && !tagLowercase.includes('guitar')) {
+                    if (!tagLowercase.includes('guitar')) {
                       return null;
                     }
 
@@ -276,8 +293,13 @@ const HomeFeed = () => {
                   let isFirstItem = true;
                   return samples.map((sample, index) => {
                     const tagLowercase = sample.tags?.toLowerCase();
+                    if (!tagLowercase){
+                      console.log("returning null"); 
+                      return null;
+                    }
+                    console.log("tags", tagLowercase);
 
-                    if (tagLowercase && (!tagLowercase.includes('synth') || !tagLowercase.includes('reggaeton'))) {
+                    if (!tagLowercase.includes('synth') || !tagLowercase.includes('reggaeton')) {
                       return null;
                     }
 
@@ -317,50 +339,47 @@ const HomeFeed = () => {
                 })()
               )}
             </ScrollableContainer>
-
-
           </>
-          
-    ) : (
-      <>
-        <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
-          New This Week
-        </p>
-        <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
-          Packs and sounds crafted just for you. Updated Weekly.
-        </p>
-        <div className="flex overflow-x-auto gap-[8px]">
-          {loading ? (
-            <Loader />
-          ) : (
-            vocals.map((vocal: any) => (
-              <div
-                key={vocal.id}
-                onClick={() => navigate(`/sound/vocals/${vocal.id}`)}
-                className="cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] card"
-              >
-                <img
-                  src={vocal.thumbnail}
-                  alt={`Vocal named ${vocal.name}`}
-                  className="w-[175px] h-[175px]"
-                />
-                <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
-                  {vocal.name}
-                </p>
-                <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777]">
-                  {vocal?.genre}
-                </p>
-                <p className="text-[12px] font-['Mona-Sans-M'] text-[#777]">
-                  MVSSIVE
-                </p>
-              </div>
-            ))
-          )}
-        </div>
-      </>
-    )}
+      ) : (
+        <>
+          <p className="text-[#fff] text-[24px] font-['Mona-Sans-S']">
+            New This Week
+          </p>
+          <p className="text-[#6e6e6e] pb-[20px] font-['Mona-Sans-M']">
+            Packs and sounds crafted just for you. Updated Weekly.
+          </p>
+          <div className="flex overflow-x-auto gap-[8px]">
+            {loading ? (
+              <Loader />
+            ) : (
+              vocals.map((vocal: any) => (
+                <div
+                  key={vocal.id}
+                  onClick={() => navigate(`/sound/vocals/${vocal.id}`)}
+                  className="cursor-pointer p-[12px] bg-[#232426] border border-[#494949] rounded-[4px] card"
+                >
+                  <img
+                    src={vocal.thumbnail}
+                    alt={`Vocal named ${vocal.name}`}
+                    className="w-[175px] h-[175px]"
+                  />
+                  <p className="text-[14px] pt-[8px] font-['Mona-Sans-M'] text-[#fff]">
+                    {vocal.name}
+                  </p>
+                  <p className="text-[12px] pb-[22px] font-['Mona-Sans-M'] text-[#777]">
+                    {vocal?.genre}
+                  </p>
+                  <p className="text-[12px] font-['Mona-Sans-M'] text-[#777]">
+                    MVSSIVE
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
 
-    </div>
+      </div>
       </Theme>
     </React.Fragment>
   );
