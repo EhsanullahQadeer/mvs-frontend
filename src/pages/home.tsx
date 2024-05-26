@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
-import Theme from "components/theme";
+
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getSounds } from "redux/actionCreators/sounds";
 import ActionType from "redux/actionTypes";
+import Theme from "theme";
 import ScrollableContainer from "util/ScrollableContainer";
 
 declare const require: {

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 import { useLocation, useNavigate } from "react-router-dom";
-import Theme from "components/theme";
+import Theme from "theme";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Fragment } from "react";
