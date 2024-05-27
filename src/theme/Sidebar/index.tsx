@@ -17,7 +17,7 @@ const Sidebar = () => {
             navigate('/sounds');
           }}
           // Change color of button based on the current path and hover
-          className={`onboard-1`+`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
+          className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/sounds'
               ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
               : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
@@ -40,7 +40,7 @@ const Sidebar = () => {
             navigate('/sounds');
           }}
           // Change color of button based on the current path and hover
-          className={`onboard-1`+`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
+          className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/dashboard'
               ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
               : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
@@ -63,7 +63,7 @@ const Sidebar = () => {
             navigate('/sounds');
           }}
           // Change color of button based on the current path and hover
-          className={`onboard-1`+`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
+          className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/inbox'
               ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
               : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
@@ -85,7 +85,7 @@ const Sidebar = () => {
             navigate('/sounds');
           }}
           // Change color of button based on the current path and hover
-          className={`onboard-1`+`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
+          className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/network-request'
               ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
               : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
@@ -108,7 +108,7 @@ const Sidebar = () => {
             navigate('/sounds');
           }}
           // Change color of button based on the current path and hover
-          className={`onboard-1`+`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
+          className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/documents'
               ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
               : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
@@ -131,7 +131,7 @@ const Sidebar = () => {
             navigate('/sounds');
           }}
           // Change color of button based on the current path and hover
-          className={`onboard-1`+`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
+          className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/license-request'
               ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
               : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
