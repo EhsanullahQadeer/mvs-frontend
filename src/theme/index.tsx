@@ -2,14 +2,15 @@
 import * as React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "./header";
-import Sidebar from "./sidebar";
-import mvssive_text from "../../assets/img/massive_text.svg";
+import Sidebar from "./Sidebar";
+import mvssive_text from "../assets/img/massive_text.svg";
 import ReactJoyride, { ACTIONS, EVENTS, Step } from "react-joyride";
 import logo from "../../assets/img/mvssive-logo.png";
 import royal_logo from "../../assets/img/royalty-icon.svg";
 import { RootState } from "redux/reducers/combine";
 import { useSelector } from "react-redux";
-import Onboarding from "../onBoarding/onboard";
+import Onboarding from "components/onBoarding/onboard";
+
 
 const Theme = (props:any) => {
  

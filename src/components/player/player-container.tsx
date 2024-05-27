@@ -21,7 +21,7 @@ import {
 } from "../../redux/actionCreators/sounds";
 
 import React, { useCallback, useEffect, useState } from "react";
-import Theme from "components/theme";
+
 import { useParams } from "react-router-dom";
 
 import skipBack from '../../assets/img/player/skip-back.svg'
@@ -36,9 +36,11 @@ import TermsOfUse from "assets/terms_of_use";
 import AudioPlayer from "components/AudioPlayer";
 import Avatar from "react-avatar";
 import Toggle from "components/toggle";
-import DropDown from "components/theme/dropdown";
+
 import ReactPaginate from "react-paginate";
 import ConsideringModal from "components/modals/considering";
+import Theme from "theme";
+import DropDown from "theme/dropdown";
 
 const PlayerContainer = ({ source = '' }) => {
 
