@@ -136,7 +136,7 @@ const HomeFeed = () => {
               }}
               className={`${
                 sample === true
-                  ? "border h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
+                  ? "border h-[30px] bg-[#CD7255] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
                   : "border h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
                 }`}
               >
@@ -150,7 +150,7 @@ const HomeFeed = () => {
             }}
             className={`${
               vocal === false
-                ? "border w-[96px] h-[30px] bg-[#C4FF4826] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
+                ? "border w-[96px] h-[30px] bg-[#CD7255] px-[8px] py-[4px] border-[#C4FF48] border-2 text-[#fff] rounded-[4px] text-xs truncate"
                 : "border w-[96px] h-[30px] px-[8px] py-[4px] border-[#5C5C5C] border-2 text-[#5C5C5C] rounded-[4px] text-xs truncate"
             }`}
             >
