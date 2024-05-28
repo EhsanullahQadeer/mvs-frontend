@@ -19,8 +19,8 @@ const Sidebar = () => {
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/sounds'
-              ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
-              : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
+              ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-S"]'
+              : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
             }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -42,8 +42,8 @@ const Sidebar = () => {
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/dashboard'
-              ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
-              : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
+              ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-S"]'
+              : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
             }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -60,13 +60,13 @@ const Sidebar = () => {
         <button
           onClick={() => {
             // @TODO this should be redirected to the "home" page, not "sounds"
-            navigate('/sounds');
+            navigate('/inbox');
           }}
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/inbox'
-              ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
-              : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
+              ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-S"]'
+              : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
             }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -87,8 +87,8 @@ const Sidebar = () => {
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/network-request'
-              ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
-              : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
+              ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-S"]'
+              : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
             }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -110,8 +110,8 @@ const Sidebar = () => {
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/documents'
-              ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
-              : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
+              ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-S"]'
+              : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
             }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -133,8 +133,8 @@ const Sidebar = () => {
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
           justify-start ${pathname === '/license-request'
-              ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
-              : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
+              ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-S"]'
+              : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
             }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -162,8 +162,8 @@ const Sidebar = () => {
             }}
             className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center 
             justify-start ${pathname === '/my/downloads'
-                ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-M"]'
-                : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
+                ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-M"]'
+                : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
               }`}
           >
             <svg
@@ -189,8 +189,8 @@ const Sidebar = () => {
               navigate('/my/likes');
             }}
             className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center justify-start ${pathname === '/my/likes'
-                ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-M"]'
-                : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
+                ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-M"]'
+                : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
               }`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -217,8 +217,8 @@ const Sidebar = () => {
               navigate('/my/likes');
             }}
             className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center justify-start ${pathname === '/my/likes'
-                ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-M"]'
-                : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
+                ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-M"]'
+                : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
               }`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -234,8 +234,8 @@ const Sidebar = () => {
               navigate('/my/likes');
             }}
             className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center justify-start ${pathname === '/my/likes'
-                ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-M"]'
-                : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
+                ? 'bg-[#c45b3a] text-[#000] font-["Mona-Sans-M"]'
+                : 'hover:bg-[#CD7255] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-M"]'
               }`}
           >
             <svg
