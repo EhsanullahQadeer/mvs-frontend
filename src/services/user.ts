@@ -22,8 +22,43 @@ import  config from "config/config"
     return axios.post(`${config.defaults.api_url}/auth/confirm`,data)
   }
 
-  export async function requestAccess(data:any) {
+  /**
+   * @description This function looks into the database and checks if 
+   *              the username is available.
+   * @param data 
+   * @returns 
+   */
+  export async function requestInvitationCodeWithEmail(data:any) {
     return axios.post(`${config.defaults.api_url}/users/request/access`,data)
+  }
+
+  /**
+   * @description This function looks into the database and checks if 
+   *              the username is available.
+   * @param data 
+   * @returns 
+   */
+  export async function validateUsername(username?: string, email?: string) {
+  
+    let url = `${config.defaults.api_url}/users/validate-username?`;
+    if (username) {
+      url += `username=${username}`;
+    }
+    if (email) {
+      if (username) url += '&';
+      url += `email=${email}`;
+    }
+    return axios.post(url);
+  }
+
+  /**
+   * @description This function looks into the database and checks if 
+   *              the username is available.
+   * @param data 
+   * @returns 
+   */
+  export async function validateEmail( email?: string ) {
+    return axios.post(`${config.defaults.api_url}/users/validate-email?email=${email}`)
   }
 
   export async function verifyCode(data:any) {
@@ -33,7 +68,6 @@ import  config from "config/config"
   export async function resendCode(data:any) {
     return axios.post(`${config.defaults.api_url}/auth/resend/code`,data)
   }
-
 
   export async function resetPassword(data:any) {
     return axios.post(`${config.defaults.api_url}/auth/confirm/password`,data)
