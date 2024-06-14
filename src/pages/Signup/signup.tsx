@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { createNewUser, validateUsername, verifyCode } from "services/user";
 import { FileUploader } from "react-drag-drop-files";
-import PhoneInput from "react-phone-input-2";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -36,9 +35,6 @@ const SignupPage = () => {
   });
 
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [image, setImage] = useState(null);
-  const [imageName, setImageName] = useState(null);
-  const [imageType, setImageType] = useState(null);
   const [usernameError, setUsernameError] = useState(null);
   const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -73,13 +69,12 @@ const SignupPage = () => {
     img.src = window.URL.createObjectURL(file);
     img.onload = () => {
       setPreviewUrl(URL.createObjectURL(file));
-      setImageName(file.name);
-      setImageType(file.type);
+
 
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        setImage(reader.result);
+        
       };
     };
   };
@@ -189,12 +184,14 @@ const SignupPage = () => {
                 {previewUrl ? (
                   <img
                     loading="lazy"
+                    alt=""
                     className="self-center max-w-full rounded-full border-2 border-white border-solid aspect-square w-[100px]"
                     src={previewUrl}
                   />
                 ) : (
                   <img
                     loading="lazy"
+                    alt=""
                     src="http://www.gravatar.com/avatar/?d=mp"
                     className="self-center max-w-full rounded-full border-2 border-white border-solid aspect-square w-[100px]"
                   />
@@ -208,6 +205,7 @@ const SignupPage = () => {
                   <div className="flex gap-2.5 justify-center p-2.5 mt-3 cursor-pointer">
                     <img
                       loading="lazy"
+                      alt=""
                       src="https://cdn.builder.io/api/v1/image/assets/TEMP/9651b37c5a2f80fabc45d3eae3490c4a07d3f1a09b72c458d5fa58dce2e92470?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
                       className="shrink-0 w-6 aspect-square"
                     />
@@ -328,6 +326,7 @@ const SignupPage = () => {
               <div className="flex flex-col grow justify-center items-start w-full bg-white max-md:mt-10 max-md:max-w-full">
                 <img
                   loading="lazy"
+                  alt=""
                   srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3187037835e4f8e3b25773bb8651120a26e67473dafd68594e50df3c89a65d60?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3187037835e4f8e3b25773bb8651120a26e67473dafd68594e50df3c89a65d60?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3187037835e4f8e3b25773bb8651120a26e67473dafd68594e50df3c89a65d60?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3187037835e4f8e3b25773bb8651120a26e67473dafd68594e50df3c89a65d60?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3187037835e4f8e3b25773bb8651120a26e67473dafd68594e50df3c89a65d60?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3187037835e4f8e3b25773bb8651120a26e67473dafd68594e50df3c89a65d60?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3187037835e4f8e3b25773bb8651120a26e67473dafd68594e50df3c89a65d60?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3187037835e4f8e3b25773bb8651120a26e67473dafd68594e50df3c89a65d60?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
                   className="w-full aspect-[0.7] max-md:max-w-full"
                 />
