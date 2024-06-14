@@ -2,15 +2,11 @@
 import config from 'config/config';
 import React, { useEffect, useState } from 'react';
 import Avatar from 'react-avatar';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Theme from 'theme';
 import ScrollableContainer from 'util/ScrollableContainer';
 import { fetchCurrentUser } from "redux/actionCreators/auth";
-
-interface RootState {
-  auth: any;
-}
 
 const ProfilePage = () => {
   const { username } = useParams<{ username: string }>();
