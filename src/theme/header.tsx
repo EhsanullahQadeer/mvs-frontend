@@ -4,7 +4,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import ContactModal from "components/modals/contact-us";
@@ -39,10 +39,14 @@ const Header = () => {
 
   const LogOut = () => {
     cookie.remove('token');
+    localStorage.removeItem('token');
     navigate('/login');
     return;
   };
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { username } = useParams();
 
 
   const onboardGuide = async () => {
@@ -83,10 +87,7 @@ const Header = () => {
   }, [dispatch]);
 
   useEffect(() => {
-
-     console.log("=== Header State ===");
      setUser(state.auth.user);
-
   },[state])
 
   return (
@@ -126,7 +127,6 @@ const Header = () => {
         </div>
 
           {/* Notification Button */}
-
           <div className="flex items-center space-x-4 px-[40px]">
           <button className="relative  bg-transparent rounded-full">
             <svg
@@ -200,6 +200,41 @@ const Header = () => {
                     </>
                   )}
                 </Menu.Item>
+
+                <Menu.Item>
+                  {({ active }) => (
+                    <>
+                      <div
+                        onClick={() => navigate(`/user/${state?.auth?.user?.username}`)}
+                        className={classNames(
+                          active
+                            ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"
+                            : "hover:bg-[#0014CD] rounded-[8px]  flex items-center px-[12px] py-[8px] cursor-pointer"
+                        )}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M9 22V12H15V22M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z"
+                            stroke="#BBBBBB"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                          Profile
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </Menu.Item>
+
                 <Menu.Item>
                   {({ active }) => (
                     <>
@@ -399,5 +434,3 @@ const Header = () => {
 };
 
 export default Header;
-
-

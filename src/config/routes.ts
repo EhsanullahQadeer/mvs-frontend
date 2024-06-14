@@ -1,7 +1,7 @@
 import IRoute from "../interfaces/route";
 import LoginPage from "../pages/login";
-import SignupPage from "pages/signup";
-import RequestInfoPage from "pages/request-info";
+import SignupPage from "pages/Signup/signup";
+import RequestInfoPage from "pages/Signup/TalentProfiles/request-info";
 import ThankyouPage from "pages/thankyou";
 import ForgotPasswordPage from "pages/forgot-password";
 import CompleteProfilePage from "pages/complete-profile";
@@ -10,7 +10,7 @@ import TermsOfService from "pages/terms";
 import SamplesPage from "pages/samples";
 import MyLikesPage from "pages/my-likes";
 import MyDownloadsPage from "pages/downloaded-samples";
-
+import ProfilePage from "pages/ProfilePage";
 const routes: IRoute[] = [
   {
     path: "/home",
@@ -21,6 +21,11 @@ const routes: IRoute[] = [
     path: "/",
     name: "Login",
     component: LoginPage,
+  },
+  {
+    path: '/user/:username',
+    name: 'Profile',
+    component: ProfilePage,
   },
   {
     path: "/login",

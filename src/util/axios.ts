@@ -1,15 +1,29 @@
-import cookie from "js-cookie";
-import axios from "axios";
+// src/util/axios.ts
+import axios from 'axios';
+import cookie from 'js-cookie';
+import config from '../config/config'; // Adjust the path as necessary
 
-axios.interceptors.request.use(async (config:any) => {
-  if(localStorage.getItem("token")) {
-    config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
-  } else {
-
-    config.headers.Authorization = `Bearer ${cookie.get("token")}`;
-
-  }
-  return config;
+// Create an Axios instance
+const axiosInstance = axios.create({
+  baseURL: config.defaults.api_url, // Use the base URL from the config
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-export default axios;
+// Set up the request interceptor
+axiosInstance.interceptors.request.use(
+  async (config: any) => {
+    const token = localStorage.getItem('token') || cookie.get('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Export the Axios instance with the name 'axios'
+export default axiosInstance as typeof axios;

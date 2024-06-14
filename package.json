@@ -39,6 +39,7 @@
     "framer-motion": "^10.16.4",
     "js-cookie": "^3.0.1",
     "jsencrypt": "^3.2.1",
+    "libphonenumber-js": "^1.11.2",
     "moment": "^2.29.4",
     "mui-datatables": "^4.2.2",
     "query-string": "^8.1.0",
