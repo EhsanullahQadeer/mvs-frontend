@@ -1,5 +1,4 @@
 // src/components/ProfilePage.tsx
-import PlayerContainer from 'components/player/player-container';
 import config from 'config/config';
 import React, { useEffect, useState } from 'react';
 import Avatar from 'react-avatar';
@@ -16,7 +15,6 @@ interface RootState {
 const ProfilePage = () => {
   const { username } = useParams<{ username: string }>();
   const dispatch = useDispatch();
-  const stater = useSelector((state: RootState) => state.auth.user);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +25,6 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      console.log('stater', stater);
       try {
         const response = await fetch(`${config.defaults.api_url}/user/${username}`);
         if (!response.ok) {

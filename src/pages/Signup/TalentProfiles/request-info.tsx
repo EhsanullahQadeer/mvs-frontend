@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { requestInvitationCodeWithEmail, validateEmail, validateUsername } from "services/user";
-import { isValidPhoneNumber } from 'libphonenumber-js';
+import { requestInvitationCodeWithEmail, validateEmail } from "services/user";
 
 type Country = {
   name: string;
@@ -20,12 +19,10 @@ const RequestInfoPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [countryCode, setCountryCode] = useState('US'); // Initial country code (adjust)
 
   // Error messages
   const [firstNameError, setFirstNameError] = useState(null);
   const [lastNameError, setLastNameError] = useState(null);
-  const [usernameError, setUsernameError] = useState(null);
   const [emailError, setEmailError] = useState(null);
 
   const [user, setUser] = useState({
@@ -276,7 +273,6 @@ const RequestInfoPage = () => {
             </div>
             <div className={`mt-2 p-2 bg-zinc-800 text-neutral-300 border border-neutral-700 rounded-lg ${isValidInput ? '' : 'border-red-500'}`}>
               <PhoneInput
-                country={countryCode} // Pass dynamic country code
                 value={user.phone}
                 isValid={(value: string, country: Country) => {
                   const valid = isPhoneNumberComplete(value, country);
