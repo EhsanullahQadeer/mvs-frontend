@@ -11,6 +11,7 @@ import SamplesPage from "pages/samples";
 import MyLikesPage from "pages/my-likes";
 import MyDownloadsPage from "pages/downloaded-samples";
 import ProfilePage from "pages/ProfilePage";
+import InboxPage from "pages/Inbox";
 const routes: IRoute[] = [
   {
     path: "/home",
@@ -41,6 +42,11 @@ const routes: IRoute[] = [
     path: "/request-info",
     name: "Request Info",
     component: RequestInfoPage,
+  },
+  {
+    path: "/inbox",
+    name: "Inbox",
+    component: InboxPage,
   },
   {
     path: "/thank-you",

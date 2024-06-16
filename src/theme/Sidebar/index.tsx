@@ -60,7 +60,7 @@ const Sidebar = () => {
         <button
           onClick={() => {
             // @TODO this should be redirected to the "home" page, not "sounds"
-            navigate('/sounds');
+            navigate('/inbox');
           }}
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
