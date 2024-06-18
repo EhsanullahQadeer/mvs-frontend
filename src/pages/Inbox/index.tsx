@@ -5,6 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "redux/reducers/combine";
 import axios from "util/axios";
 import config from "config/config";
+import CheckoutForm from "components/stripe";
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { loadStripe } from "@stripe/stripe-js";
+
+
+console.log('key', process.env.STRIPE_PUBLIC_KEY);
 
 const InboxPage = () => {
   const dispatch = useDispatch();
@@ -45,7 +51,6 @@ const InboxPage = () => {
       // Sort conversations by latestMessage.Timestamp in descending order
       conversations = conversations.sort((a, b) => b.latestMessage.Timestamp - a.latestMessage.Timestamp);
 
-
       return conversations;
     } catch (error) {
       console.error('Error fetching conversations:', error);
@@ -55,7 +60,6 @@ const InboxPage = () => {
 
   const handleConversationClick = (conversation) => {
     setSelectedConversation(conversation);
-    console.log('conversation.messages', conversation.messages);
     setMessages(conversation.messages || []);
   };
 
@@ -65,13 +69,14 @@ const InboxPage = () => {
 
   const handleSendMessage = async () => {
     if (newMessage.trim() === "") return;
-
+    console.log('newMessage', newMessage);
     // Send the message to the backend
     try {
-      await axios.post(`${config.defaults.api_url}/messenger/conversations`, {
-        conversationId: selectedConversation.ConversationId,
-        userId: state.auth.user.UserId,
-        message: newMessage,
+      await axios.post(`${config.defaults.api_url}/messenger/send-message`, {
+        senderId: state.auth.user.UserId,
+        receiverId: selectedConversation.otherUserId,
+        conversationId: selectedConversation.conversationId,
+        messageContent: newMessage,
       });
       // After sending the message, clear the input box and refresh messages
       setNewMessage("");
@@ -216,15 +221,15 @@ const InboxPage = () => {
         }
   
         .message-details {
-            flex: 1;
-            padding: 20px;
-            background-color: #1e1e1e;
-            color: #fff;
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-            height: 100%;
-            width: 100%;
-            position: relative;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          padding: 20px;
+          background-color: #1e1e1e;
+          color: #fff;
+          transition: transform 0.3s ease;
+          overflow-y: auto;
+          position: relative;
         }
   
         .close-button {
@@ -260,6 +265,14 @@ const InboxPage = () => {
             background-color: #1e90ff;
             align-self: flex-end;
         }
+
+        .message-input-container {
+          display: flex;
+          justify-content: flex-end;
+          padding: 10px;
+          background-color: #1e1e1e;
+          border-top: 1px solid #333;
+        }
   
         .message-timestamp {
             font-size: 0.8em;
@@ -284,11 +297,11 @@ const InboxPage = () => {
         }
   
         .message-input button {
-            padding: 10px 20px;
-            background-color: #33ff33;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+          padding: 10px 20px;
+          background-color: #33ff33;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
         }
   
         .message-date-line {
@@ -322,20 +335,27 @@ const InboxPage = () => {
           </div>
           {selectedConversation && (
             <div className="message-details">
+              <Elements stripe={stripePromise}>
+                <CheckoutForm/>
+              </Elements>
               <button className="close-button" onClick={handleCloseConversation}>×</button>
               <h2>Conversation with {selectedConversation.otherUserId}</h2>
               <div className="chat">
                 {renderMessages()}
               </div>
-              <div className="message-input">
-                <input
-                  type="text"
-                  placeholder="Type a message..."
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                />
-                <button onClick={handleSendMessage}>Send</button>
-              </div>
+              <div className="message-input-container">
+                <div className="message-input">
+                  <input
+                    type="text"
+                    placeholder="Type a message..."
+                    value={newMessage}
+                    onChange={
+                      (e) => setNewMessage(e.target.value)
+                    }
+                  />
+                  <button onClick={handleSendMessage}>Send</button>
+                </div>
+              </div>            
             </div>
           )}
         </main>
