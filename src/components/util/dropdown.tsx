@@ -20,15 +20,7 @@ import RequestSplitSheetModal from "components/modals/request-split-sheet";
 import SampleInfoModal from "components/modals/sample-info";
 import { sampleLikeAPI, sampleUnlikeAPI } from "../../api/sounds";
 
-
-interface RootState {
-  auth: any;
-  sounds: any;
-}
-
 const DropDown = (props: any) => {
-  const navigate = useNavigate();
-  const state = useSelector((state: RootState) => state);
   const [request_split_sheet, setRequestSplitSheet] = useState(false);
   const [sample_info, setSampleInfo] = useState(false);
   

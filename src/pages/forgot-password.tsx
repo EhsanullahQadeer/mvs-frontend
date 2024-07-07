@@ -20,19 +20,14 @@ interface IPage {
 
 const ForgotPasswordPage: React.FunctionComponent<IPage> = (props) => {
     const [email, setEmail] = useState(null);
-    const [codeInput, setCodeInput] = useState(false);
     const [code, setCode] = useState(null);
 
     const [password, setPassword] = useState(null);
 
 
     const [showPassword1, setShowPassword1] = useState(false);
-    const [showPassword2, setShowPassword2] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [resending, setResendng] = useState(false);
-
-    const [isSubmittingCode, setIsSubmittingCode] = useState(false);
 
     const navigate = useNavigate();
 
@@ -56,8 +51,6 @@ const ForgotPasswordPage: React.FunctionComponent<IPage> = (props) => {
             await forgotPasswordAPI({
                 email,
             });
-
-            setCodeInput(true);
 
             setIsSubmitting(false);
 

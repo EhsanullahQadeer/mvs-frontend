@@ -42,13 +42,11 @@ const PlayerContainer = ({ source = '' }) => {
   const { id } = useParams();
   const [currentSampleIndex, setCurrentSampleIndex] = useState(null);
   const [playing, setPlaying]                       = useState(false); 
-  const [manualToggle, setManualToggle]             = useState(false); 
   const [current_page, setCurrentPage]              = useState(0);
   const [volume, setVolume]                         = useState(50);
-  const [isVolumeDragging, setIsVolumeDragging]     = useState(false);
   const [loading, setLoading]                       = useState(false); 
   const [sound_samples, setSoundSamples] = useState([]);
-  const [take, setTake] = useState(10);
+  const [take] = useState(10);
   const [total, setTotal] = useState(0);
   const [preview, setPreview]          = useState(false); // Used to show the sample player
   const [sample, setSample] = useState({});
@@ -115,7 +113,6 @@ const PlayerContainer = ({ source = '' }) => {
       // Toggle playing state if the same sample is clicked
       setPlaying(!playing);
     }
-    setManualToggle(true); // Mark the toggle as manual
   };
 
   const handleSampleClick = useCallback((sample, index) => {
@@ -166,7 +163,6 @@ const PlayerContainer = ({ source = '' }) => {
         // Toggle playing state with space key
         event.preventDefault(); // Prevent page scrolling
         setPlaying((prev) => !prev); // Toggle playing state
-        setManualToggle(true); // Mark toggle as manual
       } else if (
         (event.key === 'ArrowUp' || event.key === 'ArrowDown') &&
         currentSampleIndex !== null
@@ -293,13 +289,11 @@ const PlayerContainer = ({ source = '' }) => {
   };
   
   const handleMouseDown = () => {
-    setIsVolumeDragging(true);
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
   };
   
   const handleMouseUp = () => {
-    setIsVolumeDragging(false);
     window.removeEventListener('mousemove', handleMouseMove);
     window.removeEventListener('mouseup', handleMouseUp);
   };
@@ -358,6 +352,7 @@ const PlayerContainer = ({ source = '' }) => {
                           <div className="bg-[#101010] p-[20px] flex justify-start">
                             <div className="mt-[16px] gap-[22px] flex">
                               <div>
+                                {/* eslint-disable-next-line */}
                                 <img
                                   src={lockImage}
                                   alt="Download"
@@ -382,6 +377,7 @@ const PlayerContainer = ({ source = '' }) => {
                           <div className="bg-[#101010] p-[20px] flex justify-start">
                             <div className="mt-[16px] gap-[22px] flex">
                               <div>
+                                {/* eslint-disable-next-line */}
                                 <img
                                   src={downloadPicture}
                                   alt="Download"
@@ -405,6 +401,7 @@ const PlayerContainer = ({ source = '' }) => {
                         <div className="mt-0 gap-3 flex justify-start">
                           <div className="flex items-center gap-4">
                             <div>
+                              {/* eslint-disable-next-line */}
                               <img className="h-[250px]" src={sound?.thumbnail} style={{ minHeight: '175px', minWidth: '175px', borderRadius: '4px' }} />
                             </div>
                             <div className="text flex-grow max-w-[335px]">
@@ -535,6 +532,7 @@ const PlayerContainer = ({ source = '' }) => {
                               alignItems: 'center',
                             }}>
                               <div className="thumbnail-container">
+                                {/* eslint-disable-next-line */}
                                 <img
                                   className={
                                     index !== currentSampleIndex
@@ -565,6 +563,7 @@ const PlayerContainer = ({ source = '' }) => {
                                     handlePlayToggle(index);
                                 }}
                               />
+                              {/* eslint-disable-next-line */}
                               <img
                                 className={
                                   index !== currentSampleIndex
@@ -595,6 +594,7 @@ const PlayerContainer = ({ source = '' }) => {
                                   handlePlayToggle(index);
                               }}
                             />
+                            {/* eslint-disable-next-line */}
                             <img
                                 src={playButton}
                                 className="play-icon"
@@ -810,6 +810,7 @@ const PlayerContainer = ({ source = '' }) => {
   <div>
     <div className="sample-container">
       <div className="album-art">
+        {/* eslint-disable-next-line */}
         <img 
           src={sound_details[currentSampleIndex]?.thumbnail || ''} 
           alt="Album Art"
@@ -832,6 +833,7 @@ const PlayerContainer = ({ source = '' }) => {
     <div className="control-container">
       {/* Previous Button */}
       <button className="control-button pr-2" onClick={handlePrevClick}>
+        {/* eslint-disable-next-line */}
         <img src={skipBack} alt="Play" />
       </button>
 
@@ -848,6 +850,7 @@ const PlayerContainer = ({ source = '' }) => {
 
       {/* Next Button */}
       <button className="control-button pl-2" onClick={handleNextClick}>
+        {/* eslint-disable-next-line */}
       <img src={skipNext} alt="Play" />
       </button>
     </div>
