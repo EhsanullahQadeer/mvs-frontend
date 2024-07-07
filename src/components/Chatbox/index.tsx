@@ -9,7 +9,7 @@
 
 /* IMPORTS */
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Modal from 'react-modal';
 import { 
   CardElement, 
@@ -29,65 +29,12 @@ interface ChatboxProps {
   setMessages: (messages: any) => void;
 }
 
-const PaymentForm = ({ amount, message }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!stripe || !elements) {
-      console.log('test');
-      return;
-    }
-    setIsProcessing(true);
-
-    try {
-      console.log('api', config.get('API'));
-      const response = await axios.post(`${config.get('API')}/payments/create-payment-intent`, { amount });
-      const clientSecret  = response.data.client_secret;
-      console.log('client secrets', clientSecret);
-
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            name: 'Customer Name',
-          },
-        },
-      });
-
-      if (error) {
-        console.error(error);
-        setIsProcessing(false);
-      } else {
-        console.log(paymentIntent);
-        alert(`Payment successful: ${message}`);
-        setIsProcessing(false);
-      }
-    } catch (error) {
-      console.error(error);
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <CardElement />
-      <button type="submit" disabled={!stripe || isProcessing}>
-        {isProcessing ? "Processing..." : "Pay"}
-      </button>
-    </form>
-  );
-};
-
 const Chatbox: React.FC<ChatboxProps> = ({
   selectedConversation, 
   setSelectedConversation, 
   messages, 
   setMessages 
 }) => {
-  const dispatch = useDispatch();
   const [newMessage, setNewMessage] = useState("");
   const state = useSelector((state: RootState) => state);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -97,16 +44,10 @@ const Chatbox: React.FC<ChatboxProps> = ({
   const stripe = useStripe();
   const elements = useElements();
 
-  const [amount, setAmount] = useState(50.00); // Default amount
-  const [message, setMessage] = useState("");
+  const [amount, setAmount] = useState(50.00);
 
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
-
-  const handleAmountChange = (operation) => {
-    setAmount((prevAmount) => operation === "increment" ? prevAmount + 1 : prevAmount - 1);
-  };
-
 
   const customStyles = {
     content: {
