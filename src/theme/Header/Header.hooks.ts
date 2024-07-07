@@ -26,7 +26,6 @@ export const useHeaderHooks = () => {
   const [user_settings, setUserSettings] = useState(false);
   const dispatch = useDispatch();
   const token = cookie.get('token');
-  const { username } = useParams();
 
   const LogOut = () => {
     cookie.remove('token');

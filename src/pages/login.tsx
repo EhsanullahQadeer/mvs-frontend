@@ -209,6 +209,7 @@ const LoginPage = () => {
                   Sign Up
                 </button>
               </div>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a
                 href="#"
                 onClick={() => navigate('/forgot-password')}
@@ -230,6 +231,7 @@ const LoginPage = () => {
               <div className="Group4 w-[350px] h-12 relative">
                 <div className="Rectangle3467559 w-[350px] h-12 left-0 top-0 absolute opacity-60 bg-neutral-700 rounded-xl backdrop-blur-[50px]" />
                 <div className="Frame48095852 w-[227px] h-8 left-[16px] top-[8px] absolute justify-start items-center gap-5 inline-flex">
+                  {/* eslint-disable-next-line */}
                   <img
                     className="Ellipse715 w-8 h-8 opacity-60 rounded-full"
                     src="https://mvssive-content.s3.amazonaws.com/Frame+48095852.png"

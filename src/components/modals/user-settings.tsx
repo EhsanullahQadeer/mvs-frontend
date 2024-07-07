@@ -132,15 +132,11 @@ const UserSettingsModal = (props: any) => {
     // setImageName(file.name);
     // setImageType(file.type);
 
-    const [previewUrl, setPreviewUrl] = useState('');
-
     // Function to handle file selection
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
     
-            const fileURL = URL.createObjectURL(file);
-            setPreviewUrl(fileURL);
             setImageName(file.name);
             setImageType(file.type);
     

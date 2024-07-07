@@ -56,15 +56,6 @@ const PlayerContainer = ({ source = '' }) => {
   // For use of assorted players
   const [sound_details, setSampleDetails] = useState([]);
 
-  /*
-   * Initialization of sample player
-   */
-  useEffect(() => {
-    const init = async () => {
-      await getSoundData();
-    };
-    init();
-  }, []);
 
 
   const handleRowPlayClick = (e) => {
@@ -96,6 +87,16 @@ const PlayerContainer = ({ source = '' }) => {
     setLoading(false);
   };
 
+  /*
+   * Initialization of sample player
+   */
+  useEffect(() => {
+    const init = async () => {
+      await getSoundData();
+    };
+    init();
+  }, [getSoundData]);
+
   useEffect(() => {
     // Use a unique key for each page
     const pageKey = `${window.location.pathname}_current_page`;
@@ -126,7 +127,7 @@ const PlayerContainer = ({ source = '' }) => {
       // Call the toggle function if it's the same sample
       handlePlayToggle(index);
     }
-  }, [currentSampleIndex, playing]);
+  }, [currentSampleIndex, playing, handlePlayToggle]);
 
 
   const handlePageClick = async (event) => {
@@ -153,6 +154,41 @@ const PlayerContainer = ({ source = '' }) => {
       bubbles: true,
     });
     document.dispatchEvent(event);
+  };
+
+
+
+  const getSamples = async (id, page) => {
+    setLoading(true);
+
+    let _samples;
+
+    switch(source){
+      case "likes":
+          _samples = await getLikedSamplesAPI({
+          skip: page,
+          take,
+        });
+        break;
+
+      case "downloads": 
+          _samples = await getDownloadedSamplesAPI({
+          skip: page,
+          take,
+        });
+        break;
+
+      default:
+        _samples = await getSoundSamplesAPI(id, {
+          skip: page,
+          take,
+        });
+    }
+
+    console.log('page: ', page);
+    setTotal(_samples?.data?.results?.total);
+    setSoundSamples(_samples?.data?.results?.samples);
+    setLoading(false);
   };
 
 
@@ -208,41 +244,7 @@ const PlayerContainer = ({ source = '' }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentSampleIndex, current_page, take, total, sound_samples, id]);
-
-
-  const getSamples = async (id, page) => {
-    setLoading(true);
-
-    let _samples;
-
-    switch(source){
-      case "likes":
-          _samples = await getLikedSamplesAPI({
-          skip: page,
-          take,
-        });
-        break;
-
-      case "downloads": 
-          _samples = await getDownloadedSamplesAPI({
-          skip: page,
-          take,
-        });
-        break;
-
-      default:
-        _samples = await getSoundSamplesAPI(id, {
-          skip: page,
-          take,
-        });
-    }
-
-    console.log('page: ', page);
-    setTotal(_samples?.data?.results?.total);
-    setSoundSamples(_samples?.data?.results?.samples);
-    setLoading(false);
-  };
+  }, [currentSampleIndex, current_page, take, total, sound_samples, id, getSamples]);
 
 
 
@@ -303,7 +305,7 @@ const PlayerContainer = ({ source = '' }) => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, []);
+  }, [handleMouseUp]);
 
 
   return (
@@ -720,6 +722,7 @@ const PlayerContainer = ({ source = '' }) => {
                               </div>
 
                               {/* DOWNLOAD BUTTON */}
+                              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                               <a
                                 href="#"
                                 className="onboard-8 download-link cursor-pointer"
