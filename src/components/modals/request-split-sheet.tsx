@@ -23,20 +23,10 @@ const RequestSplitSheetModal = (props: any) => {
   const [submitting, setSubmitting] = useState(false);
   const [master_offer, setMasterOffer] = useState(null);
   const [publisher_offer, setPublisherOffer] = useState(null);
-  const [sample_file_name, setSampleFileName] = useState(null);
-  const [sample_file_type, setSampleFileType] = useState(null);
-  const [sample_file_size, setSampleFileSize]: any = useState(0);
-  const [sample_file_loaded, setSampleFileLoaded]: any = useState(0);
-  const [sample_file_progress, setSampleFileProgress] = useState(false);
-  const [sample_file, setSampleFile]: any = useState(null);
-
-
 
   // File handler
   const fileInputRef = useRef(null);
   const MAX_FILE_SIZE_MB = 10;
-  const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024; // 1 MB in bytes
-
 
   const handleButtonClick = () => {
     fileInputRef.current.click(); // Simulate a click on the file input
@@ -62,11 +52,6 @@ const RequestSplitSheetModal = (props: any) => {
         return; // Stop further execution
     }
 
-    // Set file details
-    setSampleFileName(file.name);
-    setSampleFileType(file.type);
-    setSampleFileSize(fileSizeMB.toFixed(2));
-
     // Prepare form data
     const formData = new FormData();
     formData.append("file", file);
@@ -74,18 +59,12 @@ const RequestSplitSheetModal = (props: any) => {
     await axios.post(`${config.get('API')}/sounds/upload/sample`, formData, {
       onUploadProgress(progressEvent: any) {
 
-            setSampleFileLoaded((progressEvent.loaded / (1024 * 1024)).toFixed(2))
-
-            setSampleFileProgress(true)
         },
     }).then((data: any) => {
-        setSampleFileProgress(false);
 
         toast.success("Sample file uploaded to storage successfully!");
-
         console.log("DATA: ", data.data.Location);
         payload.document = data.data.Location;
-        setSampleFile(data.data.Location);
     }).catch((error) => {
         alert("There is some error uploading sample file. please try again later");
         return;
@@ -134,6 +113,7 @@ const RequestSplitSheetModal = (props: any) => {
                         onClick={() => props.setModal(false)}
                         className="cursor-pointer flex justify-center items-center self-end px-1 w-6 h-6 bg-neutral-200 rounded-[29px]"
                       >
+                        {/* eslint-disable-next-line */}
                         <img
                           loading="lazy"
                           src="https://cdn.builder.io/api/v1/image/assets/TEMP/017c22613a8e414ec7a32ffbe1bbc0ab7f8dca0b759aae1f05ac1e874e4d328e?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
@@ -385,6 +365,7 @@ const RequestSplitSheetModal = (props: any) => {
                                   className="flex items-center text-[13px] justify-center p-4 text-gray-900 bg-gray-500 rounded-lg w-[156px] h-[49px]"
                                   onClick={handleButtonClick}
                                 >
+                                  {/* eslint-disable-next-line */}
                                   <img
                                     loading="lazy"
                                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/201642e50a07306dd8b6a8d138b1a54999510c21cfaef3d392a2778316319b89?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
