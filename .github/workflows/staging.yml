@@ -16,16 +16,18 @@ jobs:
       - name: Setup npmrc
         run: echo "registry=https://registry.npmjs.org/" > ~/.npmrc
 
-      # Setup pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 7.0.1
-
       # Setup Node.js
       - uses: actions/setup-node@v2
         with:
           node-version: 20
+
+      # Install pnpm using npm as a fallback
+      - name: Install pnpm
+        run: npm install -g pnpm@7.0.1
+
+      # Verify pnpm installation
+      - name: Verify pnpm
+        run: pnpm --version
 
       # Install dependencies and build the project
       - run: yarn install
