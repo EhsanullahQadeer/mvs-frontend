@@ -51,6 +51,7 @@ const ContactModal = (props: any) => {
                       onClick={() => props.setModal(false)}
                       className="cursor-pointer flex justify-center items-center self-end px-1 w-6 h-6 bg-neutral-200 rounded-[29px]"
                     >
+                      {/* eslint-disable-next-line */}
                     <img
                       loading="lazy"
                       src="https://cdn.builder.io/api/v1/image/assets/TEMP/017c22613a8e414ec7a32ffbe1bbc0ab7f8dca0b759aae1f05ac1e874e4d328e?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
@@ -72,6 +73,7 @@ const ContactModal = (props: any) => {
 
 
                       <div className="flex gap-3 p-5 mt-5">
+                        {/* eslint-disable-next-line */}
                         <img
                             loading="lazy"
                             src="https://cdn.builder.io/api/v1/image/assets/TEMP/ed6818d62695dd0d38418a9dedf6d1b4566850fac804ff4e2d50f1328e1a6d47?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
@@ -81,6 +83,7 @@ const ContactModal = (props: any) => {
                   </div>
                       
                     <div className="flex gap-3 p-5 mt-2 whitespace-nowrap">
+                      {/* eslint-disable-next-line */}
                       <img
                           loading="lazy"
                           srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/ca6e8937359d7dcbaab61c4a9b9e8a476bb5a5c7dc44d60340b33687fd3396fa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/ca6e8937359d7dcbaab61c4a9b9e8a476bb5a5c7dc44d60340b33687fd3396fa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/ca6e8937359d7dcbaab61c4a9b9e8a476bb5a5c7dc44d60340b33687fd3396fa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/ca6e8937359d7dcbaab61c4a9b9e8a476bb5a5c7dc44d60340b33687fd3396fa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/ca6e8937359d7dcbaab61c4a9b9e8a476bb5a5c7dc44d60340b33687fd3396fa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/ca6e8937359d7dcbaab61c4a9b9e8a476bb5a5c7dc44d60340b33687fd3396fa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/ca6e8937359d7dcbaab61c4a9b9e8a476bb5a5c7dc44d60340b33687fd3396fa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/ca6e8937359d7dcbaab61c4a9b9e8a476bb5a5c7dc44d60340b33687fd3396fa?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
@@ -89,6 +92,7 @@ const ContactModal = (props: any) => {
                       <div className="my-auto underline">WhatsApp</div>
                       </div>
                       <div className="flex gap-3 p-5 mt-2 whitespace-nowrap">
+                        {/* eslint-disable-next-line */}
                         <img
                             loading="lazy"
                             src="https://cdn.builder.io/api/v1/image/assets/TEMP/5bc50b322f9f7f8d11c6aaa95b4505de1a79c985ef7585281e8621378b114ae5?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
@@ -99,6 +103,7 @@ const ContactModal = (props: any) => {
                       <div className="shrink-0 h-2.5 border-b border-solid border-stone-900 max-md:max-w-full" />
 
                       <div className="flex gap-3 p-5 mt-2 whitespace-nowrap">
+                        {/* eslint-disable-next-line */}
                                                   <img
                                                       loading="lazy"
                                                       src="https://cdn.builder.io/api/v1/image/assets/TEMP/6c295ae726afc2362827dcb2b4fc4f2ff4a14b879be51d65d5f255ecd191b4a0?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"

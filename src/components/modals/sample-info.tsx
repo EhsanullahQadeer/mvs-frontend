@@ -49,6 +49,7 @@ const SampleInfoModal = (props: any) => {
                         onClick={() => props.setModal(false)}
                         className="cursor-pointer flex justify-center items-center self-end px-1 w-6 h-6 bg-neutral-200 rounded-[29px]"
                       >
+                        {/* eslint-disable-next-line */}
                         <img
                           loading="lazy"
                           src="https://cdn.builder.io/api/v1/image/assets/TEMP/017c22613a8e414ec7a32ffbe1bbc0ab7f8dca0b759aae1f05ac1e874e4d328e?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
@@ -74,6 +75,7 @@ const SampleInfoModal = (props: any) => {
                         File Name:
                       </div>
                       <div className="flex gap-2.5 p-2.5 mt-3.5 text-sm whitespace-nowrap rounded-lg border border-solid bg-neutral-900 border-neutral-800 text-neutral-400 max-md:flex-wrap">
+                        {/* eslint-disable-next-line */}
                         <img
                           loading="lazy"
                           src="https://cdn.builder.io/api/v1/image/assets/TEMP/160f10237fa3e980ee4caff403ee55279445d55c1274fed6306d8f9c30340c84?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"

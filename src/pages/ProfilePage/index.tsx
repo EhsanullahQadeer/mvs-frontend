@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /* IMPORTS */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Avatar from 'react-avatar';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -29,7 +29,8 @@ const ProfilePage = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
-
+  console.log(modalIsOpen);
+  console.log(closeModal);
 
   useEffect(() => {
     dispatch(fetchCurrentUser());

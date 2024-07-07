@@ -69,7 +69,6 @@ const Loader = () => {
 const HomeFeed = () => {
   const [sample, setSample] = useState(true);
   const [vocal, setVocal] = useState(true);
-  const [run, setRun] = useState(true); // Automatically start the tour
 
   const [loading, setLoading] = useState(false);
 

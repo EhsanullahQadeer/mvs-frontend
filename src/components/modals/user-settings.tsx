@@ -23,15 +23,7 @@ const UserSettingsModal = (props: any) => {
     const dispatch: any = useDispatch();
     const state = useSelector((state: RootState) => state);
     const [user, setUser]: any = useState({});
-    
-  const styles = {
-    label: 'block text-gray-700 text-sm font-bold pt-2 pb-1',
-    field:
-      'bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none',
-    button:
-      'w-full disabled:cursor-not-allowed disabled:shadow-none disabled:text-white disabled:transform-none disabled:transition-none  cursor-pointer flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
-    errorMsg: 'text-red-500 text-sm pb-2 font-bold',
-  }
+
     
     const [isEditUsernameModalOpen, setIsEditUsernameModalOpen] = useState(false);
     const [isEditCityModalOpen, setIsEditCityModalOpen] = useState(false);
@@ -49,8 +41,6 @@ const UserSettingsModal = (props: any) => {
     const [city, setCity] = useState(user?.city || ''); 
     const [stateLoc, setState] = useState(user?.state || '');
     const [phone, setPhone] = useState(user?.phone || '');
-    const [email, setEmail] = useState(user?.email || '');
-    const [isInvalid, setIsInvalid] = useState(false);
 
 
     // When the modal opens, initialize the 'name' state with the user's current name
@@ -125,34 +115,6 @@ const UserSettingsModal = (props: any) => {
       };
 
 
-
-        const inputWrapperStyle = {
-            display: 'flex',
-            alignItems: 'center',
-        };
-    
-        const inputFieldStyle = {
-            flex: 1,
-            paddingRight: '30px', // Add some right padding to make space for the button
-        };
-    
-        const buttonStyle: React.CSSProperties = {
-            position: 'absolute', // Using specific literal type
-            right: '10px',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-        };
-
-    const handleOverlayClick = () => {
-        props.setModal(false); // This function should close the modal
-      };
-
-    // Function to stop the propagation for modal dialog click
-    const handleModalClick = (event) => {
-        event.stopPropagation();
-    };
-
     useEffect(() => {
         dispatch( fetchCurrentUser() );
     }, [dispatch]);
@@ -192,8 +154,6 @@ const UserSettingsModal = (props: any) => {
             reader.readAsDataURL(file);
         }
     };
-
-    const [updating, setUpdate] = useState(false);
 
     // Function to handle password change submission
     const handlePasswordChangeSubmit = async (e) => {
@@ -235,7 +195,6 @@ const UserSettingsModal = (props: any) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevents the default form submission action
-        setUpdate(true);
 
         // Construct the payload with user data
         const payload = {
@@ -270,7 +229,6 @@ const UserSettingsModal = (props: any) => {
         setCity(  user?.city );
         setState( user?.state );
         setPhone( user?.phone );
-        setEmail( user?.email );
         setImagePreview( user?.thumbnail );
     }, [ user ]);
 
@@ -403,6 +361,7 @@ const UserSettingsModal = (props: any) => {
                 <div className="account-detail-row">
                     <div className="row-content">
                         <span className="detail-title">Profile Picture</span>
+                        {/* eslint-disable-next-line */}
                         <img src={imagePreview} alt="Profile" className="profile-thumbnail" />
                     </div>
                     <button className="edit-button" onClick={openEditImageModal}>
