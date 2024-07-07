@@ -6,6 +6,8 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 /* IMPORTS */
 import React, { 
   useCallback, 
