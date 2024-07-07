@@ -1,0 +1,41 @@
+/*************************************************************************
+ * @file ConfigManager.ts
+ * @author End Quote
+ * @desc Configuration manager for accessing environment variables.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+export class ConfigManager {
+  private readonly config: Record<string, any>;
+
+  constructor() {
+    console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+    console.log('REACT_APP_STRIPE_PUBLISHABLE_KEY:', process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
+    this.config = {
+
+      // General
+      API: process.env.REACT_APP_API_URL,
+
+      // Stripe
+      STRIPE:{
+        PUBLISHABLE_KEY: process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY,
+      }
+    };
+  }
+
+  get(key: string): any {
+    const parts = key.split('.');
+    let value = this.config;
+    for (const part of parts) {
+      value = value[part];
+      if (value === undefined) {
+        return undefined;
+      }
+    }
+    return value;
+  }
+}
+
+export const config = new ConfigManager();

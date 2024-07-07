@@ -1,23 +1,39 @@
-import { useEffect, useState } from "react";
+/*************************************************************************
+ * @file InboxPage.tsx
+ * @author End Quote
+ * @desc Component for displaying and managing user messages and 
+ *       conversations.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
+import { 
+  useEffect, 
+  useRef, 
+  useState 
+} from "react";
 import Theme from "theme";
-import { fetchCurrentUser } from "redux/actionCreators/auth";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "redux/reducers/combine";
-import axios from "util/axios";
-import config from "config/config";
-import CheckoutForm from "components/stripe";
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 
+/* LOCAL IMPORTS */
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/reducers";
+import { fetchCurrentUser } from "../../redux/actions";
+import axios from "../../api/axios";
+import { config } from "config/ConfigManager";
+import Chatbox from "../../components/Chatbox";
 
-console.log('key', process.env.STRIPE_PUBLIC_KEY);
+// Stripe Setup
+const stripePromise = loadStripe(config.get('STRIPE.PUBLISHABLE_KEY'));
 
 const InboxPage = () => {
   const dispatch = useDispatch();
   const [conversationsList, setConversationsList] = useState([]);
   const [messages, setMessages] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
-  const [newMessage, setNewMessage] = useState("");
   const state = useSelector((state: RootState) => state);
 
   useEffect(() => {
@@ -41,12 +57,11 @@ const InboxPage = () => {
 
   const getUserConvo = async (userId) => {
     try {
-      const response = await axios.get(`${config.defaults.api_url}/messenger/conversations`, {
+      const response = await axios.get(`${config.get('API')}/messenger/conversations`, {
         params: { userId }
       });
-      console.log('API response:', response.data); // Debugging: Log API response
 
-      let conversations = response.data.conversations || []; // Ensure conversations are returned as an array
+      let conversations = response.data.conversations || [];
 
       // Sort conversations by latestMessage.Timestamp in descending order
       conversations = conversations.sort((a, b) => b.latestMessage.Timestamp - a.latestMessage.Timestamp);
@@ -58,308 +73,174 @@ const InboxPage = () => {
     }
   };
 
-  const handleConversationClick = (conversation) => {
-    setSelectedConversation(conversation);
-    setMessages(conversation.messages || []);
-  };
-
-  const handleCloseConversation = () => {
-    setSelectedConversation(null);
-  };
-
-  const handleSendMessage = async () => {
-    if (newMessage.trim() === "") return;
-    console.log('newMessage', newMessage);
-    // Send the message to the backend
+  const getMessages = async (conversationId) => {
     try {
-      await axios.post(`${config.defaults.api_url}/messenger/send-message`, {
-        senderId: state.auth.user.UserId,
-        receiverId: selectedConversation.otherUserId,
-        conversationId: selectedConversation.conversationId,
-        messageContent: newMessage,
-      });
-      // After sending the message, clear the input box and refresh messages
-      setNewMessage("");
-      handleConversationClick(selectedConversation);
+      const response = await axios.get(`${config.get('API')}/messenger/conversation/${conversationId}`);
+      return response.data.messages || [];
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error fetching messages:', error);
+      return [];
     }
+  }  
+
+  const handleConversationClick = async (conversation) => {
+    setSelectedConversation(conversation);
+    const conversationMessages = await getMessages(conversation.conversationId);
+    setMessages(conversationMessages);
   };
 
-  const renderMessages = () => {
-    console.log('messages', messages);
-    if (!messages.length) return null;
+  const Dropdown = ({ 
+    label, 
+    options, 
+    selectedOption, 
+    onOptionChange 
+  }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const buttonRef = useRef(null);
 
-    const renderedMessages = [];
-    let lastDate = null;
+    const handleOptionClick = (option) => {
+      onOptionChange(option);
+      setIsOpen(false);
+    };
 
-    messages.forEach((message, index) => {
-      const messageDate = new Date(message.Timestamp).toLocaleDateString();
-
-      if (messageDate !== lastDate) {
-        renderedMessages.push(
-          <div key={`date-${index}`} className="message-date-line">
-            {messageDate}
-          </div>
-        );
-        lastDate = messageDate;
+    useEffect(() => {
+      if (buttonRef.current) {
       }
+    }, []);
 
-      console.log('message', message);
-      renderedMessages.push(
-        <div key={index} className={`chat-message ${message.UserId === state.auth.user.UserId ? 'right' : 'left'}`}>
-          <div className="message-bubble">
-            {message.MessageContent}
-          </div>
-          <div className="message-timestamp">
-            {new Date(message.Timestamp).toLocaleTimeString()}
-          </div>
-        </div>
-      );
-    });
-
-    return renderedMessages;
+    return (
+      <div className="relative">
+        <button
+          ref={buttonRef}
+          onClick={() => setIsOpen(!isOpen)}
+          className="bg-gray-900 text-white px-4 py-2 rounded"
+        >
+          {label} {selectedOption} ▼
+        </button>
+        {isOpen && (
+          <ul className="absolute top-full left-0 bg-gray-900 text-white mt-1 rounded shadow-md min-w-full z-10">
+            {options.map((option) => (
+              <li
+                key={option}
+                onClick={() => handleOptionClick(option)}
+                className="px-4 py-2 cursor-pointer hover:bg-gray-700"
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
   };
+
+  const [sortOption, setSortOption] = useState('Newest');
+
+  const handleSortChange = (option) => setSortOption(option);
 
   return (
     <Theme>
-      <style>{`
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-        }
-  
-        .container {
-            display: flex;
-            width: 100%;
-            height: 100vh;
-        }
-  
-        .main-content {
-            display: flex;
-            flex: 1;
-            background-color: #121212;
-        }
-  
-        .messages-list {
-            flex: ${selectedConversation ? '0 0 60%' : '1'};
-            overflow-y: auto;
-            width: 10px;
-            border-right: 1px solid #333;
-            padding: 20px;
-            transition: flex 0.3s ease;
-        }
-  
-        .message-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #333;
-            cursor: pointer;
-            color: #fff;
-        }
-  
-        .message-item:hover {
-            background-color: #333;
-        }
-  
-        .message-checkbox {
-            margin-right: 10px;
-        }
-  
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            background-color: #444;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-        }
-  
-        .message-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-  
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-  
-        .message-name {
-            font-weight: bold;
-        }
-  
-        .message-date {
-            color: #aaa;
-            font-size: 0.9em;
-        }
-  
-        .message-priority {
-            background-color: #ff0000;
-            color: #fff;
-            padding: 2px 5px;
-            border-radius: 5px;
-            font-size: 0.8em;
-        }
-  
-        .message-text {
-            margin-top: 5px;
-            color: #ccc;
-        }
-  
-        .message-amount {
-            color: #33ff33;
-            margin-left: 10px;
-        }
-  
-        .message-details {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          padding: 20px;
-          background-color: #1e1e1e;
-          color: #fff;
-          transition: transform 0.3s ease;
-          overflow-y: auto;
-          position: relative;
-        }
-  
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-  
-        .chat-message {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 10px;
-        }
-  
-        .chat-message .message-bubble {
-            max-width: 60%;
-            padding: 10px;
-            border-radius: 10px;
-            color: #fff;
-        }
-  
-        .chat-message.left .message-bubble {
-            background-color: #333;
-            align-self: flex-start;
-        }
-  
-        .chat-message.right .message-bubble {
-            background-color: #1e90ff;
-            align-self: flex-end;
-        }
+    <Elements stripe={stripePromise}>
 
-        .message-input-container {
-          display: flex;
-          justify-content: flex-end;
-          padding: 10px;
-          background-color: #1e1e1e;
-          border-top: 1px solid #333;
-        }
-  
-        .message-timestamp {
-            font-size: 0.8em;
-            color: #aaa;
-            margin-top: 5px;
-        }
-  
-        .message-input {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-top: 1px solid #333;
-            background-color: #1e1e1e;
-        }
-  
-        .message-input input {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-  
-        .message-input button {
-          padding: 10px 20px;
-          background-color: #33ff33;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-        }
-  
-        .message-date-line {
-            text-align: center;
-            color: #aaa;
-            margin: 10px 0;
-        }
-      `}</style>
-      <div className="container">
-        <main className="main-content">
-          <div className="messages-list">
-            {conversationsList.map((conversation, index) => (
-              <div
-                className="message-item"
-                key={index}
-                onClick={() => handleConversationClick(conversation)}
-              >
-                <input type="checkbox" className="message-checkbox" />
-                <div className="message-avatar">{conversation.otherUserId.charAt(0).toUpperCase()}</div>
-                <div className="message-content">
-                  <div className="message-header">
-                    <span className="message-name">{conversation.otherUserId}</span>
-                    <span className="message-amount">$34.99</span>
-                    <span className="message-date">{new Date(conversation.latestMessage.Timestamp).toLocaleString()}</span>
-                    <span className="message-priority">Priority</span>
-                  </div>
-                  <div className="message-text">{conversation.latestMessage.MessageContent}</div>
+      <div className="flex flex-row">
+        <div
+          className="flex flex-col"
+          style={{
+            background: "#1f1f1f",
+            height: "100vh", // Set height to 100% of the viewport height
+            width: "200%", // Or any percentage that looks good on your screen
+          }}
+        >
+          {/* Title */}
+          <div className="p-4">
+            <h3 className="text-2xl text-white font-semibold">
+              Messages
+            </h3>
+          </div>
+          {/* Search Function */}
+          <div>
+            <div className="ml-4">
+              <label htmlFor="simple-search" className="sr-only">
+                Search
+              </label>
+              <div className="relative w-[400px]">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={24}
+                    height={25}
+                    viewBox="0 0 24 25"
+                    fill="none"
+                  >
+                    <path
+                      d="M21 21.5L16.7 17.2M19 11.5C19 15.9183 15.4183 19.5 11 19.5C6.58172 19.5 3 15.9183 3 11.5C3 7.08172 6.58172 3.5 11 3.5C15.4183 3.5 19 7.08172 19 11.5Z"
+                      stroke="#4C4C4C"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </div>
+                <input
+                  type="text"
+                  id="simple-search"
+                  className="bg-gray-900 border border-gray-700 text-gray-400 text-sm rounded-full w-full h-[45px] pl-10 py-2.5"
+                  placeholder="Search..."
+                />
               </div>
+            </div>
+          </div>
+          <Dropdown
+            label="Sort by:"
+            options={['Newest', 'Oldest', 'Highest Bid', 'Lowest Bid']}
+            selectedOption={sortOption}
+            onOptionChange={handleSortChange}
+          />
+          <div className="mt-4 flex-1 overflow-y-auto">
+            {Array.from({ length: 5 }).map((_, repeatIndex) => (
+              <React.Fragment key={`repeat-${repeatIndex}`}>
+                {conversationsList.map((conversation, index) => (
+                  <div
+                    className="hover:bg-gray-800 p-4 cursor-pointer flex items-center"
+                    key={`${repeatIndex}-${index}`}
+                    onClick={() => handleConversationClick(conversation)}
+                  >
+                    <input type="checkbox" className="mr-4" />
+                    <div className="bg-gray-700 w-10 h-10 rounded-full flex items-center justify-center text-white mr-4">
+                      {conversation.otherUserId.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 flex items-center justify-between">
+                      <div className="flex flex-col items-center">
+                        <span className="message-name text-white mr-4">{conversation.otherUserId}</span>
+                        <span className="text-green-500 mr-4">$0.00</span>
+                      </div>
+                      {/* Latest Message */}
+                      <div className="overflow-hidden text-ellipsis whitespace-nowrap text-white mr-4">
+                        {conversation.latestMessage.MessageContent}
+                      </div>
+                      <span className="text-gray-400 text-center mr-4">
+                        {new Date(conversation.latestMessage.Timestamp).toLocaleDateString()} {new Date(conversation.latestMessage.Timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                      <span className="text-red-500">Priority</span>
+                    </div>
+                  </div>
+                ))}
+              </React.Fragment>
             ))}
           </div>
-          {selectedConversation && (
-            <div className="message-details">
-              <Elements stripe={stripePromise}>
-                <CheckoutForm/>
-              </Elements>
-              <button className="close-button" onClick={handleCloseConversation}>×</button>
-              <h2>Conversation with {selectedConversation.otherUserId}</h2>
-              <div className="chat">
-                {renderMessages()}
-              </div>
-              <div className="message-input-container">
-                <div className="message-input">
-                  <input
-                    type="text"
-                    placeholder="Type a message..."
-                    value={newMessage}
-                    onChange={
-                      (e) => setNewMessage(e.target.value)
-                    }
-                  />
-                  <button onClick={handleSendMessage}>Send</button>
-                </div>
-              </div>            
-            </div>
-          )}
-        </main>
+        </div>
+
+        {/* Chatbox Container */}
+        <div className="flex-1">
+         <Chatbox
+            selectedConversation={selectedConversation}
+            setSelectedConversation={setSelectedConversation}
+            messages={messages}
+            setMessages={setMessages}
+          />
+        </div>
+
       </div>
+      </Elements>
     </Theme>
   );
 };

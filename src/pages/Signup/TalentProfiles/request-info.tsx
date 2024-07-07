@@ -1,8 +1,22 @@
+/*************************************************************************
+ * @file RequestInfoPage.tsx
+ * @author End Quote
+ * @desc Component for handling user requests for an invitation code.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
 import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { requestInvitationCodeWithEmail, validateEmail } from "services/user";
+
+/* LOCAL IMPORTS */
+import { 
+  requestInvitationCodeWithEmailAPI, 
+  validateEmailAPI
+} from "../../../api/user";
 
 type Country = {
   name: string;
@@ -124,7 +138,7 @@ const RequestInfoPage = () => {
 
       // Look if email has already requested a code
       try{
-        const response = await validateEmail( user.email );
+        const response = await validateEmailAPI( user.email );
         console.log('response', response);
         if( response.data.exists ){
           setEmailError(`This email already requested an invitation code.`);
@@ -144,7 +158,7 @@ const RequestInfoPage = () => {
        * Request invitation code to be sent to provided email
        */
       try {
-        await requestInvitationCodeWithEmail( user );
+        await requestInvitationCodeWithEmailAPI( user );
         setIsSubmitting(false);
         setSuccess(true);
         toast.success("Your request for access to the platform has been sent.");
@@ -207,6 +221,7 @@ const RequestInfoPage = () => {
                   onChange={handleChange}
                 />
               </div>
+
               <div className="flex flex-col w-1/2">
                 <label className="mt-6 max-md:max-w-full">
                   Last Name <span className="text-red-500">*</span>
@@ -219,6 +234,7 @@ const RequestInfoPage = () => {
                   onChange={handleChange}
                 />
               </div>
+              
             </div>
 
 

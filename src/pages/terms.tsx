@@ -1,201 +1,209 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/*************************************************************************
+ * @file terms.tsx
+ * @author End Quote
+ * @desc Component for displaying the Terms of Service for MVSSIVE 
+ *       platform.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
 
 const TermsOfService = (props: any) => {
-    const navigate = useNavigate();
-    return (
-        <React.Fragment>
-            <div className="container">
-                <div className="flex flex-col justify-end items-start  pr-8 pb-9 pl-20 bg-stone-950 max-md:px-5">
-                    <div className="flex flex-col pb-20 bg-neutral-950">
-                        <div className="flex flex-col justify-end pt-16 w-full border-b border-solid bg-zinc-900 border-zinc-700 max-md:max-w-full">
-                            <div className="flex flex-col items-start pr-20 pb-12 pl-6 w-full max-md:px-5 max-md:max-w-full">
-                                <img
-                                    loading="lazy"
-                                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/b6ca8adfa02099dfca96938cae1c05379065d8a380bb70750f820a315c3bedec?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                                    className="w-14 border border-gray-300 border-solid shadow-sm aspect-square rounded-[12px]"
-                                />
-                                <div className="mt-11 text-4xl font-semibold tracking-tight text-center text-lime-300 max-md:mt-10 max-md:max-w-full">
-                                    MVSSIVE Licensing Agreement
-                                </div>
-                                <div className="mt-4 text-2xl tracking-tight text-neutral-200 w-[691px] max-md:max-w-full">
-                                    The use of this file is subject to MVSSIVE License Agreement. Read
-                                    the full License Agreement here to learn what you can and can't do
-                                    with this platform
-                                </div>
-                            </div>
-                        </div>
-                        <div className="self-center mt-8 text-2xl tracking-tight text-justify text-zinc-400 max-md:max-w-full">
-                            <div className="p-[20px] ml-[100px]">
-                                Welcome to MVSSIVE! This Agreement outlines the comprehensive terms and
-                                conditions for accessing and using the copyrighted audio samples and
-                                vocals (&quot;Content&quot;) offered on our platform. By downloading any
-                                Content, you (hereinafter referred to as &quot;Licensee&quot;) agree to
-                                be bound by these terms.
-                                <br />
-                                Content Licensing:
-                         
-                            </div>
-
-                            <div className="p-[20px] ml-[150px]">
-                                <ul className="list-disc marker:text-neutral-200 ">
-                                    <li>Audio Samples:
-
-
-                                        <ul className="list-disc marker:text-neutral-200  ml-[50px]">
-                                            <li>
-                                                Royalty Rates: A starting point for royalty negotiations will be 1% of
-                                                the Net Master Recording Royalty and 15% of the Net Publisher's Share.
-                                                <br /></li>
-                                            <li>&quot;Major Label&quot; Release Advance Fee: For releases distributed by
-                                                a major record label (defined as a record company belonging to the
-                                                &quot;Big Three&quot;: Universal Music Group, Sony Music Entertainment,
-                                                or Warner Music Group), a starting point for negotiation will be a
-                                                $1,000 advance fee (sub-commissioned from the Executive Producer, as
-                                                defined below). This fee is separate from royalties and is not
-                                                recoupable.</li>
-
-                                            <li>
-                                                Negotiation: Both royalty rates and advance fees are negotiable based on
-                                                factors including, but not limited to, the specific sample used, the
-                                                prominence of the sample in the final track, the Licensee's track
-                                                record, and the anticipated commercial success of the release.
-                                                Negotiation will be facilitated through Split-Sheets generated by the
-                                                MVSSIVE legal team. These Split-Sheets will detail the agreed-upon
-                                                royalty rates, advance fees (if applicable), and crediting requirements.
-                                                <br /></li>
-                                        </ul>
-                                    </li>
-
-                                </ul>
-
-
-
-                                <ul className="list-disc marker:text-neutral-200">
-                                    <li>Original Vocal Top-Lines:
-
-
-                                        <ul className="list-disc marker:text-neutral-200  ml-[50px]">
-                                            <li>Royalty Rates: The starting point for royalty negotiations will be 20%
-                                                of the Net Master Recording Royalty and 50% of the Net Publisher's
-                                                Share.</li>
-                                            <li>Recording Advance Fee: A starting point for negotiation will be a $1,500
-                                                Recording Advance Fee. This fee is separate from royalties and is not
-                                                recoupable. Negotiation will be based on factors including, but not
-                                                limited to, the popularity of the vocalist, the uniqueness of the vocal
-                                                melody and lyrics, and the anticipated commercial success of the
-                                                release.</li>
-                                            <li>Performer Credits & Main Artist Designation: The original vocal creator
-                                                will receive &quot;Performer&quot; credit on all platforms where the
-                                                track is distributed. Additionally, unless otherwise agreed upon through
-                                                a signed Split-Sheet, the original vocal creator will be designated as
-                                                the &quot;Main Artist&quot; on Spotify</li>
-                                        </ul>
-                                    </li>
-
-                                </ul>
-                                <br />
-
-                                <ul className="list-disc marker:text-neutral-200">
-                                    <li>Vocal Covers:
-
-                                        <ul className="list-disc marker:text-neutral-200 ml-[50px]">
-                                            <li>Royalty Rates: The starting point for royalty negotiations will be 15%
-                                                of the Net Master Recording Royalty and 30% of the Net Publisher's Share
-                                                (if any). Negotiation will be based on factors including, but not
-                                                limited to, the popularity of the original song being covered, the
-                                                uniqueness of the vocal arrangement, and the anticipated commercial
-                                                success of the release.</li>
-                                            <li>Recording Advance Fee: A starting point for negotiation will be a $1,500
-                                                Recording Advance Fee. This fee is separate from royalties and is not
-                                                recoupable. Negotiation will be based on factors including, but not
-                                                limited to, the popularity of the DJ/producer creating the cover, and
-                                                the anticipated commercial success of the release.</li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                <br />
-                                <br />
-
-
-                                Exclusivity & Scarcity:
-                                <br />
-                                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
-                                    <li>MVSSIVE operates on a &quot;First-Come-First-Serve&quot; system.
-                                        However, to ensure exclusivity and prevent copyright issues, any sample
-                                        requested with a Split-Sheet agreement will be removed from the platform
-                                        immediately upon request. This prevents multiple Licensees from using
-                                        the same sample in their releases.</li>
-                                </ul>
-                                <br />
-                                <br />
-                                Sample Clearance:
-                                <br />
-                                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
-                                    <li>
-                                        Executive Producers: An &quot;Executive Producer&quot; (defined as an
-                                        individual or entity who has final creative and financial control over a
-                                        recording project) can submit Split-Sheets for sample clearance on
-                                        behalf of the Licensee.
-                                    </li>
-                                </ul>
-                                <br />
-                                <br />
-                                Crediting:
-                                <br />
-                                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
-                                    <li>
-                                        Audio Samples (Non-Vocals): All Audio Samples (non-vocals) require
-                                        crediting the creator as &quot;Producer&quot; & &quot;Composer&quot; on
-                                        all digital streaming platforms (DSPs) and physical releases where the
-                                        track is distributed.
-                                    </li>
-                                </ul>
-                                <br />
-                                <br />
-                                Digital Fingerprint & Copyright Protection:
-                                <br />
-                                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
-                                    <li>
-                                        Digital Fingerprint: All Content contains a unique &quot;Digital
-                                        Fingerprint&quot; embedded within the audio file. This technology allows
-                                        MVSSIVE to detect unauthorized sample use and protect the intellectual
-                                        property of its creators.
-                                    </li>
-                                    <li>
-                                        Copyright Infringement: Any unauthorized use, duplication, or
-                                        distribution of Content beyond the scope of this Agreement constitutes
-                                        copyright infringement. MVSSIVE reserves the right to pursue legal
-                                        action against infringers, which may include seeking injunctive relief,
-                                        statutory damages, and attorney's fees. In addition to legal action,
-                                        MVSSIVE may also request takedown of infringing content from online
-                                        platforms.
-                                    </li>
-                                </ul>
-                                <br />
-
-                                <br />
-                                <br />
-                                Platform Monitoring & Data Usage:
-                                <br />
-                                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
-                                    <li>
-                                        MVSSIVE Platform Activity Tracking: MVSSIVE utilizes a tracking system
-                                        to monitor user activity within the platform. This data includes, but is
-                                        not limited to, sample pack profile visits, sample playback
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
+  const navigate = useNavigate();
+  return (
+    <React.Fragment>
+      <div className="container">
+        <div className="flex flex-col justify-end items-start  pr-8 pb-9 pl-20 bg-stone-950 max-md:px-5">
+          <div className="flex flex-col pb-20 bg-neutral-950">
+            <div className="flex flex-col justify-end pt-16 w-full border-b border-solid bg-zinc-900 border-zinc-700 max-md:max-w-full">
+              <div className="flex flex-col items-start pr-20 pb-12 pl-6 w-full max-md:px-5 max-md:max-w-full">
+                <img
+                  loading="lazy"
+                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/b6ca8adfa02099dfca96938cae1c05379065d8a380bb70750f820a315c3bedec?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                  className="w-14 border border-gray-300 border-solid shadow-sm aspect-square rounded-[12px]"
+                />
+                <div className="mt-11 text-4xl font-semibold tracking-tight text-center text-lime-300 max-md:mt-10 max-md:max-w-full">
+                  MVSSIVE Licensing Agreement
                 </div>
+                <div className="mt-4 text-2xl tracking-tight text-neutral-200 w-[691px] max-md:max-w-full">
+                  The use of this file is subject to MVSSIVE License Agreement. Read
+                  the full License Agreement here to learn what you can and can't do
+                  with this platform
+                </div>
+              </div>
             </div>
-        </React.Fragment>
-    );
+            <div className="self-center mt-8 text-2xl tracking-tight text-justify text-zinc-400 max-md:max-w-full">
+              <div className="p-[20px] ml-[100px]">
+                Welcome to MVSSIVE! This Agreement outlines the comprehensive terms and
+                conditions for accessing and using the copyrighted audio samples and
+                vocals (&quot;Content&quot;) offered on our platform. By downloading any
+                Content, you (hereinafter referred to as &quot;Licensee&quot;) agree to
+                be bound by these terms.
+                <br />
+                Content Licensing:
+
+              </div>
+
+              <div className="p-[20px] ml-[150px]">
+                <ul className="list-disc marker:text-neutral-200 ">
+                  <li>Audio Samples:
+
+
+                    <ul className="list-disc marker:text-neutral-200  ml-[50px]">
+                      <li>
+                        Royalty Rates: A starting point for royalty negotiations will be 1% of
+                        the Net Master Recording Royalty and 15% of the Net Publisher's Share.
+                        <br /></li>
+                      <li>&quot;Major Label&quot; Release Advance Fee: For releases distributed by
+                        a major record label (defined as a record company belonging to the
+                        &quot;Big Three&quot;: Universal Music Group, Sony Music Entertainment,
+                        or Warner Music Group), a starting point for negotiation will be a
+                        $1,000 advance fee (sub-commissioned from the Executive Producer, as
+                        defined below). This fee is separate from royalties and is not
+                        recoupable.</li>
+
+                      <li>
+                        Negotiation: Both royalty rates and advance fees are negotiable based on
+                        factors including, but not limited to, the specific sample used, the
+                        prominence of the sample in the final track, the Licensee's track
+                        record, and the anticipated commercial success of the release.
+                        Negotiation will be facilitated through Split-Sheets generated by the
+                        MVSSIVE legal team. These Split-Sheets will detail the agreed-upon
+                        royalty rates, advance fees (if applicable), and crediting requirements.
+                        <br /></li>
+                    </ul>
+                  </li>
+
+                </ul>
+
+
+
+                <ul className="list-disc marker:text-neutral-200">
+                  <li>Original Vocal Top-Lines:
+
+
+                    <ul className="list-disc marker:text-neutral-200  ml-[50px]">
+                      <li>Royalty Rates: The starting point for royalty negotiations will be 20%
+                        of the Net Master Recording Royalty and 50% of the Net Publisher's
+                        Share.</li>
+                      <li>Recording Advance Fee: A starting point for negotiation will be a $1,500
+                        Recording Advance Fee. This fee is separate from royalties and is not
+                        recoupable. Negotiation will be based on factors including, but not
+                        limited to, the popularity of the vocalist, the uniqueness of the vocal
+                        melody and lyrics, and the anticipated commercial success of the
+                        release.</li>
+                      <li>Performer Credits & Main Artist Designation: The original vocal creator
+                        will receive &quot;Performer&quot; credit on all platforms where the
+                        track is distributed. Additionally, unless otherwise agreed upon through
+                        a signed Split-Sheet, the original vocal creator will be designated as
+                        the &quot;Main Artist&quot; on Spotify</li>
+                    </ul>
+                  </li>
+
+                </ul>
+                <br />
+
+                <ul className="list-disc marker:text-neutral-200">
+                  <li>Vocal Covers:
+
+                    <ul className="list-disc marker:text-neutral-200 ml-[50px]">
+                      <li>Royalty Rates: The starting point for royalty negotiations will be 15%
+                        of the Net Master Recording Royalty and 30% of the Net Publisher's Share
+                        (if any). Negotiation will be based on factors including, but not
+                        limited to, the popularity of the original song being covered, the
+                        uniqueness of the vocal arrangement, and the anticipated commercial
+                        success of the release.</li>
+                      <li>Recording Advance Fee: A starting point for negotiation will be a $1,500
+                        Recording Advance Fee. This fee is separate from royalties and is not
+                        recoupable. Negotiation will be based on factors including, but not
+                        limited to, the popularity of the DJ/producer creating the cover, and
+                        the anticipated commercial success of the release.</li>
+                    </ul>
+                  </li>
+                </ul>
+                <br />
+                <br />
+
+
+                Exclusivity & Scarcity:
+                <br />
+                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
+                  <li>MVSSIVE operates on a &quot;First-Come-First-Serve&quot; system.
+                    However, to ensure exclusivity and prevent copyright issues, any sample
+                    requested with a Split-Sheet agreement will be removed from the platform
+                    immediately upon request. This prevents multiple Licensees from using
+                    the same sample in their releases.</li>
+                </ul>
+                <br />
+                <br />
+                Sample Clearance:
+                <br />
+                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
+                  <li>
+                    Executive Producers: An &quot;Executive Producer&quot; (defined as an
+                    individual or entity who has final creative and financial control over a
+                    recording project) can submit Split-Sheets for sample clearance on
+                    behalf of the Licensee.
+                  </li>
+                </ul>
+                <br />
+                <br />
+                Crediting:
+                <br />
+                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
+                  <li>
+                    Audio Samples (Non-Vocals): All Audio Samples (non-vocals) require
+                    crediting the creator as &quot;Producer&quot; & &quot;Composer&quot; on
+                    all digital streaming platforms (DSPs) and physical releases where the
+                    track is distributed.
+                  </li>
+                </ul>
+                <br />
+                <br />
+                Digital Fingerprint & Copyright Protection:
+                <br />
+                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
+                  <li>
+                    Digital Fingerprint: All Content contains a unique &quot;Digital
+                    Fingerprint&quot; embedded within the audio file. This technology allows
+                    MVSSIVE to detect unauthorized sample use and protect the intellectual
+                    property of its creators.
+                  </li>
+                  <li>
+                    Copyright Infringement: Any unauthorized use, duplication, or
+                    distribution of Content beyond the scope of this Agreement constitutes
+                    copyright infringement. MVSSIVE reserves the right to pursue legal
+                    action against infringers, which may include seeking injunctive relief,
+                    statutory damages, and attorney's fees. In addition to legal action,
+                    MVSSIVE may also request takedown of infringing content from online
+                    platforms.
+                  </li>
+                </ul>
+                <br />
+
+                <br />
+                <br />
+                Platform Monitoring & Data Usage:
+                <br />
+                <ul className="list-disc marker:text-neutral-200 ml-[50px]">
+                  <li>
+                    MVSSIVE Platform Activity Tracking: MVSSIVE utilizes a tracking system
+                    to monitor user activity within the platform. This data includes, but is
+                    not limited to, sample pack profile visits, sample playback
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </React.Fragment>
+  );
 }
 
 export default TermsOfService;

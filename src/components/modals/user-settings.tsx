@@ -1,24 +1,23 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable jsx-a11y/no-redundant-roles */
-/* eslint-disable no-unused-vars */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/*************************************************************************
+ * @file user-settings.tsx
+ * @author End Quote
+ * @desc Modal component for user settings.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
 
-import { Formik, Field, Form, ErrorMessage } from 'formik'
+/* IMPORTS */
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import { fetchCurrentUser } from "redux/actionCreators/auth";
-import { RootState } from "redux/reducers/combine";
-import { resetPassword, updateUser, updateUserPassword } from "services/user";
-import * as Yup from "yup";
-
-
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+
+/* LOCAL IMPORTS */
+import { fetchCurrentUser } from "../../redux/actions";
+import { RootState } from "../../redux/reducers";
+import { updateUserAPI, updateUserPasswordAPI } from "../../api/user";
 
 const UserSettingsModal = (props: any) => {
     const dispatch: any = useDispatch();
@@ -221,7 +220,7 @@ const UserSettingsModal = (props: any) => {
         // Call a function to verify the old password and update to new password
         // Assuming updateUserPassword is a function that updates the password
         try {
-            const response = await updateUserPassword(payload);
+            const response = await updateUserPasswordAPI(payload);
             if (response.data.error) {
                 console.log(response);
                 setOldPasswordError(response?.data?.message);
@@ -250,7 +249,7 @@ const UserSettingsModal = (props: any) => {
         };
 
         try {
-          const update_user = await updateUser(payload, user?.id);
+          const update_user = await updateUserAPI(payload, user?.id);
           if (update_user.data.error) {
             toast.error(update_user.data.message);
           } else {

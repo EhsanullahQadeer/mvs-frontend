@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import axios from 'axios';
-import config from 'config/config';
+/*************************************************************************
+ * @file index.tsx
+ * @author End Quote
+ * @desc Handles payments using Stripe.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
 
-// Your Stripe publishable key
-const stripePromise = loadStripe("pk_test_51PMwyTFHUzsY35bvNh83M8lJNjCUPJA6UE7gnfwq4x2HFzUFHP2bpnQ4NmoUVvKQi1aIfYh4P91pGibyZiWSNm7G006lQCOvAA");
+/* IMPORTS */
+import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { 
+  Elements, 
+  CardElement, 
+  useStripe, 
+  useElements 
+} from '@stripe/react-stripe-js';
+
+/* LOCAL IMPORTS */
+import axios from '../../api/axios';
+import { config } from 'config/ConfigManager';
+
+const stripePromise = loadStripe( config.get('STRIPE.PUBLISHABLE_KEY') );
+
 
 const CheckoutForm = () => {
   const stripe = useStripe();
@@ -31,7 +47,7 @@ const CheckoutForm = () => {
         return;
       }
 
-      const { data } = await axios.post(`${config.defaults.api_url}/payments/create-payment-intent`, {
+      const { data } = await axios.post(`${config.get('API')}/payments/create-payment-intent`, {
         amount: amountInCents, // Convert to cents
       });
       console.log('data', data);

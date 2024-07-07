@@ -1,13 +1,25 @@
+/*************************************************************************
+ * @file onboard.tsx
+ * @author End Quote
+ * @desc Onboarding component for guiding new users through the site.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
 import { useEffect, useState } from "react";
-import logo from "../../assets/img/mvssive-logo.png";
-import royal_logo from "../../assets/img/royalty-icon.svg";
 import ReactJoyride, { ACTIONS, EVENTS } from "react-joyride";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { updateUser } from "services/user";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "redux/reducers/combine";
-import { fetchCurrentUser } from "redux/actionCreators/auth";
+
+/* LOCAL IMPORTS */
+import { fetchCurrentUser } from "../../redux/actions";
+import logo from "../../assets/img/mvssive-logo.png";
+import royal_logo from "../../assets/img/royalty-icon.svg";
+import { updateUserAPI } from "../../api/user";
+import { RootState } from "../../redux/reducers";
+
 
 const Onboarding = (props:any) => {
   const dispatch: any = useDispatch();
@@ -27,7 +39,7 @@ const Onboarding = (props:any) => {
     };
 
     try {
-      const update_user = await updateUser(payload, user?.id);
+      const update_user = await updateUserAPI(payload, user?.id);
       if (update_user.data.error) {
         console.error("Error updating user:", update_user.data.error);
       } else {

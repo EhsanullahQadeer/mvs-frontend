@@ -1,19 +1,20 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable jsx-a11y/no-redundant-roles */
-/* eslint-disable no-unused-vars */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useRef, useState } from "react";
+/*************************************************************************
+ * @file request-split-sheet.tsx
+ * @author Zohaib Ahmed
+ * @desc Modal component for submitting a split sheet request.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
+import React, { useRef, useState } from "react";
 import Modal from "react-modal";
-import { useSelector } from "react-redux";
-import { submitSplitSheetRequest } from "redux/actionCreators/sounds";
 import { ToastContainer, toast } from "react-toastify";
 
-import { DEF_MASTER_OFFER, DEF_PUBLISHING_OFFER } from "../../constants"
-import config from "config/config";
-import axios from "util/axios";
+/* LOCAL IMPORTS */
+import { submitSplitSheetRequestAPI } from "../../api/sounds";
+import { config } from "config/ConfigManager";
+import axios from "../../api/axios";
 
 const RequestSplitSheetModal = (props: any) => {
   const [submit_request, setSubmitRequest]  = useState(false);
@@ -70,7 +71,7 @@ const RequestSplitSheetModal = (props: any) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    await axios.post(`${config.defaults.api_url}/sounds/upload/sample`, formData, {
+    await axios.post(`${config.get('API')}/sounds/upload/sample`, formData, {
       onUploadProgress(progressEvent: any) {
 
             setSampleFileLoaded((progressEvent.loaded / (1024 * 1024)).toFixed(2))
@@ -89,7 +90,7 @@ const RequestSplitSheetModal = (props: any) => {
         alert("There is some error uploading sample file. please try again later");
         return;
     });
-  await submitSplitSheetRequest(payload);
+  await submitSplitSheetRequestAPI(payload);
   setSubmitRequestSuccess(true);
   setSubmitting(false);
   
@@ -175,7 +176,7 @@ const RequestSplitSheetModal = (props: any) => {
 
                                 <div className="justify-center items-start p-5 mt-3.5 w-full rounded-xl border border-solid border-stone-500 border-opacity-30 text-stone-500 max-md:max-w-full">
                                   <span className=" text-stone-500">
-                                    {`${DEF_MASTER_OFFER}%`}
+                                    {`${15}%`}
                                   </span>
                                 </div>
 
@@ -186,7 +187,7 @@ const RequestSplitSheetModal = (props: any) => {
 
                                 <div className="justify-center items-start p-5 mt-3.5 w-full rounded-xl border border-solid border-stone-500 border-opacity-30 text-stone-500 max-md:max-w-full">
                                   <span className=" text-stone-500">
-                                    {`${DEF_PUBLISHING_OFFER}%`}
+                                    {`${15}%`}
                                   </span>
                                 </div>
 
@@ -208,10 +209,10 @@ const RequestSplitSheetModal = (props: any) => {
                                       onClick={async () => {
                                         setSubmitting(true);
                                         // Submit proposal request
-                                        await submitSplitSheetRequest({
+                                        await submitSplitSheetRequestAPI({
                                           sample_id: props.sample.id,
-                                          publisher_offer: parseInt(DEF_PUBLISHING_OFFER),
-                                          master_offer: parseInt(DEF_MASTER_OFFER)
+                                          publisher_offer: 15,
+                                          master_offer: 15
                                         })
                                         setSubmitRequestSuccess(true);
                                         setSubmitting(false);
@@ -302,7 +303,7 @@ const RequestSplitSheetModal = (props: any) => {
                                             setSubmitting(true);
                                             return;
                                           }
-                                          await submitSplitSheetRequest({
+                                          await submitSplitSheetRequestAPI({
                                             sample_id: props.sample.id,
                                             publisher_offer,
                                             master_offer,

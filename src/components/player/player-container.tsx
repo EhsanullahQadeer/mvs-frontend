@@ -1,46 +1,41 @@
-/**
- * Author: End Quote
- * Desc:   
- *   
- */
+/*************************************************************************
+ * @file player-container.tsx
+ * @author End Quote
+ * @desc Main player container for handling and displaying sound samples.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
 
-
-/* eslint-disable react/jsx-no-target-blank */
-/* eslint-disable eqeqeq */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable jsx-a11y/alt-text */
-
-import {
-  getDownloadedSamples,
-  getLikedSamples,
-  getSound,
-  getSoundSamples,
-  saveSampleDownload,
-} from "../../redux/actionCreators/sounds";
-
-import React, { useCallback, useEffect, useState } from "react";
-
+/* IMPORTS */
+import React, { 
+  useCallback, 
+  useEffect, 
+  useState 
+} from "react";
 import { useParams } from "react-router-dom";
+import ReactPaginate from "react-paginate";
+import Avatar from "react-avatar";
 
+/* LOCAL IMPORTS */
+import Toggle from "components/util/toggle";
 import skipBack from '../../assets/img/player/skip-back.svg'
 import skipNext from '../../assets/img/player/skip-forward.svg'
 import playButton from '../../assets/img/player/play-circle.svg'
 import pauseButton from '../../assets/img/player/pause-circle.svg'
 import downloadPicture from '../../assets/img/download-image.svg'
 import lockImage from '../../assets/img/lock-image.svg'
-
 import TermsOfUse from "assets/terms_of_use";
-
-import AudioPlayer from "components/AudioPlayer";
-import Avatar from "react-avatar";
-import Toggle from "components/toggle";
-
-import ReactPaginate from "react-paginate";
+import AudioPlayer from "components/AudioPlayer/audio-player";
 import ConsideringModal from "components/modals/considering";
 import Theme from "theme";
-import DropDown from "theme/dropdown";
+import DropDown from "components/util/dropdown";
+import {
+  getDownloadedSamplesAPI,
+  getLikedSamplesAPI,
+  getSoundAPI,
+  getSoundSamplesAPI,
+  saveSampleDownloadAPI,
+} from "../../api/sounds";
 
 const PlayerContainer = ({ source = '' }) => {
 
@@ -93,7 +88,7 @@ const PlayerContainer = ({ source = '' }) => {
 
   const getSoundData = async () => {
     setLoading(true);
-    const _sound: any = await getSound(id);
+    const _sound: any = await getSoundAPI(id);
     setCurrentPage((currentPage) => {
       getSamples(id, currentPage);
       return currentPage;
@@ -227,21 +222,21 @@ const PlayerContainer = ({ source = '' }) => {
 
     switch(source){
       case "likes":
-          _samples = await getLikedSamples({
+          _samples = await getLikedSamplesAPI({
           skip: page,
           take,
         });
         break;
 
       case "downloads": 
-          _samples = await getDownloadedSamples({
+          _samples = await getDownloadedSamplesAPI({
           skip: page,
           take,
         });
         break;
 
       default:
-        _samples = await getSoundSamples(id, {
+        _samples = await getSoundSamplesAPI(id, {
           skip: page,
           take,
         });
@@ -262,7 +257,7 @@ const PlayerContainer = ({ source = '' }) => {
           if (!sample.sound_id) return { thumbnail: null, author: null }; // Handle cases where sound_id might be undefined
   
           try {
-            const result = await getSound(sample.sound_id);
+            const result = await getSoundAPI(sample.sound_id);
             return {
               thumbnail: result.data.results.thumbnail, // Assuming this is the correct path
               author: result.data.results.author // Assuming this is the correct path
@@ -731,7 +726,7 @@ const PlayerContainer = ({ source = '' }) => {
                                 onClick={async (e) => {
                                   e.preventDefault();
                                   const FileSaver = require("file-saver");
-                                  await saveSampleDownload(x.id);
+                                  await saveSampleDownloadAPI(x.id);
                                   FileSaver.saveAs(x.sample_src, x.filename);
                                 }}
                                 rel="noreferrer"

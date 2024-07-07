@@ -1,13 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable jsx-a11y/alt-text */
+/*************************************************************************
+ * @file home.tsx
+ * @author End Quote
+ * @desc Main component for displaying the home feed with various 
+ *       sound samples.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
 
+/* IMPORTS */
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getSounds } from "redux/actionCreators/sounds";
-import ActionType from "redux/actionTypes";
+
+/* LOCAL IMPORTS */
+import { getSounds } from "../redux/actions";
 import Theme from "theme";
-import ScrollableContainer from "util/ScrollableContainer";
+import ScrollableContainer from "components/util/scrollable-container";
 
 declare const require: {
   context: (directory: string, useSubdirectories?: boolean, regExp?: RegExp) => {

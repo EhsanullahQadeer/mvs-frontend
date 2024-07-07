@@ -1,4 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/*************************************************************************
+ * @file index.tsx
+ * @author Zohaib Ahmed
+ * @desc Provides sidebar navigation for the application.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
 import * as React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -14,11 +22,11 @@ const Sidebar = () => {
         <button
           onClick={() => {
             // @TODO this should be redirected to the "home" page, not "sounds"
-            navigate('/sounds');
+            navigate('/home');
           }}
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
-          justify-start ${pathname === '/sounds'
+          justify-start ${pathname === '/home'
               ? 'bg-[#C4FF48] text-[#000] font-["Mona-Sans-S"]'
               : 'hover:bg-[#B4FF15] text-[#CECFDA] hover:text-[#000] font-["Mona-Sans-S"]'
             }`}
@@ -37,7 +45,7 @@ const Sidebar = () => {
         <button
           onClick={() => {
             // @TODO this should be redirected to the "home" page, not "sounds"
-            navigate('/sounds');
+            navigate('/home');
           }}
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
@@ -82,7 +90,7 @@ const Sidebar = () => {
         <button
           onClick={() => {
             // @TODO this should be redirected to the "home" page, not "sounds"
-            navigate('/sounds');
+            navigate('/home');
           }}
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
@@ -105,7 +113,7 @@ const Sidebar = () => {
         <button
           onClick={() => {
             // @TODO this should be redirected to the "home" page, not "sounds"
-            navigate('/sounds');
+            navigate('/home');
           }}
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center
@@ -128,7 +136,7 @@ const Sidebar = () => {
         <button
           onClick={() => {
             // @TODO this should be redirected to the "home" page, not "sounds"
-            navigate('/sounds');
+            navigate('/home');
           }}
           // Change color of button based on the current path and hover
           className={`cursor-pointer rounded-[8px] w-[100%] h-[52px] px-[24px] flex items-center

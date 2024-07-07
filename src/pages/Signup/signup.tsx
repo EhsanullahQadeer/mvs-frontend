@@ -1,17 +1,24 @@
-/**
- * @author Zohaib Ahmed
- * @file signup.tsx
- * @description Signup page for new users
+/*************************************************************************
+ * @file SignupPage.tsx
+ * @author End Quote
+ * @desc User signup page component.
  * 
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
- */
+ *************************************************************************/
 
-
+/* IMPORTS */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { createNewUser, validateUsername, verifyCode } from "services/user";
 import { FileUploader } from "react-drag-drop-files";
+
+/* LOCAL IMPORTS */
+import {
+  checkUsernameAvailabilityAPI, 
+  createNewUserAPI, 
+  verifyCodeAPI 
+} from "../../api/user";
+
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -21,10 +28,10 @@ const SignupPage = () => {
   const fileTypes = ["JPG", "PNG", "JPEG"];
 
   const [userSignup, setUserSignup] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
+    FirstName: "",
+    LastName: "",
+    Email: "",
+    Phone: "",
   })
 
   const [user, setUser] = useState({
@@ -82,20 +89,21 @@ const SignupPage = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
-    const _code = await verifyCode({ code });
+    const _code = await verifyCodeAPI({ code });
 
     if (_code.data.error) {
       toast.error("Invalid invite code.");
     } else {
+
       const userData = {
-        first_name: _code.data.first_name,
-        last_name: _code.data.last_name,
-        email: _code.data.email,
-        phone: _code.data.phone,
+        FirstName: _code.data.FirstName,
+        LastName:  _code.data.LastName,
+        Email:     _code.data.Email,
+        Phone:     _code.data.Phone,
       };
 
       setCode(code);
-      setUserSignup(userData);
+      setUserSignup( userData );
       setSignup(true);
     }
     setIsSubmitting(false);
@@ -115,13 +123,13 @@ const SignupPage = () => {
     setIsSubmitting(true);
 
     /**
-     * BACKEND: Validate username availability in MongoDB
-     *          set Email to null.
+     * Validate username availability in MongoDB
+     * set Email to null.
      */
     try {
-      const rspUsername = await validateUsername(username, null);
-      const rspEmail    = await validateUsername(null, userSignup.email);
-      if (rspUsername.data.exists || rspEmail.data.exists) {
+      const rspUsername = await checkUsernameAvailabilityAPI(username);
+      console.log(rspUsername);
+      if ( !rspUsername.data.available ) {
         setUsernameError(`This username is unavailable. Please try a different one.`);
         setIsSubmitting(false);
         return;
@@ -135,21 +143,20 @@ const SignupPage = () => {
       return;
     }
 
+    // Final user info payload
     const payload = {
-      first_name: userSignup.first_name,
-      last_name: userSignup.last_name,
-      username: username,
-      email: userSignup.email,
-      phone: userSignup.phone,
-      code: code,
-      password: user.password
+      FirstName:  userSignup.FirstName,
+      LastName:   userSignup.LastName,
+      Username:   username,
+      Email:      userSignup.Email,
+      Phone:      userSignup.Phone,
+      InviteCode: code,
+      Password:   user.password,
+      Type:       'Creator'
     }
 
-    /**
-     * BACKEND: Create new user
-     */
     try {
-      const new_user = await createNewUser(payload);
+      const new_user = await createNewUserAPI( payload );
       if (new_user.data.error) {
         toast.error(new_user.data.message);
       } else {

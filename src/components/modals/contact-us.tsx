@@ -1,17 +1,16 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable jsx-a11y/no-redundant-roles */
-/* eslint-disable no-unused-vars */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
+/*************************************************************************
+ * @file contact-us.tsx
+ * @author Zohaib Ahmed
+ * @desc Modal component for displaying contact information.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
+import React from "react";
 import Modal from "react-modal";
-import { useSelector } from "react-redux";
 
 const ContactModal = (props: any) => {
-    
-
   return (
     <React.Fragment>
       <>
