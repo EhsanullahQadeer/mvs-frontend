@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 
 
 const TermsOfService = (props: any) => {
-  const navigate = useNavigate();
   return (
     <React.Fragment>
       <div className="container">
@@ -21,6 +20,7 @@ const TermsOfService = (props: any) => {
           <div className="flex flex-col pb-20 bg-neutral-950">
             <div className="flex flex-col justify-end pt-16 w-full border-b border-solid bg-zinc-900 border-zinc-700 max-md:max-w-full">
               <div className="flex flex-col items-start pr-20 pb-12 pl-6 w-full max-md:px-5 max-md:max-w-full">
+                {/* eslint-disable-next-line */}
                 <img
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/b6ca8adfa02099dfca96938cae1c05379065d8a380bb70750f820a315c3bedec?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"

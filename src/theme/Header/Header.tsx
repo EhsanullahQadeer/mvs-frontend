@@ -8,7 +8,7 @@
 
 /* IMPORTS */
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import Avatar from 'react-avatar';
@@ -22,8 +22,6 @@ import { classNames, HeaderProps } from './Header.types';
 const Header: React.FC<HeaderProps> = () => {
   const {
     state,
-    user, 
-    setUser, 
     contact_us, 
     setContactUs, 
     user_settings, 
