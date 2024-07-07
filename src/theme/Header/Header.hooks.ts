@@ -9,7 +9,7 @@
 
 /* IMPORTS */
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import cookie from 'js-cookie';
 
