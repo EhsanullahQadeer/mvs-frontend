@@ -1,15 +1,20 @@
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable jsx-a11y/no-redundant-roles */
-/* eslint-disable no-unused-vars */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/*************************************************************************
+ * @file considering.tsx
+ * @author Zohaib Ahmed
+ * @desc Modal component to display users considering a sample download.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import { useSelector } from "react-redux";
-import { getSampleDownloads } from "redux/actionCreators/sounds";
 import Avatar from 'react-avatar';
+
+/* LOCAL IMPORTS */
+import {
+  getSampleDownloadsAPI
+} from "../../api/sounds";
 
 
 const ConsideringModal = (props: any) => {
@@ -19,7 +24,7 @@ const ConsideringModal = (props: any) => {
   useEffect(() => {
     const init = async () => {
       setLoading(true);
-      const _downloads = await getSampleDownloads(props.sample.id, {});
+      const _downloads = await getSampleDownloadsAPI(props.sample.id, {});
 
       // console.log(_downloads.data.results.data);
 

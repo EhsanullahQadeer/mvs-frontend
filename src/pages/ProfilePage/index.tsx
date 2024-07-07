@@ -1,12 +1,23 @@
-// src/components/ProfilePage.tsx
-import config from 'config/config';
+/*************************************************************************
+ * @file index.tsx
+ * @author End Quote
+ * @desc Entry point for rendering profile pages.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
 import React, { useEffect, useState } from 'react';
 import Avatar from 'react-avatar';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import Modal from 'react-modal';
+
+/* LOCAL IMPORTS */
+import { config } from 'config/ConfigManager';
+import ScrollableContainer from 'components/util/scrollable-container';
+import { fetchCurrentUser } from "../../redux/actions";
 import Theme from 'theme';
-import ScrollableContainer from 'util/ScrollableContainer';
-import { fetchCurrentUser } from "redux/actionCreators/auth";
 
 const ProfilePage = () => {
   const { username } = useParams<{ username: string }>();
@@ -15,6 +26,11 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const openModal = () => setModalIsOpen(true);
+  const closeModal = () => setModalIsOpen(false);
+
+
   useEffect(() => {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
@@ -22,7 +38,8 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`${config.defaults.api_url}/user/${username}`);
+        const response = await fetch(`${config.get('API')}/user/${username}`);
+        console.log('response in frontend: ', response);
         if (!response.ok) {
           throw new Error(`Error fetching user: ${response.statusText}`);
         }
@@ -150,6 +167,13 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      <button onClick={openModal}>Start Conversation</button>
+
+      <Modal>
+
+      </Modal>
+
 
       {/* CREDITS */}
       <div

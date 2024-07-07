@@ -1,17 +1,41 @@
-import { createStore, applyMiddleware } from 'redux';
+/*************************************************************************
+ * @file store.ts
+ * @author Zohaib Ahmed
+ * @desc Configures and exports the Redux store with middleware and persistence.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
+import { createStore, applyMiddleware, compose, Store } from 'redux';
 import thunk from 'redux-thunk';
-import reducers from './reducers/combine';
-import { persistStore, persistReducer } from 'redux-persist';
+import { persistStore, persistReducer, Persistor } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-  
+
+/* LOCAL IMPORTS */
+import rootReducer from './reducers';
+import { RootState } from './reducers';
+
 const persistConfig = {
   key: 'root',
   storage,
-}
- 
+  whitelist: ['auth', 'sounds'],
+};
 
-const persistedReducer = persistReducer(persistConfig, reducers);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const store = createStore(persistedReducer, {}, applyMiddleware(thunk));
+const composeEnhancers =
+  (process.env.NODE_ENV === 'development' &&
+    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+  compose;
 
-export const persistor = persistStore(store);
+const middleware = [thunk];
+
+const store: Store<RootState> = createStore(
+  persistedReducer,
+  composeEnhancers(applyMiddleware(...middleware))
+);
+
+const persistor: Persistor = persistStore(store);
+
+export { store, persistor };

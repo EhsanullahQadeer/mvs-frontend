@@ -1,12 +1,38 @@
-// @ts-ignore */
+/*************************************************************************
+ * @file index.tsx
+ * @author End Quote
+ * @desc Entry point for rendering the application.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Application from './application';
-import { store, persistor } from './redux/store';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import './assets/css/global.scss';
-import 'react-toastify/dist/ReactToastify.css';
 import { PersistGate } from 'redux-persist/integration/react';
+
+/* LOCAL IMPORTS */
+import routes from './pages/routes';
+import { store, persistor } from './redux/store';
+import './assets/css/global.scss';
+
+const Application: React.FunctionComponent<{}> = (props) => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {routes.map((route, index) => (
+          <Route
+            key={index}
+            path={route.path}
+            element={<route.component name={route.name} {...props} {...route.props} />}
+          />
+        ))}
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

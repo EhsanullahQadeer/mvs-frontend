@@ -1,14 +1,22 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable jsx-a11y/anchor-is-valid */
+/*************************************************************************
+ * @file login.tsx
+ * @author End Quote
+ * @desc Login page component for user authentication.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* IMPORTS */
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import cookie from "js-cookie";
-import { login } from "redux/actionCreators/auth";
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from "yup";
+
+/* LOCAL IMPORTS */
+import { login } from "../redux/actions";
 
 interface RootState {
   auth: any;
@@ -47,7 +55,7 @@ const LoginPage = () => {
   useEffect(() => {
     if (cookie.get("token")) {
 
-      navigate("/sounds");
+      navigate("/home");
 
       return;
     }
@@ -55,7 +63,7 @@ const LoginPage = () => {
 
     if (user.auth.type === "USER_LOGIN_SUCCESS" && cookie.get("token")) {
       localStorage.removeItem("persist:root");
-      navigate("/sounds");
+      navigate("/home");
       setIsSubmitting(false);
       setErrors(false);
     } else if (user.auth.type === "USER_LOGIN_FAIL") {

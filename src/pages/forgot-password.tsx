@@ -1,25 +1,21 @@
-/* eslint-disable no-script-url */
-/* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
-import IPage from "interfaces/page";
-import logging from "config/logging";
-import logo from "assets/img/logo.svg";
-import AccountImage from "assets/img/account-img.png";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "redux/actionCreators/auth";
-import { useLocation, useNavigate } from "react-router-dom";
-import cookie from "js-cookie";
-import "assets/css/global.scss";
-import { Logo } from "icons";
-import { ToastContainer, toast } from "react-toastify";
-import { confirmEmail, forgotPassword, resendCode, resetPassword } from "services/user";
+/*************************************************************************
+ * @file forgot-password.tsx
+ * @author End Quote
+ * @desc Page component for handling the forgot password process.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
 
-interface RootState {
-    auth: any;
+/* IMPORTS */
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+
+/* LOCAL IMPORTS */
+import { forgotPasswordAPI, resetPasswordAPI } from "../api/auth";
+import "assets/css/global.scss";
+interface IPage {
+    name: string;
 }
 
 const ForgotPasswordPage: React.FunctionComponent<IPage> = (props) => {
@@ -57,7 +53,7 @@ const ForgotPasswordPage: React.FunctionComponent<IPage> = (props) => {
         }
 
         try {
-            await forgotPassword({
+            await forgotPasswordAPI({
                 email,
             });
 
@@ -77,7 +73,7 @@ const ForgotPasswordPage: React.FunctionComponent<IPage> = (props) => {
     const passwordReset = async () => {
         setIsSubmitting(true);
 
-        const _password = await resetPassword({
+        const _password = await resetPasswordAPI({
             email,
             code,
             password
