@@ -44,3 +44,24 @@ export async function sampleUnlikeAPI(id: any) {
 export async function saveSampleDownloadAPI(id: any) {
   return axiosInstance.post(`/sounds/sample/${id}/download`);
 }
+
+export async function uploadAudioFile( 
+  selectedFile: File 
+) : Promise<string | null> {
+  if (!selectedFile) return null;
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+
+  try {
+    const response = await axiosInstance.post('/sounds/upload-audio-file', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data.fileUrl;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    return null;
+  }
+}

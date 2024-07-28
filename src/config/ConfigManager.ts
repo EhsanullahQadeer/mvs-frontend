@@ -10,16 +10,12 @@ export class ConfigManager {
   private readonly config: Record<string, any>;
 
   constructor() {
-    console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
-    console.log('REACT_APP_STRIPE_PUBLISHABLE_KEY:', process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
-
     this.config = {
-
       // General
       API: process.env.REACT_APP_API_URL,
 
       // Stripe
-      STRIPE:{
+      STRIPE: {
         PUBLISHABLE_KEY: process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY,
       }
     };

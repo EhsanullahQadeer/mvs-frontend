@@ -19,79 +19,31 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
 /* LOCAL IMPORTS */
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/reducers";
-import { fetchCurrentUser } from "../../redux/actions";
-import axios from "../../api/axios";
 import { config } from "config/ConfigManager";
 import Chatbox from "../../components/Chatbox";
+import { useInboxHooks } from "./Inbox.hooks";
 
-// Stripe Setup
+/* STRIPE CONFIG */
 const stripePromise = loadStripe(config.get('STRIPE.PUBLISHABLE_KEY'));
 
-const InboxPage = () => {
-  const dispatch = useDispatch();
-  const [conversationsList, setConversationsList] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [selectedConversation, setSelectedConversation] = useState(null);
-  const state = useSelector((state: RootState) => state);
+const InboxPage = (
+  
+) => {
 
-  useEffect(() => {
-    dispatch(fetchCurrentUser());
-  }, [dispatch]);
+  // States and Hooks
+  const {
+    state,
+    selectedConversation, setSelectedConversation,
+    conversationsList, setConversationsList,
+    messages, setMessages,
+    sortOption, setSortOption,
+    handleSortChange,
+    handleConversationClick,
+  } = useInboxHooks();
 
-  useEffect(() => {
-    if (state.auth.user && state.auth.user.UserId) {
-      const fetchConversations = async () => {
-        try {
-          const conversations = await getUserConvo(state.auth.user.UserId);
-          setConversationsList(conversations);
-        } catch (error) {
-          console.error('Error fetching conversations:', error);
-        }
-      };
-
-      fetchConversations();
-    }
-  }, [state.auth.user]);
-
-  const getUserConvo = async (userId) => {
-    try {
-      const response = await axios.get(`${config.get('API')}/messenger/conversations`, {
-        params: { userId }
-      });
-
-      let conversations = response.data.conversations || [];
-
-      // Sort conversations by latestMessage.Timestamp in descending order
-      conversations = conversations.sort((a, b) => b.latestMessage.Timestamp - a.latestMessage.Timestamp);
-
-      return conversations;
-    } catch (error) {
-      console.error('Error fetching conversations:', error);
-      return [];
-    }
-  };
-
-  const getMessages = async (conversationId) => {
-    try {
-      const response = await axios.get(`${config.get('API')}/messenger/conversation/${conversationId}`);
-      return response.data.messages || [];
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-      return [];
-    }
-  }  
-
-  const handleConversationClick = async (conversation) => {
-    setSelectedConversation(conversation);
-    const conversationMessages = await getMessages(conversation.conversationId);
-    setMessages(conversationMessages);
-  };
-
-  const Dropdown = ({ 
+  const Dropdown = ({
     label, 
-    options, 
+    options,
     selectedOption, 
     onOptionChange 
   }) => {
@@ -134,10 +86,6 @@ const InboxPage = () => {
     );
   };
 
-  const [sortOption, setSortOption] = useState('Newest');
-
-  const handleSortChange = (option) => setSortOption(option);
-
   return (
     <Theme>
     <Elements stripe={stripePromise}>
@@ -157,6 +105,7 @@ const InboxPage = () => {
               Messages
             </h3>
           </div>
+
           {/* Search Function */}
           <div>
             <div className="ml-4">
@@ -189,13 +138,17 @@ const InboxPage = () => {
               </div>
             </div>
           </div>
+
+
           <Dropdown
             label="Sort by:"
             options={['Newest', 'Oldest', 'Highest Bid', 'Lowest Bid']}
             selectedOption={sortOption}
             onOptionChange={handleSortChange}
           />
+
           <div className="mt-4 flex-1 overflow-y-auto">
+            {/* TEMPORARY, REMOVE LATER */}
             {Array.from({ length: 5 }).map((_, repeatIndex) => (
               <React.Fragment key={`repeat-${repeatIndex}`}>
                 {conversationsList.map((conversation, index) => (
@@ -229,13 +182,15 @@ const InboxPage = () => {
           </div>
         </div>
 
-        {/* Chatbox Container */}
+        {/* Chatbox container */}
         <div className="flex-1">
          <Chatbox
             selectedConversation={selectedConversation}
-            setSelectedConversation={setSelectedConversation}
             messages={messages}
             setMessages={setMessages}
+            recipientId={selectedConversation?.otherUserId}
+            conversationId={selectedConversation?.conversationId} 
+            RecipientProfile={undefined}
           />
         </div>
 

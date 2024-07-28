@@ -25,7 +25,6 @@ interface RootState {
 const LoginPage = () => {
 
   const dispatch: any = useDispatch();
-
   const user = useSelector((state: RootState) => state);
 
 
@@ -173,7 +172,6 @@ const LoginPage = () => {
                   alt=""
                   className="cursor-pointer shrink-0 my-auto w-5 aspect-[1.11]"
                   onClick={() => setShowPassword(!showPassword)}
-
                 />
 
               </div>
@@ -182,6 +180,7 @@ const LoginPage = () => {
                 className={styles.errorMsg}
                 name='password'
               />
+
               <button
                 disabled={isSubmitting}
                 type="submit"
@@ -203,6 +202,10 @@ const LoginPage = () => {
                   </>
                 )}
               </button>
+
+
+
+
               <div className="flex gap-2.5 py-0.5 mt-3 text-base">
                 <span className="text-stone-500">Request account or use invitation code.</span>
                 <button onClick={() => navigate("/signup")} className="underline text-stone-300">

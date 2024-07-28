@@ -20,12 +20,13 @@ import { useHeaderHooks } from './Header.hooks';
 import { classNames, HeaderProps } from './Header.types';
 
 const Header: React.FC<HeaderProps> = () => {
+  /* States and Hooks */
   const {
     state,
     contact_us, 
     setContactUs, 
     user_settings, 
-    setUserSettings, 
+    setUserSettings,
     onboardGuide, 
     LogOut 
   } = useHeaderHooks();
@@ -132,7 +133,7 @@ const Header: React.FC<HeaderProps> = () => {
                 <Menu.Item>
                   {({ active }) => (
                     <div
-                      onClick={() => navigate(`/profile/${state?.auth?.user?.username}`)}
+                      onClick={() => navigate(`/profile/${state?.auth?.user?.profile?.Username}`)}
                       className={classNames(
                         active
                           ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"

@@ -16,6 +16,7 @@ export interface UserData {
 }
 
 export interface RootState {
+  [x: string]: any;
   auth: {
     user: UserData | null;
     loading: boolean;
