@@ -17,6 +17,7 @@ import { useParams } from 'react-router-dom';
 import { config } from 'config/ConfigManager';
 import { fetchConversationId, getMessages } from 'api/messenger';
 import { RootState } from 'redux/reducers';
+import axios from 'api/axios';
 
 export const useProfilePageHooks = () => {
   const state = useSelector((state: RootState) => state);
@@ -30,12 +31,30 @@ export const useProfilePageHooks = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`${config.get('API')}/users/username/${username}`);
-        if (!response.ok) {
-          throw new Error(`Error fetching user: ${response.statusText}`);
-        }
-        const data = await response.json();
-        setUser( data );
+
+        /* Get user's info from Profiles table */
+        const profiles_results = await fetch(
+          `${config.get('API')}/users/username/${username}`
+        );
+
+        // Convert to legible JSON format
+        const data = await profiles_results.json();
+        
+        /* Get user's info from Users table */
+        const users_results = await axios.get(`${config.get('API')}/users/get-user-info`, {
+          params: {
+            UserId: data?.UserId
+          }
+        });
+     
+        // Combining both results 
+        const combinedUserDetails = {
+          profile: users_results.data?.available,
+          ...data,
+        };
+
+        setUser( combinedUserDetails );
+
       } catch (error) {
         setError(error.message);
       } finally {
@@ -46,7 +65,8 @@ export const useProfilePageHooks = () => {
     if (username) {
       fetchUser();
     }
-  }, [username]);
+  }, [ username ]);
+
 
   const useFetchMessages = (currentUserId, otherUserId) => {
     const [messages, setMessages] = useState([]);
@@ -66,20 +86,16 @@ export const useProfilePageHooks = () => {
             console.error('Error fetching data:', error);
           }
         };
-  
         fetchData();
       }
     }, [currentUserId, otherUserId]);
   
     return { messages, setMessages, convId };
-  };
+  };  
 
   useEffect(() => {
-    console.log('state here', state);
-  }, [ state ]);
-
-
-
+    console.log('state herasdflkajsdfkle', user);
+  }, [ user ]);
 
   return{
     state,

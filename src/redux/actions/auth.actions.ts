@@ -65,7 +65,9 @@ export function login(
 }
 
 export function fetchCurrentUser() {
-  return async function (dispatch: Dispatch) {
+  return async function (
+    dispatch: Dispatch
+  ) {
     try {
       // Fetching user details from /auth/me
       const userResponse = await axios.get(`${config.get('API')}/auth/me`);

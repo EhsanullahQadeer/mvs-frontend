@@ -19,8 +19,9 @@ import Chatbox from 'components/Chatbox';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { config } from 'config/ConfigManager';
-import { useSelector } from 'react-redux';
-import { RootState } from 'redux/reducers';
+import defaultAvatar from '../../assets/img/defaultProfilePicture.png';
+
+
 
 const ProfilePage = (
 
@@ -42,7 +43,6 @@ const ProfilePage = (
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
-
   const [chatboxIsOpen, setDisplayChatbox] = useState(false);
   const closeChatbox = () => setDisplayChatbox(false);
   const displayChatbox = () => setDisplayChatbox(true);
@@ -60,12 +60,13 @@ const ProfilePage = (
     <Theme>
       <div className="flex">
         <div className="flex-1">
-      {/* BANNER */}
+
+          {/* BANNER */}
           <div
             style={{
               width: '100%',
               height: '256px',
-              backgroundImage: `url(${user?.banner})`,
+              backgroundImage: `url(${user?.Banner})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
@@ -75,6 +76,7 @@ const ProfilePage = (
               display: 'flex',
             }}
           >
+            {/* User Information */}
             <div
               className="row-container"
               style={{
@@ -83,11 +85,14 @@ const ProfilePage = (
                 alignItems: 'center',
               }}
             >
-              {user?.thumbnail ? (
-                <Avatar src={user?.profilePicture} size="200" round={true} />
+              {/* Thumbnail */}
+              {user?.Thumbnail ? (
+                <Avatar src={user?.Thumbnail} size="200" round={true} />
               ) : (
-                <Avatar name={user?.name} size="200" round={true} />
+                <Avatar src={defaultAvatar} size="200" round={true} />
               )}
+
+              {/* User Information */}
               <div
                 className="column-container"
                 style={{
@@ -95,6 +100,7 @@ const ProfilePage = (
                   width: '450px',
                 }}
               >
+                {/* Name and Bio */}
                 <div>
                   <h1
                     style={{
@@ -104,7 +110,7 @@ const ProfilePage = (
                       fontWeight: 'bold',
                     }}
                   >
-                    {user?.name}
+                    {user?.profile.FirstName} {user?.profile.LastName}
                   </h1>
                   <p
                     style={{
@@ -112,7 +118,7 @@ const ProfilePage = (
                       marginLeft: '10px',
                     }}
                   >
-                    @{user?.username}
+                    @{user?.Username}
                   </p>
                   <p
                     style={{
@@ -125,12 +131,12 @@ const ProfilePage = (
                       marginBottom: '10px',
                     }}
                   >
-                    {user?.bio}
+                    {user?.Description}
                   </p>
                 </div>
-                <div>
 
-                  {/* Solicit Message with User */}
+                {/* Message User Button */}
+                <div>
                   <button
                     className="relative rounded-full"
                     style={{
@@ -165,54 +171,61 @@ const ProfilePage = (
                     Submit Message
                   </button>
                 </div>
+
               </div>
             </div>
           </div>
-      {/* CREDITS */}
-      <div
-        style={{
-          padding: '16px',
-          borderBottom: '2px solid #1F1F1F',
-          paddingBottom: '16px',
-        }}
-      >
-        <ScrollableContainer scrollAutomatically={true} title="Credits">
-          <div className="carousel-inner flex transition-transform duration-1000 ease-linear">
-            {user?.credits?.map((credit, index) => (
-              <div
-                key={index}
-                style={{
-                  borderRadius: '4px',
-                  width: '200px',
-                  height: '100px',
-                  margin: '4px',
-                  flexShrink: 0,
-                  backgroundColor: '#232426',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#fff',
-                  padding: '16px',
-                  border: '1px solid #494949',
-                }}
-              >
-                {credit}
+          {/* END BANNER */}
+          
+          {/* CREDITS */}
+          <div
+            style={{
+              padding: '16px',
+              borderBottom: '2px solid #1F1F1F',
+              paddingBottom: '16px',
+            }}
+          >
+            <ScrollableContainer scrollAutomatically={true} title="Credits">
+              <div className="carousel-inner flex transition-transform duration-1000 ease-linear">
+                {user?.credits?.map((credit, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      borderRadius: '4px',
+                      width: '200px',
+                      height: '100px',
+                      margin: '4px',
+                      flexShrink: 0,
+                      backgroundColor: '#232426',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      padding: '16px',
+                      border: '1px solid #494949',
+                    }}
+                  >
+                    {credit}
+                  </div>
+                ))}
               </div>
-            ))}
+            </ScrollableContainer>
           </div>
-        </ScrollableContainer>
-      </div>
+          {/* END CREDITS */}
 
-      {/* LIBRARY */}
-      <div
-        style={{
-          padding: '16px',
-          borderBottom: '2px solid #1F1F1F',
-          paddingBottom: '16px',
-        }}
-      >
+          {/* LIBRARY */}
+          <div
+            style={{
+              padding: '16px',
+              borderBottom: '2px solid #1F1F1F',
+              paddingBottom: '16px',
+            }}
+          >
+          </div>
+          {/* END LIBRARY */}
+
         </div>
-        </div>
+      
         <div className="ml-auto flex-1 w-1/2">
 
         {/* Load Chatbox on Profile Page */}
@@ -225,7 +238,7 @@ const ProfilePage = (
                 recipientId={user?.UserId}
                 conversationId={convId}
                 // Recipient information
-                RecipientProfile={undefined}              
+                RecipientProfile={undefined}
               />
             </Elements>
           }
