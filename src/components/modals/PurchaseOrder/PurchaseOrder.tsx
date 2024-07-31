@@ -43,7 +43,7 @@ const PurchaseOrderModal = ({
       <div className="self-stretch justify-start items-center gap-2 inline-flex">
         <div className="justify-start items-center gap-2 flex">
           <div className="justify-start items-start gap-2.5 flex">
-            <img className="w-9 h-9 rounded-full" src={user?.Thumbnail} />
+            <img alt="" className="w-9 h-9 rounded-full" src={user?.Thumbnail} />
           </div>
 
           {/* User Info */}
