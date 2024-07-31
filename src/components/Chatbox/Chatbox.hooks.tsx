@@ -84,8 +84,8 @@ export const useChatboxHooks = (
     if (fileURL == null) return;
 
     /* Start of new conversation */
-    if (conversationId = null){
-      
+    if (conversationId == null){
+      // TODO: create new 'conversation' with user
       return;
     }
     
