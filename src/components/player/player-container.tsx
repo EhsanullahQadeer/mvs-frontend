@@ -40,7 +40,6 @@ import {
 } from "../../api/sounds";
 
 const PlayerContainer = ({ source = '' }) => {
-
   const { id } = useParams();
   const [currentSampleIndex, setCurrentSampleIndex] = useState(null);
   const [playing, setPlaying]                       = useState(false); 

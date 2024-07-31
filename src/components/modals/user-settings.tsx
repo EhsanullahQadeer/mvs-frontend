@@ -236,10 +236,9 @@ const UserSettingsModal = (props: any) => {
         useEffect(() => {
             dispatch(fetchCurrentUser());
         }, [dispatch]);
-    
+
         const openEditImageModal = () => setIsEditImageModalOpen(true);
         const closeEditImageModal = () => setIsEditImageModalOpen(false);
-
 
     return (
         <React.Fragment>

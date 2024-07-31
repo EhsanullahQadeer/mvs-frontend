@@ -22,12 +22,12 @@ const Theme = (props:any) => {
         <img src={mvssive_text} alt="Site Logo" className="h-auto" />
       </div>
       <div className="onboard-14 row-start-1 col-start-2 border-b-2 border-[#1F1F1F]">
-          <Header />
+        <Header />
       </div>
 
       {/* Sidebar */}
       <div className="row-start-2 col-start-1">
-          <Sidebar />
+        <Sidebar />
       </div>
 
       {/* Main content */}

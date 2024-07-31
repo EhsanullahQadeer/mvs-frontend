@@ -19,6 +19,7 @@ import MyLikesPage from "pages/my-likes";
 import MyDownloadsPage from "pages/downloaded-samples";
 import ProfilePage from "pages/ProfilePage";
 import InboxPage from "pages/Inbox";
+import StripeCallback from "pages/StripeCallback";
 
  interface IRoute {
   path: string;
@@ -100,6 +101,11 @@ const routes: IRoute[] = [
     path: "/sound/samples/:id",
     name: "Samples",
     component: SamplesPage,
+  },
+  {
+    path: "/stripe/callback",
+    name: "Stripe Connect Redirect",
+    component: StripeCallback
   },
   {
     path: "/my/likes",

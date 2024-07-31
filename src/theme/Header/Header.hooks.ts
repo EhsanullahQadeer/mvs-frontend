@@ -57,12 +57,13 @@ export const useHeaderHooks = () => {
     if (!token) {
       navigate('/login');
     } else {
-      dispatch(fetchCurrentUser());
+      dispatch( fetchCurrentUser() );
     }
   }, [token, navigate, dispatch]);
 
   useEffect(() => {
     setUser(state.auth.user);
+    console.log('users', state);
   }, [state]);
 
   return {

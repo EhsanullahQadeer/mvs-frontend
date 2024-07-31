@@ -15,7 +15,9 @@ import cookie from "js-cookie";
 import { config } from "config/ConfigManager";
 import ActionType from "redux/types"
 
-export function login(params: any) {
+export function login(
+  params: any
+) {
   return async function (dispatch: Dispatch) {
     try {
       const data = {
@@ -63,19 +65,38 @@ export function login(params: any) {
 }
 
 export function fetchCurrentUser() {
-  return async function (dispatch: Dispatch) {
+  return async function (
+    dispatch: Dispatch
+  ) {
     try {
-      await axios
-        .get(`${config.get('API')}/auth/me`)
-        .then((user: any) => {
-          dispatch({
-            type: ActionType.CURRENT_USER,
-            payload: user,
-          });
-        });
-    } catch (error) {
-      console.log(error);
+      // Fetching user details from /auth/me
+      const userResponse = await axios.get(`${config.get('API')}/auth/me`);
+      const user = userResponse.data;
+      console.log('User data from /auth/me:', user);
 
+      // Fetching additional profile details from /profiles/details
+      const profileResponse = await axios.get(`${config.get('API')}/users/get-user-profile-details`, {
+        params: {
+          UserId: user.UserId
+        }
+      });
+      const profileDetails = profileResponse.data.available;
+      console.log('Profile details:', profileDetails);
+
+      // Combining both results
+      const combinedUserDetails = {
+        ...user,
+        profile: profileDetails,
+      };
+      console.log( 'Combined user details:', combinedUserDetails );
+
+      // Dispatching combined result
+      dispatch({
+        type: ActionType.CURRENT_USER,
+        payload: combinedUserDetails,
+      });
+    } catch (error) {
+      console.error('Error fetching user details:', error);
       dispatch({
         type: ActionType.CURRENT_USER_FAILED,
         payload: {

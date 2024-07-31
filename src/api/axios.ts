@@ -15,7 +15,7 @@ import { config } from '../config/ConfigManager';
 
 // Create an Axios instance
 const axiosInstance = axios.create({
-  baseURL: config.get('API'), // Use the base URL from the config
+  baseURL: config.get( 'API' ),
   headers: {
     'Content-Type': 'application/json',
   },
