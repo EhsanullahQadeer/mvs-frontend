@@ -6,6 +6,8 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* IMPORTS */
 import { useState } from 'react';
 import Avatar from 'react-avatar';
@@ -83,7 +85,7 @@ const ProfilePage = (
                 alignItems: 'center',
               }}
             >
-              
+
               {/* Thumbnail */}
               {user?.Thumbnail ? (
                 <Avatar src={user?.Thumbnail} size="200" round={true} />

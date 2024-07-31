@@ -7,6 +7,8 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import axios from 'api/axios';
 import { config } from 'config/ConfigManager';
 import React, { useEffect } from 'react';

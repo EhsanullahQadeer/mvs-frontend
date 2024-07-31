@@ -6,6 +6,7 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
 import { useEffect, useState } from 'react';
@@ -44,7 +45,7 @@ export const useProfilePageHooks = () => {
 
 
   const checkConversationExists = async () => {
-    
+
   }
 
 
