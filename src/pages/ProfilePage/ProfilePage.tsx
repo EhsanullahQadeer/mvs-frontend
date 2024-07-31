@@ -21,8 +21,6 @@ import { loadStripe } from '@stripe/stripe-js';
 import { config } from 'config/ConfigManager';
 import defaultAvatar from '../../assets/img/defaultProfilePicture.png';
 
-
-
 const ProfilePage = (
 
 ) => {
@@ -85,6 +83,7 @@ const ProfilePage = (
                 alignItems: 'center',
               }}
             >
+              
               {/* Thumbnail */}
               {user?.Thumbnail ? (
                 <Avatar src={user?.Thumbnail} size="200" round={true} />
@@ -225,7 +224,7 @@ const ProfilePage = (
           {/* END LIBRARY */}
 
         </div>
-      
+
         <div className="ml-auto flex-1 w-1/2">
 
         {/* Load Chatbox on Profile Page */}

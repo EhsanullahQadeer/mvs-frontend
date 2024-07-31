@@ -50,9 +50,6 @@ export const useChatboxHooks = (
 
   const [user, setUser] = useState('');
 
-
-
-
   const cardElementOptions = {
     style: {
       base: {
@@ -218,14 +215,13 @@ export const useChatboxHooks = (
     }
   };
 
-
   const handleConfirmPayment = async (
-    recipientId,
-    conversationId,
-    paymentIntentId
+    recipientId:     string,
+    conversationId:  string,
+    paymentIntentId: string
   ) => {
     try {
-      const response = await axios.post( `${config.get('API')}/payments/confirm-payment-intent`, {
+      const response = await axios.post( `${config.get('API')}/stripe/confirm-payment-intent`, {
         paymentIntentId: paymentIntentId
       });
 

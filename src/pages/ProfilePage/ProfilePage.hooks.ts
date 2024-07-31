@@ -29,9 +29,29 @@ export const useProfilePageHooks = () => {
   const [ProfileInformation, setProfileInformation] = useState(null);
 
   useEffect(() => {
+    if (state?.auth?.user?.UserId && user?.UserId){
+      const checkConversationExists = async () =>{ 
+        const response = await axios.get('/messenger/check-conversation-exists', {
+          params: {
+            UserId: state?.auth?.user?.UserId,
+            OtherUserId: user?.UserId
+          }
+        })
+      }
+      checkConversationExists();
+    };
+  }, [ user, state ])
+
+
+  const checkConversationExists = async () => {
+    
+  }
+
+
+
+  useEffect(() => {
     const fetchUser = async () => {
       try {
-
         /* Get user's info from Profiles table */
         const profiles_results = await fetch(
           `${config.get('API')}/users/username/${username}`
@@ -91,11 +111,7 @@ export const useProfilePageHooks = () => {
     }, [currentUserId, otherUserId]);
   
     return { messages, setMessages, convId };
-  };  
-
-  useEffect(() => {
-    console.log('state herasdflkajsdfkle', user);
-  }, [ user ]);
+  };
 
   return{
     state,

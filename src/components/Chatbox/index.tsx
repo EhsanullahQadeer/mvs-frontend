@@ -56,7 +56,6 @@ const Chatbox: React.FC<ChatboxProps> = ({
   ) => {
     event.preventDefault();
     if (!stripe || !elements) {
-      // Stripe.js has not loaded yet. Make sure to disable form submission until Stripe.js has loaded.
       return;
     }
 
@@ -99,8 +98,13 @@ const Chatbox: React.FC<ChatboxProps> = ({
                 <audio ref={audioRef} controls src={audioURL} />
               )}
             </div>
+
+
+            <a href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_QDNqYJ6zDSs6Dwr8qwrHTeTwqQifAXlp&scope=read_write">
+                Connect with Stripe
+            </a>
+
       
-            {/* Send message with demo track */}
             {/* Open Modal to send demo track */}
             <button 
               onClick={openModal}
@@ -135,8 +139,8 @@ const Chatbox: React.FC<ChatboxProps> = ({
             </form>
 
             <Modal
-              isOpen={confirmPaymentIsOpen}
-              onRequestClose={closeModal}
+              isOpen={ confirmPaymentIsOpen }
+              onRequestClose={ closeModal }
               contentLabel="Send Demo Track Modal"
               style={{
                 content: {
@@ -185,6 +189,7 @@ const Chatbox: React.FC<ChatboxProps> = ({
                         Stop Recording
                       </button>
                     )}
+
                     <button
                       onClick={deleteRecording}
                       className="px-4 py-2 bg-gray-500 text-white rounded"

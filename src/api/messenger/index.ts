@@ -47,7 +47,9 @@ export const getUserConvo = async (
 ) => {
   try {
     const response = await axios.get(`${config.get('API')}/messenger/conversations`, {
-      params: { userId }
+      params: {
+        userId
+      }
     });
     return response.data.conversations || [];
   } catch (error) {
@@ -72,15 +74,27 @@ export const getMessages = async (
 };
 
 export const fetchConversationId = async (
-  currentUserId, otherUserId
+  currentUserId, 
+  otherUserId
 ) => {
   try {
-    console.log(currentUserId, otherUserId);
     const response = await axios.get(`${config.get('API')}/messenger/conversations/fetchConversationID/${currentUserId}/${otherUserId}`);
-    console.log(response);
     return response.data;
   } catch (error) {
     console.error('Error fetching conversation ID:', error);
     return null;
   }
 };
+
+export const checkConversationExists = async (
+  UserId: string,
+  OtherUserId: string,
+) => {
+  const response = await axios.get('/messenger/check-conversation-exists', {
+    params: {
+      UserId: UserId,
+      OtherUserId: OtherUserId,
+    }
+  })
+}
+

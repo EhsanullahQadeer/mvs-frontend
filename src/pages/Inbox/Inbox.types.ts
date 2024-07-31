@@ -6,7 +6,6 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-
 export interface ChatboxProps {
   selectedConversation: any,
   messages: any;
@@ -14,7 +13,3 @@ export interface ChatboxProps {
   recipientId: string,
   conversationId: string,
 }
-
-
-
-
