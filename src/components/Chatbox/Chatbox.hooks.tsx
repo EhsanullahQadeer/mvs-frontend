@@ -6,8 +6,10 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* IMPORTS */
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
 

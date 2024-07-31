@@ -6,11 +6,11 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* LOCAL IMPORTS */
 import axios from "api/axios";
 import { config } from "config/ConfigManager";
-
-
 
 export const sendMessage = async({
   // General info
