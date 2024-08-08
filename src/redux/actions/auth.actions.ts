@@ -25,7 +25,7 @@ export function login(
         password: params.password,
       };
       await axios
-        .post(`${config.get('API')}/auth/login`, data, {
+        .post(`/auth/login`, data, {
           method: "POST",
         })
         .then((user: any) => {
