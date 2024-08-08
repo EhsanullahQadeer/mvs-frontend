@@ -20,6 +20,10 @@ jobs:
 
       - run: yarn install
       - run: yarn build
+        env:
+          REACT_APP_API_URL: api.mvssive.net
+          REACT_APP_STRIPE_PUBLISHABLE_KEY: ${{ secrets.REACT_APP_STRIPE_PUBLISHABLE_KEY }}
+          REACT_APP_APIGATEWAY_URL: ${{ secrets.REACT_APP_APIGATEWAY_URL }}
 
       - uses: aws-actions/configure-aws-credentials@v1
         with:
