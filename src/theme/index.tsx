@@ -11,7 +11,9 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import mvssive_text from "../assets/img/massive_text.svg";
 
-const Theme = (props:any) => {
+const Theme = (
+  props:any
+) => {
   return (
     <div className="grid grid-rows-[auto,1fr] grid-cols-[auto,1fr] h-screen">
       <div

@@ -236,7 +236,8 @@ const Sidebar = () => {
                 d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
             <p className="pl-[8px]">New Collection</p>
-          </button>
+        </button>
+
         <button
             onClick={() => {
               navigate('/my/likes');
@@ -258,7 +259,7 @@ const Sidebar = () => {
               />
             </svg>
             <p className="pl-[8px]">Likes</p>
-          </button>
+        </button>
 
       </div>
 
