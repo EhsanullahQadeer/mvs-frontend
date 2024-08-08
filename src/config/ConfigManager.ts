@@ -17,6 +17,11 @@ export class ConfigManager {
       // Stripe
       STRIPE: {
         PUBLISHABLE_KEY: process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY,
+      },
+      
+      // API Gateway
+      GATEWAY: {
+        API_URL: process.env.REACT_APP_APIGATEWAY_URL,
       }
     };
   }

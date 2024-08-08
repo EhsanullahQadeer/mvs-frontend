@@ -1,6 +1,6 @@
 /*************************************************************************
  * @file index.tsx
- * @author End Quote
+ * @author Zohaib Ahmed
  * @desc Entry point for rendering the application.
  * 
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
@@ -17,6 +17,8 @@ import { PersistGate } from 'redux-persist/integration/react';
 import routes from './pages/routes';
 import { store, persistor } from './redux/store';
 import './assets/css/global.scss';
+import { WebSocketProvider } from 'services/WebSocket/APIGatewayManager.context';
+
 
 const Application: React.FunctionComponent<{}> = (props) => {
   return (
@@ -41,7 +43,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <Application />
+      <WebSocketProvider>
+        <Application />
+      </WebSocketProvider>
     </PersistGate>
   </Provider>
 );
