@@ -49,7 +49,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
         setWebSocketManager(null);
       };
     }
-  }, [userId]);
+  }, [userId, websocketUrl]);
 
   const registerHandler = (type: string, handler: (data: any) => void) => {
     webSocketManager?.registerHandler(type, handler);
