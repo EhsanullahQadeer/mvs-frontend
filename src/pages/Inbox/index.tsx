@@ -29,9 +29,9 @@ const InboxPage = (
 
   return (
     <Theme>
-      <div className="relative">
+      <div className="h-56 grid grid-cols-2 gap-4 content-start">
         <MessagesList />
-        <MessagesDetail />
+        <MessagesDetail/>
       </div>
     </Theme>
   );

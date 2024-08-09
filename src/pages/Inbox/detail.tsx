@@ -29,7 +29,7 @@ const MessagesDetail = (
         <React.Fragment>
 
 
-            <div className="absolute right-0">
+            <div className="flex">
 
                 <div className="flex flex-col justify-between px-3 py-2 max-w-4xl min-h-[909px]">
                     <div className="flex flex-col w-full max-md:max-w-full">
