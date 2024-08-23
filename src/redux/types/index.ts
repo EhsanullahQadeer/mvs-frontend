@@ -9,10 +9,12 @@
 /* LOCAL IMPORTS */
 import AuthActionTypes from './auth.types';
 import SoundActionTypes from './sounds.types';
+import InboxTypes from './inbox.types';
 
 const ActionType = {
   ...AuthActionTypes,
   ...SoundActionTypes,
+  ...InboxTypes,
 };
 
 export default ActionType;

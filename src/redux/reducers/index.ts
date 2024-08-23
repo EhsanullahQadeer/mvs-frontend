@@ -12,10 +12,12 @@ import { combineReducers } from 'redux';
 /* LOCAL IMPORTS */
 import authReducer from './auth.reducer';
 import soundsReducer from './sounds.reducer';
+import InboxReducer from './inbox.reducer';
 
 const reducers = combineReducers({
     auth: authReducer,
-    sounds: soundsReducer
+    sounds: soundsReducer,
+    inbox: InboxReducer
 });
 
 export default reducers;

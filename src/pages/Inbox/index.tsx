@@ -18,7 +18,6 @@ import {
 import Theme from "theme";
 import React from "react";
 import MessagesList from "./list";
-import MessagesDetail from "./detail";
 
 
 
@@ -31,7 +30,6 @@ const InboxPage = (
     <Theme>
       <div className="h-56 grid grid-cols-2 gap-4 content-start">
         <MessagesList />
-        <MessagesDetail/>
       </div>
     </Theme>
   );

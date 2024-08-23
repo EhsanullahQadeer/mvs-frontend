@@ -45,8 +45,6 @@ const Header: React.FC<HeaderProps> = () => {
           <div className="flex gap-2.5 self-stretch my-auto min-h-[17px]" />
         </div>
       </div>
-
-
     </React.Fragment>
   );
 };

@@ -8,3 +8,4 @@
 
 export * from './auth.actions';
 export * from './sounds.actions';
+export * from './inbox.actions';

@@ -19,9 +19,7 @@ import React from "react";
 
 
 
-const MessagesDetail = (
-
-) => {
+const MessagesDetail = (props:any) => {
 
 
     return (
