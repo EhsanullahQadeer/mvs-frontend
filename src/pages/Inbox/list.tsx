@@ -81,16 +81,49 @@ const Conversations = (props: any) => {
         },conversation_id);
  
         console.log("=== Messages ===");
-        console.log(_msgs.data.messages)
-        props.setMessages(_msgs.data.messages)
+        // console.log(_msgs.data.messages)
+
+        const results = _msgs.data.messages;
+
+        for(var i = 0; i < results.length; i++) {
+
+            results[i].date = moment(results[i].Timestamp).format('YYYY-MM-DD')
+            console.log(results[i])
+        }
+
+        const groups = results.reduce((groups, message) => {
+            const date = message.date
+            if (!groups[date]) {
+            groups[date] = [];
+            }
+            groups[date].push(message);
+            return groups;
+        }, {});
+        
+        const groupArrays = Object.keys(groups).map((date) => {
+            return {
+            date,
+            messages: groups[date]
+            };
+        });
+
+        console.log(groupArrays);
+
+
+
+        console.log(results)
+
+        props.setMessages(groupArrays)
 
    }
   return (
     <>
       <div 
         onClick={ async () => {
+            props.setLoading(true);
+            props.setActiveConversation(props.conversation)
             await getConversationMessages(props.conversation.ConversationId)
-            props.setActiveConversation(props.conversation.ConversationId)
+            props.setLoading(false);
         }}
         className="cursor-pointer hover:bg-neutral-800 cursor-pointer  flex justify-between items-center px-3 py-2 w-full border-b border-gray-500 border-opacity-20 max-md:max-w-full">
         <div className="flex flex-wrap flex-1 shrink gap-3 items-center self-stretch my-auto w-full basis-0 min-w-[240px] max-md:max-w-full">
@@ -169,6 +202,8 @@ const MessagesList = (props) => {
   const [activeConversation,setActiveConversation] = useState(null);
 
   const [messages,setMessages] = useState([]);
+
+  const [loading,setLoading] = useState(false);
 
   const [total, setTotal] = useState(0);
 
@@ -326,7 +361,7 @@ const MessagesList = (props) => {
                       {conversations.map((c) => {
                         return (
                           <>
-                            <Conversations conversation={c} setActiveConversation={setActiveConversation} setMessages={setMessages}  />
+                            <Conversations setLoading={setLoading} conversation={c} setActiveConversation={setActiveConversation} setMessages={setMessages}  />
                           </>
                         );
                       })}
@@ -340,7 +375,9 @@ const MessagesList = (props) => {
           </div>
         </div>
       </div>
-      <MessagesDetail messages={messages} conversation={activeConversation}/>
+      {activeConversation && (
+         <MessagesDetail messages={messages} conversation={activeConversation} loading={loading}/>
+      )}
     </React.Fragment>
   );
 };
