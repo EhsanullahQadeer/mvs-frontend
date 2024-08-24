@@ -12,6 +12,8 @@
 /* IMPORTS */
 import { useEffect, useRef, useState } from "react";
 import React from "react";
+import moment from "moment";
+
 
 const MessagesDetail = (props: any) => {
   console.log(" ==== Message Detail Props ====");
@@ -65,17 +67,7 @@ const MessagesDetail = (props: any) => {
           </div>
           <div className="flex overflow-hidden flex-col flex-1 justify-center py-3 w-full max-md:max-w-full">
             <div className="flex flex-col flex-1 w-full max-md:max-w-full">
-              {/* <div className="flex flex-wrap items-center w-full max-md:max-w-full">
-                                <div className="flex flex-col flex-1 shrink justify-center self-stretch p-2.5 my-auto basis-0 min-w-[240px]">
-                                    <div className="w-full min-h-[1px]" />
-                                </div>
-                                <div className="gap-2.5 self-stretch p-2.5 my-auto text-sm font-medium text-zinc-400">
-                                    Thursday, May 30, 2024
-                                </div>
-                                <div className="flex flex-col flex-1 shrink justify-center self-stretch p-2.5 my-auto basis-0 min-w-[240px]">
-                                    <div className="w-full min-h-[1px]" />
-                                </div>
-                            </div> */}
+              
               <div className="flex flex-col mt-3 w-full h-[531px] max-md:max-w-full">
                 {props.loading === true ? (
                   <>
@@ -94,7 +86,26 @@ const MessagesDetail = (props: any) => {
                     {props.messages.map((message) => {
                       return (
                         <>
-                          <div className="flex flex-wrap gap-2 py-2 w-full max-md:max-w-full">
+                          <div className="flex flex-wrap items-center w-full max-md:max-w-full">
+                                <div className="flex flex-col flex-1 shrink justify-center self-stretch p-2.5 my-auto basis-0 min-w-[240px]">
+                                    <div className="w-full min-h-[1px]" />
+                                </div>
+                                <div className="gap-2.5 self-stretch p-2.5 my-auto text-sm font-medium text-zinc-400">
+                                {moment(message.date).format("dddd, MMMM D, YYYY")}
+
+                                </div>
+                                <div className="flex flex-col flex-1 shrink justify-center self-stretch p-2.5 my-auto basis-0 min-w-[240px]">
+                                    <div className="w-full min-h-[1px]" />
+                                </div>
+                          </div>
+
+                          {message.messages.map((x) => {
+
+                              return (
+
+                                  <>
+
+<div className="flex flex-wrap gap-2 py-2 w-full max-md:max-w-full">
                             <div className="flex relative gap-2.5 items-start w-11 h-full">
                               <div className="flex z-0 shrink-0 w-11 h-11 rounded-full" />
                               <img
@@ -113,7 +124,7 @@ const MessagesDetail = (props: any) => {
                                   <div className="text-gray-500">4:19 PM</div>
                                 </div>
                                 <div className="mt-1 text-stone-300 w-[650px]">
-                                  {message?.Message}
+                                  {x?.Message}
                                 </div>
                               </div>
                               {/* <div className="flex gap-1 items-center self-start p-3 mt-3 rounded-2xl bg-neutral-800">
@@ -138,6 +149,11 @@ const MessagesDetail = (props: any) => {
                                         </div> */}
                             </div>
                           </div>
+
+                                  </>
+                              )
+                          })}
+                          
                         </>
                       );
                     })}
