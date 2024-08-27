@@ -12,7 +12,7 @@ import SignupPage from "pages/Signup/signup";
 import RequestInfoPage from "pages/Signup/TalentProfiles/request-info";
 import ThankyouPage from "pages/thankyou";
 import ForgotPasswordPage from "pages/forgot-password";
-import HomeFeed from "pages/home";
+import Home from "./home/Home";
 import TermsOfService from "pages/terms";
 import SamplesPage from "pages/samples";
 import MyLikesPage from "pages/my-likes";
@@ -32,7 +32,7 @@ const routes: IRoute[] = [
   {
     path: "/home",
     name: "Home",
-    component: HomeFeed,
+    component: Home,
   },
   {
     path: "/",
