@@ -20,6 +20,7 @@ import MyDownloadsPage from "pages/downloaded-samples";
 import ProfilePage from "pages/ProfilePage";
 import InboxPage from "pages/Inbox";
 import StripeCallback from "pages/StripeCallback";
+import CheckScrolling from "./CheckScrolling";
 
  interface IRoute {
   path: string;
@@ -33,6 +34,11 @@ const routes: IRoute[] = [
     path: "/home",
     name: "Home",
     component: Home,
+  },
+  {
+    path: "/check-scrolling",
+    name: "CheckScrolling",
+    component: CheckScrolling,
   },
   {
     path: "/",
