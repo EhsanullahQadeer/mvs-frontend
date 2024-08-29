@@ -1,0 +1,19 @@
+.search-header-wrap {
+  height: 242px;
+  .banner {
+    object-fit: cover;
+    object-position: center;
+  }
+  .serach-wrap {
+    width: 53.6%;
+    min-width: 520px;
+    height: 100%;
+    .search-box {
+      padding-bottom: 2.86%;
+      padding-top: 1.9%;
+      .wing-img {
+        width: 100%;
+      }
+    }
+  }
+}

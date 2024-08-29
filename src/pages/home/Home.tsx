@@ -1,10 +1,11 @@
 import Theme from "theme";
+import { SearchHeader } from "./components/SearchHeader";
 
 const Home = () => {
   return (
-    <div>
-      <Theme></Theme>
-    </div>
+    <Theme>
+      <SearchHeader />
+    </Theme>
   );
 };
 
