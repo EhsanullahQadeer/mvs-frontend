@@ -7,6 +7,7 @@ import "../styles/search-header.scss";
 import { Autocomplete, TextField } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
 import artistImg from "../../../assets/img/artistImg.png";
+import Popper from "@mui/material/Popper";
 
 export interface IAppProps {}
 
@@ -18,6 +19,22 @@ const topResults = [
   { label: "Hit Boy", category: "Artists", imgSrc: artistImg },
   { label: "Subelo Neo", category: "Producers", imgSrc: artistImg },
 ];
+
+function CustomPopper(props) {
+  return (
+    <Popper
+      {...props}
+      modifiers={[
+        {
+          name: "offset",
+          options: {
+            offset: [0, 10],
+          },
+        },
+      ]}
+    />
+  );
+}
 
 export function SearchHeader(props: IAppProps) {
   return (
@@ -57,6 +74,7 @@ export function SearchHeader(props: IAppProps) {
                 freeSolo
                 disableClearable
                 options={topResults}
+                PopperComponent={CustomPopper}
                 groupBy={() => "Top Results"}
                 ListboxProps={{
                   sx: {
@@ -79,10 +97,12 @@ export function SearchHeader(props: IAppProps) {
                     <ul>{params.children}</ul>
                   </li>
                 )}
-                renderOption={(props, option) => (
+                renderOption={(props, option, { selected }) => (
                   <li
                     {...props}
-                    className="flex items-center gap-3 cursor-pointer p-2 hover:bg-[#0F0F0F] rounded-md"
+                    className={`flex items-center gap-3 cursor-pointer p-2 rounded-md hover:bg-[#0F0F0F] ${
+                      props['aria-selected'] ? "bg-[#0F0F0F]" : ""
+                    }`}
                   >
                     <img
                       src={option.imgSrc}
@@ -107,6 +127,7 @@ export function SearchHeader(props: IAppProps) {
                     sx={{
                       background: "#1C1C1C",
                       borderRadius: "8px",
+                      color: "rgba(76, 76, 76, 1)",
                       "& .MuiOutlinedInput-root": {
                         paddingLeft: "35px",
                         "& fieldset": {
