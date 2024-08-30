@@ -1,3 +1,4 @@
+import { useState } from "react";
 import banner from "../../../assets/img/welcome-banner.svg";
 import leftWing from "../../../assets/img/left wing.svg";
 import rightWing from "../../../assets/img/right wing.svg";
@@ -6,6 +7,7 @@ import crownIcon from "../../../assets/icons/crownIcon.svg";
 import "../styles/search-header.scss";
 import { Autocomplete, TextField } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
+import { MdCancel } from "react-icons/md";
 import artistImg from "../../../assets/img/artistImg.png";
 import Popper from "@mui/material/Popper";
 
@@ -37,6 +39,12 @@ function CustomPopper(props) {
 }
 
 export function SearchHeader(props: IAppProps) {
+  const [searchValue, setSearchValue] = useState<any>(null);
+
+  const handleCancelBtn = () => {
+    setSearchValue(null);
+  };
+
   return (
     <div className="search-header-wrap w-full relative">
       <img src={banner} alt="banner" className="h-full w-full banner" />
@@ -72,7 +80,8 @@ export function SearchHeader(props: IAppProps) {
             <div className="relative">
               <Autocomplete
                 freeSolo
-                disableClearable
+                value={searchValue}
+                onChange={(event, newValue) => setSearchValue(newValue)}
                 options={topResults}
                 PopperComponent={CustomPopper}
                 groupBy={() => "Top Results"}
@@ -97,11 +106,11 @@ export function SearchHeader(props: IAppProps) {
                     <ul>{params.children}</ul>
                   </li>
                 )}
-                renderOption={(props, option, { selected }) => (
+                renderOption={(props, option, { selected, index }) => (
                   <li
                     {...props}
-                    className={`flex items-center gap-3 cursor-pointer p-2 rounded-md hover:bg-[#0F0F0F] ${
-                      props['aria-selected'] ? "bg-[#0F0F0F]" : ""
+                    className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-[#0F0F0F] ${
+                      props["aria-selected"] ? "bg-[#0F0F0F]" : ""
                     }`}
                   >
                     <img
@@ -127,9 +136,10 @@ export function SearchHeader(props: IAppProps) {
                     sx={{
                       background: "#1C1C1C",
                       borderRadius: "8px",
-                      color: "rgba(76, 76, 76, 1)",
+
                       "& .MuiOutlinedInput-root": {
                         paddingLeft: "35px",
+                        paddingRight: "35px",
                         "& fieldset": {
                           borderColor: "rgba(104, 113, 126, 0.20)",
                         },
@@ -141,9 +151,10 @@ export function SearchHeader(props: IAppProps) {
                         },
                       },
                       ".MuiInputBase-input": {
-                        padding: "0 !important",
                         boxShadow: "none",
                         height: "19px",
+                        color: "rgba(76, 76, 76, 1)",
+                        padding: "10px 24px",
                       },
                     }}
                   />
@@ -152,6 +163,13 @@ export function SearchHeader(props: IAppProps) {
 
               <div className="absolute left-[9px] top-1/2 -translate-y-1/2">
                 <SearchIcon />
+              </div>
+
+              <div
+                className="absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer"
+                onClick={handleCancelBtn}
+              >
+                <MdCancel className="h-5 w-5" />
               </div>
             </div>
           </div>
