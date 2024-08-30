@@ -4,10 +4,20 @@ import rightWing from "../../../assets/img/right wing.svg";
 import frquesncyIcon from "../../../assets/img/frequency-Icon.svg";
 import crownIcon from "../../../assets/icons/crownIcon.svg";
 import "../styles/search-header.scss";
-import { Autocomplete, InputAdornment, TextField } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
+import artistImg from "../../../assets/img/artistImg.png";
 
 export interface IAppProps {}
+
+const topResults = [
+  { label: "Marshmello", category: "Artists", imgSrc: artistImg },
+  { label: "Max Martin", category: "Producers", imgSrc: artistImg },
+  { label: "Bad Bunny", category: "Songwriters", imgSrc: artistImg },
+  { label: "Sylvia Massy", category: "Engineers", imgSrc: artistImg },
+  { label: "Hit Boy", category: "Artists", imgSrc: artistImg },
+  { label: "Subelo Neo", category: "Producers", imgSrc: artistImg },
+];
 
 export function SearchHeader(props: IAppProps) {
   return (
@@ -42,12 +52,54 @@ export function SearchHeader(props: IAppProps) {
                 </div>
               </div>
             </div>
-            <div>
+            <div className="relative">
               <Autocomplete
                 freeSolo
-                id="free-solo-2-demo"
                 disableClearable
-                options={[]}
+                options={topResults}
+                groupBy={() => "Top Results"}
+                ListboxProps={{
+                  sx: {
+                    background: "#1C1C1C",
+                    padding: "12px",
+                    paddingTop: "20px",
+                  },
+                }}
+                renderGroup={(params) => (
+                  <li key={params.key}>
+                    <div className="mb-5">
+                      <span className="text-white text-base font-semibold border-b-2 border-limeGreen pb-2">
+                        Top Results
+                      </span>
+
+                      <div className="text-coolGray text-xs mt-5">
+                        What are you looking for?
+                      </div>
+                    </div>
+                    <ul>{params.children}</ul>
+                  </li>
+                )}
+                renderOption={(props, option) => (
+                  <li
+                    {...props}
+                    className="flex items-center gap-3 cursor-pointer p-2 hover:bg-[#0F0F0F] rounded-md"
+                  >
+                    <img
+                      src={option.imgSrc}
+                      alt={option.label}
+                      className="w-10 h-10 rounded-md"
+                    />
+                    <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
+                      <span className="text-gainsboro text-sm">
+                        {option.label}
+                      </span>
+                      <span className="text-charcoalGray text-xs">
+                        From{" "}
+                        <span className="text-coolGray">{option.category}</span>
+                      </span>
+                    </div>
+                  </li>
+                )}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -56,6 +108,7 @@ export function SearchHeader(props: IAppProps) {
                       background: "#1C1C1C",
                       borderRadius: "8px",
                       "& .MuiOutlinedInput-root": {
+                        paddingLeft: "35px",
                         "& fieldset": {
                           borderColor: "rgba(104, 113, 126, 0.20)",
                         },
@@ -72,27 +125,13 @@ export function SearchHeader(props: IAppProps) {
                         height: "19px",
                       },
                     }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                      style: {
-                        padding: "10px 24px",
-                        border: "none",
-                        color: "rgba(76, 76, 76, 1)",
-                      },
-                    }}
-                    // slotProps={{
-                    //   input: {
-                    //     ...params.InputProps,
-                    //     type: "search",
-                    //   },
-                    // }}
                   />
                 )}
               />
+
+              <div className="absolute left-[9px] top-1/2 -translate-y-1/2">
+                <SearchIcon />
+              </div>
             </div>
           </div>
           <div className="flex items-end">
