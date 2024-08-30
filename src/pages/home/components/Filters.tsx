@@ -1,5 +1,3 @@
-import { log } from "console";
-import React from "react";
 import { IoIosArrowDown } from "react-icons/io";
 
 interface Props {
@@ -20,13 +18,12 @@ const Filters = (props: Props) => {
   const { filterValue, setFilterValue } = props;
   const handleFilters = (value: string) => {
     setFilterValue(value);
-    console.log("filter value", value);
   };
 
   return (
     <div className="p-3 border-b border-borderColor">
       <div className="mb-5">
-        <h2 className="text-lightGray text-2xl font-bold">Discover Partners</h2>
+        <h2 className="text-lightGray text-2xl font-bold mb-1">Discover Partners</h2>
         <p className="text-sm font-normal text-neutralGray">
           Connect and work with the world’s top enginners, producers, and
           songwriters
@@ -34,9 +31,9 @@ const Filters = (props: Props) => {
       </div>
 
       <div className="flex max-w-[1381px] items-center justify-between flex-wrap gap-2">
-        <div className="p-2 flex justify-between items-center gap-1 border-[1px] border-bottonBorder bg-charcoalGray rounded-lg text-darkGray text-xs font-normal">
+        <div className="p-2 flex justify-between items-center gap-[6px] border-[1px] border-bottonBorder bg-darkGray rounded-lg text-charcoalGray text-xs font-normal">
           Filter By
-          <IoIosArrowDown />
+          <IoIosArrowDown  height={16} width={16}/>
         </div>
 
         <div className="flex gap-2 flex-wrap">
@@ -46,7 +43,7 @@ const Filters = (props: Props) => {
               <div
                 key={label + idx}
                 onClick={() => handleFilters(value)}
-                className={`border-[1px] cursor-pointer px-3 py-2 rounded-[35px] hover:bg-limeGreen hover:border-limeGreen hover:text-black text-[10px] font-normal ${
+                className={`border-[1px] cursor-pointer px-3 py-2 rounded-[35px] hover:bg-limeGreen hover:border-limeGreen hover:text-black text-[12px] font-normal ${
                   filterValue === value
                     ? "bg-limeGreen border-limeGreen text-black"
                     : "border-eclipseGray bg-darkGray text-charcoalGray"
@@ -56,6 +53,9 @@ const Filters = (props: Props) => {
               </div>
             );
           })}
+        </div>
+        <div>
+
         </div>
       </div>
     </div>

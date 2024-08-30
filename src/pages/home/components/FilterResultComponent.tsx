@@ -13,21 +13,33 @@ const FilterResultComponent = (props: Props) => {
             result;
 
           const singersArr = result.singersCollab?.split(", ");
-
           return (
             <div
               key={name + idx}
-              className={`border-[1px]  h-[239px] rounded-lg relative result-img-container ${
+              className={`border-[1px]  h-[239px] w-[152px] rounded-lg relative  ${
                 isAvaible && isAvaible === true
                   ? "border-secondaryBlue"
                   : "border-eclipseGray"
               }`}
+              style={{
+                background: `linear-gradient(
+                  180deg,
+                  rgba(0, 0, 0, 0) 3.28%,
+                  rgba(0, 0, 0, 0.9) 72.01%,
+                  #000 100%
+                ),
+                linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
+                url(${imgSrc})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
             >
-              <img
+              {/* <img
                 src={imgSrc}
-                alt="result-image"
                 className="w-full h-full rounded-lg object-cover"
-              />
+                alt="result"
+              /> */}
 
               <div className="absolute bottom-4 px-3 w-full">
                 <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1">

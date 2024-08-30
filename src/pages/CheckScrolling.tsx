@@ -49,7 +49,7 @@ const CheckScrolling = (props: Props) => {
               <div
                 key={label + idx}
                 onClick={() => handleFilters(value)}
-                className={`border-[1px]  cursor-pointer px-3 py-2 rounded-[35px] hover:bg-limeGreen hover:border-limeGreen hover:text-black text-[10px] font-normal ${
+                className={`border-[1px]  cursor-pointer px-3 py-2 rounded-[35px] hover:bg-limeGreen hover:border-limeGreen hover:text-black text-[12px] font-normal ${
                   filterValue === value
                     ? "bg-limeGreen border-limeGreen text-black"
                     : "border-eclipseGray bg-darkGray text-charcoalGray"
