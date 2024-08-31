@@ -26,6 +26,11 @@ function CustomPopper(props) {
   return (
     <Popper
       {...props}
+      sx={{
+        "& .MuiAutocomplete-paper": {
+          backgroundColor: "#1C1C1C",
+        },
+      }}
       modifiers={[
         {
           name: "offset",
@@ -87,9 +92,9 @@ export function SearchHeader(props: IAppProps) {
                 groupBy={() => "Top Results"}
                 ListboxProps={{
                   sx: {
-                    background: "#1C1C1C",
                     padding: "12px",
                     paddingTop: "20px",
+                    scrollbarWidth: "thin",
                   },
                 }}
                 renderGroup={(params) => (

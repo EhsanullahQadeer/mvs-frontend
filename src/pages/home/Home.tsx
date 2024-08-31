@@ -5,7 +5,6 @@ import { useState } from "react";
 import ScrollableComponent from "./components/ScrollableComponent";
 import { artistData } from "./components/data";
 import FilterResultComponent from "./components/FilterResultComponent";
-import "./styles/home.scss";
 
 const Home = () => {
   const [filterValue, setFilterValue] = useState("");
