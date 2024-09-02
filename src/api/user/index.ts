@@ -8,6 +8,7 @@
 
 /* LOCAL IMPORTS */
 import axiosInstance from '../axios';
+import { IgetUsersByTagParms } from './types';
 
 export async function requestInvitationCodeWithEmailAPI(data: any) {
   return axiosInstance.post('/users/request/access', data);
@@ -47,4 +48,7 @@ export async function verifyCouponAPI(params: any) {
 
 export async function confirmSignupAPI(params: any) {
   return axiosInstance.post('/user/confirm/signup', params);
+}
+export async function getUsersByTag(params: IgetUsersByTagParms) {
+  return axiosInstance.get(`/users/by-tag`, { params });
 }

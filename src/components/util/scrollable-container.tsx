@@ -2,7 +2,7 @@
  * @file scrollable-container.tsx
  * @author Zohaib Ahmed
  * @desc Component for creating a scrollable container.
- * 
+ *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
@@ -19,6 +19,7 @@ const ScrollableContainer = ({
   showScrollArrows = false,
   title = null,
   desc = null,
+  filtersHeader = null,
 }) => {
   const ref = useRef(null);
   const [isScrollable, setIsScrollable] = useState(false);
@@ -26,31 +27,43 @@ const ScrollableContainer = ({
   const [scrolling, setScrolling] = useState(false);
   const [wrapToStart, setWrapToStart] = useState(false);
 
+  const [canScrollLeft, setCanScrollLeft] = useState<boolean>(false);
+  const [canScrollRight, setCanScrollRight] = useState<boolean>(false);
+  const checkScrollPosition = () => {
+    const scrollContainer = ref.current;
+    if (scrollContainer) {
+      setCanScrollLeft(scrollContainer.scrollLeft > 0);
+      setCanScrollRight(
+        scrollContainer.scrollLeft <
+          scrollContainer.scrollWidth - scrollContainer.clientWidth - 1
+      );
+    }
+  };
 
   useEffect(() => {
     const element = ref.current;
-  
+
     // Function to handle resizing
     const handleResize = () => {
       if (element) {
         setIsScrollable(element.scrollWidth > element.clientWidth);
       }
     };
-  
+
     // Initial check on mount
     handleResize();
-  
+
     // Add event listener for window resizing
-    window.addEventListener('resize', handleResize);
-  
+    window.addEventListener("resize", handleResize);
+
     // Mutation observer to watch for content changes
     const observer = new MutationObserver(handleResize);
     if (element) {
       observer.observe(element, { childList: true, subtree: true });
     }
-  
+
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       if (element) {
         observer.disconnect();
       }
@@ -59,22 +72,20 @@ const ScrollableContainer = ({
 
   const scrollLeft = () => {
     if (ref.current) {
-      ref.current.scrollBy({ left: -100, behavior: 'smooth' });
+      ref.current.scrollBy({ left: -100, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (ref.current) {
-      ref.current.scrollBy({ left: 100, behavior: 'smooth' });
+      ref.current.scrollBy({ left: 100, behavior: "smooth" });
     }
   };
 
-
-
   useEffect(() => {
+    checkScrollPosition();
     const el = ref.current;
     if (!el) return;
-
 
     // Add manual scrolling
     const onPointerDown = (e) => {
@@ -102,7 +113,7 @@ const ScrollableContainer = ({
     };
 
     el.addEventListener("pointerdown", onPointerDown);
-
+    el.addEventListener("scroll", checkScrollPosition);
     // Add automatic scrolling only if scrollAutomatically is true
     let interval;
     if (scrollAutomatically) {
@@ -165,9 +176,17 @@ const ScrollableContainer = ({
 
     return () => {
       el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("scroll", checkScrollPosition);
       if (interval) clearInterval(interval);
     };
-  }, [jumpAmount, scrollInterval, scrollDuration, scrollAutomatically, scrolling, wrapToStart]);
+  }, [
+    jumpAmount,
+    scrollInterval,
+    scrollDuration,
+    scrollAutomatically,
+    scrolling,
+    wrapToStart,
+  ]);
 
   return (
     <div>
@@ -189,7 +208,11 @@ const ScrollableContainer = ({
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="#C4FF48"
-                    className="w-6 h-6"
+                    className={`w-6 h-6 ${
+                      canScrollLeft
+                        ? "opacity-100 cursor-pointer"
+                        : "opacity-50 cursor-auto"
+                    }`}
                   >
                     <path
                       strokeLinecap="round"
@@ -207,7 +230,11 @@ const ScrollableContainer = ({
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="#C4FF48"
-                    className="w-6 h-6"
+                    className={`w-6 h-6 ${
+                      canScrollRight
+                        ? "opacity-100 cursor-pointer"
+                        : "opacity-50 cursor-auto"
+                    }`}
                   >
                     <path
                       strokeLinecap="round"
@@ -225,7 +252,7 @@ const ScrollableContainer = ({
       {desc && (
         <p className="text-[#6e6e6e] pb-[14px] font-['Mona-Sans-R']">{desc}</p>
       )}
-
+      {filtersHeader && filtersHeader}
       <div
         ref={ref}
         className="horizontal-scroll-wrapper overflow-auto whitespace-nowrap"
