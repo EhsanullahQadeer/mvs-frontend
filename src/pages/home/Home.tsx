@@ -11,17 +11,18 @@ import { getUsersByTag } from "api/user";
 const Home = () => {
   const [filterValue, setFilterValue] = useState("");
   const [artistFilter, setArtistFilter] = useState("");
-  const [musicProducerFilter, setMusicProducerFilter] = useState("");
   // Fetch users by tags with Promise.all
+  console.log(filterValue);
+  
   const [usersByTag, setUsersByTag] = useState({});
-  console.log("usersByTag: ", usersByTag);
-
+console.log(usersByTag);
+console.log(Object.entries(usersByTag))
   const fetchUsersByTags = async () => {
     const usersData = {};
     // Run all promises concurrently
     const results = await Promise.all(
       userTags.map(async (tag) => {
-        const users = await getUsersByTag({ tag });
+        const users = await getUsersByTag({tag});
         return { tag, users: users.data }; 
       })
     );
@@ -74,11 +75,9 @@ const Home = () => {
       {Object.entries(usersByTag).map(([key, value]) => (
         <ScrollableComponent
           key={key}
-          filterValue={musicProducerFilter}
-          setFilterValue={setMusicProducerFilter}
-          filtersArr={artistData.filtersArr}
           dataArr={value}
           title={userLabel[key]}
+          setUsersByTag={setUsersByTag}
         />
       ))}
     </Theme>

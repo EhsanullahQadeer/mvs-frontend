@@ -1,28 +1,41 @@
 import { GrFormLocation } from "react-icons/gr";
 import ScrollableContainer from "components/util/scrollable-container";
+import { useState } from "react";
+import { artistData } from "./data";
+import { userLabel } from "utils/usersTags";
+import { getKeyByValue } from "utils/jsHandlers";
+import { getUsersByTag } from "api/user";
 
 type Props = {
-  filterValue: string;
-  setFilterValue: (event: string) => void;
-  filtersArr: { label: string; value: string }[];
-  // dataArr: {
-  //   name: string;
-  //   imgSrc: any;
-  //   isAvaible?: boolean;
-  //   skills?: string;
-  //   country?: string;
-  //   city?: string;
-  // }[];
+  setUsersByTag: (value: any) => void;
   dataArr: any;
   title: string;
 };
+const { filtersArr } = artistData;
 
 const ScrollableComponent = (props: Props) => {
-  const { filterValue, setFilterValue, dataArr, filtersArr, title } = props;
+  const { dataArr, title, setUsersByTag } = props;
+  const [filterValue, setFilterValue] = useState("");
+  const tag = getKeyByValue(userLabel, title);
 
-  const handleFilters = (value: string) => {
+  const handleFilters = async (value: string) => {
+    console.log("Selected filter:", value);
+
+    const params: any = { tag };
     setFilterValue(value);
-    console.log("user filter value", value);
+    if (filterValue === "mostPopular") {
+      params["topPopular"] = true;
+    } else if (filterValue === "recentlyAdded") {
+      params["recentlyAdded"] = true;
+    }
+
+    const users = await getUsersByTag(params);
+
+    setUsersByTag((prev: any) => {
+      return { ...prev, [tag]: users.data };
+    });
+
+    setFilterValue(value);
   };
 
   const handleViewAll = () => {
@@ -38,7 +51,7 @@ const ScrollableComponent = (props: Props) => {
             <div
               key={label + idx}
               onClick={() => handleFilters(value)}
-              className={`border-[1px]  cursor-pointer px-3 py-2 rounded-[35px] hover:bg-limeGreen hover:border-limeGreen hover:text-black text-[12px] font-normal ${
+              className={`border-[1px] cursor-pointer px-3 py-2 rounded-[35px] hover:bg-limeGreen hover:border-limeGreen hover:text-black text-[12px] font-normal ${
                 filterValue === value
                   ? "bg-limeGreen border-limeGreen text-black"
                   : "border-eclipseGray bg-darkGray text-charcoalGray"
@@ -66,16 +79,23 @@ const ScrollableComponent = (props: Props) => {
         showScrollArrows={true}
       >
         {dataArr.map((user, idx) => {
-          console.log("user: ", user);
-          const { isAvaible, name, Thumbnail: imgSrc, city, country } = user;
-
-          const formattedSkills = user.skills?.split(", ").join(" | ");
+          const {
+            artist_name,
+            isAvaible,
+            sub_label,
+            name,
+            thumbnail: imgSrc,
+            city,
+            country,
+          } = user;
 
           return (
-            <div className="carousel-inner px-1 flex transition-transform duration-1000 ease-linear">
+            <div
+              key={name + idx}
+              className="carousel-inner px-1 flex transition-transform duration-1000 ease-linear"
+            >
               <div
-                key={name + idx}
-                className={`border-[1px]  w-[152px] h-[260px] rounded-lg relative img-container ${
+                className={`border-[1px] w-[152px] h-[260px] rounded-lg relative img-container group ${
                   isAvaible && isAvaible === true
                     ? "border-secondaryBlue"
                     : "border-eclipseGray"
@@ -94,26 +114,33 @@ const ScrollableComponent = (props: Props) => {
                   backgroundRepeat: "no-repeat",
                 }}
               >
-                <div className="absolute bottom-4 px-3 w-full text-center">
-                  <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1">
-                    {name}
-                  </span>
-
-                  <div className="font-normal text-sm text-white capitalize mb-1">
-                    {formattedSkills}
-                  </div>
-
-                  <div className="text-xs font-normal text-white flex gap-0.5 items-center justify-center mb-3">
-                    <span className="text-white">
-                      <GrFormLocation className="h-4 w-4" />
+                <div
+                  className="absolute  bottom-0   left-0 right-0 px-3 w-full text-center group-hover:h-full transition-all duration-300 ease-in-out "
+                  style={{ height: "60px" }} // Initial height showing only artist name
+                >
+                  <div className="transition-transform  duration-300 ease-in-out group-hover:transform group-hover:-translate-y-[100px]">
+                    <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1 block">
+                      {artist_name}
                     </span>
-                    <span className="font-normal capitalize">{city}</span>,
-                    <span className="font-normal uppercase">{country}</span>
-                  </div>
 
-                  <button className="bg-limeGreen text-black px-3 py-2 rounded-lg cursor-pointer text-xs font-normal">
-                    View Profile
-                  </button>
+                    <div className="opacity-0 h-0 transition-opacity overflow-hidden duration-500 group-hover:opacity-100 group-hover:h-full">
+                      <div className="font-normal text-sm text-white capitalize mb-1">
+                        {sub_label}
+                      </div>
+
+                      <div className="text-xs font-normal text-white flex gap-0.5 items-center justify-center mb-3">
+                        <span className="text-white">
+                          <GrFormLocation className="h-4 w-4" />
+                        </span>
+                        <span className="font-normal capitalize">{city}</span>,
+                        <span className="font-normal uppercase">{country}</span>
+                      </div>
+
+                      <button className="bg-limeGreen text-black px-3 py-2 rounded-lg cursor-pointer text-xs font-normal">
+                        View Profile
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
