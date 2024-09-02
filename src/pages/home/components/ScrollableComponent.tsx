@@ -98,6 +98,9 @@ const ScrollableComponent = (props: Props) => {
           const concatedRoles = primary_label + " | " + sub_label;
           const role =
             concatedRoles.length > 17 ? primary_label : concatedRoles;
+          const concatedLocation = city + " , " + country;
+          const location =
+            concatedLocation.length > 17 ? country : concatedLocation;
           return (
             <div
               key={name + idx}
@@ -138,10 +141,8 @@ const ScrollableComponent = (props: Props) => {
                           <span className="text-white">
                             <GrFormLocation className="h-4 w-4" />
                           </span>
-                          <span className="font-normal capitalize">{city}</span>
-                          ,
-                          <span className="font-normal uppercase">
-                            {country}
+                          <span className="font-normal capitalize">
+                            {location}
                           </span>
                         </div>
 
