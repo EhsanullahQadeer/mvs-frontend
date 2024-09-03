@@ -2,7 +2,7 @@ import { GrFormLocation } from "react-icons/gr";
 import ScrollableContainer from "components/util/scrollable-container";
 import { useState } from "react";
 import { artistData } from "./data";
-import { userLabel } from "utils/usersTags";
+import { userTagsObj } from "utils/usersTags";
 import { getKeyByValue } from "utils/jsHandlers";
 import { getUsersByTag } from "api/user";
 import "../styles/user-card.scss";
@@ -18,7 +18,7 @@ const ScrollableComponent = (props: Props) => {
   const { dataArr, title, setUsersByTag } = props;
   const [filterValue, setFilterValue] = useState("");
   const [isScrollableContainer, setIsScrollableContainer] = useState(false);
-  const tag = getKeyByValue(userLabel, title);
+  const tag = getKeyByValue(userTagsObj, title);
 
   const handleFilters = async (filterName: string) => {
     const value = filterValue === filterName ? "" : filterName;
@@ -90,7 +90,6 @@ const ScrollableComponent = (props: Props) => {
             artist_name,
             primary_label,
             sub_label,
-            name,
             thumbnail,
             city,
             state: country,
@@ -103,7 +102,7 @@ const ScrollableComponent = (props: Props) => {
             concatedLocation.length > 17 ? country : concatedLocation;
           return (
             <div
-              key={name + idx}
+              key={artist_name + idx}
               className="user-card-wrap cursor-grab carousel-inner px-1 flex transition-transform duration-1000 ease-linear"
             >
               <div
@@ -125,31 +124,29 @@ const ScrollableComponent = (props: Props) => {
               >
                 <div className="img-container w-[152px] h-[260px] rounded-lg">
                   <div className="absolute  bottom-[18px] left-0 right-0 px-3 w-full text-center">
-                    <div className="">
-                      <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1 block whitespace-normal">
-                        {artist_name.length > 15
-                          ? artist_name.slice(0, 15) + "..."
-                          : artist_name}
-                      </span>
+                    <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1 block whitespace-normal">
+                      {artist_name.length > 15
+                        ? artist_name.slice(0, 15) + "..."
+                        : artist_name}
+                    </span>
 
-                      <div className="max-h-0 overflow-hidden transition-all ease-in-out duration-500 group-hover:max-h-[85px] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100">
-                        <div className="font-normal text-sm text-white capitalize mb-1">
-                          {role}
-                        </div>
-
-                        <div className="text-xs font-normal text-white flex gap-0.5 items-center justify-center mb-3">
-                          <span className="text-white">
-                            <GrFormLocation className="h-4 w-4" />
-                          </span>
-                          <span className="font-normal capitalize">
-                            {location}
-                          </span>
-                        </div>
-
-                        <button className="bg-limeGreen text-black px-3 py-2 rounded-lg cursor-pointer text-xs font-normal">
-                          View Profile
-                        </button>
+                    <div className="max-h-0 overflow-hidden transition-all ease-in-out duration-500 group-hover:max-h-[85px] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100">
+                      <div className="font-normal text-sm text-white capitalize mb-1">
+                        {role}
                       </div>
+
+                      <div className="text-xs font-normal text-white flex gap-0.5 items-center justify-center mb-3">
+                        <span className="text-white">
+                          <GrFormLocation className="h-4 w-4" />
+                        </span>
+                        <span className="font-normal capitalize">
+                          {location}
+                        </span>
+                      </div>
+
+                      <button className="bg-limeGreen text-black px-3 py-2 rounded-lg cursor-pointer text-xs font-normal">
+                        View Profile
+                      </button>
                     </div>
                   </div>
                 </div>

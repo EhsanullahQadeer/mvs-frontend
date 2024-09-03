@@ -3,33 +3,29 @@ import { SearchHeader } from "./components/SearchHeader";
 import Filters from "./components/Filters";
 import { useEffect, useState } from "react";
 import ScrollableComponent from "./components/ScrollableComponent";
-import { artistData } from "./components/data";
 import FilterResultComponent from "./components/FilterResultComponent";
-import { userLabel, userTags } from "utils/usersTags";
+import { userTags, userTagsObj } from "utils/usersTags";
 import { getUsersByTag } from "api/user";
 
 const Home = () => {
   const [filterValue, setFilterValue] = useState("");
+  const [filtersData, setFiltersData] = useState([]);
   const [artistFilter, setArtistFilter] = useState("");
   // Fetch users by tags with Promise.all
-  console.log(filterValue);
-  
   const [usersByTag, setUsersByTag] = useState({});
-console.log(usersByTag);
-console.log(Object.entries(usersByTag))
   const fetchUsersByTags = async () => {
     const usersData = {};
     // Run all promises concurrently
     const results = await Promise.all(
       userTags.map(async (tag) => {
-        const users = await getUsersByTag({tag});
-        return { tag, users: users.data }; 
+        const users = await getUsersByTag({ tag });
+        return { tag, users: users.data };
       })
     );
 
     // Sort and assign the results based on the order of userTags
     userTags.forEach((tag) => {
-      const result = results.find((res) => res.tag === tag); 
+      const result = results.find((res) => res.tag === tag);
       if (result) {
         usersData[tag] = result.users;
       }
@@ -41,45 +37,35 @@ console.log(Object.entries(usersByTag))
   useEffect(() => {
     fetchUsersByTags();
   }, []);
+  useEffect(() => {
+    if (filterValue) {
+      const params = { tag: filterValue, limit: 50 };
+      (async () => {
+        const user = await getUsersByTag(params);
+        setFiltersData(user.data);
+      })();
+    } else {
+      setFiltersData([]);
+    }
+  }, [filterValue]);
   return (
     <Theme>
       <SearchHeader />
       <Filters {...{ filterValue, setFilterValue }} />
       {filterValue !== "" ? (
         <>
-          <FilterResultComponent />
+          <FilterResultComponent {...{ filtersData }} />
         </>
       ) : (
-        <>
-          {/* <ScrollableComponent
-            {...{
-              filterValue: artistFilter,
-              setFilterValue: setArtistFilter,
-              filtersArr: artistData.filtersArr,
-              dataArr: artistData.artistsArr,
-              title: "Artists",
-            }}
-          />
-
+        Object.entries(usersByTag).map(([key, value]) => (
           <ScrollableComponent
-            {...{
-              filterValue: musicProducerFilter,
-              setFilterValue: setMusicProducerFilter,
-              filtersArr: artistData.filtersArr,
-              dataArr: artistData.artistsArr,
-              title: "Music Producers",
-            }}
-          /> */}
-        </>
+            key={key}
+            dataArr={value}
+            title={userTagsObj[key]}
+            setUsersByTag={setUsersByTag}
+          />
+        ))
       )}
-      {Object.entries(usersByTag).map(([key, value]) => (
-        <ScrollableComponent
-          key={key}
-          dataArr={value}
-          title={userLabel[key]}
-          setUsersByTag={setUsersByTag}
-        />
-      ))}
     </Theme>
   );
 };

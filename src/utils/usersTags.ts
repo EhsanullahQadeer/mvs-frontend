@@ -1,17 +1,11 @@
-const userTags = [
-    "artist",
-    "songwriter",
-    "mixing_engineer",
-    "mastering_engineer",
-    "producer"
-];
-
-const userLabel: { [key: string]: string } = {
-    artist: "Artists",
+export const userTagsObj: { [key: string]: string } = {
     songwriter: "Songwriters",
-    mixing_engineer: "Mixing Engineers",
+    artist: "Artists",
     mastering_engineer: "Mastering Engineers",
-    producer: "Music Producers"
+    mixing_engineer: "Mixing Engineers",
+    musicians: "Musicians",
+    producer: "Producers"
 };
-
-export { userTags, userLabel };
+const userTags = Object.keys(userTagsObj);
+const userLabels = Object.values(userTagsObj)
+export { userTags, userLabels };

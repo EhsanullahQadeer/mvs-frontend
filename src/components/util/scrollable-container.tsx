@@ -20,7 +20,7 @@ const ScrollableContainer = ({
   title = null,
   desc = null,
   filtersHeader = null,
-  setIsScrollableContainer = null,
+  setIsScrollableContainer=null
 }) => {
   const ref = useRef(null);
   const [isScrollable, setIsScrollable] = useState(false);
@@ -47,9 +47,9 @@ const ScrollableContainer = ({
     // Function to handle resizing
     const handleResize = () => {
       if (element) {
-        const isScroll = element.scrollWidth > element.clientWidth;
+        const isScroll=element.scrollWidth > element.clientWidth
         setIsScrollable(isScroll);
-        setIsScrollableContainer && setIsScrollableContainer(isScroll);
+        setIsScrollableContainer&& setIsScrollableContainer(isScroll)
       }
     };
 
