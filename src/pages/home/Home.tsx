@@ -10,7 +10,6 @@ import { getUsersByTag } from "api/user";
 const Home = () => {
   const [filterValue, setFilterValue] = useState("");
   const [filtersData, setFiltersData] = useState([]);
-  const [artistFilter, setArtistFilter] = useState("");
   // Fetch users by tags with Promise.all
   const [usersByTag, setUsersByTag] = useState({});
   const fetchUsersByTags = async () => {

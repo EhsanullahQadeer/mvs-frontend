@@ -21,6 +21,7 @@ import ProfilePage from "pages/ProfilePage";
 import InboxPage from "pages/Inbox";
 import StripeCallback from "pages/StripeCallback";
 import CheckScrolling from "./CheckScrolling";
+import ArtistProfile from "./profile/ArtistProfile";
 
  interface IRoute {
   path: string;
@@ -128,6 +129,11 @@ const routes: IRoute[] = [
     path: "/sound/vocals/:id",
     name: "Vocals",
     component: SamplesPage,
+  },
+  {
+    path: "/artist-profile/:id",
+    name: "Artist Profile",
+    component: ArtistProfile,
   },
 ];
 

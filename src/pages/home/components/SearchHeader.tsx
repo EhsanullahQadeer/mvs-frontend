@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import banner from "../../../assets/img/welcome-banner.svg";
 import leftWing from "../../../assets/img/left wing.svg";
 import rightWing from "../../../assets/img/right wing.svg";
@@ -8,48 +8,55 @@ import "../styles/search-header.scss";
 import { Autocomplete, TextField } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
 import { MdCancel } from "react-icons/md";
-import artistImg from "../../../assets/img/artistImg.png";
-import Popper from "@mui/material/Popper";
-
+import CustomPopper from "./CutomPopperSearch";
+import { spotifySearch, spotifySearchTopArtist } from "api/spotify";
+import useDebounce from "hooks/useDebounce";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Link } from "react-router-dom";
 export interface IAppProps {}
-
-const topResults = [
-  { label: "Marshmello", category: "Artists", imgSrc: artistImg },
-  { label: "Max Martin", category: "Producers", imgSrc: artistImg },
-  { label: "Bad Bunny", category: "Songwriters", imgSrc: artistImg },
-  { label: "Sylvia Massy", category: "Engineers", imgSrc: artistImg },
-  { label: "Hit Boy", category: "Artists", imgSrc: artistImg },
-  { label: "Subelo Neo", category: "Producers", imgSrc: artistImg },
-];
-
-function CustomPopper(props) {
-  return (
-    <Popper
-      {...props}
-      sx={{
-        "& .MuiAutocomplete-paper": {
-          backgroundColor: "#1C1C1C",
-        },
-      }}
-      modifiers={[
-        {
-          name: "offset",
-          options: {
-            offset: [0, 10],
-          },
-        },
-      ]}
-    />
-  );
-}
-
 export function SearchHeader(props: IAppProps) {
-  const [searchValue, setSearchValue] = useState<any>(null);
-
+  const [topRatedArtist, setTopRatedArtist] = useState([]);
+  const [spotifySearchResult, setSpotifySearchResult] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  // Debounce the search value
+  const debouncedSearchValue = useDebounce(searchInput, 300);
+  const topResults = spotifySearchResult.length
+    ? spotifySearchResult
+    : topRatedArtist;
   const handleCancelBtn = () => {
-    setSearchValue(null);
+    setSearchInput("");
   };
-
+  useEffect(() => {
+    (async () => {
+      const response = await spotifySearchTopArtist({ limit: 10 });
+      setTopRatedArtist(response.data.results);
+    })();
+  }, []);
+  useEffect(() => {
+    if (debouncedSearchValue) {
+      (async () => {
+        try {
+          setLoading(true);
+          const spotifyResponse = await spotifySearch({
+            limit: 10,
+            query: debouncedSearchValue,
+          });
+          setSpotifySearchResult(spotifyResponse.data);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    } else {
+      setSpotifySearchResult([]);
+    }
+  }, [debouncedSearchValue]);
+  const handleSearchInput = (e) => {
+    console.log("e.target.value: ", e.target.value);
+    setSearchInput(e.target.value);
+  };
   return (
     <div className="search-header-wrap w-full relative">
       <img src={banner} alt="banner" className="h-full w-full banner" />
@@ -84,22 +91,21 @@ export function SearchHeader(props: IAppProps) {
             </div>
             <div className="relative">
               <Autocomplete
+                inputValue={searchInput}
                 freeSolo
-                value={searchValue}
-                onChange={(event, newValue) => setSearchValue(newValue)}
+                getOptionLabel={(option) => option.name || ""}
                 options={topResults}
                 PopperComponent={CustomPopper}
                 groupBy={() => "Top Results"}
                 ListboxProps={{
                   sx: {
-                    padding: "12px",
-                    paddingTop: "20px",
-                    scrollbarWidth: "thin",
+                    padding: "0 15px",
+                    scrollbarWidth: "none",
                   },
                 }}
                 renderGroup={(params) => (
                   <li key={params.key}>
-                    <div className="mb-5">
+                    <div className="pt-5 pb-5 sticky top-0 bg-[#1C1C1C]">
                       <span className="text-white text-base font-semibold border-b-2 border-limeGreen pb-2">
                         Top Results
                       </span>
@@ -109,9 +115,11 @@ export function SearchHeader(props: IAppProps) {
                       </div>
                     </div>
                     <ul>{params.children}</ul>
+                    <div className="h-4 sticky bottom-0 bg-[#1C1C1C]"></div>
                   </li>
                 )}
                 renderOption={(props, option, { selected, index }) => (
+                  <Link to={`/artist-profile/${option.id}`}>
                   <li
                     {...props}
                     className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-[#0F0F0F] ${
@@ -119,23 +127,25 @@ export function SearchHeader(props: IAppProps) {
                     }`}
                   >
                     <img
-                      src={option.imgSrc}
-                      alt={option.label}
+                      src={option.thumbnail}
+                      alt={option.name}
                       className="w-10 h-10 rounded-md"
                     />
                     <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
                       <span className="text-gainsboro text-sm">
-                        {option.label}
+                        {option.name}
                       </span>
                       <span className="text-charcoalGray text-xs">
                         From{" "}
-                        <span className="text-coolGray">{option.category}</span>
+                        <span className="text-coolGray">{option.type}</span>
                       </span>
                     </div>
                   </li>
+                  </Link>
                 )}
                 renderInput={(params) => (
                   <TextField
+                    onChange={handleSearchInput}
                     {...params}
                     placeholder="search producers, songwriters and more..."
                     sx={{
@@ -169,13 +179,16 @@ export function SearchHeader(props: IAppProps) {
               <div className="absolute left-[9px] top-1/2 -translate-y-1/2">
                 <SearchIcon />
               </div>
-
-              <div
-                className="absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer"
-                onClick={handleCancelBtn}
-              >
-                <MdCancel className="h-5 w-5" />
-              </div>
+                <div
+                  className="bg-[#1C1C1C] absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer"
+                  onClick={handleCancelBtn}
+                >
+                  {loading ? (
+                    <CircularProgress style={{color:"#C4FF48"}} size={20} />
+                  ) : (
+                    searchInput && <MdCancel className="h-5 w-5" />
+                  )}
+                </div>
             </div>
           </div>
           <div className="flex items-end">
