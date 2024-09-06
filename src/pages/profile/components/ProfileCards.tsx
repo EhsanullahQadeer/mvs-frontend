@@ -19,7 +19,7 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
           border: '1px solid #242424',
           background: '#131313',
         }}
-        className="min-w-80 rounded-md p-3"
+        className=" rounded-md p-3"
       >
         <div className="flex   gap-3 items-center rounded-md">
           <div className='w-24 h-24 object-cover'>
