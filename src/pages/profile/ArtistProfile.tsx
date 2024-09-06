@@ -4,7 +4,7 @@ import ScrollableContainer from "components/util/scrollable-container";
 import ProfileCards from "./components/ProfileCards";
 import { Data } from "./sampleData/sampleData";
 import { useState } from "react";
-import cardpic from './sampleData/download.webp'
+import cardpic from './sampleData/download.jpeg'
 
 
 const ArtistProfile = () => {
@@ -48,7 +48,7 @@ const ArtistProfile = () => {
     </section>
 <section className="my-4 mx-5">
 
- <div className="bg-black text-coolGray   flex flex-col">
+ <div className=" text-coolGray   flex flex-col">
       <h3 className="text-lg text-lightGray font-bold my-2">Library</h3>
       <div className="flex space-x-4 w-fit border-b border-coolGray ">
         {tabs.map((tab) => (

@@ -34,34 +34,44 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
             <p className="text-lightGray text-sm">{props.singer}</p>
             <p className="text-coolGray text-xs">{props.date}</p>
 
-            <div className="flex mt-1.5  gap-1.5">
+            <div className="flex mt-3  gap-1.5">
               <button
                 style={{
                   background: '#242424',
-                  padding : "8px"
+                  padding : "8px",
+                  fontSize : "10px",
+                  borderRadius : "4px"
+
 
                 }}
-                className="text-white w-full text-xs flex  items-center justify-center  rounded-lg"
+                className="text-white h-6 text-xs flex  items-center justify-center  "
               >
                 {props.p1}
               </button>
               <button
                 style={{
                   background: '#242424',
-                  padding : "8px"
+                  padding : "8px",
+                  fontSize : "10px",
+                  borderRadius : "4px"
+
+
 
                 }}
-                className="text-white w-full text-xs flex  items-center justify-center  rounded-lg"
+                className="text-white w-full h-6 text-xs flex  items-center justify-center  rounded-lg"
               >
                 {props.p1}
               </button>
               <button
                 style={{
                   background: '#242424',
-                  padding : "8px"
+                  padding : "8px",
+                  fontSize : "10px",
+                  borderRadius : "4px"
+
 
                 }}
-                className="text-white w-full text-xs flex  items-center justify-center  rounded-lg"
+                className="text-white w-full h-6 text-xs flex  items-center justify-center  rounded-lg"
               >
                 {props.p1}
               </button>

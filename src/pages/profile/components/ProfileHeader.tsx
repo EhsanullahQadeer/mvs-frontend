@@ -46,8 +46,9 @@ const ProfileHeader = () => {
       {/* Send Message Button */}
       <button style={{
         padding :"12px 16px" ,
-        width : "unset"
-      }} className="flex w-28 font-medium bg-lime-400 items-center   bg-green-500 text-black px-3 py-2 text-sm rounded-lg hover:bg-green-600 transition">
+        width : "unset",
+        background : "#9EFF00"
+      }} className="flex w-28 font-medium items-center   bg-green-500 text-black px-3 py-2 text-sm rounded-lg  transition">
         Send Message
       </button>
 
@@ -55,7 +56,7 @@ const ProfileHeader = () => {
       <button style={{
         background:" #1C1C1C",
         border: "1px solid #242424"
-      }} className="bg-black text-coolGray p-2 rounded-lg hover:bg-gray-700 transition">
+      }} className="bg-black text-coolGray p-2 w-10 h-10 rounded-lg hover:bg-gray-700 transition">
         <LiaEllipsisVSolid className='text-xl font-semibold' />
       </button>
     </div>
