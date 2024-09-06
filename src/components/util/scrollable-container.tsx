@@ -1,6 +1,6 @@
 /*************************************************************************
  * @file scrollable-container.tsx
- * @author Zohaib Ahmed
+ * @author End Quote
  * @desc Component for creating a scrollable container.
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.

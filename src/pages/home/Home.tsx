@@ -1,28 +1,46 @@
+/*************************************************************************
+ * @file Home.tsx
+ * @author Ehsanullah Qadeer
+ * @desc Main component for managing and displaying user data on the
+ *       homepage.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* LOCAL IMPORTS */
 import Theme from "theme";
 import { SearchHeader } from "./components/SearchHeader";
 import Filters from "./components/Filters";
-import { useEffect, useState } from "react";
 import ScrollableComponent from "./components/ScrollableComponent";
 import FilterResultComponent from "./components/FilterResultComponent";
 import { userTags, userTagsObj } from "utils/usersTags";
 import { getUsersByTag } from "api/user";
+import { UserFiltersDTO } from "api/user/types";
 
-const Home = () => {
-  const [filterValue, setFilterValue] = useState("");
+
+import { useEffect, useState } from "react";
+const Home = (
+
+) => {
+  const [filterValue, setFilterValue] = useState<string>("");
   const [filtersData, setFiltersData] = useState([]);
+  const [usersByTag, setUsersByTag] = useState<Record<string, any>>({});
+
   // Fetch users by tags with Promise.all
-  const [usersByTag, setUsersByTag] = useState({});
   const fetchUsersByTags = async () => {
-    const usersData = {};
+    const usersData: Record<string, any> = {};
+
     // Run all promises concurrently
     const results = await Promise.all(
       userTags.map(async (tag) => {
-        const users = await getUsersByTag({ tag });
-        return { tag, users: users.data };
+        const users = await getUsersByTag({ primaryUserLabel: tag }, 20);
+        return { 
+          tag, 
+          users: users.data 
+        };
       })
     );
 
-    // Sort and assign the results based on the order of userTags
     userTags.forEach((tag) => {
       const result = results.find((res) => res.tag === tag);
       if (result) {
@@ -36,29 +54,38 @@ const Home = () => {
   useEffect(() => {
     fetchUsersByTags();
   }, []);
+
+  // Fetch filtered users based on filterValue change
+  // Main tags under search bar
   useEffect(() => {
-    if (filterValue) {
-      const params = { tag: filterValue, limit: 50 };
-      (async () => {
-        const user = await getUsersByTag(params);
+    const fetchFilteredUsers = async () => {
+      if (filterValue) {
+        const params: UserFiltersDTO = { 
+          primaryUserLabel: filterValue, 
+          limit: 50
+        };
+        const user = await getUsersByTag(params, 20);
         setFiltersData(user.data);
-      })();
-    } else {
-      setFiltersData([]);
-    }
+      }
+      else {
+        setFiltersData([]);
+      }
+    };
+
+    fetchFilteredUsers();
   }, [filterValue]);
+
   return (
     <Theme>
       <SearchHeader />
       <Filters {...{ filterValue, setFilterValue }} />
       {filterValue !== "" ? (
-        <>
-          <FilterResultComponent {...{ filtersData }} />
-        </>
+        <FilterResultComponent {...{ filtersData }} />
       ) : (
         Object.entries(usersByTag).map(([key, value]) => (
           <ScrollableComponent
             key={key}
+            primaryUserLabel={key}
             dataArr={value}
             title={userTagsObj[key]}
             setUsersByTag={setUsersByTag}
