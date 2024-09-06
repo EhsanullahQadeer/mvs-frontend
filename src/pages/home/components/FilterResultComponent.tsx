@@ -4,20 +4,24 @@ type Props = {
 
 const FilterResultComponent = (props: Props) => {
   const { filtersData } = props;
-  console.log("filtersData: ", filtersData);
   return (
     <div className="user-card-wrap p-3 pr-2 border-b border-borderColor">
       <h2 className="text-white text-xl font-semibold mb-3">Results</h2>
 
       <div className="flex gap-4 flex-wrap items-center self-stretch">
         {filtersData.map((result, idx) => {
-          const { artist_name,primary_label, thumbnail, city, state:country } =
-            result;
-            console.log('result: ', result);
+          const { 
+            artist_name, 
+            primary_label,
+            thumbnail, 
+            city, 
+            state:country 
+          } = result;
             const concatedLocation = city + " , " + country;
             const location =
               concatedLocation.length > 17 ? country : concatedLocation;
           const singersArr = result.singersCollab?.split(", ");
+
           return (
             <div
               key={artist_name + idx}

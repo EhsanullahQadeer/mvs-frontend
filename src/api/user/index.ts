@@ -8,7 +8,7 @@
 
 /* LOCAL IMPORTS */
 import axiosInstance from '../axios';
-import { IgetUsersByTagParms } from './types';
+import { UserFiltersDTO } from '../user/types';
 
 export async function requestInvitationCodeWithEmailAPI(data: any) {
   return axiosInstance.post('/users/request/access', data);
@@ -49,6 +49,32 @@ export async function verifyCouponAPI(params: any) {
 export async function confirmSignupAPI(params: any) {
   return axiosInstance.post('/user/confirm/signup', params);
 }
-export async function getUsersByTag(params: IgetUsersByTagParms) {
-  return axiosInstance.get(`/users/by-tag`, { params });
+
+export async function getUsersByTag(
+  params: UserFiltersDTO, 
+  limit: 20
+) {
+  return axiosInstance.get(`/users/by-tag`, {
+    params: { 
+      ...params, 
+      limit 
+    }
+  });
+}
+
+export async function storeSpotifyArtist(
+  spotifyArtistId: string,
+  artistName: string,
+  artistPopularity: number,
+  artistThumbnail: string,
+  artistTag: 'artist',
+) {
+  // Use 'data' instead of 'params' for POST request body
+  return axiosInstance.post(`/misc/store-artist-info`, {
+    spotifyArtistId: spotifyArtistId,
+    artistName: artistName,
+    artistPopularity: artistPopularity,
+    artistThumbnail: artistThumbnail,
+    artistTag: artistTag,
+  });
 }

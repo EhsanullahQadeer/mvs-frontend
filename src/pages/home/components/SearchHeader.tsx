@@ -12,9 +12,15 @@ import CustomPopper from "./CutomPopperSearch";
 import { spotifySearch, spotifySearchTopArtist } from "api/spotify";
 import useDebounce from "hooks/useDebounce";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { storeSpotifyArtist } from "api/user";
 export interface IAppProps {}
-export function SearchHeader(props: IAppProps) {
+
+export function SearchHeader(
+  props: IAppProps
+) {
+  const navigate = useNavigate();
+
   const [topRatedArtist, setTopRatedArtist] = useState([]);
   const [spotifySearchResult, setSpotifySearchResult] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -24,15 +30,20 @@ export function SearchHeader(props: IAppProps) {
   const topResults = spotifySearchResult.length
     ? spotifySearchResult
     : topRatedArtist;
+
   const handleCancelBtn = () => {
     setSearchInput("");
   };
+
   useEffect(() => {
     (async () => {
-      const response = await spotifySearchTopArtist({ limit: 10 });
+      const response = await spotifySearchTopArtist({ 
+        limit: 10 
+      });
       setTopRatedArtist(response.data.results);
     })();
   }, []);
+
   useEffect(() => {
     if (debouncedSearchValue) {
       (async () => {
@@ -49,14 +60,16 @@ export function SearchHeader(props: IAppProps) {
           setLoading(false);
         }
       })();
-    } else {
+    } 
+    else {
       setSpotifySearchResult([]);
     }
   }, [debouncedSearchValue]);
+
   const handleSearchInput = (e) => {
-    console.log("e.target.value: ", e.target.value);
     setSearchInput(e.target.value);
   };
+
   return (
     <div className="search-header-wrap w-full relative">
       <img src={banner} alt="banner" className="h-full w-full banner" />
@@ -118,31 +131,44 @@ export function SearchHeader(props: IAppProps) {
                     <div className="h-4 sticky bottom-0 bg-[#1C1C1C]"></div>
                   </li>
                 )}
+
                 renderOption={(props, option, { selected, index }) => (
-                  <Link to={`/artist-profile/${option.id}`}>
                   <li
-                    {...props}
-                    className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-[#0F0F0F] ${
-                      props["aria-selected"] ? "bg-[#0F0F0F]" : ""
-                    }`}
-                  >
-                    <img
-                      src={option.thumbnail}
-                      alt={option.name}
-                      className="w-10 h-10 rounded-md"
-                    />
-                    <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
-                      <span className="text-gainsboro text-sm">
-                        {option.name}
-                      </span>
-                      <span className="text-charcoalGray text-xs">
-                        From{" "}
-                        <span className="text-coolGray">{option.type}</span>
-                      </span>
-                    </div>
-                  </li>
-                  </Link>
+                  {...props}
+                  className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-[#0F0F0F] ${
+                    props["aria-selected"] ? "bg-[#0F0F0F]" : ""
+                  }`}
+                  onClick={async (e) => {
+                    // Prevent default navigation behavior
+                    e.preventDefault();
+
+                    // API call
+                    const response = await storeSpotifyArtist(
+                      option?.id,
+                      option?.name,
+                      option?.popularity,
+                      option?.thumbnail,
+                      option?.type,
+                    );
+
+                    // Once the API call is done, navigate to the profile page
+                    navigate(`/artist-profile/${option.id}`);
+                  }}
+                >
+                  <img
+                    src={option.thumbnail}
+                    alt={option.name}
+                    className="w-10 h-10 rounded-md"
+                  />
+                  <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
+                    <span className="text-gainsboro text-sm">{option.name}</span>
+                    <span className="text-charcoalGray text-xs">
+                      From <span className="text-coolGray">{option.type}</span>
+                    </span>
+                  </div>
+                </li>
                 )}
+
                 renderInput={(params) => (
                   <TextField
                     onChange={handleSearchInput}

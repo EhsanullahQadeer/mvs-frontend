@@ -14,7 +14,9 @@ export async function spotifySearch(params:IspotifySearchParams) {
     return axiosInstance.get("/spotify/search", { params });
   }
   
-export async function spotifySearchTopArtist(params:IspotifySearchTopArtistParams) {
+export async function spotifySearchTopArtist(
+  params:IspotifySearchTopArtistParams
+) {
     return axiosInstance.get("/spotify/top-artists", { params });
   }
   
