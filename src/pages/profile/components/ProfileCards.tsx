@@ -9,6 +9,8 @@ interface ProfileCardsProps {
   p1: string;
   p2: string;
   p3: string;
+    isWikiProfile?: boolean;
+
 }
 
 const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
@@ -17,7 +19,7 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
       <div
         style={{
           border: '1px solid #242424',
-          background: '#131313',
+          background: props.isWikiProfile ? 'rgba(19, 19, 19, 1)' : '#242424',
         }}
         className=" rounded-md p-3"
       >

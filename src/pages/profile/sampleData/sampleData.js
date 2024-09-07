@@ -1,8 +1,7 @@
-import cardpic from './download.webp'
 
 export const Data=[{
     title: "sideEffect",
-    imageUrl: cardpic,
+    imageUrl: "",
     singer: "helvik hug",
     date:"12 March 2021",
     p1: "producer" ,
