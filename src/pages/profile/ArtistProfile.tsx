@@ -4,7 +4,7 @@ import ScrollableContainer from "components/util/scrollable-container";
 import ProfileCards from "./components/ProfileCards";
 import { Data } from "./sampleData/sampleData";
 import { useState } from "react";
-import cardpic from './sampleData/download.jpeg'
+import cardpic from './sampleData/download.png'
 
 
 const ArtistProfile = () => {
