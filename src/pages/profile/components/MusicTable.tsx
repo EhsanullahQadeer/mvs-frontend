@@ -160,7 +160,7 @@ const MusicTable = () => {
                   bpm,
                   status,
                   considering,
-                  link,
+                  // link,
                   album,
                 } = music;
 

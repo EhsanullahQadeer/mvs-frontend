@@ -2,7 +2,7 @@
  * @file ProfileCards.tsx
  * @author Ehsanullah Qadeer
  * @desc Profile card for artist profile page.
- * 
+ *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
@@ -21,7 +21,15 @@ interface ProfileCardsProps {
 }
 
 const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
-  const { isWikiProfile, imageurl, title, singer, date, p1, p2, p3 } = props;
+  const {
+    // isWikiProfile,
+    imageurl,
+    title,
+    singer,
+    date,
+    p1,
+    //  p2, p3
+  } = props;
 
   return (
     <>
