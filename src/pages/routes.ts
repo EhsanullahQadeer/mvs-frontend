@@ -131,6 +131,11 @@ const routes: IRoute[] = [
     component: SamplesPage,
   },
   {
+    path: "/artist-wiki-profile/:id",
+    name: "Artist Profile",
+    component: ArtistProfile,
+  },
+  {
     path: "/artist-profile/:id",
     name: "Artist Profile",
     component: ArtistProfile,

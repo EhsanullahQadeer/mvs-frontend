@@ -5,12 +5,22 @@ import { MdVerified } from "react-icons/md";
 import { LiaEllipsisVSolid } from "react-icons/lia";
 import { IoLocationOutline } from "react-icons/io5";
 import { LuCake, LuHome } from "react-icons/lu";
+import { FiSend } from "react-icons/fi";
 
 interface ProfileHeaderProps {
   isWikiProfile?: boolean;
+  setIsConnect: (value: boolean) => void;
+  isConnect: boolean;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isWikiProfile }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({
+  isWikiProfile,
+  setIsConnect,
+  isConnect,
+}) => {
+  const handleConnect = () => {
+    setIsConnect(true);
+  };
   return (
     <>
       <header
@@ -89,7 +99,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isWikiProfile }) => {
                   </span>
                 </span>
                 <span className="flex gap-1 item-center">
-                <LuHome className="text-xs  " />
+                  <LuHome className="text-xs  " />
 
                   <span>Polydor Records</span>
                 </span>
@@ -109,16 +119,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isWikiProfile }) => {
               Without You." She's a former "The Voice UK" contestant.{" "}
             </p>
 
-            <div className={`space-x-2 ${isWikiProfile ? "hidden" : "flex"} `}>
-              <button
-                style={{
-                  padding: "12px 16px",
-                }}
-                className="flex text-sm  items-center bg-transparent text-white border  border-white  rounded-lg cursor-pointer transition"
-              >
-                <FiUserPlus className="mr-2 text-xl" />
-                Connect
-              </button>
+            <div className={`space-x-2 ${isWikiProfile ? "hidden" : "flex items-center"} `}>
+              {!isConnect && (
+                <button
+                  style={{
+                    padding: "12px 16px",
+                  }}
+                  onClick={handleConnect}
+                  className="flex text-sm  items-center bg-transparent text-white border  border-white  rounded-lg cursor-pointer transition"
+                >
+                  <FiUserPlus className="mr-2 text-xl" />
+                  Connect
+                </button>
+              )}
 
               <button
                 style={{
@@ -126,9 +139,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isWikiProfile }) => {
                   width: "unset",
                   background: "#9EFF00",
                 }}
-                className="flex w-28 font-medium items-center   bg-green-500 text-black  text-sm rounded-lg  transition"
+                className="flex w-28 font-medium items-center   bg-green-500 text-[#0F0F0F]  text-sm rounded-lg  transition"
               >
-                Send Message
+                {isConnect ? (
+                  <div className="flex gap-2 items-center">
+                    <FiSend className="w-6 h-6" />
+                    <span>Message</span>
+                  </div>
+                ) : (
+                  <span>Send Message</span>
+                )}
               </button>
 
               <button

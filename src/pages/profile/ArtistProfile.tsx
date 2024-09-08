@@ -2,14 +2,23 @@ import Theme from "theme";
 import ProfileHeader from "./components/ProfileHeader";
 import ScrollableContainer from "components/util/scrollable-container";
 import ProfileCards from "./components/ProfileCards";
-import { Data } from "./sampleData/sampleData";
+import { Data, musicTableData } from "./sampleData/sampleData";
 import { useState } from "react";
 import cardpic from "./sampleData/download.png";
+import { useLocation } from "react-router-dom";
+import { InputAdornment, TextField } from "@mui/material";
+import { FiSearch } from "react-icons/fi";
+import getMuiStyles from "styles/getMuiStyles";
+import MusicTable from "./components/MusicTable";
 
 const ArtistProfile = () => {
-  const isWikiProfile = true;
+  const location = useLocation();
+  const isWikiProfile = location.pathname.includes("artist-wiki-profile");
   const [selectedTab, setSelectedTab] = useState("Instrumentals");
   const [selectedRole, setSelectedRole] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMusicType, setSelectedMusicType] = useState("");
+  const [isConnect, setIsConnect] = useState(false);
 
   const tabs = ["Instrumentals", "Samples", "Full Songs"];
   const roles = [
@@ -25,10 +34,18 @@ const ArtistProfile = () => {
     "Remixed",
   ];
 
+  const musicType = ["reggaeton", "synth", "guitar", "dark"];
+
+  const muiStyles = getMuiStyles();
+
   return (
     <Theme>
       <div className={`${isWikiProfile ? "flex flex-col gap-2 mx-3" : ""}`}>
-        <ProfileHeader isWikiProfile={isWikiProfile} />
+        <ProfileHeader
+          isWikiProfile={isWikiProfile}
+          setIsConnect={setIsConnect}
+          isConnect={isConnect}
+        />
         <section
           style={{
             background: isWikiProfile ? "#1C1C1C" : "",
@@ -73,25 +90,33 @@ const ArtistProfile = () => {
         <section
           style={{
             background: isWikiProfile ? "#1C1C1C" : "",
-            border:isWikiProfile ?  "1px solid var(--Neutral-700, #242424)" : '' ,
+            border: isWikiProfile
+              ? "1px solid var(--Neutral-700, #242424)"
+              : "",
           }}
           className="px-5 py-3"
         >
-         <div className="flex justify-between items-center">
-         <h2
-            style={{
-              color: " #D1D1D1",
-            }}
-            className={`text-white mb-3 ${
-              isWikiProfile ? " text-base font-semibold " : ""
-            }`}
-          >
-            Credits
-          </h2>
-          <span style={{
-            color: "rgba(132, 132, 132, 1)"
-          }} className={`text-sm ${isWikiProfile ? '' : "hidden"}`}> View All</span>
-         </div>
+          <div className="flex justify-between items-center">
+            <h2
+              style={{
+                color: " #D1D1D1",
+              }}
+              className={`text-white mb-3 ${
+                isWikiProfile ? " text-base font-semibold " : ""
+              }`}
+            >
+              Credits
+            </h2>
+            <span
+              style={{
+                color: "rgba(132, 132, 132, 1)",
+              }}
+              className={`text-sm ${isWikiProfile ? "" : "hidden"}`}
+            >
+              {" "}
+              View All
+            </span>
+          </div>
           <ScrollableContainer
             {...{
               showScrollArrows: false,
@@ -118,7 +143,7 @@ const ArtistProfile = () => {
           style={{
             background: isWikiProfile ? "#1C1C1C" : "",
           }}
-          className={`  px-5 py-3  mb-8`}
+          className={`px-5 py-3 mb-8`}
         >
           <div
             className={` text-coolGray   flex flex-col ${
@@ -155,29 +180,71 @@ const ArtistProfile = () => {
             }`}
           >
             <h3 className={"text-lg text-lightGray font-semibold "}>Roles</h3>
-            <div className="flex gap-2 py-4  ">
+            <div className="flex gap-2 py-4">
               {roles.map((tab) => (
                 <button
-                  style={{
-                    borderRadius: " 8px",
-                    border: " 1.5px solid #2B2B2B",
-                    background: "#161616",
-                    padding : "8px 16px",
-                    color: "#C9C9C9",
-
-
-                  }}
                   key={tab}
                   onClick={() => setSelectedRole(tab)}
-
-                  className={`whitespace-nowrap  text-xs ${
-                    selectedRole === tab ? " text-white border-hoveredparrot border-px" : "text-gray-400"
+                  className={`whitespace-nowrap text-sm px-2 py-1 border-[1.5px] rounded-lg ${
+                    selectedRole === tab
+                      ? " text-white border-hoveredparrot bg-[#C4FF4840]"
+                      : "text[#C9C9C9] border-[#2B2B2B] bg-[#161616]"
                   } hover:text-white transition duration-300`}
                 >
                   {tab}
                 </button>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className={`${isWikiProfile ? "hidden" : "block"} px-5`}>
+          <div className="flex gap-2 mb-4">
+            <div className="w-44">
+              <TextField
+                placeholder="search anything..."
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FiSearch />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
+                sx={muiStyles.searchInputTextField}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                fullWidth
+              />
+            </div>
+
+            <div className="flex gap-2">
+              {musicType.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setSelectedMusicType(tab)}
+                  className={`whitespace-nowrap text-sm px-2 py-1 border-[1px] rounded-md ${
+                    selectedMusicType === tab
+                      ? " text-white border-hoveredparrot bg-[#C4FF4840]"
+                      : "text-dimGray border-eerieBlack bg-eerieBlack"
+                  } hover:text-white transition duration-300`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="relative" style={{ filter: !isConnect ? "blur(5px)" : "none"}}>
+            {!isConnect && (
+              <div
+                className="absolute w-full h-full z-10 bg-[#101010] opacity-30"
+              ></div>
+            )}
+            <div className="text-xs font-medium text-[#9C9C9C] mb-3">
+              {musicTableData.length} results
+            </div>
+
+            <MusicTable />
           </div>
         </section>
       </div>

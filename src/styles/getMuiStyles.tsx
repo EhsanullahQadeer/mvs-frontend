@@ -1,0 +1,94 @@
+type Props = {};
+
+const getMuiStyles = () => {
+  const muiStyles = {
+    searchInputTextField: {
+      justifyContent: "flex",
+      height: "33px",
+      "& .MuiInputAdornment-root": {
+        color: "#3D3D3D !important",
+      },
+
+      "& fieldset": {
+        borderColor: "#3D3D3D !important",
+
+        "&:hover": {
+          borderColor: "#3D3D3D !important",
+        },
+      },
+      "& .MuiInputBase-root": {
+        width: "100%",
+        minWidth: "160px",
+        height: "100%",
+        borderRadius: "9999px",
+        background: "#1C1C1C",
+      },
+      "& .Mui-focused": {
+        width: "100%",
+        "& fieldset": { borderColor: "#3D3D3D !important" },
+      },
+      "& input": {
+        minHeight: "100%",
+        paddingY: "0 !important",
+        color: "#3D3D3D !important",
+        fontSize: "14px",
+        fontWeight: 400,
+        boxShadow: "none !important",
+      },
+    },
+
+    tableHead: {
+      ".css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root.Mui-active": {
+        color: "#848484",
+      },
+      ".css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root:hover": {
+        color: "#848484",
+      },
+      ".css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root.Mui-active .MuiTableSortLabel-icon":
+        {
+          color: "#848484",
+        },
+      ".MuiTableCell-head": {
+        borderTop: "1px solid #1C1C1C",
+        borderBottom: "1px solid #1C1C1C",
+        fontWeight: 400,
+        fontSize: "14px",
+        backgroundColor: "transparent",
+        color: "#FFFFFF",
+      },
+    },
+
+    tablePagination: {
+      "& .MuiTablePagination-selectLabel": {
+        display: "none",
+      },
+      "& .MuiInputBase-root": {
+        backgroundColor: "#161616",
+        padding: "4px 14px",
+        borderRadius: "100px",
+        "& svg": {
+          color: "#666666",
+        },
+
+        "& .MuiSelect-select": {
+          color: "#A3A3A3",
+          fontSize: "16px",
+          fontWeight: 500,
+          backgroundColor: "transparent !important",
+          paddingRight: "8px !important",
+          display: "flex",
+          alignItems: "center",
+        },
+      },
+      "& .MuiTablePagination-displayedRows": {
+        color: "white",
+      },
+      "& .MuiButtonBase-root": {
+        color: "white",
+      },
+    },
+  };
+  return muiStyles;
+};
+
+export default getMuiStyles;

@@ -26,7 +26,9 @@ module.exports = {
         borderColor: "rgba(104, 113, 126, 0.20)",
         bottonBorder: "rgba(104, 113, 126, 0.10)",
         slateGray: "rgba(104, 113, 126, 1)",
-        hoveredparrot : "#C4FF48"
+        hoveredparrot : "#C4FF48",
+        eerieBlack: "#1C1C1C",
+        dimGray: "#666666"
       },
     },
   },
