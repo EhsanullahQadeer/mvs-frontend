@@ -1,15 +1,27 @@
+/*************************************************************************
+ * @file ArtistProfile.tsx
+ * @author Ehsanullah Qadeer
+ * @desc Main component ArtistProfile for artist profile page.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* LOCAL IMPORTS */
 import Theme from "theme";
 import ProfileHeader from "./components/ProfileHeader";
 import ScrollableContainer from "components/util/scrollable-container";
 import ProfileCards from "./components/ProfileCards";
 import { Data, musicTableData } from "./sampleData/sampleData";
-import { useState } from "react";
 import cardpic from "./sampleData/download.png";
-import { useLocation } from "react-router-dom";
-import { InputAdornment, TextField } from "@mui/material";
-import { FiSearch } from "react-icons/fi";
 import getMuiStyles from "styles/getMuiStyles";
 import MusicTable from "./components/MusicTable";
+
+// THIRD PARTY IMPORTS
+import { InputAdornment, TextField } from "@mui/material";
+import { FiSearch } from "react-icons/fi";
+
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const ArtistProfile = () => {
   const location = useLocation();
@@ -36,6 +48,7 @@ const ArtistProfile = () => {
 
   const musicType = ["reggaeton", "synth", "guitar", "dark"];
 
+  // hook for mui styles
   const muiStyles = getMuiStyles();
 
   return (
@@ -48,26 +61,22 @@ const ArtistProfile = () => {
         />
         <section
           style={{
-            background: isWikiProfile ? "#1C1C1C" : "",
             border: "1px solid var(--Neutral-700, #242424)",
           }}
-          className={`px-5 py-3 ${isWikiProfile ? "block" : "hidden"}`}
+          className={`px-5 py-3 ${
+            isWikiProfile ? "block bg-eerieBlack" : "hidden"
+          }`}
         >
           <h2
             style={{
-              color: "#D1D1D1",
               borderBottom: "1px solid var(--Neutral-700, #242424)",
             }}
-            className="text-white pb-3 text-base font-semibold  "
+            className="text-gainsBoro pb-3 text-base font-semibold"
           >
             About
           </h2>
           <div
-            style={{
-              color: "#848484",
-              fontSize: "14px",
-            }}
-            className="flex flex-col gap-2 font-normal"
+            className="flex flex-col gap-2 font-normal text-coolGray text-sm"
           >
             <p>
               Becky Hill is a British singer and songwriter known for her
@@ -89,29 +98,22 @@ const ArtistProfile = () => {
         </section>
         <section
           style={{
-            background: isWikiProfile ? "#1C1C1C" : "",
             border: isWikiProfile
               ? "1px solid var(--Neutral-700, #242424)"
               : "",
           }}
-          className="px-5 py-3"
+          className={`px-5 py-3 ${isWikiProfile ? "bg-eerieBlack" : ""}`}
         >
           <div className="flex justify-between items-center">
             <h2
-              style={{
-                color: " #D1D1D1",
-              }}
-              className={`text-white mb-3 ${
+              className={`text-gainsBoro mb-3 ${
                 isWikiProfile ? " text-base font-semibold " : ""
               }`}
             >
               Credits
             </h2>
             <span
-              style={{
-                color: "rgba(132, 132, 132, 1)",
-              }}
-              className={`text-sm ${isWikiProfile ? "" : "hidden"}`}
+              className={`text-coolGray text-sm ${isWikiProfile ? "" : "hidden"}`}
             >
               {" "}
               View All
@@ -140,30 +142,20 @@ const ArtistProfile = () => {
           </ScrollableContainer>
         </section>
         <section
-          style={{
-            background: isWikiProfile ? "#1C1C1C" : "",
-          }}
-          className={`px-5 py-3 mb-8`}
+          className={`px-5 py-3 mb-8 ${isWikiProfile ? "bg-eerieBlack" : ""}`}
         >
           <div
-            className={` text-coolGray   flex flex-col ${
+            className={`text-coolGray flex flex-col ${
               isWikiProfile ? "hidden" : "flex"
             }`}
           >
-            <h2
-              style={{
-                color: " #D1D1D1",
-              }}
-              className="text-white mb-3  font-bold"
-            >
-              Library
-            </h2>
-            <div className="flex gap-4 w-fit border-b border-coolGray ">
+            <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
+            <div className="flex gap-4 w-fit border-b border-coolGray">
               {tabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
-                  className={`text-white  py-2  pb-3 text-sm flex  items-center justify-center   ${
+                  className={`text-white py-2 pb-3 text-sm flex  items-center justify-center ${
                     selectedTab === tab
                       ? "border-b border-white text-white"
                       : "text-gray-400"
@@ -175,7 +167,7 @@ const ArtistProfile = () => {
             </div>
           </div>
           <div
-            className={` text-coolGray   flex flex-col ${
+            className={`text-coolGray flex flex-col ${
               !isWikiProfile ? "hidden" : "flex"
             }`}
           >
@@ -234,11 +226,12 @@ const ArtistProfile = () => {
               ))}
             </div>
           </div>
-          <div className="relative" style={{ filter: !isConnect ? "blur(5px)" : "none"}}>
+          <div
+            className="relative"
+            style={{ filter: !isConnect ? "blur(5px)" : "none" }}
+          >
             {!isConnect && (
-              <div
-                className="absolute w-full h-full z-10 bg-[#101010] opacity-30"
-              ></div>
+              <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
             )}
             <div className="text-xs font-medium text-[#9C9C9C] mb-3">
               {musicTableData.length} results

@@ -1,4 +1,24 @@
-import React, { useState } from "react";
+/*************************************************************************
+ * @file MusicTable.tsx
+ * @author Ehsanullah Qadeer
+ * @desc MusicTable for artist profile page to show the list of songs that artist produced.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* LOCAL IMPORTS */
+
+import getMuiStyles from "styles/getMuiStyles";
+import sampleImg from "../sampleData/download.png";
+import musicBeam from "../../../assets/icons/musicBeam.svg";
+import playIcon from "../../../assets/icons/playIcon.svg";
+import waveform from "../../../assets/img/waveform.png";
+import { FaRegHeart } from "react-icons/fa";
+import { MdOutlineFileDownload } from "react-icons/md";
+import { musicTableData } from "../sampleData/sampleData";
+
+// THIRD PARTY IMPORTS
+
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,16 +28,9 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import getMuiStyles from "styles/getMuiStyles";
-import sampleImg from "../sampleData/download.png";
-import musicBeam from "../../../assets/icons/musicBeam.svg";
-import playIcon from "../../../assets/icons/playIcon.svg";
-import waveform from "../../../assets/img/waveform.png";
-import { FaRegHeart } from "react-icons/fa";
-import { MdOutlineFileDownload } from "react-icons/md";
 import { FaEllipsisVertical } from "react-icons/fa6";
-import { musicTableData } from "../sampleData/sampleData";
 
+import React, { useState } from "react";
 interface Column {
   id:
     | "sample"
@@ -108,7 +121,7 @@ const MusicTable = () => {
         backgroundColor: "transparent",
       }}
     >
-      <TableContainer sx={{ maxHeight: 'maxContent' }}>
+      <TableContainer sx={{ maxHeight: "maxContent" }}>
         <Table stickyHeader>
           <TableHead sx={muiStyles.tableHead}>
             <TableRow>

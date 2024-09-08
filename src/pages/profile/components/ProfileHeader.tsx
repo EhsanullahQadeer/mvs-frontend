@@ -1,5 +1,13 @@
+/*************************************************************************
+ * @file ProfileHeader.tsx
+ * @author Ehsanullah Qadeer
+ * @desc Profile header for artist profile page.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+/* LOCAL IMPORTS */
 import profileImage from "../sampleData/Ellipse 730.png";
-import { FaEnvelope } from "react-icons/fa";
 import { FiEdit3, FiUserPlus } from "react-icons/fi";
 import { MdVerified } from "react-icons/md";
 import { LiaEllipsisVSolid } from "react-icons/lia";
@@ -26,20 +34,20 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <header
         style={{
           background:
-            "linear-gradient(to right,  rgb(74, 12, 140),black  , rgb(0, 91, 190) )",
+            "linear-gradient(to right,rgb(74, 12, 140),black, rgb(0, 91, 190))",
         }}
-        className={`relative flex  items-start  w-full    py-7 ${
-          isWikiProfile ? "justify-center rounded-lg " : "justify-between  px-5"
+        className={`relative flex items-start w-full py-7 ${
+          isWikiProfile ? "justify-center rounded-lg" : "justify-between px-5"
         } `}
       >
         <div
           className={`flex items-center ${
-            isWikiProfile ? "flex-col text-cente  gap-2 " : "flex-row  gap-5 "
-          }  `}
+            isWikiProfile ? "flex-col text-cente gap-2" : "flex-row  gap-5"
+          }`}
         >
           <div
             className={`rounded-full  p-0.5 bg-gradient-to-r from-blue-500 to-lime-500 ${
-              isWikiProfile ? "w-32 h-32" : "w-48 h-48 "
+              isWikiProfile ? "w-32 h-32" : "w-48 h-48"
             } `}
           >
             <img
@@ -51,13 +59,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
           <div
             className={`text-white flex flex-col gap-1 ${
-              isWikiProfile ? "w-full text-center" : " w-1/3"
-            }  `}
+              isWikiProfile ? "w-full text-center" : "w-1/3"
+            }`}
           >
             <h1
               className={`text-2xl flex items-center font-bold ${
                 isWikiProfile ? "justify-center font-semibold" : ""
-              } `}
+              }`}
             >
               Becky Hill
               <MdVerified
@@ -67,39 +75,21 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               />
             </h1>
             {!isWikiProfile ? (
-              <span
-                style={{
-                  color: "#DADADA",
-                }}
-                className="text-xs font-semibold"
-              >
+              <span className="text-xs font-semibold text-[#DADADA]">
                 @heckyhill
               </span>
             ) : (
-              <div
-                style={{
-                  fontSize: "12px",
-
-                  color: "rgba(229, 229, 229, 1)",
-                }}
-                className="flex gap-5 justify-center"
-              >
+              <div className="flex gap-5 justify-center text-xs text-[#e5e5e5]">
                 <span className="flex gap-1 item-center">
-                  <IoLocationOutline className="text-xs  " />
+                  <IoLocationOutline className="text-xs" />
                   London, UK
                 </span>
-                <span className="flex gap-1 item-center ">
-                  <LuCake className="text-xs  " /> Mar 28th, 1986{" "}
-                  <span
-                    style={{
-                      color: "rgba(132, 132, 132, 1)",
-                    }}
-                  >
-                    (38 Years)
-                  </span>
+                <span className="flex gap-1 item-center">
+                  <LuCake className="text-xs" /> Mar 28th, 1986{" "}
+                  <span className="text-[#848484]">(38 Years)</span>
                 </span>
                 <span className="flex gap-1 item-center">
-                  <LuHome className="text-xs  " />
+                  <LuHome className="text-xs" />
 
                   <span>Polydor Records</span>
                 </span>
@@ -107,10 +97,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             )}
 
             <p
-              style={{
-                color: "#BEBEBE",
-              }}
-              className={`text-sm text-gray-200  my-2 ${
+              className={`text-sm text-gray-200 text-[#BEBEBE] my-2 ${
                 isWikiProfile ? "hidden" : "flex"
               } `}
             >
@@ -119,14 +106,15 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               Without You." She's a former "The Voice UK" contestant.{" "}
             </p>
 
-            <div className={`space-x-2 ${isWikiProfile ? "hidden" : "flex items-center"} `}>
+            <div
+              className={`space-x-2 ${
+                isWikiProfile ? "hidden" : "flex items-center"
+              } `}
+            >
               {!isConnect && (
                 <button
-                  style={{
-                    padding: "12px 16px",
-                  }}
                   onClick={handleConnect}
-                  className="flex text-sm  items-center bg-transparent text-white border  border-white  rounded-lg cursor-pointer transition"
+                  className="flex text-sm items-center bg-transparent text-white border border-white rounded-lg cursor-pointer transition px-3 py-4"
                 >
                   <FiUserPlus className="mr-2 text-xl" />
                   Connect
@@ -135,11 +123,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
               <button
                 style={{
-                  padding: "12px 16px",
                   width: "unset",
-                  background: "#9EFF00",
                 }}
-                className="flex w-28 font-medium items-center   bg-green-500 text-[#0F0F0F]  text-sm rounded-lg  transition"
+                className="flex w-28 font-medium items-center   bg-green-500 text-[#0F0F0F]  text-sm rounded-lg  transition px-3 py-4 bg-limeGreen"
               >
                 {isConnect ? (
                   <div className="flex gap-2 items-center">
@@ -151,13 +137,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 )}
               </button>
 
-              <button
-                style={{
-                  background: " #1C1C1C",
-                  border: "1px solid #242424",
-                }}
-                className="bg-black text-coolGray p-2 w-10 h-10 rounded-lg hover:bg-gray-700 transition"
-              >
+              <button className="bg-eerieBlack text-coolGray p-2 w-10 h-10 rounded-lg hover:bg-gray-700 transition border-[1px] border-eclipseGray">
                 <LiaEllipsisVSolid className="text-xl font-semibold" />
               </button>
             </div>
@@ -167,28 +147,18 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               } `}
             >
               <button
-                style={{
-                  padding: "10px",
-                  background: "#9EFF00",
-                }}
-                className="flex font-medium px-3 py-2 items-center text-xs   bg-green-500 text-black  rounded-lg  transition"
+                className="flex font-medium px-3 py-2 items-center text-xs bg-green-500 text-black rounded-lg transition bg-limeGreen"
               >
                 Singer/Songwriter
               </button>
               <button
-                style={{
-                  padding: "8px 12px",
-                }}
-                className="flex gap-2 px-3 py-2 items-center   bg-transparent text-white border text-xs  border-white  rounded-lg cursor-pointer transition"
+                className="flex gap-2 px-3 py-2 items-center   bg-transparent text-white border text-xs border-white  rounded-lg cursor-pointer transition"
               >
-                <FiUserPlus className=" text-base" />
+                <FiUserPlus className="text-base" />
                 <span>Follow</span>
               </button>
               <button
-                style={{
-                  padding: "8px 12px",
-                }}
-                className="flex gap-2 px-3    py-2 items-center bg-transparent text-white border text-xs border-white  rounded-lg cursor-pointer transition"
+                className="flex gap-2 px-3 py-2 items-center bg-transparent text-white border text-xs border-white  rounded-lg cursor-pointer transition"
               >
                 <svg
                   className="text-white"

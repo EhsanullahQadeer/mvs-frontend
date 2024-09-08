@@ -10,6 +10,7 @@ module.exports = {
     extend: {
       colors: {
         // Add your custom colors here
+        gainsBoro: "#D1D1D1",
         gray: "#D7D7D7",
         eclipseGray: "#242424",
         lightGray: "#F5F5F5",
