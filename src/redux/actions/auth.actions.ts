@@ -42,7 +42,7 @@ export function login(
 
             const expires = new Date(new Date().getTime() + 60 * 60 * 1000);
 
-            cookie.set("token", user.data.results.access_token, { expires });
+            cookie.set("token", user.data.results.access_token);
 
             dispatch({
               type: ActionType.USER_LOGIN_SUCCESS,

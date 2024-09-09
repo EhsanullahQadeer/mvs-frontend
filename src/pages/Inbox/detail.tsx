@@ -13,11 +13,57 @@
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 import moment from "moment";
-
+import { AudioRecorder } from "react-audio-voice-recorder";
+import { AudioPlayer } from "react-audio-play";
+import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
+import { sendMessage } from "api/inbox";
 
 const MessagesDetail = (props: any) => {
   console.log(" ==== Message Detail Props ====");
   console.log(props);
+
+  const [tip, setTip] = useState(0);
+  const [message, setMessage] = useState("");
+  const [tab, setTab] = useState(0);
+
+  const validateTip = (e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setTip(value);
+  };
+
+  useEffect(() => {}, [props]);
+
+  const addAudioElement = (blob, message) => {
+    const url = URL.createObjectURL(blob);
+    const audio = document.createElement("audio");
+    audio.src = url;
+    audio.controls = true;
+    // document.body.appendChild(audio);
+
+    console.log("==== Audio Url ====");
+    console.log(url);
+  };
+
+  const newMessage = async () => {
+    const key = props.messages[props.messages.length - 1]["messages"];
+    const index = key.length - 1;
+    const _msg = props.messages[props.messages.length - 1]["messages"].push(
+      key[index]
+    );
+
+    props.messages[props.messages.length - 1]["messages"][index].message =
+      message;
+
+    const payload = {
+      recipient_id: props.conversation.recipient,
+      conversation_id: props.conversation.conversation_id,
+      message,
+    };
+    const _newMessage = await sendMessage(payload);
+    console.log("=== New Message ===");
+    console.log(_newMessage);
+    setMessage("");
+  };
 
   return (
     <React.Fragment>
@@ -42,24 +88,45 @@ const MessagesDetail = (props: any) => {
                   <div className="text-xs text-zinc-400">Los Angeles, CA</div>
                 </div>
               </div>
-              {/* <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-zinc-900">
+              <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-zinc-900">
                 <img
                   alt=""
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/863349b86cd073a53ab244e19a316e50a23805036103b283eb7633ef9ab7ed48?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
                   className="object-contain self-stretch my-auto w-4 aspect-square"
                 />
-              </div> */}
+              </div>
             </div>
             <div className="flex flex-col justify-center py-1 w-full text-xs font-medium text-gray-500 whitespace-nowrap max-md:max-w-full">
               <div className="flex flex-wrap gap-2 items-center py-2 w-full max-md:max-w-full">
-                <div className="gap-2.5 self-stretch px-2.5 py-2 my-auto font-semibold bg-lime-400 rounded-[35px] text-neutral-900">
+                <div
+                  onClick={() => setTab(0)}
+                  className={
+                    tab === 0
+                      ? "gap-2.5 self-stretch px-2.5 py-2 my-auto font-semibold bg-lime-400 rounded-[35px] text-neutral-900 cursor-pointer"
+                      : "cursor-pointer gap-2.5 self-stretch px-2.5 py-2 my-auto bg-zinc-900 rounded-[35px] bg-lime-400 "
+                  }
+                >
                   Messages
                 </div>
-                <div className="gap-2.5 self-stretch px-2.5 py-2 my-auto bg-zinc-900 rounded-[35px]">
+                <div
+                  onClick={() => setTab(1)}
+                  className={
+                    tab === 1
+                      ? "gap-2.5 self-stretch px-2.5 py-2 my-auto font-semibold bg-lime-400 rounded-[35px] text-neutral-900 cursor-pointer"
+                      : "cursor-pointer gap-2.5 self-stretch px-2.5 py-2 my-auto bg-zinc-900 rounded-[35px] bg-lime-400 "
+                  }
+                >
                   Info
                 </div>
-                <div className="gap-2.5 self-stretch px-2.5 py-2 my-auto bg-zinc-900 rounded-[35px]">
+                <div
+                  onClick={() => setTab(2)}
+                  className={
+                    tab === 2
+                      ? "gap-2.5 self-stretch px-2.5 py-2 my-auto font-semibold bg-lime-400 rounded-[35px] text-neutral-900 cursor-pointer"
+                      : "cursor-pointer gap-2.5 self-stretch px-2.5 py-2 my-auto bg-zinc-900 rounded-[35px] bg-lime-400 "
+                  }
+                >
                   Notes
                 </div>
               </div>
@@ -67,212 +134,336 @@ const MessagesDetail = (props: any) => {
           </div>
           <div className="flex overflow-hidden flex-col flex-1 justify-center py-3 w-full max-md:max-w-full">
             <div className="flex flex-col flex-1 w-full max-md:max-w-full">
-              
-              <div className="flex flex-col mt-3 w-full h-[531px] max-md:max-w-full">
-                {props.loading === true ? (
-                  <>
-                    <div role="status" className="max-w-sm animate-pulse w-full">
-                        <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4" />
-                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5" />
-                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5" />
-                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5" />
-                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5" />
-                        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]" />
-                        <span className="sr-only">Loading...</span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {props.messages.map((message) => {
-                      return (
-                        <>
-                          <div className="flex flex-wrap items-center w-full max-md:max-w-full">
+              {tab === 0 && (
+                <>
+                  <div className="flex flex-col mt-3 w-full h-[531px] max-md:max-w-full overflow-auto">
+                    {props.loading === true ? (
+                      <>
+                        <div
+                          role="status"
+                          className="max-w-sm animate-pulse w-full"
+                        >
+                          <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4" />
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5" />
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5" />
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5" />
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5" />
+                          <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]" />
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {props.messages.map((message) => {
+                          return (
+                            <>
+                              <div className="flex flex-wrap items-center w-full max-md:max-w-full">
                                 <div className="flex flex-col flex-1 shrink justify-center self-stretch p-2.5 my-auto basis-0 min-w-[240px]">
-                                    <div className="w-full min-h-[1px]" />
+                                  <div className="w-full min-h-[1px]" />
                                 </div>
                                 <div className="gap-2.5 self-stretch p-2.5 my-auto text-sm font-medium text-zinc-400">
-                                {moment(message.date).format("dddd, MMMM D, YYYY")}
-
+                                  {moment(message.date).format(
+                                    "dddd, MMMM D, YYYY"
+                                  )}
                                 </div>
                                 <div className="flex flex-col flex-1 shrink justify-center self-stretch p-2.5 my-auto basis-0 min-w-[240px]">
-                                    <div className="w-full min-h-[1px]" />
-                                </div>
-                          </div>
-
-                          {message.messages.map((x) => {
-
-                              return (
-
-                                  <>
-
-<div className="flex flex-wrap gap-2 py-2 w-full max-md:max-w-full">
-                            <div className="flex relative gap-2.5 items-start w-11 h-full">
-                              <div className="flex z-0 shrink-0 w-11 h-11 rounded-full" />
-                              <img
-                                alt=""
-                                loading="lazy"
-                                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/3735978c0b69383fae7936808efe1969fc85d3b3a765eb1aa6eb513848eb2719?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/3735978c0b69383fae7936808efe1969fc85d3b3a765eb1aa6eb513848eb2719?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3735978c0b69383fae7936808efe1969fc85d3b3a765eb1aa6eb513848eb2719?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/3735978c0b69383fae7936808efe1969fc85d3b3a765eb1aa6eb513848eb2719?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/3735978c0b69383fae7936808efe1969fc85d3b3a765eb1aa6eb513848eb2719?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/3735978c0b69383fae7936808efe1969fc85d3b3a765eb1aa6eb513848eb2719?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/3735978c0b69383fae7936808efe1969fc85d3b3a765eb1aa6eb513848eb2719?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/3735978c0b69383fae7936808efe1969fc85d3b3a765eb1aa6eb513848eb2719?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                                className="object-contain absolute top-1 right-1 z-0 shrink-0 w-9 h-9 rounded-full aspect-square"
-                              />
-                            </div>
-                            <div className="flex flex-col flex-1 shrink justify-center my-auto basis-0 min-w-[240px] max-md:max-w-full">
-                              <div className="flex flex-col w-full text-sm max-md:max-w-full">
-                                <div className="flex gap-1 items-start self-start">
-                                  <div className="font-bold text-white w-[100px]">
-                                    Simon Mehl
-                                  </div>
-                                  <div className="text-gray-500">4:19 PM</div>
-                                </div>
-                                <div className="mt-1 text-stone-300 w-[650px]">
-                                  {x?.Message}
+                                  <div className="w-full min-h-[1px]" />
                                 </div>
                               </div>
-                              {/* <div className="flex gap-1 items-center self-start p-3 mt-3 rounded-2xl bg-neutral-800">
-                                            <div className="flex gap-2.5 items-start self-stretch my-auto w-9">
-                                                <img  alt=""  
-                                                    loading="lazy"
-                                                    srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/65e6130a-ec9f-4eee-9592-747102edc98a?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/65e6130a-ec9f-4eee-9592-747102edc98a?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/65e6130a-ec9f-4eee-9592-747102edc98a?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/65e6130a-ec9f-4eee-9592-747102edc98a?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/65e6130a-ec9f-4eee-9592-747102edc98a?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/65e6130a-ec9f-4eee-9592-747102edc98a?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/65e6130a-ec9f-4eee-9592-747102edc98a?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/65e6130a-ec9f-4eee-9592-747102edc98a?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                                                    className="object-contain w-9 h-9 bg-lime-400 rounded-full aspect-square"
-                                                />
+
+                              {message.messages.map((x) => {
+                                return (
+                                  <>
+                                    <div className="flex flex-wrap gap-2 py-2 w-full max-md:max-w-full">
+                                      <div className="flex relative gap-2.5 items-start w-11 h-full">
+                                        <div className="flex z-0 shrink-0 w-11 h-11 rounded-full" />
+                                        <img
+                                          alt=""
+                                          loading="lazy"
+                                          src={x.thumbnail}
+                                          className="object-contain absolute top-1 right-1 z-0 shrink-0 w-9 h-9 rounded-full aspect-square"
+                                        />
+                                      </div>
+                                      <div className="flex flex-col flex-1 shrink justify-center my-auto basis-0 min-w-[240px] max-md:max-w-full">
+                                        <div className="flex flex-col w-full text-sm max-md:max-w-full">
+                                          <div className="flex gap-1 items-start self-start">
+                                            <div className="font-bold text-white w-[100px]">
+                                              {x.displayName}
                                             </div>
-                                            <div className="flex relative flex-col self-stretch py-2.5 pr-2 pl-2.5 my-auto w-[120px]">
-                                                <img  alt=""  
-                                                    loading="lazy"
-                                                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/aa34de2b02702438fd5a8f8f63b99263c81db450bbb3093b62732f65094f2092?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                                                    className="object-contain z-0 max-w-full aspect-[34.48] w-[100px]"
-                                                />
-                                                <div className="flex absolute bottom-1 left-1 z-0 w-3 h-3 rounded-full bg-zinc-400 min-h-[12px]" />
+                                            <div className="text-gray-500">
+                                              4:19 PM
                                             </div>
-                                            <div className="gap-2.5 self-stretch my-auto text-sm whitespace-nowrap text-zinc-400">
-                                                3:13
-                                            </div>
-                                        </div> */}
+                                          </div>
+                                          <div className="mt-1 text-stone-300 w-[650px]">
+                                            {x?.message}
+                                          </div>
+                                        </div>
+                                        {x?.audio_recording_url && (
+                                          <div className="flex gap-1 items-center self-start p-3 mt-3 rounded-2xl bg-neutral-800 w-[400px]">
+                                            <AudioPlayer
+                                              src={x.audio_recording_url}
+                                              color="#1C1C1"
+                                              sliderColor="#B7B7B7"
+                                              style={{
+                                                background: "#242424",
+                                                borderRadius: "15px",
+                                              }}
+                                              className="audio-player"
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </>
+                                );
+                              })}
+                            </>
+                          );
+                        })}
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {tab === 1 && (
+                <>
+                  <div className="flex flex-col w-[100%]">
+                    <div className="flex gap-4 justify-center items-center w-full">
+                      <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-0">
+                        <div className="gap-2.5 self-stretch py-2.5 w-full text-xs font-semibold leading-none text-white">
+                          First Name
+                        </div>
+                        <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center whitespace-nowrap rounded-lg border border-solid border-neutral-200 text-neutral-200">
+                          Becky
+                        </div>
+                      </div>
+                      <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-0">
+                        <div className="gap-2.5 self-stretch py-2.5 w-full text-xs font-semibold leading-none text-white">
+                          Last Name
+                        </div>
+                        <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center whitespace-nowrap rounded-lg border border-solid border-neutral-200 text-neutral-200">
+                          Hill
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-4 justify-center items-center mt-4 w-full">
+                      <div className="flex flex-col flex-1 shrink self-stretch my-auto whitespace-nowrap basis-0">
+                        <div className="gap-2.5 self-stretch py-2.5 w-full text-xs font-semibold leading-none text-white">
+                          Email
+                        </div>
+                        <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center rounded-lg border border-solid border-neutral-200 text-neutral-200">
+                          info@mvssive.net
+                        </div>
+                      </div>
+                      <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-0">
+                        <div className="gap-2.5 self-stretch py-2.5 w-full text-xs font-semibold leading-none text-white">
+                          User Role
+                        </div>
+                        <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center whitespace-nowrap rounded-lg border border-solid border-neutral-200 text-neutral-200">
+                          Songwriter
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-4 justify-center items-center mt-4 w-full">
+                      <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-0">
+                        <div className="gap-2.5 self-stretch p-2.5 w-full text-xs font-semibold leading-none text-white">
+                          Amount Spent
+                        </div>
+                        <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center whitespace-nowrap bg-lime-400 rounded-lg text-stone-950">
+                          $467.89
+                        </div>
+                      </div>
+                      <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-0">
+                        <div className="gap-2.5 self-stretch p-2.5 w-full text-xs font-semibold leading-none text-white">
+                          Files Submitted
+                        </div>
+                        <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center whitespace-nowrap rounded-lg border border-solid border-neutral-200 text-neutral-200">
+                          3
+                        </div>
+                      </div>
+                    </div>
+                    <div className="border mt-5 border-solid bg-stone-500 border-stone-500 w-[100%] min-h-[1px]" />
+
+                    <div className="mt-5 w-[100%]">
+                      <div className="flex gap-2.5 items-center px-4 py-2 text-sm font-semibold leading-none max-w-[397px]">
+                        <div className="gap-2.5 self-stretch p-2 my-auto rounded border border-solid bg-neutral-800 border-zinc-900 text-neutral-700">
+                          File History
+                        </div>
+                        <div className="overflow-hidden gap-2.5 self-stretch p-2 my-auto text-black bg-lime-400 rounded">
+                          Files Sent
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 history w-[100%]">
+                      <div className="flex items-center px-4 py-3 border-b border-stone-900">
+                        <div className="flex flex-1 shrink gap-3 justify-between items-center self-stretch my-auto w-full basis-0 min-w-[240px]">
+                          <div className="flex items-center self-stretch my-auto font-semibold whitespace-nowrap w-[145px]">
+                            <div className="flex flex-col justify-center self-stretch my-auto w-[129px]">
+                              <div className="text-sm leading-none text-white">
+                                rap-demo-23...
+                              </div>
+                              <div className="self-start text-xs text-neutral-400">
+                                05/7/2024
+                              </div>
+                              <div className="text-xs text-emerald-200">
+                                $149.99
+                              </div>
                             </div>
                           </div>
+                          <div className="flex overflow-hidden gap-1 items-center self-stretch px-3 py-2.5 my-auto w-40 rounded-2xl border border-solid bg-neutral-800 border-neutral-700 min-h-[44px]">
+                            <div className="flex gap-2.5 justify-center items-center self-stretch my-auto w-6">
+                              <img
+                                loading="lazy"
+                                srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                                className="object-contain self-stretch my-auto w-6 h-6 bg-lime-400 rounded-full aspect-square fill-lime-400"
+                              />
+                            </div>
+                            <div className="flex relative flex-col flex-1 shrink justify-center self-stretch px-2.5 py-2.5 my-auto basis-0">
+                              <img
+                                loading="lazy"
+                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/5f6d697732c463093143e52b7acaee9a6b416b0c1206363c9d410bbb82dd7587?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                                className="object-contain z-0 aspect-[32.26] w-[65px]"
+                              />
+                              <div className="flex absolute left-1 top-2/4 z-0 w-2.5 h-2.5 rounded-full -translate-y-2/4 bg-zinc-400 min-h-[10px] translate-x-[0%]" />
+                            </div>
+                            <div className="gap-2.5 self-stretch my-auto text-xs leading-none whitespace-nowrap text-zinc-400">
+                              3:13
+                            </div>
+                          </div>
+                          <div className="flex gap-2.5 justify-center items-center self-stretch my-auto w-9 h-9 bg-zinc-900 min-h-[36px]">
+                            <div className="flex self-stretch my-auto min-h-[16px]" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
-                                  </>
-                              )
-                          })}
-                          
-                        </>
-                      );
-                    })}
-                  </>
-                )}
-              </div>
+              {tab === 2 && (
+                <>
+                  <div className="flex flex-col p-4 max-w-[100%]">
+                    <textarea
+                      placeholder="Type a note..."
+                      className="bg-transparent resize-none overflow-hidden gap-2.5 px-5 pt-3 pb-16 w-full text-xs leading-none rounded-xl border border-solid border-neutral-800 min-h-[90px] text-neutral-700"
+                    />
+
+                    <div className="flex flex-col justify-center items-end mt-3 w-full text-sm leading-none text-center whitespace-nowrap text-stone-950">
+                      <div className="gap-2 self-stretch px-4 py-2 bg-lime-400 rounded-lg">
+                        Save
+                      </div>
+                    </div>
+
+                    <div className="mt-5 gap-2.5 self-stretch py-4 text-base leading-none border-b border-solid border-b-neutral-700 text-neutral-200">
+                      History of notes
+                    </div>
+
+                    <div className="flex flex-col text-sm w-[100%] mt-5">
+                      <div className="flex gap-1 items-start self-start leading-none">
+                        <div className="flex-1 shrink gap-2.5 self-stretch px-3.5 py-2.5 border border-solid bg-zinc-800 border-neutral-700 rounded-[50px] text-neutral-400 w-[300px]">
+                          03:37 PM | 05/31/2024
+                        </div>
+                        <div className="gap-2.5 self-stretch p-2.5 font-semibold text-blue-400 whitespace-nowrap">
+                          Edit
+                        </div>
+                      </div>
+                      <div className="flex-1 shrink gap-2.5 self-stretch px-3.5 py-2.5 mt-2 w-full leading-4 rounded-lg border border-solid border-neutral-700 text-neutral-400">
+                        Joshua is a really dope producer for r&B, he mainly
+                        plays guitar and its very good at finger arpegios.
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
-          <div className="flex overflow-hidden flex-col px-3 py-2 w-full rounded-xl bg-zinc-900 max-md:max-w-full">
-            <textarea className="flex mb-3 resize-none overflow-hidden flex-col gap-2.5  px-3 py-2.5 w-full rounded-xl bg-zinc-900 max-md:max-w-full text-sm text-zinc-400"></textarea>
-            {/* <div className="flex-1 shrink gap-2.5 self-stretch py-2.5 w-full text-sm text-zinc-400 max-md:max-w-full">
-                            Hi Justin! Just wanted to see if you could help me out, i’ve seen you
-                            in the studio with Sabrina lately and wanted to send you a few files
-                            for your consideration. I Appreciate you!
-                        </div>
-                        <div className="flex flex-col justify-center items-start py-1 w-full max-md:max-w-full">
-                            <div className="flex gap-1 items-center p-3 rounded-2xl bg-neutral-800">
-                                <div className="flex gap-2.5 items-start self-stretch my-auto w-9">
-                                    <img  alt=""  
-                                        loading="lazy"
-                                        srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/bcba23ab-be95-48c3-90d2-886a2260bd29?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/bcba23ab-be95-48c3-90d2-886a2260bd29?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bcba23ab-be95-48c3-90d2-886a2260bd29?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/bcba23ab-be95-48c3-90d2-886a2260bd29?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/bcba23ab-be95-48c3-90d2-886a2260bd29?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bcba23ab-be95-48c3-90d2-886a2260bd29?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/bcba23ab-be95-48c3-90d2-886a2260bd29?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/bcba23ab-be95-48c3-90d2-886a2260bd29?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                                        className="object-contain w-9 h-9 bg-lime-400 rounded-full aspect-square"
-                                    />
-                                </div>
-                                <div className="flex relative flex-col self-stretch py-2.5 pr-2 pl-2.5 my-auto w-[120px]">
-                                    <img  alt=""  
-                                        loading="lazy"
-                                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/aa34de2b02702438fd5a8f8f63b99263c81db450bbb3093b62732f65094f2092?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                                        className="object-contain z-0 max-w-full aspect-[34.48] w-[100px]"
-                                    />
-                                    <div className="flex absolute bottom-1 left-1 z-0 w-3 h-3 rounded-full bg-zinc-400 min-h-[12px]" />
-                                </div>
-                                <div className="gap-2.5 self-stretch my-auto text-sm whitespace-nowrap text-zinc-400">
-                                    3:13
-                                </div>
-                            </div>
-                        </div> */}
-            <div className="flex flex-wrap gap-2 items-center w-full max-md:max-w-full">
-              <div className="flex gap-1 items-center self-stretch my-auto">
-                <div className="flex gap-2.5 items-start self-stretch p-2 my-auto w-10">
-                  <img
-                    alt=""
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/eee8529ef94cc52cf8b2a10c926846ef66f381b7e2b58c5a4b7644cd576a0579?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                    className="object-contain w-6 aspect-square"
-                  />
-                </div>
-                <div className="flex gap-2.5 items-start self-stretch p-2 my-auto w-10 rounded">
-                  <img
-                    alt=""
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/6b84c6d795d86f619c1b3c19630461f0f6075e13f87b82e24a801134796b5e08?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                    className="object-contain w-6 aspect-square"
-                  />
+          <div className="flex flex-col p-3 max-w-[783px] w-[700px]">
+            <div className="flex flex-col w-full relative top-[15px] z-[-1] text-sm font-semibold leading-none text-center rounded-none text-stone-500 max-md:max-w-full">
+              <div className="flex flex-col px-7 text-[#955353] pb-3 w-full bg-red-100 rounded-xl max-md:px-5 max-md:max-w-full">
+                <div className="gap-2.5 self-stretch py-2.5 min-h-[36px]">
+                  Messages with tip appear at the top of the recipient inbox
                 </div>
               </div>
-              <div className="flex items-start self-stretch p-0.5 my-auto">
-                <img
-                  alt=""
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/6b326cc3dc89ec7dad6c7544633a287ba5013434e6d70a3055ce9ab861f86f53?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                  className="object-contain w-0"
-                />
-              </div>
-              <div className="flex gap-1 items-start self-stretch my-auto">
-                <div className="flex gap-2.5 justify-center items-center p-2 w-10 rounded-lg">
-                  <img
-                    alt=""
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/373d5fe1b36a8fd81675bbb4b56d9eeebe18318d50f48d34bde94a6135660208?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                    className="object-contain self-stretch my-auto w-6 aspect-square"
-                  />
+            </div>
+            <div className="flex overflow-hidden flex-col justify-center px-3 pt-2 w-full rounded-xl border border-solid shadow-sm bg-neutral-900 border-blue-200 border-opacity-80 min-h-[119px] max-md:max-w-full">
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="focus:border-transparent focus:ring-0 resize-none bg-transparent border-none flex-1 shrink gap-2.5 self-stretch p-2.5 w-full text-base leading-none text-blue-200 whitespace-nowrap max-md:max-w-full"
+              />
+
+              <div className="flex flex-wrap gap-10 justify-between items-center w-full min-h-[56px] max-md:max-w-full">
+                <div className="flex gap-4 items-center self-stretch p-2 my-auto rounded-lg border border-solid border-neutral-700">
+                  <div className="flex flex-col self-stretch my-auto w-[79px]">
+                    <div className="gap-2.5 self-stretch w-full text-sm font-semibold leading-none text-white whitespace-nowrap">
+                      Tip
+                    </div>
+                    <div className="gap-2.5 mt-1 self-stretch w-full text-xs leading-none text-red-500">
+                      Min $3.00
+                    </div>
+                  </div>
+                  <div className="flex items-start self-stretch p-0.5 my-auto">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/2f9f55873e4b0ae9afa113c243c498bf83df88509960c8c9b6e1d53b5cfdd9ed?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                      className="object-contain w-0 stroke-[1px] stroke-neutral-700"
+                    />
+                  </div>
+                  <div className="self-stretch my-auto text-sm leading-none text-right whitespace-nowrap text-zinc-500 w-[60px] ">
+                    <input
+                      type="number"
+                      placeholder="0.00"
+                      className="bg-transparent max-w-[60px] border-none border-transparent focus:border-transparent focus:ring-0"
+                    />
+                  </div>
                 </div>
-                <div className="flex gap-2.5 items-start p-2 w-10 rounded">
-                  <img
-                    alt=""
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/5c0f5fa713157bf5047a922c38778a416e1b86c4edad324ba1d97d9a8138b057?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                    className="object-contain w-6 aspect-square"
-                  />
+
+                <div className="flex gap-1 items-center self-stretch my-auto">
+                  <div className="flex gap-1 items-center self-stretch my-auto">
+                    <div className="flex gap-2.5 items-center self-stretch p-2.5 my-auto w-11 rounded">
+                      <img
+                        loading="lazy"
+                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/08c2c08125b829bc38020e0b24f8b12a07fdfc63b37ceafdb612cfa611d38448?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                        className="object-contain self-stretch my-auto w-6 aspect-square"
+                      />
+                    </div>
+                    <div className="flex gap-2.5 items-center self-stretch p-2.5  rounded">
+                      <AudioRecorder
+                        onRecordingComplete={(e) =>
+                          addAudioElement(e, props?.conversation)
+                        }
+                        audioTrackConstraints={{
+                          noiseSuppression: true,
+                          echoCancellation: true,
+                        }}
+                        downloadOnSavePress={false}
+                        // showVisualizer={true}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-start self-stretch p-0.5 my-auto">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/5704eb9459095409e648ed32ab82c4e3f2ce7089517c323eeb336e9107cd2bf3?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                      className="object-contain w-0 stroke-[1px] stroke-stone-500"
+                    />
+                  </div>
+                  <div className="flex gap-2.5 items-center self-stretch p-2.5 my-auto w-11 rounded">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/a8d58bd050c9f06cd400385f88e0326420087a57eb897115f94c21286c3b7804?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                      className="object-contain self-stretch my-auto w-6 aspect-square"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-center self-stretch my-auto w-10">
+                    <PaperAirplaneIcon
+                      onClick={newMessage}
+                      className="flex gap-3 items-center p-2 w-full rounded-lg icon send-message text-[#FFFFFF] border-none cursor-pointer"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start self-stretch p-0.5 my-auto">
-                <img
-                  alt=""
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/6b326cc3dc89ec7dad6c7544633a287ba5013434e6d70a3055ce9ab861f86f53?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                  className="object-contain w-0"
-                />
-              </div>
-              <div className="flex flex-1 shrink gap-2.5 items-center self-stretch p-2 my-auto basis-0 min-w-[240px] max-md:max-w-full">
-                <img
-                  alt=""
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/9efad187f12b0e3d7ffe672302d5fd34c6dd4f1fb05363c3c73779a2288cb472?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                  className="object-contain self-stretch my-auto w-6 aspect-square"
-                />
-              </div>
-              <div className="flex gap-3 items-center self-stretch p-2 my-auto bg-lime-400 rounded">
-                <div className="cursor-pointer send-message flex gap-1 items-center self-stretch my-auto w-[19px]">
-                  <img
-                    alt=""
-                    loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/fe920fd7f145ac7f609376f3a9769ff89a98f893e6d25d2a1320c01f1fdda058?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                    className="object-contain self-stretch my-auto aspect-[1.06] w-[19px]"
-                  />
-                </div>
-                <img
-                  alt=""
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/0239824bb22a1c60b4d8a1f933858ac87400174ed8d15cd7598a1e9a5ea5ffd3?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                  className="object-contain shrink-0 self-stretch my-auto w-0"
-                />
-                <img
-                  alt=""
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/0769389dbb82b93c8534daf4ec0e4372f5e1a52a39d618a00d6596201fd81285?apiKey=e72c5327c3e8425eaa461e300549038a&&apiKey=e72c5327c3e8425eaa461e300549038a"
-                  className="object-contain shrink-0 self-stretch my-auto w-3 aspect-[2]"
-                />
               </div>
             </div>
           </div>

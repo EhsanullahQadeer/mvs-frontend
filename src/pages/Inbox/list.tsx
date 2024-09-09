@@ -119,12 +119,6 @@ const Conversations = (props: any) => {
   return (
     <>
       <div 
-        onClick={ async () => {
-            props.setLoading(true);
-            props.setActiveConversation(props.conversation)
-            await getConversationMessages(props.conversation.ConversationId)
-            props.setLoading(false);
-        }}
         className="cursor-pointer hover:bg-neutral-800 cursor-pointer  flex justify-between items-center px-3 py-2 w-full border-b border-gray-500 border-opacity-20 max-md:max-w-full">
         <div className="flex flex-wrap flex-1 shrink gap-3 items-center self-stretch my-auto w-full basis-0 min-w-[240px] max-md:max-w-full">
           <div className="flex gap-2 self-stretch my-auto min-w-[240px]">
@@ -145,14 +139,23 @@ const Conversations = (props: any) => {
                   </>
                 )}
               </div>
-              <div className="flex gap-1 items-center self-stretch my-auto">
-                {/* <div className="flex overflow-hidden flex-col justify-center items-center self-stretch p-2 my-auto w-8">
+              <div className="flex gap-1 items-center self-stretch my-auto"
+              
+              onClick={ async () => {
+                  props.setLoading(true);
+                  props.setActiveConversation(props.conversation)
+                  await getConversationMessages(props.conversation.conversation_id)
+                  props.setLoading(false);
+              }}
+              
+              >
+                <div className="flex overflow-hidden flex-col justify-center items-center self-stretch p-2 my-auto w-8">
                     <img
                         loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/28f53469e5185ff9d31d5f97cbc92bb4a08b519534846c2153a561633b702bac?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                        src="https://assets.mvssive.net/featured.svg"
                         className="object-contain w-4 aspect-square"
                     />
-                </div> */}
+                </div>
                 <div className="flex gap-2 items-center self-stretch my-auto">
                   <div className="flex gap-2.5 items-start self-stretch my-auto w-[52px]">
                     <img
@@ -165,9 +168,9 @@ const Conversations = (props: any) => {
                     <div className="text-sm leading-none text-white">
                       {props.conversation.displayName}
                     </div>
-                    {/* <div className="self-start px-1 py-0.5 mt-1 text-xs tracking-wide leading-tight text-lime-400 whitespace-nowrap bg-lime-800 rounded border border-lime-400 border-solid min-h-[16px]">
+                    <div className="self-start px-1 py-0.5 mt-1 text-xs tracking-wide leading-tight text-lime-400 whitespace-nowrap bg-lime-800 rounded border border-lime-400 border-solid min-h-[16px]">
                                             $434.99
-                                        </div> */}
+                                        </div>
                   </div>
                 </div>
               </div>
@@ -212,13 +215,26 @@ const MessagesList = (props) => {
   const state = useSelector((state: RootState) => state);
 
   useEffect(() => {
-    setLoadingConversations(true);
-    dispatch(
-      getInboxMessages({
-        paginateBackwards: 0,
-      })
-    );
+
+    getConversationList();
+    
   }, [dispatch]);
+
+
+  const getConversationList = async () => {
+
+    setLoadingConversations(true);
+
+      dispatch(
+        getInboxMessages({
+          paginateBackwards: 0,
+          skip:0,
+          take:10,
+          limit:10
+        })
+      );
+
+  }
 
 
   useEffect(() => {
@@ -247,7 +263,7 @@ const MessagesList = (props) => {
                 <div className="flex flex-1 shrink gap-2 items-center self-stretch my-auto w-full basis-0">
                   <img
                     loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/7c3ee12b66850f0a284625782f93c0e35aa3b24e2870b985ff08d830e76e290a?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                    src="https://assets.mvssive.net/search.svg"
                     className="object-contain shrink-0 self-stretch my-auto w-5 aspect-square"
                   />
                   <div className="flex-1 shrink gap-2.5 self-stretch my-auto">
@@ -266,7 +282,7 @@ const MessagesList = (props) => {
             <div className="flex justify-between items-center px-3 py-2 w-full max-md:max-w-full">
               <div className="flex flex-wrap flex-1 shrink justify-between items-center self-stretch my-auto w-full basis-0 min-w-[240px] max-md:max-w-full">
                 <div className="flex flex-1 shrink gap-2 items-center self-stretch my-auto basis-0 min-w-[240px] max-md:max-w-full">
-                  {/* <div className="flex gap-1 items-center self-stretch my-auto min-h-[32px]">
+                  <div className="flex gap-1 items-center self-stretch my-auto min-h-[32px]">
                     <div className="flex gap-1 items-center self-stretch my-auto rounded bg-zinc-900 min-h-[32px]">
                       <div className="flex justify-center items-center self-stretch px-1 my-auto w-8 rounded min-h-[32px]">
                         <div className="flex overflow-hidden justify-center items-center self-stretch my-auto w-6 min-h-[24px]">
@@ -276,73 +292,73 @@ const MessagesList = (props) => {
                       <div className="flex justify-center items-center self-stretch py-2 my-auto w-4">
                         <img
                           loading="lazy"
-                          src="https://cdn.builder.io/api/v1/image/assets/TEMP/20fb1a14e454f4be532947fd226d91921d1dec31b7a1350115a8c435e71f6fca?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                          src="https://assets.mvssive.net/arrow-down.svg"
                           className="object-contain self-stretch my-auto w-4 aspect-square"
                         />
                       </div>
                     </div>
-                  </div> */}
+                  </div>
                   <div className="flex gap-1 items-center self-stretch my-auto">
-                    {/* <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-neutral-800">
+                    <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-neutral-800">
                       <img
                         loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/99753b70e5ae3f177fcc2f9698a64a953a7288f8c42cedb68065253f9723529d?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                        src="https://assets.mvssive.net/menu-5.svg"
                         className="object-contain self-stretch my-auto w-4 aspect-square"
                       />
                     </div>
                     <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-zinc-900">
                       <img
                         loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/1bc4346dd15d9365f85b72e8b6c026e18b35ff0b75fd4022dc4343408e4ba66f?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
-                        className="object-contain self-stretch my-auto w-4 aspect-square"
-                      />
-                    </div> */}
-                    <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-zinc-900">
-                      <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/9d8dca5d006f40732f53943e371bc9c4c5886eb5f4f18244e6cc8406de43ba5f?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
-                        className="object-contain self-stretch my-auto w-4 aspect-square"
-                      />
-                    </div>
-                    {/* <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-zinc-900">
-                      <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c66cd95835fd6c5fd6d67806b5fd5e324a19d8190ad13a2a647ee7405fd88c6f?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                        src="https://assets.mvssive.net/menu-4.svg"
                         className="object-contain self-stretch my-auto w-4 aspect-square"
                       />
                     </div>
                     <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-zinc-900">
                       <img
                         loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/600605470c2cc3ff3767ff7e686190e74aad430649a8f15dc4f2e50ae65e6309?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                        src="https://assets.mvssive.net/menu-3.svg"
                         className="object-contain self-stretch my-auto w-4 aspect-square"
                       />
                     </div>
                     <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-zinc-900">
                       <img
                         loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/34f8698b837fa1de351ff7fd0af8e1b70ca47c419b2ff841cc06a160097a1a08?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
+                        src="https://assets.mvssive.net/menu-2.svg"
                         className="object-contain self-stretch my-auto w-4 aspect-square"
                       />
-                    </div> */}
+                    </div>
+                    <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-zinc-900">
+                      <img
+                        loading="lazy"
+                        src="https://assets.mvssive.net/menu-1.svg"
+                        className="object-contain self-stretch my-auto w-4 aspect-square"
+                      />
+                    </div>
+                    <div className="flex gap-2.5 justify-center items-center self-stretch px-2 my-auto w-8 h-8 rounded bg-zinc-900">
+                      <img
+                        loading="lazy"
+                        src="https://assets.mvssive.net/menu-list.svg"
+                        className="object-contain self-stretch my-auto w-4 aspect-square"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-3 items-center self-stretch my-auto">
-                  {/* <div className="gap-2.5 self-stretch p-2.5 my-auto text-sm leading-none text-neutral-400">
+                  <div className="gap-2.5 self-stretch p-2.5 my-auto text-sm leading-none text-neutral-400">
                     1-20 of 43
-                  </div> */}
-                  {/* <div className="flex gap-2 justify-center items-center self-stretch my-auto">
+                  </div>
+                  <div className="flex gap-2 justify-center items-center self-stretch my-auto">
                     <img
                       loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/c9fc6a4e6133bf349adf8fa489bd9a9e086c309036e805b45988ad25846061bd?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
-                      className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square"
+                      src="https://assets.mvssive.net/cursor-left.svg"
+                      className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square cursor-pointer"
                     />
                     <img
                       loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/1aeba66ba50e054d88ddb4f123f55f99884f99fd9e46cc2f139f825601004bd1?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
-                      className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square"
+                      src="https://assets.mvssive.net/cursor-right.svg"
+                      className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square cursor-pointer"
                     />
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>
