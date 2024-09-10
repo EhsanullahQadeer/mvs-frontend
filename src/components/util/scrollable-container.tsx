@@ -71,7 +71,7 @@ const ScrollableContainer = ({
         observer.disconnect();
       }
     };
-  }, []);
+  }, [setIsScrollableContainer]);
 
   const scrollLeft = () => {
     if (ref.current) {

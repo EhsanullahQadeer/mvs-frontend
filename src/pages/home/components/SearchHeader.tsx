@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import banner from "../../../assets/img/welcome-banner.svg";
 import leftWing from "../../../assets/img/left wing.svg";

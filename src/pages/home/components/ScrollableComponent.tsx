@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { GrFormLocation } from "react-icons/gr";
 import ScrollableContainer from "components/util/scrollable-container";
 import { useState, useEffect } from "react";
