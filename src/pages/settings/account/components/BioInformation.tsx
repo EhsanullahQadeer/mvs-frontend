@@ -7,86 +7,168 @@
 //*************************************************************************/
 
 /* LOCAL IMPORTS */
-import React from 'react'
-import Theme from 'theme'
+import React from "react";
+import sampleProfileImage from "../sampleAssets/Ellipse 730.png";
+import { FiCamera } from "react-icons/fi";
+import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
+import { ReactComponent as EditIcon } from "../../../../assets/icons/editPencilIcon.svg";
 
 // THIRD PARTY IMPORTS
-import { useState } from 'react'
+import { useState } from "react";
+import { Form, Formik } from "formik";
+import FormikField from "components/util/FormikField";
 
 const BioInformation: React.FC = () => {
   const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [formData, setFormData] = useState({
+  const [profileImage, setProfileImage] = useState(sampleProfileImage);
+  const [bgImage, setBgImage] = useState(null);
+
+  const initialValues = {
     username: "Serena",
     bio: "This is a sample bio of the user Serena.",
-  });
+    profileImage,
+    bgImage,
+  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleProfileImg = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+    }
+  };
+
+  const handleBgImg = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setBgImage(imageUrl);
+    }
+  };
+
+  const handleCancel = () => {};
+
+  const handleFormSubmit = (values: any) => {
+    console.log("values ", values);
   };
 
   return (
     <section>
-      <div className='pt-6 py-2.5 border-b border-[#242424] w-full'>
-        <div className="w-2/5 text-sm">
-          <div className="flex flex-col items-start px-4 py-2.5 gap-2 text-white rounded-lg">
-            <label className="block text-sm">Username:</label>
-            <input
-              style={{ background: "var(--Neutral-900, #131313)" }}
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              disabled={!isEditable}
-              className="w-full px-4 py-3 rounded-md border-[1px] text-coolGray border-none bg-darkGray"
-            />
-          </div>
-
-          {/* Bio */}
-          <div className="flex flex-col items-start px-4 py-2.5 gap-2  text-white rounded-lg">
-            <label className="block text-sm">Bio:</label>
-            <textarea
-              style={{ background: "var(--Neutral-900, #131313)" }}
-              name="bio"
-              value={formData.bio}
-              onChange={handleChange}
-              disabled={!isEditable}
-              className="w-full px-4 py-3 outline-none rounded-md border-[1px] text-coolGray border-none bg-darkGray resize-none"
-            ></textarea>
-          </div>
-
-          {/* Edit / Save Changes Button */}
-          <div className="flex px-4 pt-8 py-2.5 justify-start">
-            {isEditable ? (
-              <button
-                onClick={() => setIsEditable(false)}
-                className="whitespace-nowrap text-sm px-2 py-1 border-[1.5px] rounded-lg text-[#3D3D3D] border-[#2B2B2B] bg-[#161616]"
-              >
-                Save Changes
-              </button>
-            ) : (
-              <button
-              onClick={() => setIsEditable(true)}
-              className=" flex justify-between items-center gap-1 whitespace-nowrap px-2 py-1 border-[1.5px] rounded-lg text-[#3D3D3D] border-[#2B2B2B] bg-[#161616]"
+      <Formik initialValues={initialValues} onSubmit={handleFormSubmit}>
+        <Form>
+          <div className="w-full">
+            <div
+              style={{
+                background: bgImage
+                  ? `url(${bgImage})`
+                  : "linear-gradient(90deg, #7329E0 0%, #050100 50.5%, #006E89 100%)",
+              }}
+              className="py-4 px-5 relative bg-center bg-cover"
             >
-              <span className='text-sm '>
-              Edit
-              </span>
-              
-            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 16 17" fill="none">
-            <path d="M8 13.8332H14H8Z" fill="#666666"/>
-            <path d="M11 2.83316C11.2652 2.56794 11.6249 2.41895 12 2.41895C12.1857 2.41895 12.3696 2.45553 12.5412 2.5266C12.7128 2.59767 12.8687 2.70184 13 2.83316C13.1313 2.96448 13.2355 3.12038 13.3066 3.29196C13.3776 3.46354 13.4142 3.64744 13.4142 3.83316C13.4142 4.01888 13.3776 4.20277 13.3066 4.37435C13.2355 4.54594 13.1313 4.70184 13 4.83316L4.66667 13.1665L2 13.8332L2.66667 11.1665L11 2.83316Z" fill="#666666"/>
-          </svg>
-          </button>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
+              <div className="flex gap-3 items-center">
+                <div
+                  className={`relative rounded-full p-0.5 bg-gradient-to-r from-blue-500 to-lime-500 w-48 h-48`}
+                >
+                  <img
+                    src={profileImage}
+                    alt="Profile"
+                    className="h-full w-full rounded-full object-cover border-4 border-gray-900"
+                  />
 
-export default BioInformation
+                  {isEditable && (
+                    <div
+                      onClick={handleProfileImg}
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 bg-[#414040B2] rounded-full text-white flex items-center justify-center cursor-pointer"
+                    >
+                      <input
+                        accept="image/*"
+                        type="file"
+                        className="absolute w-full h-full opacity-0 cursor-pointer"
+                        onChange={handleProfileImg}
+                      />
+                      <FiCamera className="w-5 h-4" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="">
+                  <h2 className="text-xl font-semibold text-white">
+                    Serena Figueiro
+                  </h2>
+                  <p className="text-[#999999] text-sm font-normal">
+                    Buenos Aires, Argentina
+                  </p>
+                </div>
+              </div>
+
+              {isEditable && (
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-4 items-center">
+                  <div
+                    onClick={handleBgImg}
+                    className="relative w-[52px] h-[52px] bg-[#41404066] rounded-full text-white flex items-center justify-center cursor-pointer"
+                  >
+                    <input
+                      accept="image/*"
+                      type="file"
+                      className="absolute w-full h-full opacity-0 cursor-pointer"
+                      onChange={handleBgImg}
+                    />
+                    <FiCamera className="w-5 h-4" />
+                  </div>
+                  <div
+                    onClick={handleCancel}
+                    className="w-[52px] h-[52px] bg-[#41404066] rounded-full text-white flex items-center justify-center cursor-pointer"
+                  >
+                    <CancelIcon className="w-3 h-3" />
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="pt-8 py-2.5 border-b border-[#242424]">
+              <div className="w-2/5 text-sm">
+                <div className="flex flex-col items-start px-4 py-2.5 gap-2 text-white rounded-lg">
+                  <FormikField
+                    {...{ name: "username", label: "User Name", isEditable }}
+                  />
+                </div>
+
+                <div className="flex flex-col items-start px-4 py-2.5 gap-2 text-white rounded-lg">
+                  <FormikField
+                    {...{
+                      name: "bio",
+                      label: "Bio",
+                      isEditable,
+                      as: "textarea",
+                    }}
+                  />
+                </div>
+
+                {/* Edit / Save Changes Button */}
+                <div className="flex px-4 pt-8 py-2.5 justify-start">
+                  <button
+                    type={isEditable ? "button" : "submit"}
+                    onClick={() => setIsEditable(!isEditable)}
+                    className="flex justify-between items-center gap-1 whitespace-nowrap text-sm px-2 py-1 border-[1.5px] rounded-lg text-charcoalGray border-darkCharcoal bg-blackMarbel"
+                  >
+                    {isEditable ? (
+                      "Save Changes"
+                    ) : (
+                      <>
+                        <span className="text-sm">Edit</span>
+                        <div className="text-dimGray">
+                          <EditIcon />
+                        </div>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Form>
+      </Formik>
+    </section>
+  );
+};
+
+export default BioInformation;

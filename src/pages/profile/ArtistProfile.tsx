@@ -180,7 +180,7 @@ const ArtistProfile = () => {
                   className={`whitespace-nowrap text-sm px-2 py-1 border-[1.5px] rounded-lg ${
                     selectedRole === tab
                       ? " text-white border-hoveredparrot bg-[#C4FF4840]"
-                      : "text-[#C9C9C9] border-[#2B2B2B] bg-[#161616]"
+                      : "text-[#C9C9C9] border-darkCharcoal bg-blackMarbel"
                   } hover:text-white transition duration-300`}
                 >
                   {tab}

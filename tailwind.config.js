@@ -15,7 +15,6 @@ module.exports = {
         eclipseGray: "#242424",
         lightGray: "#F5F5F5",
         coolGray: "#848484",
-        neutralGray: "#666666",
         darkGray: "#131313",
         charcoalGray: "#3D3D3D",
         lightGreen: "#C4FF48",
@@ -29,7 +28,9 @@ module.exports = {
         slateGray: "rgba(104, 113, 126, 1)",
         hoveredparrot : "#C4FF48",
         eerieBlack: "#1C1C1C",
-        dimGray: "#666666"
+        dimGray: "#666666",
+        blackMarbel: "#161616",
+        darkCharcoal: "#2B2B2B"
       },
     },
   },

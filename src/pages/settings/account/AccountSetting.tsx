@@ -7,14 +7,14 @@
 //*************************************************************************/
 
 /* LOCAL IMPORTS */
-import React from 'react'
-import Theme from 'theme'
-import BioInformation from './components/BioInformation';
-import AccountInformation from './components/AccountInformation';
+import React from "react";
+import Theme from "theme";
+import BioInformation from "./components/BioInformation";
+import AccountInformation from "./components/AccountInformation";
 
 // THIRD PARTY IMPORTS
-import { useState } from 'react'
-import Address from './components/Address';
+import Address from "./components/Address";
+import RolesGenres from "./components/RolesGenres";
 
 const AccountSetting: React.FC = () => {
   return (
@@ -29,9 +29,10 @@ const AccountSetting: React.FC = () => {
       </h2>
       <BioInformation />
       <AccountInformation />
-      <Address/>
+      <Address />
+      <RolesGenres />
     </Theme>
-  )
-}
+  );
+};
 
-export default AccountSetting
+export default AccountSetting;
