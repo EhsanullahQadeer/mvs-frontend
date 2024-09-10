@@ -34,7 +34,7 @@ const RolesGenres = () => {
   return (
     <section className=" px-4 mt-10 py-5 border-b border-t border-[#242424] w-full">
       <Formik initialValues={initialValues} onSubmit={handleFormSubmit}>
-        {({}) => (
+        {() => (
           <Form>
             <div className="flex justify-between items-center">
               <h2 className={`text-white py-2.5 text-base font-semibold `}>

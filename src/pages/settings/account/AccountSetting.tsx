@@ -1,10 +1,10 @@
-//*************************************************************************
-// @file AccountSetting.tsx
-// @author Ehsanullah Qadeer
-// @desc component AccountSetting for account setting page.
-//
-// @copyright (c) 2024 MVSSIVE. All rights reserved.
-//*************************************************************************/
+/*************************************************************************
+ * @file Account-Information.tsx
+ * @author Ehsanullah Qadeer
+ * @desc  component AccountSetting for account setting page.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
 
 /* LOCAL IMPORTS */
 import React from "react";

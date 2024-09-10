@@ -1,10 +1,10 @@
-//*************************************************************************
-// @file BioInformation.tsx
-// @author Ehsanullah Qadeer
-// @desc component Bio-Information for account setting page.
-//
-// @copyright (c) 2024 MVSSIVE. All rights reserved.
-//*************************************************************************/
+/*************************************************************************
+ * @file Address.tsx
+ * @author Ehsanullah Qadeer
+ * @desc  component Bio-Information for account setting page..
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
 
 /* LOCAL IMPORTS */
 import React from "react";
@@ -35,6 +35,7 @@ const BioInformation: React.FC = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
+      e.target.value = null; // Reset the input
     }
   };
 
@@ -43,10 +44,13 @@ const BioInformation: React.FC = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setBgImage(imageUrl);
+      e.target.value = null; // Reset the input
     }
   };
 
-  const handleCancel = () => {};
+  const handleCancel = () => {
+    setBgImage(null);
+  };
 
   const handleFormSubmit = (values: any) => {
     console.log("values ", values);
@@ -104,7 +108,6 @@ const BioInformation: React.FC = () => {
               {isEditable && (
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-4 items-center">
                   <div
-                    onClick={handleBgImg}
                     className="relative w-[52px] h-[52px] bg-[#41404066] rounded-full text-white flex items-center justify-center cursor-pointer"
                   >
                     <input
