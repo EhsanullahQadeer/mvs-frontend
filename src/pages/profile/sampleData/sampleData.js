@@ -66,7 +66,6 @@ export const musicTableData = [
     status: "pending",
     considering: [
       { name: "User4", icon: sampleImg },
-      ,
       { name: "User5", icon: sampleImg },
     ],
   },
@@ -96,7 +95,6 @@ export const musicTableData = [
     status: "pending",
     considering: [
       { name: "User4", icon: sampleImg },
-      ,
       { name: "User5", icon: sampleImg },
     ],
   },
@@ -126,7 +124,6 @@ export const musicTableData = [
     status: "pending",
     considering: [
       { name: "User4", icon: sampleImg },
-      ,
       { name: "User5", icon: sampleImg },
     ],
   },
@@ -156,7 +153,6 @@ export const musicTableData = [
     status: "pending",
     considering: [
       { name: "User4", icon: sampleImg },
-      ,
       { name: "User5", icon: sampleImg },
     ],
   },
@@ -186,7 +182,6 @@ export const musicTableData = [
     status: "pending",
     considering: [
       { name: "User4", icon: sampleImg },
-      ,
       { name: "User5", icon: sampleImg },
     ],
   },
@@ -216,7 +211,6 @@ export const musicTableData = [
     status: "pending",
     considering: [
       { name: "User4", icon: sampleImg },
-      ,
       { name: "User5", icon: sampleImg },
     ],
   },
