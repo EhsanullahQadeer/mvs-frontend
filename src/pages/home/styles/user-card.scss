@@ -1,0 +1,11 @@
+.user-card-wrap{
+    .img-container {
+        background: rgba(0, 0, 0, 0.2);
+        transition: background 0.3s ease;
+      }
+      
+      .img-container:hover {
+        background: rgba(0, 0, 0, 0);
+      }
+      
+}
