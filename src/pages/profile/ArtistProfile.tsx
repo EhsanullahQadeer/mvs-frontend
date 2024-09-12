@@ -13,51 +13,110 @@ import ScrollableContainer from "components/util/scrollable-container";
 import ProfileCards from "./components/ProfileCards";
 import { Data, musicTableData } from "./sampleData/sampleData";
 import cardpic from "./sampleData/download.png";
-import getMuiStyles from "styles/getMuiStyles";
+// import getMuiStyles from "styles/getMuiStyles";
 import MusicTable from "./components/MusicTable";
 
 // THIRD PARTY IMPORTS
-import { InputAdornment, TextField } from "@mui/material";
-import { FiSearch } from "react-icons/fi";
+// import { InputAdornment, TextField } from "@mui/material";
+// import { FiSearch } from "react-icons/fi";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { artistProfileAPI, getArtistCredits } from "api/user";
+import { IArtistProfileData, MusicTableArr } from "./components/types";
+import { getUserSamplesAPI } from "api/sounds";
 
 const ArtistProfile = () => {
   const location = useLocation();
   const isWikiProfile = location.pathname.includes("artist-wiki-profile");
   const [selectedTab, setSelectedTab] = useState("Instrumentals");
   const [selectedRole, setSelectedRole] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMusicType, setSelectedMusicType] = useState("");
-  const [isConnect, setIsConnect] = useState(false);
+  // const [searchQuery, setSearchQuery] = useState("");
+  // const [selectedMusicType, setSelectedMusicType] = useState("");
+  const [isConnect, setIsConnect] = useState(true);
+  const [artistData, setArtistData] = useState<IArtistProfileData | null>(null);
+  const [musicTableArr, setMusicTableArr] = useState<MusicTableArr | null>(
+    null
+  );
+
+  const [creditsData, setCreditsData] = useState()
 
   const tabs = ["Instrumentals", "Samples", "Full Songs"];
-  const roles = [
-    "Composer",
-    "Lyricist",
-    "Primary Artist",
-    "Vocals",
-    "Guitar",
-    "Publisher",
-    "Featured Artist",
-    "Background Vocals",
-    "Instruemental",
-    "Remixed",
-  ];
+  // const roles = [
+  //   "Composer",
+  //   "Lyricist",
+  //   "Primary Artist",
+  //   "Vocals",
+  //   "Guitar",
+  //   "Publisher",
+  //   "Featured Artist",
+  //   "Background Vocals",
+  //   "Instruemental",
+  //   "Remixed",
+  // ];
 
-  const musicType = ["reggaeton", "synth", "guitar", "dark"];
+  // const musicType = ["reggaeton", "synth", "guitar", "dark"];
 
   // hook for mui styles
-  const muiStyles = getMuiStyles();
+  // const muiStyles = getMuiStyles();
+
+  const artistName = location.pathname.split("/").pop();
+
+  const getArtistData = async () => {
+    try {
+      const response = await artistProfileAPI(artistName);
+      if (response.data) {
+        console.log("response", response.data);
+        setArtistData(response.data);
+        getCredits(response.data.spotify_artist_id)
+        return;
+      }
+    } catch (e) {
+      return;
+    }
+  };
+
+  const getCredits = async (spotifyId: string) => {
+    try {
+      const response = await getArtistCredits({
+        spotify_artist_id: spotifyId,
+        skip: 0,
+        limit: 10,
+        take: 10,
+      });
+      setCreditsData(response.data)
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  useEffect(() => {
+    getArtistData();
+  }, []);
+
+  useEffect(() => {
+    if (artistData) {
+      getMusicTableData(artistData.cognito_id);
+    }
+  }, [artistData]);
+
+  const getMusicTableData = async (cognito_id: string) => {
+    try {
+      const response = await getUserSamplesAPI({ cognito_id });
+      if (response.data) {
+        console.log("getMusicTableData", response.data.results);
+        setMusicTableArr(response.data.results);
+        return;
+      }
+    } catch (e) {
+      return;
+    }
+  };
 
   return (
     <Theme>
       <div className={`${isWikiProfile ? "flex flex-col gap-2 m-3" : ""}`}>
         <ProfileHeader
-          isWikiProfile={isWikiProfile}
-          setIsConnect={setIsConnect}
-          isConnect={isConnect}
+          {...{ isWikiProfile, setIsConnect, isConnect, artistData }}
         />
         <section
           style={{
@@ -75,9 +134,7 @@ const ArtistProfile = () => {
           >
             About
           </h2>
-          <div
-            className="flex flex-col gap-2 font-normal text-coolGray text-sm"
-          >
+          <div className="flex flex-col gap-2 font-normal text-coolGray text-sm">
             <p>
               Becky Hill is a British singer and songwriter known for her
               powerful vocals and energetic performances. Born Rebecca Hill on
@@ -113,7 +170,9 @@ const ArtistProfile = () => {
               Credits
             </h2>
             <span
-              className={`text-coolGray text-sm ${isWikiProfile ? "" : "hidden"}`}
+              className={`text-coolGray text-sm ${
+                isWikiProfile ? "" : "hidden"
+              }`}
             >
               {" "}
               View All
@@ -141,9 +200,7 @@ const ArtistProfile = () => {
             </div>
           </ScrollableContainer>
         </section>
-        <section
-          className={`px-5 py-3 mb-8 ${isWikiProfile ? "bg-eerieBlack" : ""}`}
-        >
+        <section className={`px-5 py-3 mb-8 ${isWikiProfile ? "hidden" : ""}`}>
           <div
             className={`text-coolGray flex flex-col ${
               isWikiProfile ? "hidden" : "flex"
@@ -166,7 +223,7 @@ const ArtistProfile = () => {
               ))}
             </div>
           </div>
-          <div
+          {/* <div
             className={`text-coolGray flex flex-col ${
               !isWikiProfile ? "hidden" : "flex"
             }`}
@@ -187,11 +244,11 @@ const ArtistProfile = () => {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
         </section>
 
         <section className={`${isWikiProfile ? "hidden" : "block"} px-5`}>
-          <div className="flex gap-2 mb-4">
+          {/* <div className="flex gap-2 mb-4">
             <div className="w-44">
               <TextField
                 placeholder="search anything..."
@@ -225,7 +282,7 @@ const ArtistProfile = () => {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
           <div
             className="relative"
             style={{ filter: !isConnect ? "blur(5px)" : "none" }}

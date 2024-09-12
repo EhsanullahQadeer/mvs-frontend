@@ -13,15 +13,12 @@ import CustomPopper from "./CutomPopperSearch";
 import { spotifySearch, spotifySearchTopArtist } from "api/spotify";
 import useDebounce from "hooks/useDebounce";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Link, useNavigate } from "react-router-dom";
-import { storeSpotifyArtist } from "api/user";
+import { storeSpotifyArtist, userArtistSearch } from "api/user";
+import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 export interface IAppProps {}
 
-export function SearchHeader(
-  props: IAppProps
-) {
-  const navigate = useNavigate();
-
+export function SearchHeader(props: IAppProps) {
+  const { handleArtistSelected } = useHandleArtistSelected();
   const [topRatedArtist, setTopRatedArtist] = useState([]);
   const [spotifySearchResult, setSpotifySearchResult] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -38,9 +35,11 @@ export function SearchHeader(
 
   useEffect(() => {
     (async () => {
-      const response = await spotifySearchTopArtist({ 
-        limit: 10 
+      const response = await spotifySearchTopArtist({
+        limit: 10,
       });
+      console.log("list response withput serach", response.data.results);
+
       setTopRatedArtist(response.data.results);
     })();
   }, []);
@@ -50,10 +49,11 @@ export function SearchHeader(
       (async () => {
         try {
           setLoading(true);
-          const spotifyResponse = await spotifySearch({
+          const spotifyResponse = await userArtistSearch({
             limit: 10,
             query: debouncedSearchValue,
           });
+          console.log("list response with serach", spotifyResponse.data);
           setSpotifySearchResult(spotifyResponse.data);
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -61,8 +61,7 @@ export function SearchHeader(
           setLoading(false);
         }
       })();
-    } 
-    else {
+    } else {
       setSpotifySearchResult([]);
     }
   }, [debouncedSearchValue]);
@@ -132,44 +131,35 @@ export function SearchHeader(
                     <div className="h-4 sticky bottom-0 bg-[#1C1C1C]"></div>
                   </li>
                 )}
-
                 renderOption={(props, option, { selected, index }) => (
                   <li
-                  {...props}
-                  className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-[#0F0F0F] ${
-                    props["aria-selected"] ? "bg-[#0F0F0F]" : ""
-                  }`}
-                  onClick={async (e) => {
-                    // Prevent default navigation behavior
-                    e.preventDefault();
+                    {...props}
+                    className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-[#0F0F0F] ${
+                      props["aria-selected"] ? "bg-[#0F0F0F]" : ""
+                    }`}
+                    onClick={async (e) => {
+                      // Prevent default navigation behavior
+                      e.preventDefault();
 
-                    // API call
-                    const response = await storeSpotifyArtist(
-                      option?.id,
-                      option?.name,
-                      option?.popularity,
-                      option?.thumbnail,
-                      option?.type,
-                    );
-
-                    // Once the API call is done, navigate to the profile page
-                    navigate(`/artist-profile/${option.id}`);
-                  }}
-                >
-                  <img
-                    src={option.thumbnail}
-                    alt={option.name}
-                    className="w-10 h-10 rounded-md"
-                  />
-                  <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
-                    <span className="text-gainsboro text-sm">{option.name}</span>
-                    <span className="text-charcoalGray text-xs">
-                      From <span className="text-coolGray">{option.type}</span>
-                    </span>
-                  </div>
-                </li>
+                      handleArtistSelected(option);
+                    }}
+                  >
+                    <img
+                      src={option.thumbnail}
+                      alt={option.name}
+                      className="w-10 h-10 rounded-md"
+                    />
+                    <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
+                      <span className="text-gainsboro text-sm">
+                        {option.name}
+                      </span>
+                      <span className="text-charcoalGray text-xs">
+                        From{" "}
+                        <span className="text-coolGray">{option.type}</span>
+                      </span>
+                    </div>
+                  </li>
                 )}
-
                 renderInput={(params) => (
                   <TextField
                     onChange={handleSearchInput}
@@ -206,16 +196,16 @@ export function SearchHeader(
               <div className="absolute left-[9px] top-1/2 -translate-y-1/2">
                 <SearchIcon />
               </div>
-                <div
-                  className="bg-[#1C1C1C] absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer"
-                  onClick={handleCancelBtn}
-                >
-                  {loading ? (
-                    <CircularProgress style={{color:"#C4FF48"}} size={20} />
-                  ) : (
-                    searchInput && <MdCancel className="h-5 w-5" />
-                  )}
-                </div>
+              <div
+                className="bg-[#1C1C1C] absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer"
+                onClick={handleCancelBtn}
+              >
+                {loading ? (
+                  <CircularProgress style={{ color: "#C4FF48" }} size={20} />
+                ) : (
+                  searchInput && <MdCancel className="h-5 w-5" />
+                )}
+              </div>
             </div>
           </div>
           <div className="flex items-end">

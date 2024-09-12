@@ -41,7 +41,7 @@ const Home = (
       })
     );
 
-    userTags.forEach((tag) => {
+    userTags.forEach((tag) => {      
       const result = results.find((res) => res.tag === tag);
       if (result) {
         usersData[tag] = result.users;
@@ -51,6 +51,8 @@ const Home = (
     setUsersByTag(usersData);
   };
 
+  console.log('usersByTag ', usersByTag);
+  
   useEffect(() => {
     fetchUsersByTags();
   }, []);

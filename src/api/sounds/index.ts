@@ -29,6 +29,10 @@ export async function getSampleDownloadsAPI(id: any, params: any) {
   return axiosInstance.get(`/sounds/sample/${id}/downloads`, { params });
 }
 
+export async function getUserSamplesAPI(params: any) {
+  return axiosInstance.get(`/sounds/get-user-samples`, { params });
+}
+
 export async function sampleLikeAPI(id: any) {
   return axiosInstance.post(`/sounds/sample/${id}/like`);
 }

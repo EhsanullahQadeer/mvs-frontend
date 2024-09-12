@@ -26,7 +26,7 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
     imageurl,
     title,
     singer,
-    date,
+    // date,
     p1,
     //  p2, p3
   } = props;
@@ -36,7 +36,7 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
       <div
         className={`rounded-md p-3 border-[1px] border-eclipseGray bg-darkGray`}
       >
-        <div className="flex gap-3 items-center rounded-md">
+        <div className="flex gap-3 rounded-md">
           <div className="w-24 h-24 object-cover">
             <img
               src={imageurl}
@@ -45,11 +45,11 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
             />
           </div>
           <div className="flex flex-col gap-0.5">
-            <h2 className="text-white font-medium">{title}</h2>
-            <p className="text-lightGray text-sm">{singer}</p>
-            <p className="text-coolGray text-xs">{date}</p>
+            <h2 className="text-white font-semibold text-xs">{title}</h2>
+            <p className="text-[#E5E5E5] text-[10px] font-medium">{singer}</p>
+            {/* <p className="text-coolGray text-xs">{date}</p> */}
 
-            <div className="flex mt-3 gap-1.5">
+            <div className="flex mt-3 gap-1.5 opacity-0 pointer-events-none">
               <button className="text-white h-6 text-xs flex items-center justify-center bg-eclipseGray p-2 rounded text-[10px]">
                 {p1}
               </button>

@@ -137,7 +137,7 @@ const routes: IRoute[] = [
     component: ArtistProfile,
   },
   {
-    path: "/artist-profile/:id",
+    path: "/artist-profile/:username",
     name: "Artist Profile",
     component: ArtistProfile,
   },
