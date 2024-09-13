@@ -13,7 +13,7 @@ import CustomPopper from "./CutomPopperSearch";
 import { spotifySearch, spotifySearchTopArtist } from "api/spotify";
 import useDebounce from "hooks/useDebounce";
 import CircularProgress from "@mui/material/CircularProgress";
-import { storeSpotifyArtist, userArtistSearch } from "api/user";
+import { userArtistSearch } from "api/user";
 import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 export interface IAppProps {}
 
@@ -106,7 +106,7 @@ export function SearchHeader(props: IAppProps) {
               <Autocomplete
                 inputValue={searchInput}
                 freeSolo
-                getOptionLabel={(option) => option.name || ""}
+                getOptionLabel={(option) => option.artist_name || ""}
                 options={topResults}
                 PopperComponent={CustomPopper}
                 groupBy={() => "Top Results"}
@@ -146,12 +146,12 @@ export function SearchHeader(props: IAppProps) {
                   >
                     <img
                       src={option.thumbnail}
-                      alt={option.name}
+                      alt={option.artist_name}
                       className="w-10 h-10 rounded-md"
                     />
                     <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
                       <span className="text-gainsboro text-sm">
-                        {option.name}
+                        {option.artist_name}
                       </span>
                       <span className="text-charcoalGray text-xs">
                         From{" "}

@@ -18,3 +18,15 @@ export interface IGetArtistCreditsParams {
   take: number;
   spotify_artist_id: string;
 }
+export interface IgetArtistInfoParams {
+  spotify_artist_id: string
+}
+
+export interface IstoreSpotifyArtistBody {
+  spotify_artist_id: string;
+  artist_name: string;
+  popularity: number;
+  thumbnail: string;
+  tag: string;
+  followers: number;
+}

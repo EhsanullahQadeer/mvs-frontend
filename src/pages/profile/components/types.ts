@@ -1,4 +1,4 @@
-export type IArtistProfileData = {
+export interface IUserData {
   active: boolean;
   address: string | null;
   artist_name: string;
@@ -33,6 +33,10 @@ export type IArtistProfileData = {
   total_messages: number;
   updated_at: string; // ISO date string
   username: string;
+  bio: string;
+}
+export interface IArtistProfileData extends IUserData {
+  available: IUserData
 };
 
 type IAudioFile = {

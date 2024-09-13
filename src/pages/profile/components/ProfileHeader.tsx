@@ -8,7 +8,10 @@
 
 /* LOCAL IMPORTS */
 // import profileImage from "../sampleData/Ellipse 730.png";
-import { FiEdit3, FiUserPlus } from "react-icons/fi";
+import {
+  // FiEdit3,
+  FiUserPlus,
+} from "react-icons/fi";
 import { MdVerified } from "react-icons/md";
 import { LiaEllipsisVSolid } from "react-icons/lia";
 // import { IoLocationOutline } from "react-icons/io5";
@@ -25,12 +28,15 @@ interface ProfileHeaderProps {
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
   const { isWikiProfile, setIsConnect, isConnect, artistData } = props;
+
   const handleConnect = () => {
     setIsConnect(true);
   };
 
-  const { first_name, last_name, username, thumbnail, artist_name } = artistData || {};
-
+  const { username, thumbnail, artist_name, bio } =
+    artistData?.available ?? artistData ?? {};
+  const truncatedBio =
+    bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
   return (
     <>
       <header
@@ -79,7 +85,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
             </h1>
             {!isWikiProfile ? (
               <span className="text-xs font-semibold text-[#DADADA]">
-                {username}
+                @{username}
               </span>
             ) : (
               <></>
@@ -105,9 +111,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
                 isWikiProfile ? "hidden" : "flex"
               } `}
             >
-              Becky Hill is a British singer-songwriter known for her powerful
-              vocals and hit singles like "Wish You Well" and "Better Off
-              Without You." She's a former "The Voice UK" contestant.{" "}
+              {truncatedBio}
             </p>
 
             <div
@@ -178,11 +182,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
             </div> */}
           </div>
         </div>
-        {!isWikiProfile && (
+        {/* {!isWikiProfile && (
           <button>
             <FiEdit3 className="text-coolGray text-xl" />
           </button>
-        )}
+        )} */}
       </header>
     </>
   );

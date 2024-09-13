@@ -8,7 +8,7 @@
 
 /* LOCAL IMPORTS */
 import axiosInstance from "../axios";
-import { IGetArtistCreditsParams, IUsersSearchParams, UserFiltersDTO } from "../user/types";
+import { IGetArtistCreditsParams, IgetArtistInfoParams, IstoreSpotifyArtistBody, IUsersSearchParams, UserFiltersDTO } from "../user/types";
 
 export async function requestInvitationCodeWithEmailAPI(data: any) {
   return axiosInstance.post("/users/request/access", data);
@@ -72,37 +72,12 @@ export async function getArtistCredits(params: IGetArtistCreditsParams) {
     params,
   });
 }
-
-// export async function storeSpotifyArtist(
-//   spotifyArtistId: string,
-//   artistName: string,
-//   artistPopularity: number,
-//   artistThumbnail: string,
-//   artistTag: 'artist',
-// ) {
-//   // Use 'data' instead of 'params' for POST request body
-//   return axiosInstance.post(`/misc/store-artist-info`, {
-//     spotifyArtistId: spotifyArtistId,
-//     artistName: artistName,
-//     artistPopularity: artistPopularity,
-//     artistThumbnail: artistThumbnail,
-//     artistTag: artistTag,
-//   });
-// }
-
-export async function storeSpotifyArtist(
-  spotifyArtistId: string,
-  artistName: string,
-  artistPopularity: number,
-  artistThumbnail: string,
-  artistTag: "artist"
-) {
-  // Use 'data' instead of 'params' for POST request body
-  return axiosInstance.post(`/misc/store-artist-wiki`, {
-    spotifyArtistId: spotifyArtistId,
-    artistName: artistName,
-    artistPopularity: artistPopularity,
-    artistThumbnail: artistThumbnail,
-    artistTag: artistTag,
+export async function getArtistInfo(params: IgetArtistInfoParams) {
+  return axiosInstance.get(`/users/get-artist-info`, {
+    params,
   });
+}
+
+export async function storeSpotifyArtist(body: IstoreSpotifyArtistBody) {
+  return axiosInstance.post(`/misc/store-artist-wiki`, body);
 }

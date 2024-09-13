@@ -24,7 +24,7 @@ import CheckScrolling from "./CheckScrolling";
 import ArtistProfile from "./profile/ArtistProfile";
 import AccountSetting from "./settings/account/AccountSetting";
 
- interface IRoute {
+interface IRoute {
   path: string;
   name: string;
   component: any;
@@ -132,7 +132,7 @@ const routes: IRoute[] = [
     component: SamplesPage,
   },
   {
-    path: "/artist-wiki-profile/:id",
+    path: "/artist-wiki-profile/:spotify_artist_id",
     name: "Artist Profile",
     component: ArtistProfile,
   },

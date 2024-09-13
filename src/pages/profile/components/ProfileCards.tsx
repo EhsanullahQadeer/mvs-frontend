@@ -10,46 +10,40 @@ import React from "react";
 
 // Define a TypeScript interface for props
 interface ProfileCardsProps {
-  imageurl: string;
-  title: string;
-  singer: string;
-  date: string;
-  p1: string;
-  p2: string;
-  p3: string;
-  isWikiProfile?: boolean;
+  thumbnail: string;
+  track_name: string;
+  artists: any;
 }
 
 const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
   const {
-    // isWikiProfile,
-    imageurl,
-    title,
-    singer,
-    // date,
-    p1,
-    //  p2, p3
+    thumbnail,
+    track_name,
+    artists,
   } = props;
+  const { artist_name } = artists[0];
 
   return (
     <>
       <div
-        className={`rounded-md p-3 border-[1px] border-eclipseGray bg-darkGray`}
+        className={`w-[310px] cursor-grab rounded-md p-3 border-[1px] border-eclipseGray bg-darkGray`}
       >
         <div className="flex gap-3 rounded-md">
           <div className="w-24 h-24 object-cover">
             <img
-              src={imageurl}
-              alt="Side Effects Album Cover"
+              src={thumbnail}
+              alt="credits"
               className="w-full h-full object-cover rounded-md"
             />
           </div>
           <div className="flex flex-col gap-0.5">
-            <h2 className="text-white font-semibold text-xs">{title}</h2>
-            <p className="text-[#E5E5E5] text-[10px] font-medium">{singer}</p>
+            <h2 className="text-white font-semibold text-xs">{track_name}</h2>
+            <p className="text-[#E5E5E5] text-[10px] font-medium">
+              {artist_name}
+            </p>
             {/* <p className="text-coolGray text-xs">{date}</p> */}
 
-            <div className="flex mt-3 gap-1.5 opacity-0 pointer-events-none">
+            {/* <div className="flex mt-3">
               <button className="text-white h-6 text-xs flex items-center justify-center bg-eclipseGray p-2 rounded text-[10px]">
                 {p1}
               </button>
@@ -59,7 +53,7 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
               <button className="text-white w-full h-6 text-xs flex  items-center justify-center bg-eclipseGray p-2 rounded text-[10px]">
                 {p1}
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
