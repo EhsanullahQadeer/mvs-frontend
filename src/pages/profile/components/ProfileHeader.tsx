@@ -14,8 +14,6 @@ import {
 } from "react-icons/fi";
 import { MdVerified } from "react-icons/md";
 import { LiaEllipsisVSolid } from "react-icons/lia";
-// import { IoLocationOutline } from "react-icons/io5";
-// import { LuCake, LuHome } from "react-icons/lu";
 import { FiSend } from "react-icons/fi";
 import { IArtistProfileData } from "./types";
 
@@ -75,7 +73,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
                 isWikiProfile ? "justify-center font-semibold" : ""
               }`}
             >
-              {/* {first_name + " " + last_name} */}
               {artist_name}
               <MdVerified
                 className={`ml-1 text-lime-400  ${
@@ -89,21 +86,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
               </span>
             ) : (
               <></>
-              // <div className="flex gap-5 justify-center text-xs text-[#e5e5e5]">
-              //   <span className="flex gap-1 item-center">
-              //     <IoLocationOutline className="text-xs" />
-              //     London, UK
-              //   </span>
-              //   <span className="flex gap-1 item-center">
-              //     <LuCake className="text-xs" /> Mar 28th, 1986{" "}
-              //     <span className="text-[#848484]">(38 Years)</span>
-              //   </span>
-              //   <span className="flex gap-1 item-center">
-              //     <LuHome className="text-xs" />
-
-              //     <span>Polydor Records</span>
-              //   </span>
-              // </div>
             )}
 
             <p
@@ -149,19 +131,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
                 <LiaEllipsisVSolid className="text-xl font-semibold" />
               </button>
             </div>
-            {/* <div
+            <div
               className={`gap-1.5 text-center justify-center ${
                 !isWikiProfile ? "hidden" : "flex"
               } `}
             >
-              <button className="flex font-medium px-3 py-2 items-center text-xs bg-green-500 text-black rounded-lg transition bg-limeGreen">
-                Singer/Songwriter
-              </button>
-              <button className="flex gap-2 px-3 py-2 items-center   bg-transparent text-white border text-xs border-white  rounded-lg cursor-pointer transition">
+              <button className="flex gap-2 px-3 py-2 items-center   bg-transparent text-white border text-xs border-white  rounded-full cursor-pointer transition">
                 <FiUserPlus className="text-base" />
                 <span>Follow</span>
               </button>
-              <button className="flex gap-2 px-3 py-2 items-center bg-transparent text-white border text-xs border-white  rounded-lg cursor-pointer transition">
+              <button className="flex gap-2 px-3 py-2 items-center bg-transparent text-white border text-xs border-white  rounded-full cursor-pointer transition">
                 <svg
                   className="text-white"
                   xmlns="http://www.w3.org/2000/svg"
@@ -179,14 +158,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
                 </svg>
                 <span>Join Waitlist</span>
               </button>
-            </div> */}
+            </div>
           </div>
         </div>
-        {/* {!isWikiProfile && (
-          <button>
-            <FiEdit3 className="text-coolGray text-xl" />
-          </button>
-        )} */}
       </header>
     </>
   );

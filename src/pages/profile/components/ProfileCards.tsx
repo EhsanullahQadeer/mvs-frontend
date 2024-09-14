@@ -29,31 +29,18 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
         className={`w-[310px] cursor-grab rounded-md p-3 border-[1px] border-eclipseGray bg-darkGray`}
       >
         <div className="flex gap-3 rounded-md">
-          <div className="w-24 h-24 object-cover">
+          <div className="min-w-[84px] h-[84px] ">
             <img
               src={thumbnail}
               alt="credits"
-              className="w-full h-full object-cover rounded-md"
+              className="w-full h-full object-contain rounded-md"
             />
           </div>
           <div className="flex flex-col gap-0.5">
-            <h2 className="text-white font-semibold text-xs">{track_name}</h2>
+            <h2 className="text-white font-semibold text-xs text-wrap">{track_name}</h2>
             <p className="text-[#E5E5E5] text-[10px] font-medium">
               {artist_name}
             </p>
-            {/* <p className="text-coolGray text-xs">{date}</p> */}
-
-            {/* <div className="flex mt-3">
-              <button className="text-white h-6 text-xs flex items-center justify-center bg-eclipseGray p-2 rounded text-[10px]">
-                {p1}
-              </button>
-              <button className="text-white w-full h-6 text-xs flex  items-center justify-center bg-eclipseGray p-2 rounded text-[10px]">
-                {p1}
-              </button>
-              <button className="text-white w-full h-6 text-xs flex  items-center justify-center bg-eclipseGray p-2 rounded text-[10px]">
-                {p1}
-              </button>
-            </div> */}
           </div>
         </div>
       </div>

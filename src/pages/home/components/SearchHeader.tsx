@@ -70,6 +70,12 @@ export function SearchHeader(props: IAppProps) {
     setSearchInput(e.target.value);
   };
 
+  useEffect(() => {
+    console.log("topRatedArtist", topRatedArtist);
+
+  } , [topRatedArtist])
+  
+
   return (
     <div className="search-header-wrap w-full relative">
       <img src={banner} alt="banner" className="h-full w-full banner" />

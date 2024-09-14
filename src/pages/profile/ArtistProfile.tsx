@@ -21,6 +21,7 @@ import {
   IArtistProfileData,
   // MusicTableArr
 } from "./components/types";
+import { CircularProgress } from "@mui/material";
 // import { getUserSamplesAPI } from "api/sounds";
 
 const ArtistProfile = () => {
@@ -30,6 +31,7 @@ const ArtistProfile = () => {
   const [selectedTab, setSelectedTab] = useState("Instrumentals");
   const [isConnect, setIsConnect] = useState(true);
   const [artistData, setArtistData] = useState<IArtistProfileData | null>(null);
+  const [isLoading, setLoading] = useState(true);
   const { bio } = artistData?.available || {};
 
   // const [musicTableArr, setMusicTableArr] = useState<MusicTableArr | null>(
@@ -71,6 +73,8 @@ const ArtistProfile = () => {
       setCreditsData(response.data.data);
     } catch (error) {
       console.log("error", error);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -98,158 +102,121 @@ const ArtistProfile = () => {
 
   return (
     <Theme>
-      <div className={`${isWikiProfile ? "flex flex-col gap-2 m-3" : ""}`}>
-        <ProfileHeader
-          {...{ isWikiProfile, setIsConnect, isConnect, artistData }}
-        />
-        <section
-          className={`px-5 py-3 rounded-t-lg border border-[#242424] ${
-            isWikiProfile ? "block bg-eerieBlack" : "hidden"
-          }`}
-        >
-          <h2
-            style={{
-              borderBottom: "1px solid var(--Neutral-700, #242424)",
-            }}
-            className="text-gainsBoro pb-3 text-base font-semibold"
-          >
-            About
-          </h2>
-          <div className="pt-4 pb-1 flex flex-col gap-2 font-normal text-coolGray text-sm">
-            <p dangerouslySetInnerHTML={{ __html: bio }} />
-          </div>
-        </section>
-        <section
-          className={`px-5 py-3 rounded-b-lg ${
-            isWikiProfile ? "border border-[#242424] bg-eerieBlack" : ""
-          }`}
-        >
-          <div className="flex justify-between items-center">
-            <h2
-              className={`text-gainsBoro mb-3 ${
-                isWikiProfile ? " text-base font-semibold " : ""
-              }`}
-            >
-              Credits
-            </h2>
-            <span
-              className={`text-coolGray text-sm cursor-pointer ${
-                isWikiProfile ? "" : "hidden"
-              }`}
-            >
-              View All
-            </span>
-          </div>
-          <ScrollableContainer
-            {...{
-              showScrollArrows: false,
-            }}
-          >
-            <div className="flex gap-2">
-              {creditsData.map((value, index) => (
-                <ProfileCards {...value} />
-              ))}
-            </div>
-          </ScrollableContainer>
-        </section>
-        <section className={`px-5 py-3 mb-8 ${isWikiProfile ? "hidden" : ""}`}>
+      {!isLoading ? (
+        <>
           <div
-            className={`text-coolGray flex flex-col ${
-              isWikiProfile ? "hidden" : "flex"
+            className={`relative ${
+              isWikiProfile ? "flex flex-col gap-2 m-3" : ""
             }`}
           >
-            <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
-            <div className="flex gap-4 w-fit border-b border-coolGray">
-              {tabs.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setSelectedTab(tab)}
-                  className={`text-white py-2 pb-3 text-sm flex  items-center justify-center ${
-                    selectedTab === tab
-                      ? "border-b border-white text-white"
-                      : "text-gray-400"
-                  } hover:text-white transition duration-300`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-          {/* <div
-            className={`text-coolGray flex flex-col ${
-              !isWikiProfile ? "hidden" : "flex"
-            }`}
-          >
-            <h3 className={"text-lg text-lightGray font-semibold "}>Roles</h3>
-            <div className="flex gap-2 py-4">
-              {roles.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setSelectedRole(tab)}
-                  className={`whitespace-nowrap text-sm px-2 py-1 border-[1.5px] rounded-lg ${
-                    selectedRole === tab
-                      ? " text-white border-hoveredparrot bg-[#C4FF4840]"
-                      : "text-[#C9C9C9] border-darkCharcoal bg-blackMarbel"
-                  } hover:text-white transition duration-300`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div> */}
-        </section>
-
-        <section className={`${isWikiProfile ? "hidden" : "block"} px-5`}>
-          {/* <div className="flex gap-2 mb-4">
-            <div className="w-44">
-              <TextField
-                placeholder="search anything..."
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <FiSearch />
-                    </InputAdornment>
-                  ),
+            <ProfileHeader
+              {...{ isWikiProfile, setIsConnect, isConnect, artistData }}
+            />
+            <section
+              className={`px-5 py-3 rounded-t-lg border border-[#242424] ${
+                isWikiProfile ? "block bg-eerieBlack" : "hidden"
+              }`}
+            >
+              <h2
+                style={{
+                  borderBottom: "1px solid var(--Neutral-700, #242424)",
                 }}
-                variant="outlined"
-                sx={muiStyles.searchInputTextField}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                fullWidth
-              />
-            </div>
-
-            <div className="flex gap-2">
-              {musicType.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setSelectedMusicType(tab)}
-                  className={`whitespace-nowrap text-sm px-2 py-1 border-[1px] rounded-md ${
-                    selectedMusicType === tab
-                      ? " text-white border-hoveredparrot bg-[#C4FF4840]"
-                      : "text-dimGray border-eerieBlack bg-eerieBlack"
-                  } hover:text-white transition duration-300`}
+                className="text-gainsBoro pb-3 text-base font-semibold"
+              >
+                About
+              </h2>
+              <div className="pt-4 pb-1 flex flex-col gap-2 font-normal text-coolGray text-sm">
+                <p dangerouslySetInnerHTML={{ __html: bio }} />
+              </div>
+            </section>
+            <section
+              className={`px-5 py-3 rounded-b-lg ${
+                isWikiProfile ? "border border-[#242424] bg-eerieBlack" : ""
+              }`}
+            >
+              <div className="flex justify-between items-center">
+                <h2
+                  className={`text-gainsBoro mb-3 ${
+                    isWikiProfile ? " text-base font-semibold " : ""
+                  }`}
                 >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div> */}
-          <div
-            className="relative"
-            style={{ filter: !isConnect ? "blur(5px)" : "none" }}
-          >
-            {!isConnect && (
-              <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
-            )}
-            <div className="text-xs font-medium text-[#9C9C9C] mb-3">
-              {musicTableData.length} results
-            </div>
+                  Credits
+                </h2>
+                <span
+                  className={`text-coolGray text-sm cursor-pointer ${
+                    isWikiProfile ? "" : "hidden"
+                  }`}
+                >
+                  View All
+                </span>
+              </div>
+              <ScrollableContainer
+                {...{
+                  showScrollArrows: false,
+                }}
+              >
+                <div className="flex gap-2">
+                  {creditsData.map((value, index) => (
+                    <ProfileCards {...value} />
+                  ))}
+                </div>
+              </ScrollableContainer>
+            </section>
+            <section
+              className={`px-5 py-3 mb-8 ${isWikiProfile ? "hidden" : ""}`}
+            >
+              <div
+                className={`text-coolGray flex flex-col ${
+                  isWikiProfile ? "hidden" : "flex"
+                }`}
+              >
+                <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
+                <div className="flex gap-4 w-fit border-b border-coolGray">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setSelectedTab(tab)}
+                      className={`text-white py-2 pb-3 text-sm flex  items-center justify-center ${
+                        selectedTab === tab
+                          ? "border-b border-white text-white"
+                          : "text-gray-400"
+                      } hover:text-white transition duration-300`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-            <MusicTable />
+            <section className={`${isWikiProfile ? "hidden" : "block"} px-5`}>
+              <div
+                className="relative"
+                style={{ filter: !isConnect ? "blur(5px)" : "none" }}
+              >
+                {!isConnect && (
+                  <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
+                )}
+                <div className="text-xs font-medium text-[#9C9C9C] mb-3">
+                  {musicTableData.length} results
+                </div>
+
+                <MusicTable />
+              </div>
+            </section>
+          </div>{" "}
+        </>
+      ) : (
+        <>
+          <div className="absolute top-0 left-0 z-50 bg-black opacity-40 pointer-events-none w-full h-full"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
+            <CircularProgress
+              color="success"
+              sx={{ width: "80px !important", height: "80px !important" }}
+            />
           </div>
-        </section>
-      </div>
+        </>
+      )}
     </Theme>
   );
 };
