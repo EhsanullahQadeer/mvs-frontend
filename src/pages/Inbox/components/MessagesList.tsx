@@ -1,6 +1,6 @@
 /*************************************************************************
  * @file list.tsx
- * @author Zohaib Ahmad
+ * @author Ehsanullah
  * @desc Showing Incoming / outgoing messages list
  *
  *
@@ -14,10 +14,10 @@ import { useEffect, useState } from "react";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getInboxMessages } from "redux/actions";
-import MessagesDetail from "./detail";
-import searchIcon from "./assets/icons/searchIcon.svg";
-import { Conversations } from "./components/Conversations";
-import { InboxLoader } from "./components/InboxLoader";
+import MessagesDetail from "./MessagesDetail";
+import searchIcon from "../assets/icons/searchIcon.svg";
+import { Conversations } from "./Conversations";
+import { InboxLoader } from "./InboxLoader";
 
 interface RootState {
   auth: any;
@@ -185,7 +185,7 @@ const MessagesList = (props) => {
               </div>
             </div>
 
-            <div className="flex overflow-hidden flex-col pb-1 w-full h-[799px] max-md:max-w-full">
+            <div className="flex overflow-hidden flex-col pb-1 w-full">
               {/* List Item */}
 
               {loading_conversations ? (

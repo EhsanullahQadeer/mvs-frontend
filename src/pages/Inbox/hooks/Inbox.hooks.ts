@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 /* LOCAL IMPORTS */
-import { RootState } from "../../redux/reducers";
+import { RootState } from "../../../redux/reducers";
 import { getMessages, getUserConvo } from "api/messenger";
 
 export const useInboxHooks = () => {

@@ -104,12 +104,12 @@ export const Conversations = (props: any) => {
                       background:
                         "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
                     }}
-                    className="flex gap-2.5 items-start self-stretch my-auto w-[52px] rounded-full p-0.5"
+                    className="flex rounded-full p-0.5 w-[52px] aspect-square"
                   >
                     <img
                       loading="lazy"
                       src={thumbnail}
-                      className="object-contain aspect-square w-[52px] rounded-full border-[2px] border-[#151515]"
+                      className="object-contain w-full h-full rounded-full border-[2px] border-[#151515]"
                     />
                   </div>
                   <div className="flex flex-col justify-center self-stretch my-auto font-semibold w-[100px]">

@@ -1,34 +1,22 @@
 /*************************************************************************
  * @file InboxPage.tsx
- * @author Zohaib Ahmad
- * @desc Component for displaying and managing user messages and 
+ * @author Ehsanullah
+ * @desc Component for displaying and managing user messages and
  *       conversations.
- * 
+ *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
-import {
-  useEffect,
-  useRef,
-  useState
-} from "react";
 import Theme from "theme";
-import React from "react";
-import MessagesList from "./list";
+import MessagesList from "./components/MessagesList";
 
-
-
-const InboxPage = (
-
-) => {
-
-
+const InboxPage = () => {
   return (
     <Theme>
-      <div className="h-56 grid grid-cols-2 gap-4 content-start">
+      <div className="grid grid-cols-2 content-start">
         <MessagesList />
       </div>
     </Theme>
