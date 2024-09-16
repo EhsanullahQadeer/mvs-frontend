@@ -30,7 +30,8 @@ module.exports = {
         eerieBlack: "#1C1C1C",
         dimGray: "#666666",
         blackMarbel: "#161616",
-        darkCharcoal: "#2B2B2B"
+        darkCharcoal: "#2B2B2B",
+        "slateGray-2": "#58606B"
       },
     },
   },

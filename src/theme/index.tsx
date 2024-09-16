@@ -33,7 +33,7 @@ const Theme = (
       </div>
 
       {/* Main content */}
-      <div className="row-start-2 col-start-2 overflow-auto">
+      <div className={`row-start-2 col-start-2 ${props.isOverflowHidden ? "overflow-hidden" :"overflow-auto"}`}>
           {props.children}
       </div>
     </div>

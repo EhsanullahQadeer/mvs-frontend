@@ -124,7 +124,7 @@ export function SearchHeader(props: IAppProps) {
                 }}
                 renderGroup={(params) => (
                   <li key={params.key}>
-                    <div className="pt-5 pb-5 sticky top-0 bg-[#1C1C1C]">
+                    <div className="pt-5 pb-5 sticky top-0 bg-eerieBlack">
                       <span className="text-white text-base font-semibold border-b-2 border-limeGreen pb-2">
                         Top Results
                       </span>
@@ -134,7 +134,7 @@ export function SearchHeader(props: IAppProps) {
                       </div>
                     </div>
                     <ul>{params.children}</ul>
-                    <div className="h-4 sticky bottom-0 bg-[#1C1C1C]"></div>
+                    <div className="h-4 sticky bottom-0 bg-eerieBlack"></div>
                   </li>
                 )}
                 renderOption={(props, option, { selected, index }) => (
@@ -203,7 +203,7 @@ export function SearchHeader(props: IAppProps) {
                 <SearchIcon />
               </div>
               <div
-                className="bg-[#1C1C1C] absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer"
+                className="bg-eerieBlack absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer"
                 onClick={handleCancelBtn}
               >
                 {loading ? (
