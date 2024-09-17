@@ -12,6 +12,15 @@
 import axiosInstance from "api/axios";
 import axios from "api/axios";
 import { config } from "config/ConfigManager";
+import {
+  IAddNoteApiPayloads,
+  IDeleteNoteApiParams,
+  IGetConversationByIdParams,
+  IGetConversationNotesParams,
+  IGetConversationsListParams,
+  ISendInboxMessagePayloads,
+  IUpdateNoteApiParams,
+} from "./types";
 
 export const sendMessage = async ({
   // General info
@@ -99,14 +108,40 @@ export const checkConversationExists = async (
   });
 };
 
-export const getInboxMessages = async (params: any) => {
+export const getConversationsList = async (
+  params: IGetConversationsListParams
+) => {
   return axiosInstance.get(`/messenger/get-conversations/`, { params });
 };
 
-export async function getConversationsById(params: any, id: string) {
+export async function getConversationsById(
+  params: IGetConversationByIdParams,
+  id: string
+) {
   return axiosInstance.get(`/messenger/conversation/${id}`, { params });
 }
 
-export async function sendInboxMessage(params: any) {
-  return axiosInstance.post("/messenger/send-message", params);
+export async function getConversationNotes(
+  params: IGetConversationNotesParams,
+  id: string
+) {
+  return axiosInstance.get(`/messenger/get-conversation-notes/${id}`, {
+    params,
+  });
+}
+
+export async function sendInboxMessage(payload: ISendInboxMessagePayloads) {
+  return axiosInstance.post("/messenger/send-message", payload);
+}
+
+export async function addNoteApi(payload: IAddNoteApiPayloads) {
+  return axiosInstance.post("/messenger/add-note", payload);
+}
+
+export async function updateNoteApi(params: IUpdateNoteApiParams) {
+  return axiosInstance.post("/messenger/update-note", params);
+}
+
+export async function deleteNoteApi(params: IDeleteNoteApiParams) {
+  return axiosInstance.post("/messenger/delete-note", params);
 }

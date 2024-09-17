@@ -22,10 +22,14 @@ import { ReactComponent as MailOpenIcon } from "../../../assets/icons/mailOpenIc
 import { ReactComponent as FolderInputIcon } from "../../../assets/icons/folderInputIcon.svg";
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 import { Conversations } from "./Conversations";
-import { InboxLoader } from "./InboxLoader";
-import { getConversationsById, getInboxMessages } from "api/messenger";
+import {
+  getConversationsById,
+  getConversationsList,
+  getConversationNotes,
+} from "api/messenger";
 import moment from "moment";
 import { IMessage } from "./types";
+import { CircularProgress } from "@mui/material";
 
 const MessagesList = () => {
   const [conversations, setConversations] = useState([]);
@@ -34,6 +38,7 @@ const MessagesList = () => {
 
   const [messages, setMessages] = useState([]);
 
+  const [notes, setNotes]= useState()
   const [loading, setLoading] = useState(false);
 
   const [total, setTotal] = useState(0);
@@ -47,8 +52,9 @@ const MessagesList = () => {
   const getConversationList = async () => {
     try {
       setLoadingConversations(true);
-      const response = await getInboxMessages({
-        paginateBackwards: 0,
+      const response = await getConversationsList({
+        searchTerm: "",
+        order: true,
         skip: 0,
         take: 10,
         limit: 10,
@@ -103,12 +109,20 @@ const MessagesList = () => {
     setLoading(false);
   };
 
+  const getNotes = async (conversation_id: string) => {
+    const response = await getConversationNotes(
+      {
+        order: true,
+      },
+      conversation_id
+    );
+
+    setNotes(response.data)
+  };
+
   return (
     <React.Fragment>
-      <div
-        style={{ height: "calc(100svh + 30px)" }}
-        className="flex overflow-hidden flex-col pt-4 bg-[#08090a] relative"
-      >
+      <div className="flex flex-1 overflow-hidden flex-col pt-4 bg-[#08090a] relative">
         <div className="flex flex-col justify-center px-3 w-full text-sm leading-none bg-[#08090a] sticky top-0">
           <div className="flex flex-col justify-center items-start w-full">
             <div className="flex items-center pl-4 max-w-full rounded-full bg-[#1c1c1c] min-h-[40px] w-[271px]">
@@ -181,13 +195,21 @@ const MessagesList = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col mt-1 w-full flex-1  overflow-y-auto overflow-x-hidden">
-          <div className="flex flex-col pb-1 w-full">
+        <div className="flex flex-col mt-1 w-full flex-1 overflow-y-auto overflow-x-hidden custom-dropdown">
+          <div className="flex flex-col pb-1 w-full flex-1 relative">
             {/* List Item */}
 
             {loading_conversations ? (
               <>
-                <InboxLoader />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
+                  <CircularProgress
+                    sx={{
+                      width: "50px !important",
+                      height: "50px !important",
+                      color: "#9EFF00",
+                    }}
+                  />
+                </div>
               </>
             ) : (
               <>
@@ -215,16 +237,19 @@ const MessagesList = () => {
           </div>
         </div>
       </div>
-      {activeConversation && (
-        <MessagesDetail
-          {...{
-            messages,
-            conversation: activeConversation,
-            loading,
-            getConversationMessages,
-          }}
-        />
-      )}
+      <div className="flex-1">
+        {activeConversation && (
+          <MessagesDetail
+            {...{
+              messages,
+              conversation: activeConversation,
+              loading,
+              getConversationMessages,
+              getNotes
+            }}
+          />
+        )}
+      </div>
     </React.Fragment>
   );
 };

@@ -1,17 +1,33 @@
-import React from "react";
+import { addNoteApi } from "api/messenger";
+import React, { useState } from "react";
 
 type Props = {};
 
 const NotesSection = (props: Props) => {
+  const [noteText, setNoteText] = useState("");
+
+  const addNewNote = async () => {
+    const payload = {
+      note: noteText,
+    };
+
+    await addNoteApi(payload);
+  };
+
   return (
     <div className="flex flex-col p-4 max-w-[100%]">
       <textarea
+        value={noteText}
+        onChange={(e) => setNoteText(e.target.value)}
         placeholder="Type a note..."
         className="bg-transparent resize-none overflow-hidden gap-2.5 px-5 pt-3 pb-16 w-full text-xs leading-none rounded-xl border border-solid border-neutral-800 min-h-[90px] text-neutral-700"
       />
 
       <div className="flex flex-col justify-center items-end mt-3 w-full text-sm leading-none text-center whitespace-nowrap text-stone-950">
-        <div className="gap-2 self-stretch px-4 py-2 bg-lime-400 rounded-lg">
+        <div
+          onClick={addNewNote}
+          className="gap-2 self-stretch px-4 py-2 bg-lime-400 rounded-lg cursor-pointer"
+        >
           Save
         </div>
       </div>

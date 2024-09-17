@@ -20,12 +20,6 @@ import InfoSection from "./InfoSection";
 import NotesSection from "./NotesSection";
 import { sendInboxMessage } from "api/messenger";
 
-const headerTabs = [
-  { label: "Messages", value: 0 },
-  { label: "Info", value: 1 },
-  { label: "Notes", value: 2 },
-];
-
 type Props = {
   conversation: IMessage;
   loading: boolean;
@@ -34,6 +28,7 @@ type Props = {
     conversation: IMessage,
     conversation_id: string
   ) => void;
+  getNotes: (conversation_id: string) => void;
 };
 
 const MessagesDetail = (props: Props) => {
@@ -42,7 +37,18 @@ const MessagesDetail = (props: Props) => {
     loading,
     messages,
     getConversationMessages,
+    getNotes,
   } = props;
+
+  const headerTabs = [
+    {
+      label: "Messages",
+      value: 0,
+      func: () => getConversationMessages(props.conversation, conversation_id),
+    },
+    { label: "Info", value: 1, func: () => {} },
+    { label: "Notes", value: 2, func: () => getNotes(conversation_id) },
+  ];
 
   const [tip, setTip] = useState(0);
   const [message, setMessage] = useState("");
@@ -64,20 +70,18 @@ const MessagesDetail = (props: Props) => {
 
     const payload = {
       recipient_id: recipient,
-      conversation_id: conversation_id,
+      conversation_id,
       message,
     };
-    const _newMessage = await sendInboxMessage(payload);
+
+    await sendInboxMessage(payload);
     setMessage("");
     getConversationMessages(props.conversation, conversation_id);
   };
 
   return (
     <React.Fragment>
-      <div
-        style={{ height: "calc(100svh + 30px)" }}
-        className="w-full border-l border-eerieBlack bg-[#101113] relative"
-      >
+      <div className="h-full w-full border-l border-eerieBlack bg-[#101113] relative">
         <div className="flex flex-col pt-2 h-full">
           <div className="flex flex-col w-full max-md:max-w-full sticky top-0 bg-[#101113]">
             <div className="flex flex-wrap gap-5 justify-between items-center p-4 pt-2 w-full">
@@ -111,11 +115,14 @@ const MessagesDetail = (props: Props) => {
             </div>
             <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-y border-eerieBlack">
               {headerTabs.map((headerTab) => {
-                const { label, value } = headerTab;
+                const { label, value, func } = headerTab;
                 return (
                   <div
                     key={value}
-                    onClick={() => setTab(value)}
+                    onClick={() => {
+                      setTab(value);
+                      func();
+                    }}
                     className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
                       tab === value
                         ? "text-[#0F0F0F] bg-[#9EFF00] text-xs"
@@ -128,8 +135,8 @@ const MessagesDetail = (props: Props) => {
               })}
             </div>
           </div>
-          <div className="flex flex-col flex-1 py-3 mx-4 overflow-y-auto overflow-x-hidden">
-            <div className="flex flex-col">
+          <div className="flex flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden relative custom-dropdown">
+            <div className="flex flex-col px-4 flex-1">
               {tab === 0 && (
                 <>
                   <MessagesSection {...{ loading, messages }} />

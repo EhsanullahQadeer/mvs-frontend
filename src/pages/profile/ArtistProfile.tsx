@@ -211,8 +211,7 @@ const ArtistProfile = () => {
           <div className="absolute top-0 left-0 z-50 bg-black opacity-40 pointer-events-none w-full h-full"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
             <CircularProgress
-              color="success"
-              sx={{ width: "80px !important", height: "80px !important" }}
+              sx={{ width: "80px !important", height: "80px !important", color: "#9EFF00" }}
             />
           </div>
         </>

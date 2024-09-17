@@ -16,7 +16,7 @@ import MessagesList from "./components/MessagesList";
 const InboxPage = () => {
   return (
     <Theme isOverflowHidden={true}>
-      <div className="grid grid-cols-2 content-start overflow-hidden">
+      <div className="flex overflow-hidden grow">
         <MessagesList />
       </div>
     </Theme>

@@ -1,6 +1,7 @@
 import moment from "moment";
 import { AudioPlayer } from "react-audio-play";
 import { IMessagesData } from "./types";
+import { CircularProgress } from "@mui/material";
 
 type Props = {
   loading: boolean;
@@ -10,17 +11,17 @@ type Props = {
 const MessagesSection = (props: Props) => {
   const { loading, messages } = props;
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col flex-1">
       {loading === true ? (
         <>
-          <div role="status" className="max-w-sm animate-pulse w-full">
-            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4" />
-            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5" />
-            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5" />
-            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5" />
-            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5" />
-            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]" />
-            <span className="sr-only">Loading...</span>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
+            <CircularProgress
+              sx={{
+                width: "40px !important",
+                height: "40px !important",
+                color: "#9EFF00",
+              }}
+            />
           </div>
         </>
       ) : (
