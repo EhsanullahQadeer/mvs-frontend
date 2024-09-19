@@ -56,7 +56,7 @@ const RequestSplitSheetModal = (props: any) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    await axios.post(`${config.get('API')}/sounds/upload/sample`, formData, {
+    await axios.post(`/sounds/upload/sample`, formData, {
       onUploadProgress(progressEvent: any) {
 
         },

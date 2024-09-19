@@ -44,7 +44,7 @@ const StripeCallback: React.FC = (
       code: string
     ) => {
       try {
-        const response = await fetch(`${config.get('API')}/stripe/callback`, {
+        const response = await fetch(`/stripe/callback`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

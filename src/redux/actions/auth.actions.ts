@@ -70,12 +70,12 @@ export function fetchCurrentUser() {
   ) {
     try {
       // Fetching user details from /auth/me
-      const userResponse = await axios.get(`${config.get('API')}/auth/me`);
+      const userResponse = await axios.get(`/auth/me`);
       const user = userResponse.data;
       console.log('User data from /auth/me:', user);
 
       // Fetching additional profile details from /profiles/details
-      const profileResponse = await axios.get(`${config.get('API')}/users/get-user-profile-details`, {
+      const profileResponse = await axios.get(`/users/get-user-profile-details`, {
         params: {
           UserId: user.UserId
         }
@@ -111,7 +111,7 @@ export function getUserPaymentInfo(params) {
   return async function (dispatch: Dispatch) {
     try {
       await axios
-        .get(`${config.get('API')}/users/payment/info`, { params })
+        .get(`/users/payment/info`, { params })
         .then((res: any) => {
           dispatch({
             type: ActionType.USER_PAYMENT_INFO,
@@ -128,7 +128,7 @@ export function getUserTransactions(params) {
   return async function (dispatch: Dispatch) {
     try {
       await axios
-        .get(`${config.get('API')}/users/transactions`, { params })
+        .get(`/users/transactions`, { params })
         .then((res: any) => {
           dispatch({
             type: ActionType.USER_TRANSACTIONS,
