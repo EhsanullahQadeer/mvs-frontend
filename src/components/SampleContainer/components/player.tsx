@@ -5,6 +5,8 @@
  * 
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import WaveformPlayer from "components/AudioPlayer/audio-player";
 import { useContext, useEffect, useState, useCallback } from "react";

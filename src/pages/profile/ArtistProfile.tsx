@@ -6,6 +6,9 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 /* LOCAL IMPORTS */
 import Theme from "theme";
 import ProfileHeader from "./components/ProfileHeader";

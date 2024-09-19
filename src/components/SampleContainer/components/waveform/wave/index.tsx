@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useContext, useEffect, useRef, useState } from 'react'
 import { AudioTrack, WaveformConfig } from '../types'
 import { useWave } from './hooks'

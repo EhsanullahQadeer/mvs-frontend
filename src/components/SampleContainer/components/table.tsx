@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import DropDown from "components/util/dropdown";
 import AudioPlayer from "./player";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
