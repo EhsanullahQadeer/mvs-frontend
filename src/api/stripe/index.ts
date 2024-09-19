@@ -5,6 +5,7 @@
  * 
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
 import { CardElement } from "@stripe/react-stripe-js";
