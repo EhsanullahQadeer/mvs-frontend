@@ -377,7 +377,8 @@ const SampleTable = (
                         )}
                       </div> */}
 
-                      <a
+
+                      {/* <a
                         href="#"
                         className="onboard-8 download-link cursor-pointer"
                         onClick={async (e) => {
@@ -402,7 +403,7 @@ const SampleTable = (
                             strokeLinecap="round"
                             strokeLinejoin="round"/>
                         </svg>
-                      </a>
+                      </a> */}
 
                       <div className="dropdown-container">
                         <DropDown

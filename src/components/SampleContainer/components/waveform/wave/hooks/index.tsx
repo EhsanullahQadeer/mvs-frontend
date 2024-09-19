@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { generateSegments } from '../../utils'
 import { AudioTrack, Metadata, PlayState } from '../../types'
