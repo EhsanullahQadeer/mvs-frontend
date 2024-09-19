@@ -15,10 +15,11 @@ import React from "react";
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 import MessagesSection from "./MessagesSection";
 import Footer from "./Footer";
-import { IMessage, IMessagesData } from "./types";
+import { IMessage, IMessagesData, INotes } from "./types";
 import InfoSection from "./InfoSection";
 import NotesSection from "./NotesSection";
 import { sendInboxMessage } from "api/messenger";
+import { CircularProgress } from "@mui/material";
 
 type Props = {
   conversation: IMessage;
@@ -29,6 +30,7 @@ type Props = {
     conversation_id: string
   ) => void;
   getNotes: (conversation_id: string) => void;
+  notes: INotes[];
 };
 
 const MessagesDetail = (props: Props) => {
@@ -38,16 +40,16 @@ const MessagesDetail = (props: Props) => {
     messages,
     getConversationMessages,
     getNotes,
+    notes,
   } = props;
 
   const headerTabs = [
     {
       label: "Messages",
       value: 0,
-      func: () => getConversationMessages(props.conversation, conversation_id),
     },
-    { label: "Info", value: 1, func: () => {} },
-    { label: "Notes", value: 2, func: () => getNotes(conversation_id) },
+    { label: "Info", value: 1 },
+    { label: "Notes", value: 2 },
   ];
 
   const [tip, setTip] = useState(0);
@@ -115,13 +117,12 @@ const MessagesDetail = (props: Props) => {
             </div>
             <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-y border-eerieBlack">
               {headerTabs.map((headerTab) => {
-                const { label, value, func } = headerTab;
+                const { label, value } = headerTab;
                 return (
                   <div
                     key={value}
                     onClick={() => {
                       setTab(value);
-                      func();
                     }}
                     className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
                       tab === value
@@ -135,23 +136,39 @@ const MessagesDetail = (props: Props) => {
               })}
             </div>
           </div>
-          <div className="flex flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden relative custom-dropdown">
-            <div className="flex flex-col px-4 flex-1">
-              {tab === 0 && (
+          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden relative custom-dropdown">
+            <div className="flex flex-col px-4 flex-1 py-3">
+              {loading === true ? (
                 <>
-                  <MessagesSection {...{ loading, messages }} />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
+                    <CircularProgress
+                      sx={{
+                        width: "40px !important",
+                        height: "40px !important",
+                        color: "#9EFF00",
+                      }}
+                    />
+                  </div>
                 </>
-              )}
-
-              {tab === 1 && (
+              ) : (
                 <>
-                  <InfoSection />
-                </>
-              )}
+                  {tab === 0 && (
+                    <>
+                      <MessagesSection {...{ messages }} />
+                    </>
+                  )}
 
-              {tab === 2 && (
-                <>
-                  <NotesSection />
+                  {tab === 1 && (
+                    <>
+                      <InfoSection />
+                    </>
+                  )}
+
+                  {tab === 2 && (
+                    <>
+                      <NotesSection {...{ notes, conversation_id, getNotes }} />
+                    </>
+                  )}
                 </>
               )}
             </div>

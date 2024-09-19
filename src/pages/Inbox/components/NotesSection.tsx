@@ -1,21 +1,60 @@
-import { addNoteApi } from "api/messenger";
+import { addNoteApi, deleteNoteApi } from "api/messenger";
+import moment from "moment";
 import React, { useState } from "react";
+import { INotes } from "./types";
+import CircularProgress from "@mui/material/CircularProgress";
 
-type Props = {};
+type Props = {
+  notes: INotes[];
+  conversation_id: string;
+  getNotes: (conversation_id: string) => void;
+};
 
 const NotesSection = (props: Props) => {
+  const { notes, conversation_id, getNotes } = props;
   const [noteText, setNoteText] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   const addNewNote = async () => {
-    const payload = {
-      note: noteText,
+    const params = {
+      conversation_id,
+      note_content: noteText,
     };
+    setLoading(true);
+    await addNoteApi(params);
+    setNoteText("");
+    await getNotes(conversation_id);
+    setLoading(false);
+  };
 
-    await addNoteApi(payload);
+  const handleDeleteNote = async (noteId: any) => {
+    const params = {
+      noteId,
+    };
+    setLoading(true);
+    await deleteNoteApi(params);
+    await getNotes(conversation_id);
+    setLoading(false);
   };
 
   return (
     <div className="flex flex-col p-4 max-w-[100%]">
+      {/* Loader */}
+      {loading && (
+        <>
+          <div className="absolute top-0 left-0 bottom-0 right-0 bg-black opacity-40 w-full h-full flex justify-center items-center">
+            <CircularProgress
+              sx={{
+                width: "40px !important",
+                height: "40px !important",
+                color: "#9EFF00",
+              }}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Content */}
       <textarea
         value={noteText}
         onChange={(e) => setNoteText(e.target.value)}
@@ -36,19 +75,38 @@ const NotesSection = (props: Props) => {
         History of notes
       </div>
 
-      <div className="flex flex-col text-sm w-[100%] mt-5">
-        <div className="flex gap-1 items-start self-start leading-none">
-          <div className="flex-1 shrink gap-2.5 self-stretch px-3.5 py-2.5 border border-solid bg-zinc-800 border-neutral-700 rounded-[50px] text-neutral-400 w-[300px]">
-            03:37 PM | 05/31/2024
-          </div>
-          <div className="gap-2.5 self-stretch p-2.5 font-semibold text-blue-400 whitespace-nowrap">
-            Edit
-          </div>
-        </div>
-        <div className="flex-1 shrink gap-2.5 self-stretch px-3.5 py-2.5 mt-2 w-full leading-4 rounded-lg border border-solid border-neutral-700 text-neutral-400">
-          Joshua is a really dope producer for r&B, he mainly plays guitar and
-          its very good at finger arpegios.
-        </div>
+      <div className="flex flex-col text-sm w-[100%] mt-5 gap-5">
+        {notes.length ? (
+          notes.map((noteData) => {
+            const { updated_at, note, id } = noteData;
+            const formattedTime = moment(updated_at).format("h:mm A");
+            const formattedDate = moment(updated_at).format("MM/DD/YYYY");
+            return (
+              <div key={id} className="flex flex-col">
+                <div className="flex gap-3 items-center self-start leading-none">
+                  <div className="flex-1 shrink gap-2.5 self-stretch px-3.5 py-2.5 border border-solid bg-zinc-800 border-neutral-700 rounded-[50px] text-neutral-400 w-[300px]">
+                    {formattedTime} | {formattedDate}
+                  </div>
+                  <div className="font-semibold text-blue-400 whitespace-nowrap cursor-pointer">
+                    Edit
+                  </div>
+
+                  <div
+                    onClick={() => handleDeleteNote(id)}
+                    className="font-semibold text-darkRed whitespace-nowrap cursor-pointer"
+                  >
+                    Delete
+                  </div>
+                </div>
+                <div className="flex-1 shrink gap-2.5 self-stretch px-3.5 py-2.5 mt-2 w-full leading-4 rounded-lg border border-solid border-neutral-700 text-neutral-400">
+                  {note}
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="text-neutral-500">No notes available.</div>
+        )}
       </div>
     </div>
   );

@@ -6,10 +6,7 @@ import { IMessage } from "./types";
 interface Props {
   conversation: IMessage;
   activeConversation: IMessage;
-  getConversationMessages: (
-    conversation: IMessage,
-    conversation_id: string
-  ) => void;
+  getMessagesNotes: (selectedConvo: IMessage, selectedConvoId: string) => void;
 }
 
 export const Conversations = (props: Props) => {
@@ -23,7 +20,7 @@ export const Conversations = (props: Props) => {
       last_updated_timestamp,
     },
     activeConversation,
-    getConversationMessages,
+    getMessagesNotes,
   } = props;
 
   const lastMsgTimeStamp = () => {
@@ -74,7 +71,7 @@ export const Conversations = (props: Props) => {
               <div
                 className="flex gap-1 items-center self-stretch my-auto"
                 onClick={() => {
-                  getConversationMessages(props.conversation, conversation_id);
+                  getMessagesNotes(props.conversation, conversation_id);
                 }}
               >
                 <div className="flex overflow-hidden flex-col justify-center items-center self-stretch p-2 my-auto w-8">
@@ -119,7 +116,7 @@ export const Conversations = (props: Props) => {
               UnreadCount ? "text-white" : "text-[#999999]"
             } basis-6 min-w-[240px]`}
             onClick={() => {
-              getConversationMessages(props.conversation, conversation_id);
+              getMessagesNotes(props.conversation, conversation_id);
             }}
           >
             <div className="flex-1 shrink gap-2.5 self-stretch p-2.5 max-w-full text-sm font-semibold leading-none w-[150px] truncate">

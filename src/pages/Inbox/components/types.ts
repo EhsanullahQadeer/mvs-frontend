@@ -63,3 +63,12 @@ type IMessageDateGroup = {
 };
 
 export type IMessagesData = IMessageDateGroup[];
+
+export type INotes = {
+  id: number;
+  owner_id: number;
+  conversation_id: string;
+  note: string;
+  created_at: string; 
+  updated_at: string; 
+}
