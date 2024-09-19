@@ -15,7 +15,7 @@ import ActionType from "redux/types"
 export function getSounds() {
   return async function (dispatch: Dispatch<any>) {
     try {
-      await axios.get(`${config.get('API')}/sounds`).then((res: any) => {
+      await axios.get(`/sounds`).then((res: any) => {
         console.log(res);
         dispatch({
           type: ActionType.GET_SOUNDS,

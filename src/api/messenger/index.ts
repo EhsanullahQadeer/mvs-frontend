@@ -26,7 +26,7 @@ export const sendMessage = async({
   // Accept transaction
   audioURL,
 }) => {
-  await axios.post(`${config.get('API')}/messenger/send-message`, {
+  await axios.post(`/messenger/send-message`, {
     // General information
     senderUserId: senderUserId,
     recipientUserId: recipientUserId,
@@ -46,7 +46,7 @@ export const getUserConvo = async (
   userId: string
 ) => {
   try {
-    const response = await axios.get(`${config.get('API')}/messenger/conversations`, {
+    const response = await axios.get(`/messenger/conversations`, {
       params: {
         userId
       }
@@ -64,7 +64,7 @@ export const getMessages = async (
   try {
     // Get messages
     const response = await axios.get(
-      `${config.get('API')}/messenger/conversation/${conversationId}`
+      `/messenger/conversation/${conversationId}`
     );
     return response.data.messages || [];
   } catch (error) {
@@ -78,7 +78,7 @@ export const fetchConversationId = async (
   otherUserId
 ) => {
   try {
-    const response = await axios.get(`${config.get('API')}/messenger/conversations/fetchConversationID/${currentUserId}/${otherUserId}`);
+    const response = await axios.get(`/messenger/conversations/fetchConversationID/${currentUserId}/${otherUserId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching conversation ID:', error);

@@ -38,7 +38,7 @@ export const handlePaymentIntentAPI = async (
 
   try {
     const response = await axios.post(
-      `${config.get('API')}/stripe/create-payment-intent`, 
+      `/stripe/create-payment-intent`, 
       { amount, paymentMethodId: paymentMethod.id }
     );
 
@@ -68,7 +68,7 @@ export const handleRefundAPI = async (
 ) => {
   try {
     const response = await axios.post(
-      `${config.get('API')}/stripe/refund-payment`, { amount, paymentIntentId }
+      `/stripe/refund-payment`, { amount, paymentIntentId }
     );
     console.log('Refund successful:', response);
   } catch (err) {

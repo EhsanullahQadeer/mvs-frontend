@@ -47,7 +47,7 @@ const CheckoutForm = () => {
         return;
       }
 
-      const { data } = await axios.post(`${config.get('API')}/stripe/create-payment-intent`, {
+      const { data } = await axios.post(`/stripe/create-payment-intent`, {
         amount: amountInCents, // Convert to cents
       });
       console.log('data', data);
