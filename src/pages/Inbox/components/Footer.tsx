@@ -1,7 +1,7 @@
 import { AudioRecorder } from "react-audio-voice-recorder";
 import videoIcon from "../../../assets/icons/videoIcon.svg";
 import plusCircleIcon from "../../../assets/icons/plusCircleIcon.svg";
-import sendArrowIcon from "../../../assets/icons/sendArrowIcon.svg";
+import { ReactComponent as SendArrowIcon } from "../../../assets/icons/sendArrowIcon.svg";
 import micIcon from "../../../assets/icons/micIcon.svg";
 import { IMessage } from "./types";
 
@@ -98,12 +98,16 @@ const Footer = (props: Props) => {
                 />
               </div>
               <div className="flex items-center justify-center w-11 h-11 rounded">
-                <img
-                  loading="lazy"
-                  src={sendArrowIcon}
-                  className="object-contain w-6 aspect-square cursor-pointer"
-                  onClick={newMessage}
-                />
+                <div
+                  onClick={() => message.length && newMessage()}
+                  className={`flex ${
+                    message.length
+                      ? "text-[#9EFF00] cursor-pointer"
+                      : "text-[#242424] cursor-not-allowed"
+                  }`}
+                >
+                  <SendArrowIcon className="w-6 h-6" />
+                </div>
               </div>
             </div>
           </div>

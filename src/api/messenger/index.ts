@@ -56,10 +56,9 @@ export const getUserConvo = async (userId: string) => {
   try {
     const response = await axios.get(`/messenger/conversations`, {
       params: {
-        userId
-      }
-    }
-    );
+        userId,
+      },
+    });
     return response.data.conversations || [];
   } catch (error) {
     console.error("Error fetching conversations:", error);
@@ -82,7 +81,9 @@ export const getMessages = async (conversationId: string) => {
 
 export const fetchConversationId = async (currentUserId, otherUserId) => {
   try {
-    const response = await axios.get(`/messenger/conversations/fetchConversationID/${currentUserId}/${otherUserId}`);
+    const response = await axios.get(
+      `/messenger/conversations/fetchConversationID/${currentUserId}/${otherUserId}`
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching conversation ID:", error);
@@ -116,10 +117,9 @@ export async function getConversationsById(
 }
 
 export async function getConversationNotes(
-  params: IGetConversationNotesParams,
-  id: string
+  params: IGetConversationNotesParams
 ) {
-  return axiosInstance.get(`/messenger/get-conversation-notes/${id}`, {
+  return axiosInstance.get(`/messenger/get-conversation-notes`, {
     params,
   });
 }
@@ -128,8 +128,10 @@ export async function sendInboxMessage(payload: ISendInboxMessagePayloads) {
   return axiosInstance.post("/messenger/send-message", payload);
 }
 
-export async function addNoteApi(payload: IAddNoteApiPayloads) {
-  return axiosInstance.post("/messenger/add-note", payload);
+export async function addNoteApi(params: IAddNoteApiPayloads) {
+  return axiosInstance.post("/messenger/add-note", {}, {
+    params,
+  });
 }
 
 export async function updateNoteApi(params: IUpdateNoteApiParams) {
@@ -137,5 +139,7 @@ export async function updateNoteApi(params: IUpdateNoteApiParams) {
 }
 
 export async function deleteNoteApi(params: IDeleteNoteApiParams) {
-  return axiosInstance.post("/messenger/delete-note", params);
+  return axiosInstance.post("/messenger/delete-note", {}, {
+    params,
+  });
 }

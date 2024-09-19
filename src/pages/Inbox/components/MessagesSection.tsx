@@ -4,29 +4,16 @@ import { IMessagesData } from "./types";
 import { CircularProgress } from "@mui/material";
 
 type Props = {
-  loading: boolean;
   messages: IMessagesData;
 };
 
 const MessagesSection = (props: Props) => {
-  const { loading, messages } = props;
+  const { messages } = props;
   return (
     <div className="flex flex-col flex-1">
-      {loading === true ? (
-        <>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
-            <CircularProgress
-              sx={{
-                width: "40px !important",
-                height: "40px !important",
-                color: "#9EFF00",
-              }}
-            />
-          </div>
-        </>
-      ) : (
-        <>
-          {messages[0].messages.map((msg, index: number) => {
+      <>
+        {messages.length &&
+          messages[0].messages.map((msg, index: number) => {
             const {
               thumbnail,
               displayName,
@@ -113,8 +100,7 @@ const MessagesSection = (props: Props) => {
               </div>
             );
           })}
-        </>
-      )}
+      </>
     </div>
   );
 };

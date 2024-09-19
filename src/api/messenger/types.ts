@@ -5,7 +5,8 @@ export interface ISendInboxMessagePayloads {
 }
 
 export interface IAddNoteApiPayloads {
-  note: string;
+  conversation_id: string;
+  note_content: string;
 }
 
 export interface IDeleteNoteApiParams {
@@ -22,7 +23,8 @@ export interface IGetConversationByIdParams {
 }
 
 export interface IGetConversationNotesParams {
-  order: boolean;
+  conversation_id: string;
+  ascending: boolean;
 }
 
 export interface IGetConversationsListParams {

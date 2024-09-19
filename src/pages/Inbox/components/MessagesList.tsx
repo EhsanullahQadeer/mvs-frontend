@@ -28,7 +28,7 @@ import {
   getConversationNotes,
 } from "api/messenger";
 import moment from "moment";
-import { IMessage } from "./types";
+import { IMessage, INotes } from "./types";
 import { CircularProgress } from "@mui/material";
 
 const MessagesList = () => {
@@ -38,7 +38,7 @@ const MessagesList = () => {
 
   const [messages, setMessages] = useState([]);
 
-  const [notes, setNotes]= useState()
+  const [notes, setNotes] = useState<INotes[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [total, setTotal] = useState(0);
@@ -73,7 +73,6 @@ const MessagesList = () => {
     conversation: IMessage,
     conversation_id: string
   ) => {
-    setLoading(true);
     setActiveConversation(conversation);
     const _msgs = await getConversationsById(
       {
@@ -106,18 +105,25 @@ const MessagesList = () => {
     });
 
     setMessages(groupArrays);
-    setLoading(false);
   };
 
   const getNotes = async (conversation_id: string) => {
-    const response = await getConversationNotes(
-      {
-        order: true,
-      },
-      conversation_id
-    );
+    const response = await getConversationNotes({
+      conversation_id,
+      ascending: true,
+    });
 
-    setNotes(response.data)
+    setNotes(response.data);
+  };
+
+  const getMessagesNotes = async (
+    selectedConvo: IMessage,
+    selectedConvoId: string
+  ) => {
+    setLoading(true);
+    await getConversationMessages(selectedConvo, selectedConvoId);
+    await getNotes(selectedConvoId);
+    setLoading(false);
   };
 
   return (
@@ -222,7 +228,7 @@ const MessagesList = () => {
                             {...{
                               conversation,
                               activeConversation,
-                              getConversationMessages,
+                              getMessagesNotes,
                             }}
                           />
                         </>
@@ -245,7 +251,8 @@ const MessagesList = () => {
               conversation: activeConversation,
               loading,
               getConversationMessages,
-              getNotes
+              getNotes,
+              notes,
             }}
           />
         )}
