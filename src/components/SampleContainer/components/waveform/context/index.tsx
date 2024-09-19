@@ -67,7 +67,7 @@ export function WaveformProvider({
 
   const playTrack = (track: AudioTrack) => {
     if (audioRef.current) {
-      if (!(audioRef.current.src == track.src)){
+      if (!(audioRef.current.src === track.src)){
 
         audioRef.current.src = track.src; // Set the track source
       }
