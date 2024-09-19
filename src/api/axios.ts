@@ -21,6 +21,8 @@ const axiosInstance = axios.create({
   },
 });
 
+console.log('baseURL', config.get('API'));
+
 // Set up the request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
