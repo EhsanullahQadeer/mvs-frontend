@@ -1,0 +1,8 @@
+/* Add a class for your waveform container */
+.waveform-container {
+  height: 100%; /* Make sure the height is explicitly set */
+  min-height: 150px; /* Set a minimum height for better visibility */
+  display: flex; /* Flex helps with vertical alignment */
+  justify-content: center; /* Center the content horizontally */
+  align-items: center; /* Center the content vertically */
+}
