@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { forwardRef, useContext, useRef } from 'react'
 import { playerStyles } from '../styles'
 import { useAudioPlayer } from './hooks'
