@@ -18,7 +18,7 @@ const Filters = (props: Props) => {
         <h2 className="text-lightGray text-2xl font-bold mb-1">
           Discover Partners
         </h2>
-        <p className="text-sm font-normal text-neutralGray">
+        <p className="text-sm font-normal text-dimGray">
           Connect and work with the world’s top enginners, producers, and
           songwriters
         </p>

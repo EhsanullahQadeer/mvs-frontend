@@ -86,6 +86,52 @@ const getMuiStyles = () => {
         color: "white",
       },
     },
+
+    SelectDropdown: {
+      color: "#fff",
+      backgroundColor: "#161616",
+      borderRadius: "8px",
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "transparent",
+      },
+      "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: "#2B2B2B",
+      },
+      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "#2B2B2B",
+      },
+
+      svg: {
+        color: "#2B2B2B",
+      },
+    },
+    selectDropdownMenuItem: {
+      color: "#D7D7D7",
+      fontSize: "12px",
+      fontWeight: 400,
+      borderBottom: "1px solid #202020",
+      "&:hover": {
+        backgroundColor: "#242424",
+      },
+      "&.Mui-selected": {
+        backgroundColor: "#242424",
+        "&:hover": {
+          backgroundColor: "#242424",
+        },
+      },
+    },
+    muiChip: {
+      border: "1px solid #2B2B2B",
+      backgroundColor: "#161616",
+      color: "#D7D7D7",
+      borderRadius: "8px",
+      fontSize: "12px",
+      fontWeight: 400,
+      span: {
+        paddingX: "8px",
+        paddingY: "4px",
+      },
+    },
   };
   return muiStyles;
 };

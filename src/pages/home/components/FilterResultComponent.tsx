@@ -1,25 +1,29 @@
+import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
+
 type Props = {
   filtersData: any[];
 };
 
 const FilterResultComponent = (props: Props) => {
   const { filtersData } = props;
+  const { handleArtistSelected } = useHandleArtistSelected();
+
   return (
     <div className="user-card-wrap p-3 pr-2 border-b border-borderColor">
       <h2 className="text-white text-xl font-semibold mb-3">Results</h2>
 
       <div className="flex gap-4 flex-wrap items-center self-stretch">
         {filtersData.map((result, idx) => {
-          const { 
-            artist_name, 
+          const {
+            artist_name,
             primary_label,
-            thumbnail, 
-            city, 
-            state:country 
+            thumbnail,
+            city,
+            state: country,
           } = result;
-            const concatedLocation = city + " , " + country;
-            const location =
-              concatedLocation.length > 17 ? country : concatedLocation;
+          const concatedLocation = city + " , " + country;
+          const location =
+            concatedLocation.length > 17 ? country : concatedLocation;
           const singersArr = result.singersCollab?.split(", ");
 
           return (
@@ -75,7 +79,10 @@ const FilterResultComponent = (props: Props) => {
                   </div>
 
                   <div className="max-h-0 overflow-hidden transition-all ease-in-out duration-500 group-hover:max-h-[45px] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100">
-                    <button className="bg-limeGreen text-black px-3 py-2 rounded-lg cursor-pointer mt-2 text-xs font-normal">
+                    <button
+                      className="bg-limeGreen text-black px-3 py-2 rounded-lg cursor-pointer mt-2 text-xs font-normal"
+                      onClick={() => handleArtistSelected(result)}
+                    >
                       View Profile
                     </button>
                   </div>

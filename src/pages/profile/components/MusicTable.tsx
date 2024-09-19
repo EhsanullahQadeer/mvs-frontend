@@ -248,7 +248,7 @@ const MusicTable = () => {
                       align="left"
                       onClick={() => handleRowClick(music)}
                     >
-                      <span className="bg-[#161616] border-[1px] border-[#222222] rounded-lg text-white px-4 py-2 flex gap-2 w-max items-center">
+                      <span className="bg-blackMarbel border-[1px] border-[#222222] rounded-lg text-white px-4 py-2 flex gap-2 w-max items-center">
                         <div
                           className={`w-[7px] h-[7px] rounded-full ${
                             status === "available"

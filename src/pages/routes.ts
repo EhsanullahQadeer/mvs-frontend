@@ -22,8 +22,9 @@ import InboxPage from "pages/Inbox";
 import StripeCallback from "pages/StripeCallback";
 import CheckScrolling from "./CheckScrolling";
 import ArtistProfile from "./profile/ArtistProfile";
+import AccountSetting from "./settings/account/AccountSetting";
 
- interface IRoute {
+interface IRoute {
   path: string;
   name: string;
   component: any;
@@ -131,14 +132,19 @@ const routes: IRoute[] = [
     component: SamplesPage,
   },
   {
-    path: "/artist-wiki-profile/:id",
+    path: "/artist-wiki-profile/:spotify_artist_id",
     name: "Artist Profile",
     component: ArtistProfile,
   },
   {
-    path: "/artist-profile/:id",
+    path: "/artist-profile/:username",
     name: "Artist Profile",
     component: ArtistProfile,
+  },
+  {
+    path: "/account-settings/:id",
+    name: "Account Settings",
+    component: AccountSetting,
   },
 ];
 

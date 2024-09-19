@@ -8,9 +8,10 @@ import { getKeyByValue } from "utils/jsHandlers";
 import { getUsersByTag } from "api/user";
 import "../styles/user-card.scss";
 import { UserFiltersDTO } from "api/user/types";
+import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 
 type Props = {
-  primaryUserLabel: string,
+  primaryUserLabel: string;
   setUsersByTag: (value: any) => void;
   dataArr: any;
   title: string;
@@ -18,12 +19,8 @@ type Props = {
 const { filtersArr } = artistData;
 
 const ScrollableComponent = (props: Props) => {
-  const { 
-    primaryUserLabel,
-    dataArr, 
-    title, 
-    setUsersByTag
-  } = props;
+  const { primaryUserLabel, dataArr, title, setUsersByTag } = props;
+  const { handleArtistSelected } = useHandleArtistSelected();
 
   const [filterValue, setFilterValue] = useState<string>("");
   const [isScrollableContainer, setIsScrollableContainer] = useState(false);
@@ -39,7 +36,7 @@ const ScrollableComponent = (props: Props) => {
     const value = filterValue === filterName ? "" : filterName;
     setFilterValue(value);
 
-    const params: UserFiltersDTO = { 
+    const params: UserFiltersDTO = {
       primaryUserLabel: primaryUserLabel,
     };
     if (value === "mostPopular") {
@@ -54,20 +51,19 @@ const ScrollableComponent = (props: Props) => {
 
     // Fetch users based on the applied filters
     const users = await getUsersByTag(params, 20);
-    console.log('users here', users.data);
+    console.log("users here", users.data);
     // If filter is cleared, reset to initial data
     if (value === "") {
       setFilteredData(initialData);
-    } 
-    else {
+    } else {
       // Otherwise, set the filtered data
       setFilteredData(users.data);
     }
-    
+
     // Update parent component's state with filtered data
     setUsersByTag((prev: any) => ({
       ...prev,
-      [tag]: users.data
+      [tag]: users.data,
     }));
   };
 
@@ -168,12 +164,12 @@ const ScrollableComponent = (props: Props) => {
                           ? artist_name.slice(0, 15) + "..."
                           : artist_name}
                       </span>
-  
+
                       <div className="max-h-0 overflow-hidden transition-all ease-in-out duration-500 group-hover:max-h-[85px] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100">
                         <div className="font-normal text-sm text-white capitalize mb-1">
                           {role}
                         </div>
-  
+
                         <div className="text-xs font-normal text-white flex gap-0.5 items-center justify-center mb-3">
                           <span className="text-white">
                             <GrFormLocation className="h-4 w-4" />
@@ -182,8 +178,11 @@ const ScrollableComponent = (props: Props) => {
                             {location}
                           </span>
                         </div>
-  
-                        <button className="bg-limeGreen text-black px-3 py-2 rounded-lg cursor-pointer text-xs font-normal">
+
+                        <button
+                          className="bg-limeGreen text-black px-3 py-2 rounded-lg cursor-pointer text-xs font-normal"
+                          onClick={() => handleArtistSelected(user)}
+                        >
                           View Profile
                         </button>
                       </div>
@@ -195,13 +194,11 @@ const ScrollableComponent = (props: Props) => {
           })
         ) : (
           // If no results, show a message
-          <div className="text-center text-gray-500 py-10">
-            
-          </div>
+          <div className="text-center text-gray-500 py-10"></div>
         )}
       </ScrollableContainer>
     </div>
   );
-}
+};
 
 export default ScrollableComponent;

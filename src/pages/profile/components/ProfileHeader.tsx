@@ -7,28 +7,34 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
-import profileImage from "../sampleData/Ellipse 730.png";
-import { FiEdit3, FiUserPlus } from "react-icons/fi";
+// import profileImage from "../sampleData/Ellipse 730.png";
+import {
+  // FiEdit3,
+  FiUserPlus,
+} from "react-icons/fi";
 import { MdVerified } from "react-icons/md";
 import { LiaEllipsisVSolid } from "react-icons/lia";
-import { IoLocationOutline } from "react-icons/io5";
-import { LuCake, LuHome } from "react-icons/lu";
 import { FiSend } from "react-icons/fi";
+import { IArtistProfileData } from "./types";
 
 interface ProfileHeaderProps {
   isWikiProfile?: boolean;
   setIsConnect: (value: boolean) => void;
   isConnect: boolean;
+  artistData: IArtistProfileData | null;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({
-  isWikiProfile,
-  setIsConnect,
-  isConnect,
-}) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
+  const { isWikiProfile, setIsConnect, isConnect, artistData } = props;
+
   const handleConnect = () => {
     setIsConnect(true);
   };
+
+  const { username, thumbnail, artist_name, bio } =
+    artistData?.available ?? artistData ?? {};
+  const truncatedBio =
+    bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
   return (
     <>
       <header
@@ -51,7 +57,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             } `}
           >
             <img
-              src={profileImage}
+              src={thumbnail}
               alt="Profile"
               className="h-full w-full rounded-full object-cover border-4 border-gray-900"
             />
@@ -67,7 +73,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 isWikiProfile ? "justify-center font-semibold" : ""
               }`}
             >
-              Becky Hill
+              {artist_name}
               <MdVerified
                 className={`ml-1 text-lime-400  ${
                   isWikiProfile ? "hidden" : "flex"
@@ -76,24 +82,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             </h1>
             {!isWikiProfile ? (
               <span className="text-xs font-semibold text-[#DADADA]">
-                @heckyhill
+                @{username}
               </span>
             ) : (
-              <div className="flex gap-5 justify-center text-xs text-[#e5e5e5]">
-                <span className="flex gap-1 item-center">
-                  <IoLocationOutline className="text-xs" />
-                  London, UK
-                </span>
-                <span className="flex gap-1 item-center">
-                  <LuCake className="text-xs" /> Mar 28th, 1986{" "}
-                  <span className="text-[#848484]">(38 Years)</span>
-                </span>
-                <span className="flex gap-1 item-center">
-                  <LuHome className="text-xs" />
-
-                  <span>Polydor Records</span>
-                </span>
-              </div>
+              <></>
             )}
 
             <p
@@ -101,9 +93,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 isWikiProfile ? "hidden" : "flex"
               } `}
             >
-              Becky Hill is a British singer-songwriter known for her powerful
-              vocals and hit singles like "Wish You Well" and "Better Off
-              Without You." She's a former "The Voice UK" contestant.{" "}
+              {truncatedBio}
             </p>
 
             <div
@@ -125,7 +115,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 style={{
                   width: "unset",
                 }}
-                className="flex w-28 font-medium items-center   bg-green-500 text-[#0F0F0F]  text-sm rounded-lg  transition px-3 py-4 bg-limeGreen"
+                className="flex w-28 font-normal items-center   bg-green-500 text-[#0F0F0F] text-sm rounded-full  transition py-3 px-4 bg-limeGreen"
               >
                 {isConnect ? (
                   <div className="flex gap-2 items-center">
@@ -146,20 +136,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 !isWikiProfile ? "hidden" : "flex"
               } `}
             >
-              <button
-                className="flex font-medium px-3 py-2 items-center text-xs bg-green-500 text-black rounded-lg transition bg-limeGreen"
-              >
-                Singer/Songwriter
-              </button>
-              <button
-                className="flex gap-2 px-3 py-2 items-center   bg-transparent text-white border text-xs border-white  rounded-lg cursor-pointer transition"
-              >
+              <button className="flex gap-2 px-3 py-2 items-center   bg-transparent text-white border text-xs border-white  rounded-full cursor-pointer transition">
                 <FiUserPlus className="text-base" />
                 <span>Follow</span>
               </button>
-              <button
-                className="flex gap-2 px-3 py-2 items-center bg-transparent text-white border text-xs border-white  rounded-lg cursor-pointer transition"
-              >
+              <button className="flex gap-2 px-3 py-2 items-center bg-transparent text-white border text-xs border-white  rounded-full cursor-pointer transition">
                 <svg
                   className="text-white"
                   xmlns="http://www.w3.org/2000/svg"
@@ -180,11 +161,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             </div>
           </div>
         </div>
-        {!isWikiProfile && (
-          <button>
-            <FiEdit3 className="text-coolGray text-xl" />
-          </button>
-        )}
       </header>
     </>
   );

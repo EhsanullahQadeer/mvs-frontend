@@ -393,6 +393,7 @@ body {
   border: none;
   cursor: pointer;
   flex: 0 0 auto; /* Do not grow or shrink, use auto width */
+  z-index: 10;
 }
 
 .audio-player { /* Additional class or adjust your existing player CSS */
