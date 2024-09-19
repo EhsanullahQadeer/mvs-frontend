@@ -6,6 +6,9 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 /* LOCAL IMPORTS */
 import Theme from "theme";
 import ProfileHeader from "./components/ProfileHeader";
@@ -22,6 +25,7 @@ import {
   // MusicTableArr
 } from "./components/types";
 import { CircularProgress } from "@mui/material";
+import SamplesContainer from "components/SampleContainer/player-container";
 // import { getUserSamplesAPI } from "api/sounds";
 
 const ArtistProfile = () => {
@@ -100,6 +104,9 @@ const ArtistProfile = () => {
   //   }
   // };
 
+
+
+  console.log('artist',artistData)
   return (
     <Theme>
       {!isLoading ? (
@@ -201,7 +208,8 @@ const ArtistProfile = () => {
                   {musicTableData.length} results
                 </div>
 
-                <MusicTable />
+                {/* <MusicTable /> */}
+                <SamplesContainer user_id={artistData?.id}/>
               </div>
             </section>
           </div>{" "}

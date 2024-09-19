@@ -55,14 +55,14 @@ export const useProfilePageHooks = () => {
       try {
         /* Get user's info from Profiles table */
         const profiles_results = await fetch(
-          `${config.get('API')}/users/username/${username}`
+          `/users/username/${username}`
         );
 
         // Convert to legible JSON format
         const data = await profiles_results.json();
         
         /* Get user's info from Users table */
-        const users_results = await axios.get(`${config.get('API')}/users/get-user-info`, {
+        const users_results = await axios.get(`/users/get-user-info`, {
           params: {
             UserId: data?.UserId
           }

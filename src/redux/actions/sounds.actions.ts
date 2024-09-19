@@ -6,7 +6,7 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios from "../../api/axios";
 import { config } from "config/ConfigManager";
 import { Dispatch } from "react";
@@ -15,7 +15,7 @@ import ActionType from "redux/types"
 export function getSounds() {
   return async function (dispatch: Dispatch<any>) {
     try {
-      await axios.get(`${config.get('API')}/sounds`).then((res: any) => {
+      await axios.get(`/sounds`).then((res: any) => {
         console.log(res);
         dispatch({
           type: ActionType.GET_SOUNDS,

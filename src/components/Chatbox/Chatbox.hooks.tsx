@@ -223,7 +223,7 @@ export const useChatboxHooks = (
     paymentIntentId: string
   ) => {
     try {
-      const response = await axios.post( `${config.get('API')}/stripe/confirm-payment-intent`, {
+      const response = await axios.post( `/stripe/confirm-payment-intent`, {
         paymentIntentId: paymentIntentId
       });
 

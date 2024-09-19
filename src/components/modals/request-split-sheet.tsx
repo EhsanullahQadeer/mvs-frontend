@@ -5,6 +5,7 @@
  * 
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
 import React, { useRef, useState } from "react";
@@ -56,7 +57,7 @@ const RequestSplitSheetModal = (props: any) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    await axios.post(`${config.get('API')}/sounds/upload/sample`, formData, {
+    await axios.post(`/sounds/upload/sample`, formData, {
       onUploadProgress(progressEvent: any) {
 
         },
