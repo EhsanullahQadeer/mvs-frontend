@@ -33,7 +33,7 @@ jobs:
       - run: yarn install
       - run: yarn build
         env:
-          REACT_APP_API_URL: staging-api.mvssive.net
+          REACT_APP_API_URL: http://staging-api.mvssive.net
           REACT_APP_STRIPE_PUBLISHABLE_KEY: ${{ secrets.REACT_APP_STRIPE_PUBLISHABLE_KEY_STAGING }}
           REACT_APP_APIGATEWAY_URL: ${{ secrets.REACT_APP_APIGATEWAY_URL_STAGING }}
 
