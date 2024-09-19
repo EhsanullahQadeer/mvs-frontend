@@ -2,7 +2,6 @@ import { AudioRecorder } from "react-audio-voice-recorder";
 import videoIcon from "../../../assets/icons/videoIcon.svg";
 import plusCircleIcon from "../../../assets/icons/plusCircleIcon.svg";
 import { ReactComponent as SendArrowIcon } from "../../../assets/icons/sendArrowIcon.svg";
-import micIcon from "../../../assets/icons/micIcon.svg";
 import { IMessage } from "./types";
 
 type Props = {
@@ -71,6 +70,7 @@ const Footer = (props: Props) => {
                     loading="lazy"
                     src={videoIcon}
                     className="object-contain w-6 aspect-square"
+                    alt="video-icon"
                   />
                 </div>
                 <div className="flex items-center justify-center rounded">
@@ -83,7 +83,6 @@ const Footer = (props: Props) => {
                       echoCancellation: true,
                     }}
                     downloadOnSavePress={false}
-                    // showVisualizer={true}
                   />
                 </div>
               </div>
@@ -95,6 +94,7 @@ const Footer = (props: Props) => {
                   loading="lazy"
                   src={plusCircleIcon}
                   className="object-contain w-6 aspect-square"
+                  alt="circle-icon"
                 />
               </div>
               <div className="flex items-center justify-center w-11 h-11 rounded">

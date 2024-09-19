@@ -79,6 +79,7 @@ export const Conversations = (props: Props) => {
                     loading="lazy"
                     src={UnreadCount ? featuredIcon : starIcon}
                     className="object-contain w-4 aspect-square"
+                    alt="icon"
                   />
                 </div>
                 <div className="flex gap-2 items-center self-stretch my-auto">
@@ -93,6 +94,7 @@ export const Conversations = (props: Props) => {
                       loading="lazy"
                       src={thumbnail}
                       className="object-contain w-full h-full rounded-full border-[2px] border-[#151515]"
+                      alt="icon"
                     />
                   </div>
                   <div className="flex flex-col justify-center self-stretch my-auto font-semibold w-[100px]">

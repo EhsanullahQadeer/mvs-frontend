@@ -90,6 +90,7 @@ const InfoSection = (props: Props) => {
                   loading="lazy"
                   srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/bed48f33-cba1-4040-94f4-429ab2843836?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
                   className="object-contain self-stretch my-auto w-6 h-6 bg-lime-400 rounded-full aspect-square fill-lime-400"
+                  alt="icon"
                 />
               </div>
               <div className="flex relative flex-col flex-1 shrink justify-center self-stretch px-2.5 py-2.5 my-auto basis-0">
@@ -97,6 +98,7 @@ const InfoSection = (props: Props) => {
                   loading="lazy"
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/5f6d697732c463093143e52b7acaee9a6b416b0c1206363c9d410bbb82dd7587?placeholderIfAbsent=true&apiKey=e72c5327c3e8425eaa461e300549038a"
                   className="object-contain z-0 aspect-[32.26] w-[65px]"
+                  alt="icon"
                 />
                 <div className="flex absolute left-1 top-2/4 z-0 w-2.5 h-2.5 rounded-full -translate-y-2/4 bg-zinc-400 min-h-[10px] translate-x-[0%]" />
               </div>

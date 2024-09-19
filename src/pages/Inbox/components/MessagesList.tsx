@@ -85,7 +85,6 @@ const MessagesList = () => {
 
     for (var i = 0; i < results.length; i++) {
       results[i].date = moment(results[i].Timestamp).format("YYYY-MM-DD");
-      console.log(results[i]);
     }
 
     const groups = results.reduce((groups, message) => {
@@ -137,13 +136,13 @@ const MessagesList = () => {
                   loading="lazy"
                   src={searchIcon}
                   className="object-contain shrink-0 self-stretch my-auto w-5 aspect-square"
+                  alt="search-icon"
                 />
                 <div className="flex-1 shrink gap-2.5 self-stretch my-auto">
                   <input
                     style={{ boxShadow: "none" }}
                     type="text"
                     className="rounded-full outline-none bg-transparent border-none w-full py-2.5 text-sm font-normal text-[#989898]"
-                    // value=""
                     placeholder="search anyone..."
                   />
                 </div>
@@ -191,11 +190,13 @@ const MessagesList = () => {
                   loading="lazy"
                   src="https://assets.mvssive.net/cursor-left.svg"
                   className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square cursor-pointer"
+                  alt="cursor-left"
                 />
                 <img
                   loading="lazy"
                   src="https://assets.mvssive.net/cursor-right.svg"
                   className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square cursor-pointer"
+                  alt="cursor-right"
                 />
               </div>
             </div>

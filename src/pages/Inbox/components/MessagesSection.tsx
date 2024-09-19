@@ -1,7 +1,6 @@
 import moment from "moment";
 import { AudioPlayer } from "react-audio-play";
 import { IMessagesData } from "./types";
-import { CircularProgress } from "@mui/material";
 
 type Props = {
   messages: IMessagesData;

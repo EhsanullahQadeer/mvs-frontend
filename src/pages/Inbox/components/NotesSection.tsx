@@ -2,58 +2,39 @@ import { addNoteApi, deleteNoteApi } from "api/messenger";
 import moment from "moment";
 import React, { useState } from "react";
 import { INotes } from "./types";
-import CircularProgress from "@mui/material/CircularProgress";
-
 type Props = {
   notes: INotes[];
   conversation_id: string;
   getNotes: (conversation_id: string) => void;
+  setOverlayLoading: (value: boolean) => void;
 };
 
 const NotesSection = (props: Props) => {
-  const { notes, conversation_id, getNotes } = props;
+  const { notes, conversation_id, getNotes, setOverlayLoading } = props;
   const [noteText, setNoteText] = useState("");
-  const [loading, setLoading] = useState<boolean>(true);
-
   const addNewNote = async () => {
     const params = {
       conversation_id,
       note_content: noteText,
     };
-    setLoading(true);
+    setOverlayLoading(true);
     await addNoteApi(params);
     setNoteText("");
     await getNotes(conversation_id);
-    setLoading(false);
+    setOverlayLoading(false);
   };
 
   const handleDeleteNote = async (noteId: any) => {
     const params = {
       noteId,
     };
-    setLoading(true);
+    setOverlayLoading(true);
     await deleteNoteApi(params);
     await getNotes(conversation_id);
-    setLoading(false);
+    setOverlayLoading(false);
   };
-
   return (
     <div className="flex flex-col p-4 max-w-[100%]">
-      {/* Loader */}
-      {loading && (
-        <>
-          <div className="absolute top-0 left-0 bottom-0 right-0 bg-black opacity-40 w-full h-full flex justify-center items-center">
-            <CircularProgress
-              sx={{
-                width: "40px !important",
-                height: "40px !important",
-                color: "#9EFF00",
-              }}
-            />
-          </div>
-        </>
-      )}
-
       {/* Content */}
       <textarea
         value={noteText}

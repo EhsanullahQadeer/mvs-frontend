@@ -10,7 +10,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 import MessagesSection from "./MessagesSection";
@@ -28,21 +28,22 @@ type Props = {
   getConversationMessages: (
     conversation: IMessage,
     conversation_id: string
-  ) => void;
+  ) => Promise<void>;
   getNotes: (conversation_id: string) => void;
   notes: INotes[];
 };
 
 const MessagesDetail = (props: Props) => {
   const {
-    conversation: { conversation_id, thumbnail, displayName, recipient },
     loading,
     messages,
     getConversationMessages,
     getNotes,
     notes,
+    conversation,
   } = props;
-
+  const { conversation_id, thumbnail, displayName, recipient } = conversation;
+  const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
   const headerTabs = [
     {
       label: "Messages",
@@ -75,12 +76,21 @@ const MessagesDetail = (props: Props) => {
       conversation_id,
       message,
     };
-
+    setOverlayLoading(true);
     await sendInboxMessage(payload);
     setMessage("");
-    getConversationMessages(props.conversation, conversation_id);
+    await getConversationMessages(conversation, conversation_id);
+    setOverlayLoading(false);
   };
-
+  const messagesRef = useRef(null);
+  useEffect(() => {
+    setTimeout(() => {
+      const messageContainer = messagesRef.current;
+      if (messageContainer) {
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+      }
+    });
+  }, [messages, notes]);
   return (
     <React.Fragment>
       <div className="h-full w-full border-l border-eerieBlack bg-[#101113] relative">
@@ -136,21 +146,29 @@ const MessagesDetail = (props: Props) => {
               })}
             </div>
           </div>
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden relative custom-dropdown">
-            <div className="flex flex-col px-4 flex-1 py-3">
-              {loading === true ? (
-                <>
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
-                    <CircularProgress
-                      sx={{
-                        width: "40px !important",
-                        height: "40px !important",
-                        color: "#9EFF00",
-                      }}
-                    />
-                  </div>
-                </>
-              ) : (
+          <div className="flex flex-col flex-1 relative overflow-hidden">
+            {(loading || overlayLoading) && (
+              <div
+                className={`absolute top-0 left-0 bottom-0 right-0  w-full h-full flex justify-center items-center ${
+                  overlayLoading ? "bg-black opacity-40" : ""
+                }`}
+              >
+                <CircularProgress
+                  sx={{
+                    width: "40px !important",
+                    height: "40px !important",
+                    color: "#9EFF00",
+                  }}
+                />
+              </div>
+            )}
+            <div
+              ref={messagesRef}
+              className={
+                "flex flex-col px-4 flex-1 py-3  overflow custom-dropdown overflow-y-auto"
+              }
+            >
+              {!loading && (
                 <>
                   {tab === 0 && (
                     <>
@@ -166,7 +184,14 @@ const MessagesDetail = (props: Props) => {
 
                   {tab === 2 && (
                     <>
-                      <NotesSection {...{ notes, conversation_id, getNotes }} />
+                      <NotesSection
+                        {...{
+                          notes,
+                          conversation_id,
+                          getNotes,
+                          setOverlayLoading,
+                        }}
+                      />
                     </>
                   )}
                 </>
@@ -179,7 +204,7 @@ const MessagesDetail = (props: Props) => {
               message,
               setMessage,
               newMessage,
-              conversation: props.conversation,
+              conversation: conversation,
             }}
           />
         </div>
