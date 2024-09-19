@@ -2,17 +2,27 @@
  * @file index.ts
  * @author End Quote
  * @desc API functions for messenger related functions.
- * 
+ *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* LOCAL IMPORTS */
+import axiosInstance from "api/axios";
 import axios from "api/axios";
 import { config } from "config/ConfigManager";
+import {
+  IAddNoteApiPayloads,
+  IDeleteNoteApiParams,
+  IGetConversationByIdParams,
+  IGetConversationNotesParams,
+  IGetConversationsListParams,
+  ISendInboxMessagePayloads,
+  IUpdateNoteApiParams,
+} from "./types";
 
-export const sendMessage = async({
+export const sendMessage = async ({
   // General info
   senderUserId,
   recipientUserId,
@@ -38,29 +48,25 @@ export const sendMessage = async({
     clientSecret: clientSecret,
     paymentProcessed: paymentProcessed,
     // Partner Content
-    audioURL: audioURL
+    audioURL: audioURL,
   });
-}
+};
 
-export const getUserConvo = async (
-  userId: string
-) => {
+export const getUserConvo = async (userId: string) => {
   try {
     const response = await axios.get(`/messenger/conversations`, {
       params: {
-        userId
-      }
+        userId,
+      },
     });
     return response.data.conversations || [];
   } catch (error) {
-    console.error('Error fetching conversations:', error);
+    console.error("Error fetching conversations:", error);
     return [];
   }
 };
 
-export const getMessages = async (
-  conversationId: string
-) => {
+export const getMessages = async (conversationId: string) => {
   try {
     // Get messages
     const response = await axios.get(
@@ -68,33 +74,72 @@ export const getMessages = async (
     );
     return response.data.messages || [];
   } catch (error) {
-    console.error('Error fetching messages:', error);
+    console.error("Error fetching messages:", error);
     return [];
   }
 };
 
-export const fetchConversationId = async (
-  currentUserId, 
-  otherUserId
-) => {
+export const fetchConversationId = async (currentUserId, otherUserId) => {
   try {
-    const response = await axios.get(`/messenger/conversations/fetchConversationID/${currentUserId}/${otherUserId}`);
+    const response = await axios.get(
+      `/messenger/conversations/fetchConversationID/${currentUserId}/${otherUserId}`
+    );
     return response.data;
   } catch (error) {
-    console.error('Error fetching conversation ID:', error);
+    console.error("Error fetching conversation ID:", error);
     return null;
   }
 };
 
 export const checkConversationExists = async (
   UserId: string,
-  OtherUserId: string,
+  OtherUserId: string
 ) => {
-  const response = await axios.get('/messenger/check-conversation-exists', {
+  const response = await axios.get("/messenger/check-conversation-exists", {
     params: {
       UserId: UserId,
       OtherUserId: OtherUserId,
-    }
-  })
+    },
+  });
+};
+
+export const getConversationsList = async (
+  params: IGetConversationsListParams
+) => {
+  return axiosInstance.get(`/messenger/get-conversations/`, { params });
+};
+
+export async function getConversationsById(
+  params: IGetConversationByIdParams,
+  id: string
+) {
+  return axiosInstance.get(`/messenger/conversation/${id}`, { params });
 }
 
+export async function getConversationNotes(
+  params: IGetConversationNotesParams
+) {
+  return axiosInstance.get(`/messenger/get-conversation-notes`, {
+    params,
+  });
+}
+
+export async function sendInboxMessage(payload: ISendInboxMessagePayloads) {
+  return axiosInstance.post("/messenger/send-message", payload);
+}
+
+export async function addNoteApi(params: IAddNoteApiPayloads) {
+  return axiosInstance.post("/messenger/add-note", {}, {
+    params,
+  });
+}
+
+export async function updateNoteApi(params: IUpdateNoteApiParams) {
+  return axiosInstance.post("/messenger/update-note", params);
+}
+
+export async function deleteNoteApi(params: IDeleteNoteApiParams) {
+  return axiosInstance.post("/messenger/delete-note", {}, {
+    params,
+  });
+}
