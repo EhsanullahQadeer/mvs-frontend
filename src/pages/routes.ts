@@ -22,6 +22,7 @@ import InboxPage from "pages/Inbox";
 import StripeCallback from "pages/StripeCallback";
 import CheckScrolling from "./CheckScrolling";
 import ArtistProfile from "./profile/ArtistProfile";
+import ArtistWikiProfile from "./wiki-profile/ArtistWikiProfile";
 import AccountSetting from "./settings/account/AccountSetting";
 
 interface IRoute {
@@ -134,7 +135,7 @@ const routes: IRoute[] = [
   {
     path: "/artist-wiki-profile/:spotify_artist_id",
     name: "Artist Profile",
-    component: ArtistProfile,
+    component: ArtistWikiProfile,
   },
   {
     path: "/artist-profile/:username",

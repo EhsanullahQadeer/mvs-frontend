@@ -100,7 +100,7 @@ export const Conversations = (props: Props) => {
                   <div className="flex flex-col justify-center self-stretch my-auto font-semibold w-[100px]">
                     <div
                       className={`text-sm leading-none ${
-                        UnreadCount ? "text-white" : "text-[#999999]"
+                        UnreadCount ? "text-white" : "text-mediumGray"
                       }`}
                     >
                       {displayName}
@@ -115,7 +115,7 @@ export const Conversations = (props: Props) => {
           </div>
           <div
             className={`flex flex-col flex-1 shrink justify-center items-start self-stretch my-auto ${
-              UnreadCount ? "text-white" : "text-[#999999]"
+              UnreadCount ? "text-white" : "text-mediumGray"
             } basis-6 min-w-[240px]`}
             onClick={() => {
               getMessagesNotes(props.conversation, conversation_id);

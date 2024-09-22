@@ -202,13 +202,16 @@ const SampleTable = (
           <tr>
             <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-4">Sample</th>
             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">Filename</th>
-            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white"></th>
+            {/* <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white"></th> */}
             <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white">Time</th>
             <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white">Key</th>
             <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white">BPM</th>
+            <th scope="col" className="meta-sample px-3 py-3.5 text-left text-sm font-semibold text-white">Status</th>
             <th scope="col" className="considering-avatar px-3 py-3.5 text-center text-sm font-semibold text-white">Considering</th>
             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">Actions</th>
           </tr>
+          </thead>
+          <tbody className="">
           {samples && Object.values(samples.samples).map((sample: any, map_index) => {
             const considering_list = samples[map_index]?.considering?.split(',') || [];
             return(
@@ -286,7 +289,7 @@ const SampleTable = (
                     onClick={()=>{
                     }}
                     style={{
-                      maxWidth: '252px',
+                      maxWidth: '200px',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
@@ -300,7 +303,7 @@ const SampleTable = (
                   </td>
                   
                   {/* Waveform */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                  {/* <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
                     <div className="flex flex-col items-center justify-center h-full">
                       <div className="h-[50px]">
                         {tracks.find((t) => t.id === sample.id) && (
@@ -319,19 +322,30 @@ const SampleTable = (
                         )}
                       </div>
                     </div>
-                  </td>
+                  </td> */}
 
                   {/* Sample Duration */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
                     {formatDuration(sample?.length)}
                   </td>
                   {/* Sample Key */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
                     {sample?.keys}
                   </td>
                   {/* Sample BPM */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
                     {sample?.bpm}
+                  </td>
+
+                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
+                  <span className="bg-blackMarbel border-[1px] border-[#222222] rounded-lg text-white px-2 py-1 flex gap-2 w-max items-center">
+                        <div
+                          className={`w-[7px] h-[7px] rounded-full bg-[#25BA00]`}
+                        ></div>
+                        <span className="text-xs font-normal text-white">
+                          Available
+                        </span>
+                      </span>
                   </td>
 
                   {/* Considering List */}
@@ -420,7 +434,7 @@ const SampleTable = (
               </>
             )
           })}
-        </thead>
+        </tbody>
       </table>
       <div className="pb-[42px]"></div>
       {/* `Show Considering` Button Clicked */}
