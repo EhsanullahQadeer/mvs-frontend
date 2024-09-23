@@ -16,7 +16,7 @@ import skipNext from '../../../assets/img/player/skip-forward.svg';
 import pauseButton from '../../../assets/img/player/pause-circle.svg';
 import playButton from '../../../assets/img/player/play-circle.svg';
 import musicBeam from "../../../assets/icons/musicBeam.svg";
-import { useWaveform, Waveform } from "./waveform";
+import { useWaveform, Waveform, waveformCtx } from "./waveform";
 
 const AudioPlayer = ({ audio_track, currTrack, isPlaying, onPlayToggle, onPrevClick, onNextClick }) => {
   // const { currentTrack, isPlaying, playTrack, pauseTrack } = useContext(PlayerContext);
@@ -54,11 +54,14 @@ const AudioPlayer = ({ audio_track, currTrack, isPlaying, onPlayToggle, onPrevCl
     const newVolume = Math.max(0, Math.min(100, ((event.clientX - slider.left) / slider.width) * 100));
     setVolume(newVolume);
   };
+  const [progress, setProgress] = useState(0); // State to track audio progress percentage
+  const [duration, setDuration] = useState(0); // To store the actual duration
 
   const handleMouseDown = () => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
   };
+  const { audioRef, metadata } = useContext(waveformCtx); // Get audioRef and metadata from context
 
   const handleMouseUp = () => {
     window.removeEventListener('mousemove', handleMouseMove);
@@ -73,6 +76,38 @@ const AudioPlayer = ({ audio_track, currTrack, isPlaying, onPlayToggle, onPrevCl
     };
   }, [handleMouseUp]);
 
+  // Update progress using requestAnimationFrame for smooth updates
+  const updateProgress = () => {
+    if (audioRef.current && audioRef.current.duration > 0) {
+      const currentTime = audioRef.current.currentTime;
+      const duration = audioRef.current.duration;
+      setProgress((currentTime / duration) * 100); // Calculate percentage
+      setDuration(duration); // Set the correct duration
+    }
+    requestAnimationFrame(updateProgress); // Continuously update using requestAnimationFrame
+  };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.addEventListener('loadedmetadata', () => {
+        if (audioRef.current) {
+          setDuration(audioRef.current.duration); // Set duration when metadata is loaded
+        }
+      });
+
+      // Start progress updates with requestAnimationFrame
+      requestAnimationFrame(updateProgress);
+    }
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.removeEventListener('loadedmetadata', () => {});
+      }
+    };
+  }, [audioRef]);
+
+  const segments = 10000; // Number of segments for the progress bar
+  const segmentArray = Array.from({ length: segments }, (_, i) => i);
 
   console.log('currtrack', currTrack);
   return (
@@ -98,6 +133,38 @@ const AudioPlayer = ({ audio_track, currTrack, isPlaying, onPlayToggle, onPrevCl
             </button>
           </div>
         </div>
+
+      {/* Segmented progress bar */}
+      <div
+        style={{
+          display: 'flex',
+          width: '100%',
+          height: '3px',
+          backgroundColor: '#ccc',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+        }}
+      >
+        {segmentArray.map((segment) => {
+          const segmentWidth = 100 / segments; // Width of each segment in percentage
+          const segmentProgress = (segment / segments) * 100; // Progress represented by this segment
+
+          // Determine the color based on the progress
+          const backgroundColor = progress >= segmentProgress ? '#9EFF00' : '#101113';
+
+          return (
+            <div
+              key={segment}
+              style={{
+                width: `${segmentWidth}%`, // Equal width for each segment
+                height: '100%',
+                backgroundColor,
+              }}
+            />
+          );
+        })}
+      </div>
 
       {/* Audio Player Component */}
       {/* <div className="h-[50px]" style={{ marginLeft: '20px' }}>
