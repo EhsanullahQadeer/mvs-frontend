@@ -10,6 +10,9 @@ module.exports = {
     extend: {
       colors: {
         // Add your custom colors here
+        softGray: "#ccc",
+        mediumGray: "#999999",
+        jetBlack: "#0f0f0f",
         gainsBoro: "#D1D1D1",
         gray: "#D7D7D7",
         eclipseGray: "#242424",

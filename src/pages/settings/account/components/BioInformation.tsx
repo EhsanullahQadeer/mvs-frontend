@@ -99,7 +99,7 @@ const BioInformation: React.FC = () => {
                   <h2 className="text-xl font-semibold text-white">
                     Serena Figueiro
                   </h2>
-                  <p className="text-[#999999] text-sm font-normal">
+                  <p className="text-mediumGray text-sm font-normal">
                     Buenos Aires, Argentina
                   </p>
                 </div>

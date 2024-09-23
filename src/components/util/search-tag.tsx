@@ -52,7 +52,7 @@ const SearchWithTags = () => {
           <input
             type="text"
             id="simple-search"
-            className="bg-[#0F0F0F] font-['Mona-Sans-M'] border border-[#191919] text-[#4c4c4c] text-sm rounded-[100px] w-full h-[45px] pl-10 py-2.5"
+            className="bg-jetBlack font-['Mona-Sans-M'] border border-[#191919] text-[#4c4c4c] text-sm rounded-[100px] w-full h-[45px] pl-10 py-2.5"
             placeholder="Search samples."
             value={search}
             onChange={(e) => setSearch(e.target.value)}

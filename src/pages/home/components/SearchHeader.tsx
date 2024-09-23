@@ -140,8 +140,8 @@ export function SearchHeader(props: IAppProps) {
                 renderOption={(props, option, { selected, index }) => (
                   <li
                     {...props}
-                    className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-[#0F0F0F] ${
-                      props["aria-selected"] ? "bg-[#0F0F0F]" : ""
+                    className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-jetBlack ${
+                      props["aria-selected"] ? "bg-jetBlack" : ""
                     }`}
                     onClick={async (e) => {
                       // Prevent default navigation behavior

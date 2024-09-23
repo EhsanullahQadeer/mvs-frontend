@@ -7,7 +7,6 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
-// import profileImage from "../sampleData/Ellipse 730.png";
 import {
   // FiEdit3,
   FiUserPlus,
@@ -25,7 +24,7 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
-  const { isWikiProfile, setIsConnect, isConnect, artistData } = props;
+  const { isWikiProfile= true, setIsConnect, isConnect, artistData } = props;
 
   const handleConnect = () => {
     setIsConnect(true);
@@ -115,7 +114,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
                 style={{
                   width: "unset",
                 }}
-                className="flex w-28 font-normal items-center   bg-green-500 text-[#0F0F0F] text-sm rounded-full  transition py-3 px-4 bg-limeGreen"
+                className="flex w-28 font-normal items-center   bg-green-500 text-jetBlack text-sm rounded-full  transition py-3 px-4 bg-limeGreen"
               >
                 {isConnect ? (
                   <div className="flex gap-2 items-center">

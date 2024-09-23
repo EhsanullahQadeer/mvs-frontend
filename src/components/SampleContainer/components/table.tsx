@@ -6,6 +6,9 @@ import AudioPlayer from "./player";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import playButton from '../../../assets/img/player/play-circle.svg'
 import pauseButton from '../../../assets/img/player/pause-circle.svg'
+import musicBeam from "../../../assets/icons/musicBeam.svg";
+import playIcon from "../../../assets/icons/playIcon.svg";
+import musicIcon from "../../../assets/icons/musicIcon.svg";
 import { AudioTrackType } from "../player-container";
 import { AudioTrack, useWaveform, Waveform } from "./waveform";
 import Avatar from "react-avatar"; 
@@ -200,15 +203,18 @@ const SampleTable = (
       >
         <thead>
           <tr>
-            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-4">Sample</th>
-            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">Filename</th>
-            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white"></th>
-            <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white">Time</th>
-            <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white">Key</th>
-            <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-semibold text-white">BPM</th>
-            <th scope="col" className="considering-avatar px-3 py-3.5 text-center text-sm font-semibold text-white">Considering</th>
-            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">Actions</th>
+            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-normal text-softGray sm:pl-4">Sample</th>
+            <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray">Filename</th>
+            {/* <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray"></th> */}
+            <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray">Time</th>
+            <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray">Key</th>
+            <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray">BPM</th>
+            <th scope="col" className="meta-sample px-3 py-3.5 text-left text-sm font-normal text-softGray">Status</th>
+            <th scope="col" className="considering-avatar px-3 py-3.5 text-center text-sm font-normal text-softGray">Considering</th>
+            <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray">Actions</th>
           </tr>
+          </thead>
+          <tbody className="">
           {samples && Object.values(samples.samples).map((sample: any, map_index) => {
             const considering_list = samples[map_index]?.considering?.split(',') || [];
             return(
@@ -226,15 +232,11 @@ const SampleTable = (
                   }}
                 >
                   {/* Thumbnail */}
-                  <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                  <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm">
                     <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'start',
-                        alignItems: 'center',
-                      }}
+                      className="flex items-center gap-5"
                     >
-                      <div className="thumbnail-container">
+                      {/* <div className="thumbnail-container">
                         <img
                           className={
                             currPlayingId !== sample.id
@@ -261,8 +263,8 @@ const SampleTable = (
                           onClick={async (e) => {
                           }}
                         />
-                      </div>
-                      <svg
+                      </div> */}
+                      {/* <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width={20}
                         height={20}
@@ -275,32 +277,36 @@ const SampleTable = (
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
-                      </svg>
+                      </svg> */}
+
+                        <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-[#181A1D]">
+                          <img src={musicIcon} alt="musicIcon" />
+                        </div>
+                      <div>
+                      <img
+                        src={currPlayingId === sample.id ? playIcon : musicBeam}
+                        alt="icon"
+                      />
+                      </div>
                     </div>
                   </td>
 
                   {/* Sample info */}
                   <td
-                    className="row-play whitespace-nowrap px-3 py-4 text-[14px] text-[#CECFDA] font-['Mona-Sans-M']"
+                    className="row-play px-3 py-4 text-xs text-mediumGray font-['Mona-Sans-M'] max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
                     data-index={map_index}
                     onClick={()=>{
-                    }}
-                    style={{
-                      maxWidth: '252px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
                     }}
                   >
                     {sample.filename}
                     <br />
-                    <span className="text-[12px] text-[#6f6f6f]">
+                    <span className="text-[10px] font-semibold text-coolGray">
                       {sample.composers.find(composer => composer.id === sample.owner_id)?.artist_name || ''}
                     </span>
                   </td>
                   
                   {/* Waveform */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                  {/* <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
                     <div className="flex flex-col items-center justify-center h-full">
                       <div className="h-[50px]">
                         {tracks.find((t) => t.id === sample.id) && (
@@ -319,23 +325,34 @@ const SampleTable = (
                         )}
                       </div>
                     </div>
-                  </td>
+                  </td> */}
 
                   {/* Sample Duration */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
                     {formatDuration(sample?.length)}
                   </td>
                   {/* Sample Key */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
                     {sample?.keys}
                   </td>
                   {/* Sample BPM */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
                     {sample?.bpm}
                   </td>
 
+                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
+                  <span className="bg-blackMarbel border-[1px] border-[#222222] rounded-lg text-white px-2 py-1 flex gap-1.5 w-max items-center">
+                        <div
+                          className={`w-[7px] h-[7px] rounded-full bg-[#25BA00]`}
+                        ></div>
+                        <span className="text-xs font-semibold text-mediumGray">
+                          Available
+                        </span>
+                      </span>
+                  </td>
+
                   {/* Considering List */}
-                  <td className="considering-avatar whitespace-nowrap text-sm text-gray-300 text-center">
+                  <td className="considering-avatar whitespace-nowrap text-sm text-mediumGray text-center">
                     {
                       considering_list.length > 0 &&
                       considering_list.slice(0, 3).map((person, idx) => {
@@ -360,7 +377,7 @@ const SampleTable = (
                         // setSample(x);
                         // setConsidering(true);
                       }}
-                      className="cursor-pointer text-[10px] ml-[10px] mt-[10px] text-[#929292] underline font-['Mona-Sans-M']"
+                      className="cursor-pointer text-xs ml-[10px] mt-[10px] text-dimGray underline font-['Mona-Sans-M']"
                       >
                         View All
                     </span>
@@ -420,7 +437,7 @@ const SampleTable = (
               </>
             )
           })}
-        </thead>
+        </tbody>
       </table>
       <div className="pb-[42px]"></div>
       {/* `Show Considering` Button Clicked */}

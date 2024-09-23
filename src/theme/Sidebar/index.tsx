@@ -16,7 +16,7 @@ const Sidebar = () => {
 
   return (
     <React.Fragment>
-      <div className="sidebar py-[12px] border-b-2 border-r-2 border-[#1F1F1F] w-full h-full px-[12px] bg-[#0F0F0F]">
+      <div className="sidebar py-[12px] border-b-2 border-r-2 border-[#1F1F1F] w-full h-full px-[12px] bg-jetBlack">
 
         {/* Home button */}
         <button

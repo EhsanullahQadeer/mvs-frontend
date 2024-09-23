@@ -154,7 +154,6 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 5px;
   background-color: #1a1a1a; /* Dark background for visibility */
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* Adds a shadow for better separation */
   z-index: 1000; /* Ensure it stays above other content */
@@ -264,7 +263,6 @@ body {
 
 .volume-slider-wrapper {
   position: relative;
-  flex-grow: 1; /* Allow the slider to take up the rest of the space */
 }
 
 .volume-input {

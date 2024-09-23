@@ -136,7 +136,7 @@ const MessagesDetail = (props: Props) => {
                     }}
                     className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
                       tab === value
-                        ? "text-[#0F0F0F] bg-[#9EFF00] text-xs"
+                        ? "text-jetBlack bg-[#9EFF00] text-xs"
                         : "text-[#848484] bg-[#242424] text-[10px]"
                     }`}
                   >
