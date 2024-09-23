@@ -161,7 +161,7 @@ const ArtistProfile = () => {
                 </div>
 
                 {/* <MusicTable /> */}
-                <div className="">
+                <div className="relative">
                   <SamplesContainer user_id={artistData?.id} />
                 </div>
               </div>
