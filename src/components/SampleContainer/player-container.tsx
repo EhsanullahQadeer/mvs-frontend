@@ -145,7 +145,7 @@ const SamplesContainer = ({
   const [samples, setSamples] = useState<AudioTrackType[]>([]);
   const [currentPage, setCurrentPage] = useState(0); // To track the current page
   // @todo: this value is only present for MVP purposes, should remove later.
-  const samplesPerPage = 10000 // The number of samples per page
+  const samplesPerPage = 100 // The number of samples per page
 
   const [allSamples, setAllSamples] = useState<AudioTrackType[]>([]); // To store all the samples
   const [currentSamples, setCurrentSamples] = useState<AudioTrackType[]>([]); // To store the samples for the current page
@@ -155,6 +155,8 @@ const SamplesContainer = ({
     setLoading(true);
     const _sound = await getUserSamplesAPI({
       user_id,
+      skip: 0,
+      take: samplesPerPage,
     });
 
     // Assuming `samples` is the object you showed in the screenshot.
