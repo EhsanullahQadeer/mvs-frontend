@@ -109,7 +109,7 @@ const AudioPlayer = ({ audio_track, currTrack, isPlaying, onPlayToggle, onPrevCl
   const segments = 10000; // Number of segments for the progress bar
   const segmentArray = Array.from({ length: segments }, (_, i) => i);
 
-  console.log('currtrack', currTrack);
+
   return (
     <div className="bottom-audio-player" style={{ borderTop: '2px solid #1F1F1F', width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 
@@ -135,6 +135,12 @@ const AudioPlayer = ({ audio_track, currTrack, isPlaying, onPlayToggle, onPrevCl
         </div>
 
       {/* Segmented progress bar */}
+
+      <div
+        >
+
+      </div>
+
       <div
         style={{
           display: 'flex',
