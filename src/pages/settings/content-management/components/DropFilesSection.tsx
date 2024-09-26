@@ -1,4 +1,10 @@
-import React from "react";
+/*************************************************************************
+ * @file DropFilesSection.tsx
+ * @author Ehsanullah Qadeer
+ * @desc  This is the component is wrap over custom file uploader component.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
 import CustomFileDropper from "./CustomFileDropper";
 
 type Props = {};

@@ -1,4 +1,3 @@
-import React from "react";
 import DropFilesSection from "./components/DropFilesSection";
 import AttachedFilesSection from "./components/AttachedFilesSection";
 

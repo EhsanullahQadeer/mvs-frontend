@@ -52,7 +52,6 @@ const AttachedFilesTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<keyof Data>("fileName");
-  const [hoveredRow, setHoveredRow] = useState(null);
   const [selected, setSelected] = React.useState<readonly number[]>([]);
 
   const handleRequestSort = (
@@ -90,7 +89,6 @@ const AttachedFilesTable = () => {
           ? a.uploadedDate.localeCompare(b.uploadedDate)
           : b.uploadedDate.localeCompare(a.uploadedDate);
 
-      // Add more cases for other columns as needed
       default:
         return 0;
     }
@@ -201,8 +199,6 @@ const AttachedFilesTable = () => {
                     role="checkbox"
                     tabIndex={-1}
                     key={idx}
-                    onMouseEnter={() => setHoveredRow(row.id)}
-                    onMouseLeave={() => setHoveredRow(null)}
                   >
                     <TableCell
                       padding="checkbox"

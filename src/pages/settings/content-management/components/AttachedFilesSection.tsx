@@ -1,4 +1,11 @@
-import React, { useState } from "react";
+/*************************************************************************
+ * @file AttachedFilesSection.tsx
+ * @author Ehsanullah Qadeer
+ * @desc  This is the component for showing attached files.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+import  { useState } from "react";
 import AttachedFilesTable from "./AttachedFilesTable";
 
 type Props = {};

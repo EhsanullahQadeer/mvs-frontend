@@ -8,7 +8,6 @@
 
 /* LOCAL IMPORTS */
 import React from "react";
-import Theme from "theme";
 import BioInformation from "./components/BioInformation";
 import AccountInformation from "./components/AccountInformation";
 

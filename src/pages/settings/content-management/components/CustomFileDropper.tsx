@@ -1,3 +1,10 @@
+/*************************************************************************
+ * @file CustomFileDropper.tsx
+ * @author Ehsanullah Qadeer
+ * @desc  This is the component for uploading files.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
 import React, { useState } from "react";
 import uploadFileIcon from "../../../../assets/icons/uploadSheetIcon.svg";
 

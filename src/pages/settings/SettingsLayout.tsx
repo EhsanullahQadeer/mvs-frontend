@@ -1,16 +1,22 @@
-import React from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+/*************************************************************************
+ * @file SettingsLayout.tsx
+ * @author Ehsanullah Qadeer
+ * @desc  This is layout for all the setting tabs.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+import { NavLink, Outlet } from "react-router-dom";
 import Theme from "theme";
 
 const SettingsLayout = () => {
-  const location = useLocation();
   const tabs = [
     { name: "Account", path: "account/1" },
     { name: "Content Management", path: "content-management/1" },
-    { name: "Notifications", path: "notifications/1" },
-    { name: "Billing", path: "billing/1" },
-    { name: "Privacy", path: "privacy/1" },
-    { name: "Monetization", path: "monetization/1" },
+    // { name: "Notifications", path: "notifications/1" },
+    // { name: "Billing", path: "billing/1" },
+    // { name: "Privacy", path: "privacy/1" },
+    // { name: "Monetization", path: "monetization/1" },
   ];
 
   return (
