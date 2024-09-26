@@ -50,7 +50,7 @@ const ScrollableComponent = (props: Props) => {
     }
 
     // Fetch users based on the applied filters
-    const users = await getUsersByTag(params, 20);
+    const users = await getUsersByTag(params, 50);
     console.log("users here", users.data);
     // If filter is cleared, reset to initial data
     if (value === "") {

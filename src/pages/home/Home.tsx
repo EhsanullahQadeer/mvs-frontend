@@ -33,7 +33,7 @@ const Home = (
     // Run all promises concurrently
     const results = await Promise.all(
       userTags.map(async (tag) => {
-        const users = await getUsersByTag({ primaryUserLabel: tag }, 20);
+        const users = await getUsersByTag({ primaryUserLabel: tag }, 50);
         return { 
           tag, 
           users: users.data 
@@ -66,7 +66,7 @@ const Home = (
           primaryUserLabel: filterValue, 
           limit: 50
         };
-        const user = await getUsersByTag(params, 20);
+        const user = await getUsersByTag(params, 50);
         setFiltersData(user.data);
       }
       else {

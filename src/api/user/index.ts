@@ -58,7 +58,7 @@ export async function userArtistSearch(params: IUsersSearchParams) {
   return axiosInstance.get("/users/search", { params });
 }
 
-export async function getUsersByTag(params: UserFiltersDTO, limit: 20) {
+export async function getUsersByTag(params: UserFiltersDTO, limit) {
   return axiosInstance.get(`/users/by-tag`, {
     params: {
       ...params,
