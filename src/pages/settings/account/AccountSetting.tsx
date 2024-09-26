@@ -18,20 +18,15 @@ import RolesGenres from "./components/RolesGenres";
 
 const AccountSetting: React.FC = () => {
   return (
-    <Theme>
-      <h2
-        style={{
-          borderBottom: "1px solid var(--Neutral-700, #242424)",
-        }}
-        className="text-gainsBoro px-3 py-3 text-base font-semibold"
-      >
+    <>
+      <h2 className="text-white px-3 py-4 text-xl font-semibold border-b border-eclipseGray">
         Notification
       </h2>
       <BioInformation />
       <AccountInformation />
       <Address />
       <RolesGenres />
-    </Theme>
+    </>
   );
 };
 

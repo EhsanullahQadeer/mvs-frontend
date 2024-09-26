@@ -24,12 +24,15 @@ import CheckScrolling from "./CheckScrolling";
 import ArtistProfile from "./profile/ArtistProfile";
 import ArtistWikiProfile from "./wiki-profile/ArtistWikiProfile";
 import AccountSetting from "./settings/account/AccountSetting";
+import ContentManagement from "./settings/content-management/ContentManagement";
+import SettingsLayout from "./settings/SettingsLayout";
 
 interface IRoute {
   path: string;
   name: string;
   component: any;
   props?: any;
+  children?: IRoute[];
 }
 
 const routes: IRoute[] = [
@@ -143,10 +146,43 @@ const routes: IRoute[] = [
     component: ArtistProfile,
   },
   {
-    path: "/account-settings/:id",
-    name: "Account Settings",
-    component: AccountSetting,
+    path: "/settings",
+    name: "Settings",
+    component: SettingsLayout,
+    children: [
+      {
+        path: "account/:id",
+        name: "Account Settings",
+        component: AccountSetting,
+      },
+      {
+        path: "content-management/:id",
+        name: "Content Management",
+        component: ContentManagement,
+      },
+      // {
+      //   path: "notifications/:id",
+      //   name: "Notifications",
+      //   component: Notifications,
+      // },
+      // {
+      //   path: "billing/:id",
+      //   name: "Billing",
+      //   component: Billing,
+      // },
+      // {
+      //   path: "privacy/:id",
+      //   name: "Privacy",
+      //   component: Privacy,
+      // },
+      // {
+      //   path: "monetization/:id",
+      //   name: "Monetization",
+      //   component: Monetization,
+      // },
+    ],
   },
+
 ];
 
 export default routes;

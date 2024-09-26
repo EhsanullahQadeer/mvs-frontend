@@ -27,7 +27,7 @@ const Footer = (props: Props) => {
 
   return (
     <div className="sticky bottom-0">
-      <div className="flex flex-col p-3 w-full bg-[#101113] relative">
+      <div className="flex flex-col p-3 w-full bg-richBlack relative">
         <div className="flex w-full text-sm font-semibold leading-none text-center absolute left-0 top-3 px-3">
           <div className="flex justify-center px-7 w-full bg-[#f9e2dd] rounded-t-xl">
             <div className="py-2.5 text-sm font-semibold text-[#955353]">

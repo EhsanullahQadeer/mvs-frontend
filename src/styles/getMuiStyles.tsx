@@ -1,4 +1,3 @@
-
 const getMuiStyles = () => {
   const muiStyles = {
     searchInputTextField: {
@@ -37,6 +36,8 @@ const getMuiStyles = () => {
     },
 
     tableHead: {
+      borderTopLeftRadius: "8px",
+      borderTopRightRadius: "8px",
       ".css-1qgma8u-MuiButtonBase-root-MuiTableSortLabel-root.Mui-active": {
         color: "#848484",
       },
@@ -54,6 +55,20 @@ const getMuiStyles = () => {
         fontSize: "14px",
         backgroundColor: "transparent",
         color: "#FFFFFF",
+      },
+    },
+
+    tableBody: {
+      "& .MuiTableRow-root": {
+        cursor: "pointer",
+        backgroundColor: "#0F0F0F",
+        ":hover": { backgroundColor: "#101113" },
+      },
+      "& .MuiTableCell-body": {
+        color: "#B2B2B2",
+        fontSize: "12px",
+        fontWeight: 400,
+        borderBottom: "1px solid #242424",
       },
     },
 
@@ -82,8 +97,25 @@ const getMuiStyles = () => {
       "& .MuiTablePagination-displayedRows": {
         color: "white",
       },
+      "& .MuiButtonBase-root.Mui-disabled": {
+        color: "#A3A3A3",
+      },
       "& .MuiButtonBase-root": {
         color: "white",
+      },
+    },
+
+    tableCheckbox: {
+      "&.MuiCheckbox-root": {
+        color: "#666",
+
+        "&.Mui-checked": {
+          color: "#9EFF00",
+        },
+
+        "&.MuiCheckbox-indeterminate": {
+          color: "#9EFF00",
+        },
       },
     },
 

@@ -93,9 +93,9 @@ const MessagesDetail = (props: Props) => {
   }, [messages, notes]);
   return (
     <React.Fragment>
-      <div className="h-full w-full border-l border-eerieBlack bg-[#101113] relative">
+      <div className="h-full w-full border-l border-eerieBlack bg-richBlack relative">
         <div className="flex flex-col pt-2 h-full">
-          <div className="flex flex-col w-full max-md:max-w-full sticky top-0 bg-[#101113]">
+          <div className="flex flex-col w-full max-md:max-w-full sticky top-0 bg-richBlack">
             <div className="flex flex-wrap gap-5 justify-between items-center p-4 pt-2 w-full">
               <div className="flex gap-2 items-center">
                 <div

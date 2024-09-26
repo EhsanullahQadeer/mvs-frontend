@@ -45,7 +45,7 @@ const RolesGenres = () => {
                 <button
                   type={isEditable ? "button" : "submit"}
                   onClick={() => setIsEditable(!isEditable)}
-                  className="flex justify-between items-center gap-1 whitespace-nowrap text-sm px-2 py-1 rounded-lg text-dimGray bg-[#181A1D]"
+                  className="flex justify-between items-center gap-1 whitespace-nowrap text-sm px-2 py-1 rounded-lg text-dimGray bg-gunMetal"
                 >
                   {isEditable ? (
                     "Save"
