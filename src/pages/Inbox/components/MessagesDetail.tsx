@@ -116,12 +116,12 @@ const MessagesDetail = (props: Props) => {
                   <div className="text-sm font-semibold text-white">
                     {displayName}
                   </div>
-                  <div className="text-xs text-[#B2B2B2] font-normal">
+                  <div className="text-xs text-silver font-normal">
                     Los Angeles, CA
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-[#B2B2B2]">
+              <div className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver">
                 <MenuIcon className="w-5 h-5" />
               </div>
             </div>

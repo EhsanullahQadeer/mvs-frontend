@@ -164,6 +164,39 @@ const getMuiStyles = () => {
         paddingY: "4px",
       },
     },
+
+    singleSelectDropdownStyles: {
+      ":hover": {
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: "#3d3d3d",
+        },
+      },
+
+      "&.Mui-focused": {
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: "#3d3d3d",
+        },
+      },
+
+      "& .MuiSelect-select": {
+        paddingLeft: "16px",
+        paddingY: "12px",
+        backgroundColor: "#131313",
+        borderRadius: "8px",
+        color: "#666666",
+        fontSize: "14px",
+        fontWeight: "400",
+      },
+
+      "& svg": {
+        color: "#666666",
+      },
+
+      "& fieldset": {
+        borderColor: "#242424",
+        borderRadius: "8px",
+      },
+    },
   };
   return muiStyles;
 };

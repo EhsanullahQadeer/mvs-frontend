@@ -53,13 +53,13 @@ export const useHeaderHooks = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!token) {
-  //     navigate('/login');
-  //   } else {
-  //     dispatch( fetchCurrentUser() );
-  //   }
-  // }, [token, navigate, dispatch]);
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+    } else {
+      dispatch( fetchCurrentUser() );
+    }
+  }, [token, navigate, dispatch]);
 
   useEffect(() => {
     setUser(state.auth.user);

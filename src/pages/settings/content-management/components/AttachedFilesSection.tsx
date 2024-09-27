@@ -42,7 +42,7 @@ const AttachedFilesSection = (props: Props) => {
               onClick={() => handleTabClick(value, func)}
               className={`py-3 px-4 text-xs font-semibold flex items-center justify-center border border-eclipseGray ${
                 selectedTab === value
-                  ? "text-[#B2B2B2] bg-eerieBlack"
+                  ? "text-silver bg-eerieBlack"
                   : "text-charcoalGray bg-jetBlack"
               } ${idx === 0 && "rounded-l-lg border-r-0"} ${
                 idx === 2 && "rounded-r-lg border-l-0"

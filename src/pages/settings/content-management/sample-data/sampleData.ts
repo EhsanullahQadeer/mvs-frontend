@@ -1,5 +1,35 @@
 import sampleImg from "./download.png";
 
+export const songType = [
+  "Classic music",
+  "Ottoman music",
+  "Pop music",
+  "Lo-fi",
+  "Instrumental",
+  "Rap",
+];
+
+export const composersArr = [
+  {
+    name: "Raul Cardenas",
+    tags: "Executive Producer / Mixing Engineer",
+    imgSrc: sampleImg,
+    email: "abc@gmail.com",
+  },
+  {
+    name: "Raul Cardenas",
+    tags: "Executive Producer / Mixing Engineer",
+    imgSrc: sampleImg,
+    email: "abc@gmail.com",
+  },
+  {
+    name: "Raul Cardenas",
+    tags: "Executive Producer / Mixing Engineer",
+    imgSrc: sampleImg,
+    email: "abc@gmail.com",
+  },
+];
+
 export const attachedFilesTableData = [
   {
     id: 1,
