@@ -9,24 +9,36 @@ export const songType = [
   "Rap",
 ];
 
+export const rolesArr = [
+  "Executive Producer",
+  "Mixing Engineer",
+  "Songwriter",
+  "Music Producer",
+  "Singer",
+  "Composer",
+];
+
 export const composersArr = [
   {
+    id: 1,
     name: "Raul Cardenas",
-    tags: "Executive Producer / Mixing Engineer",
     imgSrc: sampleImg,
     email: "abc@gmail.com",
+    roles: ["Executive Producer", "Mixing Engineer"],
   },
   {
-    name: "Raul Cardenas",
-    tags: "Executive Producer / Mixing Engineer",
+    id: 2,
+    name: "Joseph",
     imgSrc: sampleImg,
     email: "abc@gmail.com",
+    roles: ["Songwriter", "Singer"],
   },
   {
-    name: "Raul Cardenas",
-    tags: "Executive Producer / Mixing Engineer",
+    id: 3,
+    name: "John smith",
     imgSrc: sampleImg,
     email: "abc@gmail.com",
+    roles: ["Composer", "Music Producer"],
   },
 ];
 

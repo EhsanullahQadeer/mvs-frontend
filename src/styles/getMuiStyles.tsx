@@ -59,12 +59,12 @@ const getMuiStyles = () => {
     },
 
     tableBody: {
-      "& .MuiTableRow-root": {
+      ".MuiTableRow-root": {
         cursor: "pointer",
         backgroundColor: "#0F0F0F",
         ":hover": { backgroundColor: "#101113" },
       },
-      "& .MuiTableCell-body": {
+      ".MuiTableCell-body": {
         color: "#B2B2B2",
         fontSize: "12px",
         fontWeight: 400,
@@ -195,6 +195,26 @@ const getMuiStyles = () => {
       "& fieldset": {
         borderColor: "#242424",
         borderRadius: "8px",
+      },
+    },
+
+    radioButtonLabel: {
+      marginLeft: "-7px",
+      color: "#848484",
+      "& .MuiRadio-root": {
+        padding: "8px",
+        width: "32px",
+        height: "32px",
+        color: "#848484",
+
+        "&.Mui-checked": {
+          color: "#9EFF00",
+        },
+      },
+
+      "& .MuiFormControlLabel-label": {
+        fontSize: "14px",
+        fontWeight: 400,
       },
     },
   };

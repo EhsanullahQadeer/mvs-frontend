@@ -1,31 +1,34 @@
 /*************************************************************************
  * @file SingleSelectDropdown.tsx
  * @author Ehsanullah Qadeer
- * @desc  This is the component for the mui dropdown to select one element.
+ * @desc  This is the component for the mui dropdown to select multiple elements.
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import * as React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import getMuiStyles from "styles/getMuiStyles";
+import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 
 type Props = {
   name: string;
   label?: string;
-  placeholder: string;
   dropdownItems: string[];
+  value: string[];
+  setValue: (newRoles: string[]) => void;
 };
 
-function SingleSelectDropdown(props: Props) {
-  const { name, label, placeholder, dropdownItems } = props;
+function MultiSelectDropdown(props: Props) {
+  const { name, label, dropdownItems, value, setValue } = props;
 
-  const [age, setAge] = React.useState("");
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
+  const handleChange = (event: SelectChangeEvent<string[]>) => {
+    setValue(
+      typeof event.target.value === "string"
+        ? event.target.value.split(",")
+        : event.target.value
+    );
   };
 
   const muiStyles = getMuiStyles();
@@ -37,13 +40,31 @@ function SingleSelectDropdown(props: Props) {
           {label}
         </label>
       )}
-      <FormControl fullWidth variant="outlined">
+      <FormControl fullWidth variant="outlined" sx={{ width: "350px" }}>
         <Select
           id={name}
           name={name}
-          value={age}
+          value={value}
+          multiple
           onChange={handleChange}
           sx={muiStyles.singleSelectDropdownStyles}
+          renderValue={(selected) => (
+            <div className="gap-2.5 flex flex-wrap">
+              {selected.map((role) => (
+                <div
+                  key={role}
+                  className="flex gap-2 py-1 px-3 rounded-[20px] bg-eerieBlack border border-eerieBlack items-center"
+                >
+                  <span className="text-xs text-mediumGray font-normal">
+                    {role}
+                  </span>
+                  <div className="w-2.5 h-2.5 cursor-pointer text-mediumGray flex justify-center items-center">
+                    <CancelIcon className="w-2 h-2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
           MenuProps={{
             PaperProps: {
               sx: {
@@ -57,10 +78,6 @@ function SingleSelectDropdown(props: Props) {
             },
           }}
         >
-          <MenuItem disabled value="" sx={muiStyles.selectDropdownMenuItem}>
-            <em>{placeholder}</em>
-          </MenuItem>
-
           {dropdownItems.map((item) => {
             return (
               <MenuItem value={item} sx={muiStyles.selectDropdownMenuItem}>
@@ -74,4 +91,4 @@ function SingleSelectDropdown(props: Props) {
   );
 }
 
-export default SingleSelectDropdown;
+export default MultiSelectDropdown;

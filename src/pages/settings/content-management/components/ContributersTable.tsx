@@ -1,0 +1,173 @@
+/*************************************************************************
+ * @file ContributersTable.tsx
+ * @author Ehsanullah Qadeer
+ * @desc ContributersTable for content management page to show the list of contributers that are selected through composers dialog.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { IEditComposerData } from "./types";
+import getMuiStyles from "styles/getMuiStyles";
+import { rolesArr } from "../sample-data/sampleData";
+import { useEffect } from "react";
+import MultiSelectDropdown from "./MultiSelectDropdown";
+
+interface Props {
+  composerData: IEditComposerData[];
+  setComposerData: (value: any) => void;
+  handleDeleteComposer: (composer: IEditComposerData) => void;
+}
+
+function ContributersTable(props: Props) {
+  const { composerData, setComposerData, handleDeleteComposer } = props;
+  const muiStyles = getMuiStyles();
+
+  useEffect(() => {
+    console.log("coposer datre", composerData);
+  }, [composerData]);
+
+  const handleEditBtn = (id: number) => {
+    setComposerData((prevState) =>
+      prevState.map((composer) =>
+        composer.id === id
+          ? { ...composer, isEditable: !composer.isEditable }
+          : composer
+      )
+    );
+  };
+
+  const handleRolesChange = (id: number, newRoles: string[]) => {
+    setComposerData((prevComposers) =>
+      prevComposers.map((composer) =>
+        composer.id === id ? { ...composer, roles: newRoles } : composer
+      )
+    );
+  };
+
+  return (
+    <TableContainer component={Paper}>
+      <Table
+        sx={{
+          border: "1px solid #242424",
+          borderTopLeftRadius: "8px",
+          borderTopRightRadius: "8px",
+        }}
+      >
+        <TableHead
+          sx={{
+            ...muiStyles.tableHead,
+            backgroundColor: "#1C1C1C",
+            "& .MuiTableCell-head": {
+              color: "#B2B2B2",
+              borderTop: "none",
+              fontWeight: 500,
+            },
+          }}
+        >
+          <TableRow>
+            <TableCell>Contributors</TableCell>
+            <TableCell>Publishing %</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Role</TableCell>
+            <TableCell />
+          </TableRow>
+        </TableHead>
+        <TableBody
+          sx={{
+            ...muiStyles.tableBody,
+            "& .MuiTableRow-root": {
+              backgroundColor: "#0F0F0F",
+            },
+          }}
+        >
+          {composerData.map((composer) => {
+            const { id, name, roles, imgSrc, percentValue, isEditable } =
+              composer;
+
+            return (
+              <TableRow key={composer.id}>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full">
+                      <img
+                        src={imgSrc}
+                        alt="composer"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    </div>
+                    <span className="text-base">{name}</span>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex gap-2.5 items-stretch">
+                    <div className="flex items-center">
+                      {isEditable ? (
+                        <input
+                          type="number"
+                          min="1"
+                          max="100"
+                          value={percentValue}
+                          //   onChange={(e) => handleInputChange(e, id)}
+                          className="text-silver text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11"
+                        />
+                      ) : (
+                        <span className="text-silver text-sm font-semibold">
+                          {percentValue}%
+                        </span>
+                      )}
+                    </div>
+
+                    <div
+                      onClick={() => handleEditBtn(id)}
+                      className="py-1 px-2 border border-eclipseGray rounded text-mediumGray text-sm font-normal w-max flex items-center cursor-pointer"
+                    >
+                      {isEditable ? "Save" : "Edit"}
+                    </div>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <span className="text-sm">Pending</span>
+                </TableCell>
+
+                <TableCell>
+                  <div>
+                    <MultiSelectDropdown
+                      name={`role${id}`}
+                      dropdownItems={rolesArr}
+                      value={roles}
+                      setValue={(newRoles: string[]) =>
+                        handleRolesChange(id, newRoles)
+                      }
+                    />
+                  </div>
+                </TableCell>
+
+                <TableCell align="right">
+                  <div className="w-full flex justify-end">
+                    <div
+                      onClick={() => handleDeleteComposer(composer)}
+                      className="rounded border border-eclipseGray w-14 px-2 py-1 text-sm text-mediumGray cursor-pointer"
+                    >
+                      Delete
+                    </div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
+
+export default ContributersTable;

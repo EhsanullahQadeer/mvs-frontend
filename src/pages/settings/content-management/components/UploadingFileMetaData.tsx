@@ -9,23 +9,52 @@
 import React, { useState } from "react";
 import FormikLabeledField from "./FormikLabeledField";
 import SingleSelectDropdown from "./SingleSelectDropdown";
-import { composersArr, songType } from "../sample-data/sampleData";
+import { songType } from "../sample-data/sampleData";
 import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import ComposerDialog from "./ComposerDialog";
+import {
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
+import getMuiStyles from "styles/getMuiStyles";
+import { IUploadingFileMetaDataProps } from "./types";
 
-type Props = {};
-
-const UploadingFileMetaData = (props: Props) => {
+const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
+  const {
+    privacyValue,
+    setPrivacyValue,
+    midiFile,
+    setMidiFile,
+    selectedComposer,
+    setSelectedComposer,
+    composersArr,
+  } = props;
+  const muiStyles = getMuiStyles();
   const [openComposerDialog, setOpenComposerDialog] = useState(false);
   const handleComposerFieldClick = () => {
     setOpenComposerDialog(true);
   };
 
-  const [selectedComposer, setSelectedComposer] = useState([composersArr[0]]);
+  const handleAddComposer = (composerAdded) => {
+    setSelectedComposer((prev) => {
+      const isComposerAlreadySelected = prev.some(
+        (composer) => composer.id === composerAdded.id
+      );
+      if (!isComposerAlreadySelected) {
+        return [...prev, composerAdded];
+      }
+      return prev;
+    });
+  };
 
-  const handleAddComposer = (composerAdded: any) => {
-    setSelectedComposer((prev) => [...prev, composerAdded]);
-    setOpenComposerDialog(false);
+  const handlePrivacyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPrivacyValue((event.target as HTMLInputElement).value);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMidiFile(e.target.files[0]);
   };
 
   return (
@@ -89,22 +118,86 @@ const UploadingFileMetaData = (props: Props) => {
               onClick={handleComposerFieldClick}
               className="w-full min-h-5 text-dimGray text-sm font-normal px-4 py-[9px] rounded-lg bg-darkGray border border-eclipseGray cursor-pointer flex flex-wrap gap-2"
             >
-              {selectedComposer.map((composer, idx) => {
-                const { name } = composer;
-                return (
-                  <div
-                    key={name + idx}
-                    className="flex gap-2 py-1 px-3 rounded-[20px] bg-eerieBlack border border-eerieBlack items-center"
-                  >
-                    <span className="text-xs text-mediumGray font-normal">
-                      {name}
-                    </span>
-                    <div className="w-2.5 h-2.5 cursor-pointer text-mediumGray flex justify-center items-center">
-                      <CancelIcon className="w-2 h-2" />
+              {selectedComposer.length ? (
+                selectedComposer.map((composer, idx) => {
+                  const { name } = composer;
+                  return (
+                    <div
+                      key={name + idx}
+                      className="flex gap-2 py-1 px-3 rounded-[20px] bg-eerieBlack border border-eerieBlack items-center"
+                    >
+                      <span className="text-xs text-mediumGray font-normal">
+                        {name}
+                      </span>
+                      <div className="w-2.5 h-2.5 cursor-pointer text-mediumGray flex justify-center items-center">
+                        <CancelIcon className="w-2 h-2" />
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <div className="h-6"></div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center px-4">
+          <div>
+            <div className="text-coolGray text-lg font-normal mb-3">
+              Sample Privacy:
+            </div>
+
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="demo-controlled-radio-buttons-group"
+                name="controlled-radio-buttons-group"
+                value={privacyValue}
+                onChange={handlePrivacyChange}
+              >
+                <FormControlLabel
+                  value="private"
+                  control={<Radio />}
+                  label="Private"
+                  sx={muiStyles.radioButtonLabel}
+                />
+                <FormControlLabel
+                  value="public"
+                  control={<Radio />}
+                  label="Public"
+                  sx={muiStyles.radioButtonLabel}
+                />
+              </RadioGroup>
+            </FormControl>
+
+            <div className="ml-[25px] text-[10px] font-normal text-coolGray">
+              {privacyValue === "private"
+                ? "Only you and people in your network will be able to view your samples."
+                : "Everyone will be able to view your samples."}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-base font-normal text-[#ABABAB] mb-3">
+              Add MIDI File
+            </div>
+
+            <div className="w-[132px] h-[50px] border border-[#66666659] rounded-lg flex">
+              <label
+                htmlFor="add-midi-file"
+                className="text-mediumGray text-sm font-medium w-full h-full cursor-pointer flex justify-center items-center"
+              >
+                Select File
+              </label>
+
+              <input
+                accept="file/*"
+                type="file"
+                name="add-midi-file"
+                id="add-midi-file"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
             </div>
           </div>
         </div>

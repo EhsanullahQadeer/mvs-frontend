@@ -139,10 +139,22 @@ const AttachedFilesTable = () => {
       <TableContainer sx={{ maxHeight: "maxContent" }}>
         <Table
           stickyHeader
-          sx={{ border: "1px solid #242424", borderRadius: "8px" }}
+          sx={{
+            border: "1px solid #242424",
+            borderTopLeftRadius: "8px",
+            borderTopRightRadius: "8px",
+          }}
         >
           <TableHead
-            sx={{ ...muiStyles.tableHead, backgroundColor: "#131313" }}
+            sx={{
+              ...muiStyles.tableHead,
+              backgroundColor: "#131313",
+              "& .MuiTableCell-head": {
+                color: "#B2B2B2",
+                borderTop: "none",
+                fontWeight: 500,
+              },
+            }}
           >
             <TableRow>
               <TableCell padding="checkbox">
@@ -164,14 +176,7 @@ const AttachedFilesTable = () => {
                 />
               </TableCell>
               {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  sx={{
-                    color: "#B2B2B2 !important",
-                    borderTop: "none !important",
-                  }}
-                >
+                <TableCell key={column.id} align={column.align}>
                   <TableSortLabel
                     active={orderBy === column.id}
                     direction={orderBy === column.id ? order : "asc"}
@@ -199,6 +204,7 @@ const AttachedFilesTable = () => {
                     role="checkbox"
                     tabIndex={-1}
                     key={idx}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell
                       padding="checkbox"

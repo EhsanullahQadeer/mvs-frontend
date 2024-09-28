@@ -7,9 +7,13 @@
  *************************************************************************/
 import CustomFileDropper from "./CustomFileDropper";
 
-type Props = {};
+type Props = {
+  files: File[];
+  setFiles: (event: any) => void;
+};
 
 const DropFilesSection = (props: Props) => {
+  const { files, setFiles } = props;
   return (
     <div>
       <div className="py-3 flex flex-col gap-2">
@@ -19,7 +23,7 @@ const DropFilesSection = (props: Props) => {
         </p>
       </div>
 
-      <CustomFileDropper />
+      <CustomFileDropper {...{ files, setFiles }} />
     </div>
   );
 };

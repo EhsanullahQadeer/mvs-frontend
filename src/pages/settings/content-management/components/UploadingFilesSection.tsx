@@ -11,11 +11,32 @@ import waveformIcon from "../../../../assets/icons/waveformIcon.svg";
 import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import UploadingFileMetaData from "./UploadingFileMetaData";
 import { Form, Formik } from "formik";
+import { composersArr } from "../sample-data/sampleData";
+import ContributersTable from "./ContributersTable";
 
-type Props = {};
+type Props = {
+  files: File[];
+  setFiles: (event: any) => void;
+};
 
 const UploadingFilesSection = (props: Props) => {
+  const { files, setFiles } = props;
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [selectedComposer, setSelectedComposer] = useState([composersArr[0]]);
+  const [privacyValue, setPrivacyValue] = useState("private");
+  const [midiFile, setMidiFile] = useState(null);
+
+  function formatFileSize(sizeInBytes: number): string {
+    const sizeInMB = sizeInBytes / (1024 * 1024);
+    return `${sizeInMB.toFixed(0)} Mb`;
+  }
+
+  const handleDeleteFile = (fileToDelete) => {
+    const updatedFiles = files.filter(
+      (file) => file.name !== fileToDelete.name
+    );
+    setFiles(updatedFiles);
+  };
 
   const startUpload = () => {
     let progress = 0;
@@ -38,10 +59,36 @@ const UploadingFilesSection = (props: Props) => {
     sampleKey: "",
   };
 
+  const [composerData, setComposerData] = useState(
+    selectedComposer.map((composer) => ({
+      ...composer,
+      percentValue: 0,
+      isEditable: false,
+    }))
+  );
+
+  useEffect(() => {
+    setComposerData(
+      selectedComposer.map((composer) => ({
+        ...composer,
+        percentValue: 0,
+        isEditable: false,
+      }))
+    );
+  }, [selectedComposer]);
+
+  const handleDeleteComposer = (composerToDelete) => {
+    const updatedComposerData = composerData.filter(
+      (composer) => composer.id !== composerToDelete.id
+    );
+
+    setSelectedComposer(updatedComposerData);
+  };
+
   const handleSubmit = () => {};
 
   return (
-    <div>
+    <div className="border-b border-eclipseGray">
       <div className="py-3 flex flex-col gap-2">
         <h3 className="text-[28px] font-semibold text-white -tracking-[0.56px] leading-[34px]">
           Your files are uploading!
@@ -69,16 +116,19 @@ const UploadingFilesSection = (props: Props) => {
                 <div className="flex flex-col gap-1 flex-1">
                   <div className="flex items-center justify-between">
                     <h4 className="text-platinum text-sm font-semibold">
-                      Becky Hill - Broken Memories V3.mp3
+                      {files[0].name}
                     </h4>
 
-                    <div className="bg-[#41404066] text-white rounded-[30px] w-6 h-6 cursor-pointer flex justify-center items-center">
+                    <div
+                      onClick={() => handleDeleteFile(files[0])}
+                      className="bg-[#41404066] text-white rounded-[30px] w-6 h-6 cursor-pointer flex justify-center items-center"
+                    >
                       <CancelIcon className="w-3 h-3" />
                     </div>
                   </div>
 
                   <span className="text-dimGray text-sm font-normal">
-                    42 MB
+                    {formatFileSize(files[0].size)}
                   </span>
 
                   <div className="flex items-center gap-3 py-1">
@@ -99,7 +149,34 @@ const UploadingFilesSection = (props: Props) => {
               </div>
 
               <div>
-                <UploadingFileMetaData />
+                <UploadingFileMetaData
+                  {...{
+                    privacyValue,
+                    setPrivacyValue,
+                    midiFile,
+                    setMidiFile,
+                    selectedComposer,
+                    setSelectedComposer,
+                    composersArr,
+                  }}
+                />
+              </div>
+
+              {selectedComposer.length > 0 && (
+                <div className="my-2">
+                  <ContributersTable
+                    {...{ composerData, setComposerData, handleDeleteComposer }}
+                  />
+                </div>
+              )}
+
+              <div className="py-5 px-2.5 flex justify-end">
+                <button
+                  type="submit"
+                  className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"
+                >
+                  Save Changes
+                </button>
               </div>
             </>
           </Form>

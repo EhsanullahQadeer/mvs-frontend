@@ -6,11 +6,12 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { IComposer } from "./types";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -24,18 +25,71 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 interface Props {
   openComposerDialog: boolean;
   setOpenComposerDialog: (value: boolean) => void;
-  composersArr: any[];
-  handleAddComposer: (value: any) => void
+  composersArr: IComposer[];
+  handleAddComposer: (value: any) => void;
 }
 
 function ComposerDialog(props: Props) {
-  const { openComposerDialog, setOpenComposerDialog, composersArr, handleAddComposer } = props;
+  const {
+    openComposerDialog,
+    setOpenComposerDialog,
+    composersArr,
+    handleAddComposer,
+  } = props;
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredComposers, setFilteredComposers] = useState(composersArr);
+  const [isInvite, setIsInvite] = useState(false);
+  const [isMatchedComposer, setIsMatchedComposer] = useState(false);
+  const [composerToAdd, setComposerToAdd] = useState(null);
 
   const handleClose = () => {
     setOpenComposerDialog(false);
+    setIsInvite(false);
+    setIsMatchedComposer(false);
+    setComposerToAdd(null);
+    setSearchTerm("");
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchTerm(value);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValidEmail = emailRegex.test(value);
+
+    const matchedComposer = composersArr.find(
+      (composer) =>
+        composer.name.toLowerCase() === value.toLowerCase() ||
+        composer.email.toLowerCase() === value.toLowerCase()
+    );
+
+    setIsInvite(isValidEmail && !matchedComposer);
+    setIsMatchedComposer(!!matchedComposer);
+    setComposerToAdd(matchedComposer || null);
+  };
+
+  const handleButtonClick = () => {
+    if (composerToAdd) {
+      handleAddComposer(composerToAdd);
+      handleClose();
+    }
+    if (isInvite) {
+      console.log("search term", searchTerm);
+    }
+  };
+
+  useEffect(() => {
+    const filtered = composersArr.filter(
+      (composer) =>
+        composer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        composer.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredComposers(searchTerm ? filtered : composersArr);
+  }, [searchTerm, composersArr]);
+
   const isOwner = false;
+
   return (
     <React.Fragment>
       <BootstrapDialog
@@ -75,13 +129,24 @@ function ComposerDialog(props: Props) {
           <div className="flex-1">
             <input
               type="text"
-              placeholder="search collaborators"
-              className="text-sm font-normal text-coolGray w-full bg-jetBlack rounded-lg border border-eclipseGray hover:border-secondaryBlue focus:border-transparent focus:outline-secondaryBlue focus:outline-2 focus:outline-offset-0"
+              placeholder="Search collaborators"
+              className="px-4 py-3 text-sm font-normal text-coolGray w-full bg-jetBlack rounded-lg border border-eclipseGray hover:border-secondaryBlue focus:border-transparent focus:outline-secondaryBlue focus:outline-2 focus:outline-offset-0"
+              value={searchTerm}
+              onChange={handleSearchChange}
             />
           </div>
 
-          <div className="bg-eclipseGray rounded-lg px-4 py-2 text-dimGray text-sm font-semibold cursor-pointer">
-            Add
+          <div
+            className={`${
+              isInvite
+                ? "bg-[#059669] text-softGray cursor-pointer"
+                : isMatchedComposer
+                ? "bg-blue-500 text-softGray cursor-pointer"
+                : "bg-eclipseGray text-dimGray pointer-events-none"
+            } rounded-lg text-sm font-semibold w-[69px] flex justify-center items-center`}
+            onClick={handleButtonClick}
+          >
+            {isInvite ? "Invite" : "Add"}
           </div>
         </div>
 
@@ -91,49 +156,65 @@ function ComposerDialog(props: Props) {
           </div>
 
           <div className="bg-eclipseGray rounded-lg p-1 overflow-y-auto custom-dropdown">
-            {composersArr.map((composer, idx) => {
-              const { imgSrc, name, tags } = composer;
-              return (
-                <div
-                  onClick={() => handleAddComposer(composer)}
-                  key={name + idx}
-                  className="px-2.5 py-3 cursor-pointer flex gap-2.5 hover:bg-gunMetal rounded"
-                >
-                  <div className="w-10 h-10 rounded-full">
-                    <img
-                      src={imgSrc}
-                      alt="imgSrc"
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  </div>
-
-                  <div className="flex-1 flex justify-between items-center">
-                    <div>
-                      <div className="flex items-center">
-                        <span className="text-sm font-semibold text-white">
-                          {name}
-                        </span>
-
-                        {isOwner && (
-                          <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">
-                            You
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="text-sm font-normal text-dimGray">
-                        {tags}
-                      </div>
+            {filteredComposers.length ? (
+              filteredComposers.map((composer, idx) => {
+                const { imgSrc, name, roles } = composer;
+                return (
+                  <div
+                    onClick={() => {
+                      handleAddComposer(composer);
+                      handleClose();
+                    }}
+                    key={name + idx}
+                    className="px-2.5 py-3 cursor-pointer flex gap-2.5 hover:bg-gunMetal rounded"
+                  >
+                    <div className="w-10 h-10 rounded-full">
+                      <img
+                        src={imgSrc}
+                        alt="imgSrc"
+                        className="w-full h-full object-cover rounded-full"
+                      />
                     </div>
-                    {isOwner && (
-                      <div className="text-coolGray text-xs font-normal">
-                        Owner
+
+                    <div className="flex-1 flex justify-between items-center">
+                      <div>
+                        <div className="flex items-center">
+                          <span className="text-sm font-semibold text-white">
+                            {name}
+                          </span>
+
+                          {isOwner && (
+                            <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">
+                              You
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="text-sm font-normal text-dimGray flex gap-1">
+                          {roles.map((role, idx) => (
+                            <span
+                              key={idx}
+                              className="text-sm font-normal text-dimGray"
+                            >
+                              {role}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    )}
+                      {isOwner && (
+                        <div className="text-coolGray text-xs font-normal">
+                          Owner
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <div className="white text-sm fotn-normal p-2">
+                Your search term does not match to any name or email.
+              </div>
+            )}
           </div>
         </div>
       </BootstrapDialog>

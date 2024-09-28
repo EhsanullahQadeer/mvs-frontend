@@ -11,8 +11,14 @@ import uploadFileIcon from "../../../../assets/icons/uploadSheetIcon.svg";
 const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
-const CustomFileDropper = () => {
-  const [files, setFiles] = useState<File[]>([]);
+type Props = {
+  files: File[];
+  setFiles: (event: any) => void;
+};
+
+const CustomFileDropper = (props: Props) => {
+  const { files, setFiles } = props;
+
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const validateFiles = (selectedFiles: File[]) => {
@@ -58,6 +64,8 @@ const CustomFileDropper = () => {
     const selectedFiles = Array.from(e.target.files || []);
     const validUploadedFiles = validateFiles(selectedFiles);
     setFiles((prevFiles) => [...prevFiles, ...validUploadedFiles]);
+
+    e.target.value = "";
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
