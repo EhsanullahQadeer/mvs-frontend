@@ -90,7 +90,7 @@ const SampleInfoModal = (props: any) => {
                       </div>
                       <div className="flex flex-col p-2.5 mt-3.5 text-xs text-white rounded-lg border border-solid bg-neutral-900 border-neutral-800 max-md:max-w-full">
                         
-                        {props.sample.composers.split(',').length > 0 && props.sample.composers.split(",").map((item:any,i:any) => {
+                        {props.sample.collaborators.split(',').length > 0 && props.sample.collaborators.split(",").map((item:any,i:any) => {
                             return (
                                 <>
                                   <div className="justify-center py-2.5 border-b border-solid border-stone-900 max-md:max-w-full">

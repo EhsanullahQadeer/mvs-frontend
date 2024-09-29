@@ -301,7 +301,7 @@ const SampleTable = (
                     {sample.filename}
                     <br />
                     <span className="text-[10px] font-semibold text-coolGray">
-                      {sample.composers.find(composer => composer.id === sample.owner_id)?.artist_name || ''}
+                      {sample.collaborators.find(composer => composer.id === sample.owner_id)?.artist_name || ''}
                     </span>
                   </td>
                   

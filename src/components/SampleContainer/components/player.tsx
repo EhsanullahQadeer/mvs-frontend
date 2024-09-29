@@ -203,7 +203,7 @@ const AudioPlayer = ({ audio_track, currTrack, isPlaying, onPlayToggle, onPrevCl
           {currTrack?.filename}
         </div>
         <div className="text-dimGray text-sm font-normal">
-          {currTrack?.composers[0].artist_name}
+          {/* {currTrack?.collaborators[0].artist_name} */}
         </div>
       </div>
     </div>
