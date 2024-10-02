@@ -29,9 +29,10 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
     setMidiFile,
     selectedComposer,
     setSelectedComposer,
-    composersArr,
+    formikHelpers,
   } = props;
   const muiStyles = getMuiStyles();
+  const { setFieldValue } = formikHelpers;
   const [openComposerDialog, setOpenComposerDialog] = useState(false);
   const handleComposerFieldClick = () => {
     setOpenComposerDialog(true);
@@ -63,7 +64,6 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
         {...{
           openComposerDialog,
           setOpenComposerDialog,
-          composersArr,
           handleAddComposer,
         }}
       />
@@ -93,6 +93,7 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
             label="Song / Sample Type"
             placeholder="Select Sample Type"
             dropdownItems={songType}
+            setFieldValue={setFieldValue}
           />
 
           <FormikLabeledField
@@ -120,14 +121,14 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
             >
               {selectedComposer.length ? (
                 selectedComposer.map((composer, idx) => {
-                  const { name } = composer;
+                  const { artist_name } = composer;
                   return (
                     <div
-                      key={name + idx}
+                      key={artist_name + idx}
                       className="flex gap-2 py-1 px-3 rounded-[20px] bg-eerieBlack border border-eerieBlack items-center"
                     >
                       <span className="text-xs text-mediumGray font-normal">
-                        {name}
+                        {artist_name}
                       </span>
                       <div className="w-2.5 h-2.5 cursor-pointer text-mediumGray flex justify-center items-center">
                         <CancelIcon className="w-2 h-2" />

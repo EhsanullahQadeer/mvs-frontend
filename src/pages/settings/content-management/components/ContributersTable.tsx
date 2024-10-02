@@ -13,16 +13,16 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { IEditComposerData } from "./types";
+import { IUserProfile } from "./types";
 import getMuiStyles from "styles/getMuiStyles";
 import { rolesArr } from "../sample-data/sampleData";
 import { useEffect } from "react";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 
 interface Props {
-  composerData: IEditComposerData[];
+  composerData: IUserProfile[];
   setComposerData: (value: any) => void;
-  handleDeleteComposer: (composer: IEditComposerData) => void;
+  handleDeleteComposer: (composer: IUserProfile) => void;
 }
 
 function ContributersTable(props: Props) {
@@ -88,8 +88,14 @@ function ContributersTable(props: Props) {
           }}
         >
           {composerData.map((composer) => {
-            const { id, name, roles, imgSrc, percentValue, isEditable } =
-              composer;
+            const {
+              id,
+              artist_name,
+              roles = [],
+              thumbnail,
+              percentValue,
+              isEditable,
+            } = composer;
 
             return (
               <TableRow key={composer.id}>
@@ -97,12 +103,12 @@ function ContributersTable(props: Props) {
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full">
                       <img
-                        src={imgSrc}
+                        src={thumbnail}
                         alt="composer"
                         className="w-full h-full object-cover rounded-full"
                       />
                     </div>
-                    <span className="text-base">{name}</span>
+                    <span className="text-base">{artist_name}</span>
                   </div>
                 </TableCell>
 

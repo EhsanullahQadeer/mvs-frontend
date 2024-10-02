@@ -69,3 +69,7 @@ export async function uploadAudioFile(
     return null;
   }
 }
+
+export async function uploadFile(payload: any, configs: any) {
+  return axiosInstance.post("/sounds/upload/sample", payload, configs);
+}

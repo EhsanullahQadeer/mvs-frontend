@@ -11,7 +11,9 @@ import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { IComposer } from "./types";
+import useDebounce from "hooks/useDebounce";
+import { userProfessionalNameSearch } from "api/user";
+import { CircularProgress } from "@mui/material";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -25,7 +27,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 interface Props {
   openComposerDialog: boolean;
   setOpenComposerDialog: (value: boolean) => void;
-  composersArr: IComposer[];
   handleAddComposer: (value: any) => void;
 }
 
@@ -33,15 +34,18 @@ function ComposerDialog(props: Props) {
   const {
     openComposerDialog,
     setOpenComposerDialog,
-    composersArr,
     handleAddComposer,
   } = props;
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredComposers, setFilteredComposers] = useState(composersArr);
   const [isInvite, setIsInvite] = useState(false);
   const [isMatchedComposer, setIsMatchedComposer] = useState(false);
   const [composerToAdd, setComposerToAdd] = useState(null);
+  const [loading, setLoading] = useState(false);
+  // Debounce the search value
+  const debouncedSearchValue = useDebounce(searchTerm, 300);
+
+  const [searchResults, setSearchResults] = useState([]);
 
   const handleClose = () => {
     setOpenComposerDialog(false);
@@ -54,20 +58,30 @@ function ComposerDialog(props: Props) {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearchTerm(value);
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const isValidEmail = emailRegex.test(value);
-
-    const matchedComposer = composersArr.find(
-      (composer) =>
-        composer.name.toLowerCase() === value.toLowerCase() ||
-        composer.email.toLowerCase() === value.toLowerCase()
-    );
-
-    setIsInvite(isValidEmail && !matchedComposer);
-    setIsMatchedComposer(!!matchedComposer);
-    setComposerToAdd(matchedComposer || null);
   };
+
+  useEffect(() => {
+    if (debouncedSearchValue) {
+      (async () => {
+        try {
+          setLoading(true);
+          const response = await userProfessionalNameSearch({
+            skip: 0,
+            professionalName: debouncedSearchValue,
+            take: 10,
+          });
+          console.log("list response with serach", response.data);
+          setSearchResults(response.data.users);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    } else {
+      setSearchResults([]);
+    }
+  }, [debouncedSearchValue]);
 
   const handleButtonClick = () => {
     if (composerToAdd) {
@@ -78,15 +92,6 @@ function ComposerDialog(props: Props) {
       console.log("search term", searchTerm);
     }
   };
-
-  useEffect(() => {
-    const filtered = composersArr.filter(
-      (composer) =>
-        composer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        composer.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredComposers(searchTerm ? filtered : composersArr);
-  }, [searchTerm, composersArr]);
 
   const isOwner = false;
 
@@ -126,7 +131,7 @@ function ComposerDialog(props: Props) {
         </div>
 
         <div className="py-4 border-t border-b border-eclipseGray flex gap-3 w-full items-stretch">
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <input
               type="text"
               placeholder="Search collaborators"
@@ -134,6 +139,11 @@ function ComposerDialog(props: Props) {
               value={searchTerm}
               onChange={handleSearchChange}
             />
+            <div className="absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer flex">
+              {loading && (
+                <CircularProgress style={{ color: "#C4FF48" }} size={20} />
+              )}
+            </div>
           </div>
 
           <div
@@ -156,22 +166,23 @@ function ComposerDialog(props: Props) {
           </div>
 
           <div className="bg-eclipseGray rounded-lg p-1 overflow-y-auto custom-dropdown">
-            {filteredComposers.length ? (
-              filteredComposers.map((composer, idx) => {
-                const { imgSrc, name, roles } = composer;
+            {searchResults.length ? (
+              searchResults.map((composer, idx) => {
+                const { thumbnail, artist_name, primary_label, sub_label } =
+                  composer;
                 return (
                   <div
                     onClick={() => {
                       handleAddComposer(composer);
                       handleClose();
                     }}
-                    key={name + idx}
+                    key={artist_name + idx}
                     className="px-2.5 py-3 cursor-pointer flex gap-2.5 hover:bg-gunMetal rounded"
                   >
                     <div className="w-10 h-10 rounded-full">
                       <img
-                        src={imgSrc}
-                        alt="imgSrc"
+                        src={thumbnail}
+                        alt="thumbnail"
                         className="w-full h-full object-cover rounded-full"
                       />
                     </div>
@@ -180,7 +191,7 @@ function ComposerDialog(props: Props) {
                       <div>
                         <div className="flex items-center">
                           <span className="text-sm font-semibold text-white">
-                            {name}
+                            {artist_name}
                           </span>
 
                           {isOwner && (
@@ -191,14 +202,7 @@ function ComposerDialog(props: Props) {
                         </div>
 
                         <div className="text-sm font-normal text-dimGray flex gap-1">
-                          {roles.map((role, idx) => (
-                            <span
-                              key={idx}
-                              className="text-sm font-normal text-dimGray"
-                            >
-                              {role}
-                            </span>
-                          ))}
+                          {`${primary_label} / ${sub_label}`}
                         </div>
                       </div>
                       {isOwner && (

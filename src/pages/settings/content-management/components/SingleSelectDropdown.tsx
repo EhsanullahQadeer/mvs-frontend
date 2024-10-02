@@ -6,7 +6,7 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import * as React from "react";
+import React, { useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -17,15 +17,17 @@ type Props = {
   label?: string;
   placeholder: string;
   dropdownItems: string[];
+  setFieldValue: (name, value) => void;
 };
 
 function SingleSelectDropdown(props: Props) {
-  const { name, label, placeholder, dropdownItems } = props;
+  const { name, label, placeholder, dropdownItems, setFieldValue } = props;
 
-  const [age, setAge] = React.useState("");
+  const [itemSelected, setItemSelected] = useState("");
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
+  const handleItemChange = (event: SelectChangeEvent) => {
+    setItemSelected(event.target.value as string);
+    setFieldValue(`${name}`, event.target.value);
   };
 
   const muiStyles = getMuiStyles();
@@ -41,8 +43,8 @@ function SingleSelectDropdown(props: Props) {
         <Select
           id={name}
           name={name}
-          value={age}
-          onChange={handleChange}
+          value={itemSelected}
+          onChange={handleItemChange}
           sx={muiStyles.singleSelectDropdownStyles}
           MenuProps={{
             PaperProps: {

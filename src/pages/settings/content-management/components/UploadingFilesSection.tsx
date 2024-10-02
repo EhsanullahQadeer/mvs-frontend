@@ -6,13 +6,13 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import waveformIcon from "../../../../assets/icons/waveformIcon.svg";
 import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import UploadingFileMetaData from "./UploadingFileMetaData";
 import { Form, Formik } from "formik";
-import { composersArr } from "../sample-data/sampleData";
 import ContributersTable from "./ContributersTable";
+import { uploadFile } from "api/sounds";
 
 type Props = {
   files: File[];
@@ -22,7 +22,7 @@ type Props = {
 const UploadingFilesSection = (props: Props) => {
   const { files, setFiles } = props;
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [selectedComposer, setSelectedComposer] = useState([composersArr[0]]);
+  const [selectedComposer, setSelectedComposer] = useState([]);
   const [privacyValue, setPrivacyValue] = useState("private");
   const [midiFile, setMidiFile] = useState(null);
 
@@ -37,19 +37,6 @@ const UploadingFilesSection = (props: Props) => {
     );
     setFiles(updatedFiles);
   };
-
-  const startUpload = () => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 5;
-      setUploadProgress(progress);
-      if (progress >= 100) clearInterval(interval);
-    }, 200);
-  };
-
-  useEffect(() => {
-    startUpload();
-  }, []);
 
   const initialValues = {
     songName: "",
@@ -85,7 +72,76 @@ const UploadingFilesSection = (props: Props) => {
     setSelectedComposer(updatedComposerData);
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (values) => {
+    const { songName, songBpm, sampleKey, songType, songTags } = values;
+
+    try {
+      const formData = new FormData();
+      formData.append("file", files[0]);
+      formData.append("name", songName);
+      formData.append("bpm", songBpm);
+      formData.append("key", sampleKey);
+      formData.append("type", songType);
+      formData.append("tags", songTags);
+      formData.append(
+        "is_private",
+        privacyValue === "private" ? "true" : "false"
+      );
+
+      const collaborators = composerData.map((composer) => ({
+        collaborator_id: composer.id,
+        contribution: composer.percentValue,
+        roles: composer.roles,
+      }));
+      formData.append("collaborators", JSON.stringify(collaborators));
+
+      const uploadedFile = await uploadFile(formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.log(
+            `Client-to-Backend Upload Progress: ${percentCompleted}%`
+          );
+          setUploadProgress(percentCompleted);
+        },
+      });
+
+      const { sessionId } = uploadedFile.data;
+
+      trackUploadProgress(sessionId);
+    } catch (error) {}
+  };
+
+  function trackUploadProgress(sessionId: string) {
+    const eventSource = new EventSource(
+      `${process.env.REACT_APP_API_URL}/sounds/upload/sample/progress/${sessionId}`
+    );
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("Event data received:", data);
+      if (data.progress === 100) {
+        console.log("Upload complete!");
+        eventSource.close();
+      } else if (data.progress === -1) {
+        console.error("Upload failed!");
+        eventSource.close();
+      } else {
+        console.log(`Progress: ${data.progress}%`);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error("Error in EventSource:", error);
+      eventSource.close();
+    };
+  }
 
   return (
     <div className="border-b border-eclipseGray">
@@ -99,7 +155,7 @@ const UploadingFilesSection = (props: Props) => {
       </div>
 
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        {({ values }) => (
+        {(formikHelpers) => (
           <Form>
             <>
               <div className="my-2 p-5 bg-eerieBlack border border-eclipseGray rounded-lg flex gap-4 items-stretch">
@@ -157,7 +213,7 @@ const UploadingFilesSection = (props: Props) => {
                     setMidiFile,
                     selectedComposer,
                     setSelectedComposer,
-                    composersArr,
+                    formikHelpers,
                   }}
                 />
               </div>
