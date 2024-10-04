@@ -12,10 +12,12 @@ type Props = {
   name: string;
   label: string;
   placeholder: string;
+  value?: string;
+  handleInputChange?: (event: any) => void;
 };
 
 const FormikLabeledField = (props: Props) => {
-  const { name, label, placeholder } = props;
+  const { name, label, placeholder, value, handleInputChange } = props;
   return (
     <div className="flex flex-col gap-1 flex-1">
       <label htmlFor={name} className="text-silver text-sm font-normal">
@@ -26,6 +28,8 @@ const FormikLabeledField = (props: Props) => {
         id={name}
         name={name}
         placeholder={placeholder}
+        {...(value !== undefined && { value })}
+        {...(handleInputChange && { onChange: handleInputChange })}
         style={{
           boxShadow: "none",
         }}

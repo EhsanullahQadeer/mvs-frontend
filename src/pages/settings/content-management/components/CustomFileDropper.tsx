@@ -12,58 +12,52 @@ const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 type Props = {
-  files: File[];
-  setFiles: (event: any) => void;
+  uploadingFile: File | null;
+  setUploadingFile: (file: File | null) => void;
 };
 
 const CustomFileDropper = (props: Props) => {
-  const { files, setFiles } = props;
+  const { uploadingFile, setUploadingFile } = props;
 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const validateFiles = (selectedFiles: File[]) => {
-    const validFiles: File[] = [];
+  const validateFile = (file: File) => {
+    setErrorMessage("");
 
-    selectedFiles.forEach((file) => {
-      const isDuplicate = files.some(
-        (existingFile) =>
-          existingFile.name === file.name && existingFile.size === file.size
-      );
+    if (!file.type.startsWith("audio/")) {
+      setErrorMessage(`"${file.name}" is not an audio file.`);
+      return null;
+    }
 
-      if (isDuplicate) {
-        setErrorMessage(`"${file.name}" has already been selected.`);
-        return;
-      }
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setErrorMessage(`"${file.name}" exceeds the 50MB limit.`);
+      return null;
+    }
 
-      if (file.type.startsWith("audio/")) {
-        if (file.size <= MAX_FILE_SIZE_BYTES) {
-          validFiles.push(file);
-        } else {
-          setErrorMessage(`"${file.name}" exceeds the 50MB limit.`);
-        }
-      } else {
-        setErrorMessage(`"${file.name}" is not an audio file.`);
-      }
-    });
-
-    return validFiles;
+    return file;
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setErrorMessage("");
 
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    const validDroppedFiles = validateFiles(droppedFiles);
-    setFiles((prevFiles) => [...prevFiles, ...validDroppedFiles]);
+    const droppedFile = e.dataTransfer.files[0];
+    const validFile = validateFile(droppedFile);
+
+    if (validFile) {
+      setUploadingFile(validFile);
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMessage("");
 
-    const selectedFiles = Array.from(e.target.files || []);
-    const validUploadedFiles = validateFiles(selectedFiles);
-    setFiles((prevFiles) => [...prevFiles, ...validUploadedFiles]);
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+    const validFile = selectedFile ? validateFile(selectedFile) : null;
+
+    if (validFile) {
+      setUploadingFile(validFile);
+    }
 
     e.target.value = "";
   };
@@ -76,7 +70,11 @@ const CustomFileDropper = (props: Props) => {
     <div
       onDrop={handleDrop}
       onDragOver={handleDragOver}
-      className="border border-dashed border-coolGray bg-richBlack text-center my-3 rounded-lg"
+      className={`${
+        uploadingFile
+          ? "border-2 border-[#0185FF] border-solid"
+          : "border border-coolGray border-dashed"
+      } bg-richBlack text-center my-3 rounded-lg`}
     >
       <input
         accept="audio/*"
@@ -84,7 +82,6 @@ const CustomFileDropper = (props: Props) => {
         onChange={handleFileUpload}
         className="hidden"
         id="file-upload"
-        multiple
       />
 
       <label
@@ -115,19 +112,15 @@ const CustomFileDropper = (props: Props) => {
           </p>
         </div>
 
-        {(errorMessage || files.length > 0) && (
+        {(errorMessage || uploadingFile) && (
           <div className="mt-4">
             {errorMessage && (
               <div className="text-red-500 text-sm">{errorMessage}</div>
             )}
 
-            {files.length > 0 && (
-              <div className="">
-                <ul className="text-coolGray text-sm font-normal">
-                  {files.map((file, idx) => (
-                    <li key={idx}>{file.name}</li>
-                  ))}
-                </ul>
+            {uploadingFile && (
+              <div className="text-coolGray text-sm font-normal">
+                {uploadingFile.name}
               </div>
             )}
           </div>

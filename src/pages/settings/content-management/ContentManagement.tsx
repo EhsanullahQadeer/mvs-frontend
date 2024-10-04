@@ -1,14 +1,82 @@
 import DropFilesSection from "./components/DropFilesSection";
 import AttachedFilesSection from "./components/AttachedFilesSection";
 import UploadingFilesSection from "./components/UploadingFilesSection";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { uploadFile } from "api/sounds";
 
 type Props = {};
 
 const ContentManagement = (props: Props) => {
-  const [files, setFiles] = useState<File[]>([]);
+  const [uploadingFile, setUploadingFile] = useState<File>(null);
+  const [fileRedisKey, setFileRedisKey] = useState<string>("");
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  console.log("files", files);
+  const handleCancel = () => {
+    setUploadProgress(0);
+    setUploadingFile(null);
+    setFileRedisKey("");
+  };
+
+  useEffect(() => {
+    if (uploadingFile !== null) {
+      handleUploadFile();
+      if (fileRedisKey) {
+        trackUploadProgress(fileRedisKey);
+      }
+    }
+  }, [uploadingFile]);
+
+  const handleUploadFile = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("file", uploadingFile);
+
+      const uploadResponse = await uploadFile(formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.log(
+            `Client-to-Backend Upload Progress: ${percentCompleted}%`
+          );
+          setUploadProgress(percentCompleted);
+        },
+      });
+      setFileRedisKey(uploadResponse.data.redis_key);
+    } catch (error) {
+      console.log("error ", error);
+    }
+  };
+
+  function trackUploadProgress(sessionId: string) {
+    const eventSource = new EventSource(
+      `${process.env.REACT_APP_API_URL}/sounds/upload/sample/progress/${sessionId}`
+    );
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("Event data received:", data);
+      if (data.progress === 100) {
+        console.log("Upload complete!");
+        eventSource.close();
+      } else if (data.progress === -1) {
+        console.error("Upload failed!");
+        eventSource.close();
+      } else {
+        console.log(`Progress: ${data.progress}%`);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error("Error in EventSource:", error);
+      eventSource.close();
+    };
+  }
 
   return (
     <div>
@@ -17,8 +85,17 @@ const ContentManagement = (props: Props) => {
       </h2>
 
       <div className="px-3">
-        <DropFilesSection {...{ files, setFiles }} />
-        {files.length > 0 && <UploadingFilesSection {...{ files, setFiles }} />}
+        <DropFilesSection {...{ uploadingFile, setUploadingFile }} />
+        {uploadingFile && (
+          <UploadingFilesSection
+            {...{
+              uploadingFile,
+              fileRedisKey,
+              uploadProgress,
+              handleCancel,
+            }}
+          />
+        )}
         <AttachedFilesSection />
       </div>
     </div>

@@ -13,7 +13,6 @@ export interface IUploadingFileMetaDataProps {
   setMidiFile: (event: any) => void;
   selectedComposer: IUserProfile[];
   setSelectedComposer: (value: any) => void;
-  formikHelpers: any
 }
 
 export interface IEditComposerData {

@@ -11,17 +11,18 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import getMuiStyles from "styles/getMuiStyles";
+import { useFormikContext } from "formik";
 
 type Props = {
   name: string;
   label?: string;
   placeholder: string;
   dropdownItems: string[];
-  setFieldValue: (name, value) => void;
 };
 
 function SingleSelectDropdown(props: Props) {
-  const { name, label, placeholder, dropdownItems, setFieldValue } = props;
+  const { name, label, placeholder, dropdownItems } = props;
+  const { setFieldValue } = useFormikContext();
 
   const [itemSelected, setItemSelected] = useState("");
 

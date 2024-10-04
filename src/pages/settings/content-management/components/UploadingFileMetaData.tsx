@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import getMuiStyles from "styles/getMuiStyles";
 import { IUploadingFileMetaDataProps } from "./types";
+import { useFormikContext } from "formik";
 
 const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
   const {
@@ -29,10 +30,8 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
     setMidiFile,
     selectedComposer,
     setSelectedComposer,
-    formikHelpers,
   } = props;
   const muiStyles = getMuiStyles();
-  const { setFieldValue } = formikHelpers;
   const [openComposerDialog, setOpenComposerDialog] = useState(false);
   const handleComposerFieldClick = () => {
     setOpenComposerDialog(true);
@@ -56,6 +55,25 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMidiFile(e.target.files[0]);
+  };
+
+  const { setFieldValue } = useFormikContext();
+  const [tags, setTags] = useState("");
+
+  const handleTagsChange = (e) => {
+    let value = e.target.value;
+
+    const formattedTags = value
+      .split(" ")
+      .map((word) => (word.startsWith("#") || word === "" ? word : `#${word}`))
+      .join(" ");
+
+    setTags(formattedTags);
+
+    const tagsArray = formattedTags
+      .split(" ")
+      .filter((word) => word.trim() !== "");
+    setFieldValue("songTags", tagsArray);
   };
 
   return (
@@ -93,13 +111,14 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
             label="Song / Sample Type"
             placeholder="Select Sample Type"
             dropdownItems={songType}
-            setFieldValue={setFieldValue}
           />
 
           <FormikLabeledField
             name="songTags"
             label="Song / Sample Tags"
             placeholder="Song Sample Tags"
+            value={tags}
+            handleInputChange={handleTagsChange}
           />
         </div>
 

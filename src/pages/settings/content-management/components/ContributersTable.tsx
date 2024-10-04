@@ -22,11 +22,11 @@ import MultiSelectDropdown from "./MultiSelectDropdown";
 interface Props {
   composerData: IUserProfile[];
   setComposerData: (value: any) => void;
-  handleDeleteComposer: (composer: IUserProfile) => void;
+  handleOpenDeleteDialog: (composer: IUserProfile) => void;
 }
 
 function ContributersTable(props: Props) {
-  const { composerData, setComposerData, handleDeleteComposer } = props;
+  const { composerData, setComposerData, handleOpenDeleteDialog } = props;
   const muiStyles = getMuiStyles();
 
   useEffect(() => {
@@ -83,6 +83,7 @@ function ContributersTable(props: Props) {
           sx={{
             ...muiStyles.tableBody,
             "& .MuiTableRow-root": {
+              cursor: "auto",
               backgroundColor: "#0F0F0F",
             },
           }}
@@ -160,7 +161,7 @@ function ContributersTable(props: Props) {
                 <TableCell align="right">
                   <div className="w-full flex justify-end">
                     <div
-                      onClick={() => handleDeleteComposer(composer)}
+                      onClick={() => handleOpenDeleteDialog(composer)}
                       className="rounded border border-eclipseGray w-14 px-2 py-1 text-sm text-mediumGray cursor-pointer"
                     >
                       Delete
