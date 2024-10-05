@@ -10,7 +10,6 @@
 
 import getMuiStyles from "styles/getMuiStyles";
 import musicBeam from "../../../../assets/icons/musicBeam.svg";
-import { attachedFilesTableData } from "../sample-data/sampleData";
 
 // THIRD PARTY IMPORTS
 import Paper from "@mui/material/Paper";
@@ -26,32 +25,41 @@ import moment from "moment";
 
 import React, { useState } from "react";
 import { Checkbox } from "@mui/material";
+import { ISample } from "./types";
 
 interface Column {
-  id: "fileName" | "dateUploaded" | "artist" | "uploadedBy";
+  id: "filename" | "created_at" | "artist" | "uploadedBy";
   label: string;
   align?: "right";
 }
 
 const columns: readonly Column[] = [
-  { id: "fileName", label: "File Name" },
-  { id: "dateUploaded", label: "Date uploaded" },
+  { id: "filename", label: "File Name" },
+  { id: "created_at", label: "Date uploaded" },
   { id: "artist", label: "Artist / Owner" },
   { id: "uploadedBy", label: "Uploaded by" },
 ];
 
 interface Data {
-  fileName: string;
-  dateUploaded: string;
+  filename: string;
+  created_at: string;
   artist: string;
   uploadedBy: { name: string; icon: any };
 }
 
-const AttachedFilesTable = () => {
+interface Props {
+  attachedFilesTableData: ISample[];
+  handleOpenDialog: (action: string, sample: ISample) => void;
+}
+
+const AttachedFilesTable = (props: Props) => {
+  const { attachedFilesTableData, handleOpenDialog } = props;
+  console.log("");
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
-  const [orderBy, setOrderBy] = useState<keyof Data>("fileName");
+  const [orderBy, setOrderBy] = useState<keyof Data>("filename");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
 
   const handleRequestSort = (
@@ -79,15 +87,15 @@ const AttachedFilesTable = () => {
   const sortedData = attachedFilesTableData.sort((a, b) => {
     const isAsc = order === "asc";
     switch (orderBy) {
-      case "fileName":
+      case "filename":
         return isAsc
-          ? a.fileName.localeCompare(b.fileName)
-          : b.fileName.localeCompare(a.fileName);
+          ? a.filename.localeCompare(b.filename)
+          : b.filename.localeCompare(a.filename);
 
-      case "dateUploaded":
+      case "created_at":
         return isAsc
-          ? a.uploadedDate.localeCompare(b.uploadedDate)
-          : b.uploadedDate.localeCompare(a.uploadedDate);
+          ? a.created_at.localeCompare(b.created_at)
+          : b.created_at.localeCompare(a.created_at);
 
       default:
         return 0;
@@ -193,7 +201,7 @@ const AttachedFilesTable = () => {
             {sortedData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, idx) => {
-                const { fileName, uploadedBy, uploadedDate, artist } = row;
+                const { filename, thumbnail, name, created_at } = row;
 
                 const isItemSelected = selected.includes(row.id);
                 const labelId = `enhanced-table-checkbox-${idx}`;
@@ -231,36 +239,42 @@ const AttachedFilesTable = () => {
                             />
                           </div>
                         </div>
-                        <span>{fileName}</span>
+                        <span>{filename}</span>
                       </div>
                     </TableCell>
                     <TableCell onClick={(event) => handleClick(event, row.id)}>
-                      {formattedDate(uploadedDate)}
+                      {formattedDate(created_at)}
                     </TableCell>
                     <TableCell onClick={(event) => handleClick(event, row.id)}>
-                      {artist}
+                      {name}
                     </TableCell>
                     <TableCell onClick={(event) => handleClick(event, row.id)}>
                       <div className="flex gap-2.5 items-center">
                         <div className="rounded-full w-8 h-8">
                           <img
-                            src={uploadedBy.icon}
+                            src={thumbnail}
                             alt=""
                             className="rounded-full w-full h-full"
                           />
                         </div>
 
                         <div className="text-sm font-medium whitespace-nowrap">
-                          {uploadedBy.name}
+                          {name}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell align="right" sx={{ verticalAlign: "middle" }}>
                       <div className="flex gap-2 justify-end">
-                        <div className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer">
+                        <div
+                          onClick={() => handleOpenDialog("delete", row)}
+                          className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
+                        >
                           Delete
                         </div>
-                        <div className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer">
+                        <div
+                          onClick={() => handleOpenDialog("edit", row)}
+                          className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
+                        >
                           Edit
                         </div>
                       </div>

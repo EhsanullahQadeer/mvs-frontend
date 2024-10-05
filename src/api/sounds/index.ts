@@ -84,3 +84,14 @@ export async function uploadedFileMetadata(redisKey: string, payload: any) {
     payload
   );
 }
+
+export async function updateFileMetadata(id: any, payload: any) {
+  return axiosInstance.put(
+    `/sounds/sample/${id}`,
+    payload
+  );
+}
+
+export async function deleteSampleAPI(id: any) {
+  return axiosInstance.delete(`/sounds/delete/${id}`);
+}

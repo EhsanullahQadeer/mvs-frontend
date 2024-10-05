@@ -30,6 +30,8 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
     setMidiFile,
     selectedComposer,
     setSelectedComposer,
+    isEditSample,
+    handleClose,
   } = props;
   const muiStyles = getMuiStyles();
   const [openComposerDialog, setOpenComposerDialog] = useState(false);
@@ -86,10 +88,25 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
         }}
       />
 
-      <div className="rounded-xl border border-eclipseGray bg-eerieBlack p-5 flex flex-col gap-4">
-        <span className="text-[28px] text-white font-medium leading-[34px]">
-          File Metadata
-        </span>
+      <div
+        className={`${
+          !isEditSample && "rounded-xl border border-eclipseGray bg-eerieBlack"
+        } p-5 flex flex-col gap-4`}
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-[28px] text-white font-medium leading-[34px]">
+            File Metadata
+          </span>
+
+          {isEditSample && (
+            <div
+              onClick={handleClose}
+              className="text-mediumGray cursor-pointer flex items-center justify-center bg-[#1c1c1c] p-2 rounded-full"
+            >
+              <CancelIcon className="w-3 h-3" />
+            </div>
+          )}
+        </div>
 
         <div className="flex gap-5">
           <FormikLabeledField
@@ -197,29 +214,31 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
             </div>
           </div>
 
-          <div>
-            <div className="text-base font-normal text-[#ABABAB] mb-3">
-              Add MIDI File
-            </div>
+          {!isEditSample && (
+            <div>
+              <div className="text-base font-normal text-[#ABABAB] mb-3">
+                Add MIDI File
+              </div>
 
-            <div className="w-[132px] h-[50px] border border-[#66666659] rounded-lg flex">
-              <label
-                htmlFor="add-midi-file"
-                className="text-mediumGray text-sm font-medium w-full h-full cursor-pointer flex justify-center items-center"
-              >
-                Select File
-              </label>
+              <div className="w-[132px] h-[50px] border border-[#66666659] rounded-lg flex">
+                <label
+                  htmlFor="add-midi-file"
+                  className="text-mediumGray text-sm font-medium w-full h-full cursor-pointer flex justify-center items-center"
+                >
+                  Select File
+                </label>
 
-              <input
-                accept="file/*"
-                type="file"
-                name="add-midi-file"
-                id="add-midi-file"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
+                <input
+                  accept="file/*"
+                  type="file"
+                  name="add-midi-file"
+                  id="add-midi-file"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

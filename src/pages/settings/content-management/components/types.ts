@@ -13,6 +13,8 @@ export interface IUploadingFileMetaDataProps {
   setMidiFile: (event: any) => void;
   selectedComposer: IUserProfile[];
   setSelectedComposer: (value: any) => void;
+  isEditSample?: boolean;
+  handleClose?: () => void;
 }
 
 export interface IEditComposerData {
@@ -67,3 +69,24 @@ export interface IUserProfile {
   roles?: string[];
 }
 
+export interface ISample {
+  id: number;
+  name: string | null;
+  s3_key: string;
+  filename: string;
+  thumbnail: string | null;
+  mime_type: string;
+  length: number;
+  bpm: string;
+  key: string;
+  tags: string[] | null;
+  type: string | null;
+  owner_id: number;
+  owner_roles: string[] | null;
+  owner_contribution: number;
+  is_private: boolean;
+  created_at: string;
+  collaborators: ICollaborator[];
+}
+
+interface ICollaborator {}

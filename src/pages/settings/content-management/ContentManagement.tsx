@@ -3,14 +3,15 @@ import AttachedFilesSection from "./components/AttachedFilesSection";
 import UploadingFilesSection from "./components/UploadingFilesSection";
 import { useEffect, useState } from "react";
 import { uploadFile } from "api/sounds";
+import { CircularProgress } from "@mui/material";
 
 type Props = {};
 
 const ContentManagement = (props: Props) => {
+  const [loading, setLoading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState<File>(null);
   const [fileRedisKey, setFileRedisKey] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
-
   const handleCancel = () => {
     setUploadProgress(0);
     setUploadingFile(null);
@@ -79,26 +80,43 @@ const ContentManagement = (props: Props) => {
   }
 
   return (
-    <div>
-      <h2 className="text-white px-3 py-4 text-xl font-semibold border-b border-eclipseGray">
-        Content Management
-      </h2>
+    <>
+      <div>
+        <h2 className="text-white px-3 py-4 text-xl font-semibold border-b border-eclipseGray">
+          Content Management
+        </h2>
 
-      <div className="px-3">
-        <DropFilesSection {...{ uploadingFile, setUploadingFile }} />
-        {uploadingFile && (
-          <UploadingFilesSection
-            {...{
-              uploadingFile,
-              fileRedisKey,
-              uploadProgress,
-              handleCancel,
-            }}
-          />
-        )}
-        <AttachedFilesSection />
+        <div className="px-3">
+          <DropFilesSection {...{ uploadingFile, setUploadingFile }} />
+          {uploadingFile && (
+            <UploadingFilesSection
+              {...{
+                uploadingFile,
+                fileRedisKey,
+                uploadProgress,
+                handleCancel,
+              }}
+            />
+          )}
+          <AttachedFilesSection {...{ setLoading }} />
+        </div>
       </div>
-    </div>
+
+      {loading && (
+        <>
+          <div className="absolute top-0 left-0 z-50 bg-black opacity-40 pointer-events-none w-full h-full"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
+            <CircularProgress
+              sx={{
+                width: "80px !important",
+                height: "80px !important",
+                color: "#9EFF00",
+              }}
+            />
+          </div>
+        </>
+      )}
+    </>
   );
 };
 

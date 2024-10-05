@@ -23,10 +23,11 @@ interface Props {
   composerData: IUserProfile[];
   setComposerData: (value: any) => void;
   handleOpenDeleteDialog: (composer: IUserProfile) => void;
+  isEditSample?: boolean;
 }
 
 function ContributersTable(props: Props) {
-  const { composerData, setComposerData, handleOpenDeleteDialog } = props;
+  const { composerData, setComposerData, handleOpenDeleteDialog, isEditSample } = props;
   const muiStyles = getMuiStyles();
 
   useEffect(() => {
