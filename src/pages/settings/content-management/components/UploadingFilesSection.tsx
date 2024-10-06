@@ -10,16 +10,24 @@ import waveformIcon from "../../../../assets/icons/waveformIcon.svg";
 import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import { FaCircleCheck } from "react-icons/fa6";
 import MetaDataForm from "./MetaDataForm";
+import { ICurrentUser } from "./types";
 
 type Props = {
   uploadingFile: File;
   fileRedisKey: string;
   uploadProgress: number;
   handleCancel: () => void;
+  currentUserInfo: ICurrentUser;
 };
 
 const UploadingFilesSection = (props: Props) => {
-  const { uploadingFile, fileRedisKey, uploadProgress, handleCancel } = props;
+  const {
+    uploadingFile,
+    fileRedisKey,
+    uploadProgress,
+    handleCancel,
+    currentUserInfo,
+  } = props;
 
   function formatFileSize(sizeInBytes: number): string {
     const sizeInMB = sizeInBytes / (1024 * 1024);
@@ -107,7 +115,7 @@ const UploadingFilesSection = (props: Props) => {
           )}
         </div>
 
-        <MetaDataForm {...{ fileRedisKey, handleCancel }} />
+        <MetaDataForm {...{ fileRedisKey, handleCancel, currentUserInfo }} />
       </div>
     </>
   );

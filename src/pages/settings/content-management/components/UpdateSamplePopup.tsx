@@ -2,16 +2,17 @@ import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import MetaDataForm from "./MetaDataForm";
-import { ISample } from "./types";
+import { ICurrentUser, ISample } from "./types";
 
 interface Props {
   open: boolean;
   handleClose: () => void;
   sampleToEdit: ISample;
+  currentUserInfo: ICurrentUser;
 }
 
 export default function UpdateSamplePopup(props: Props) {
-  const { open, handleClose, sampleToEdit } = props;
+  const { open, handleClose, sampleToEdit, currentUserInfo } = props;
 
   const isEditSample = true;
   return (
@@ -29,7 +30,9 @@ export default function UpdateSamplePopup(props: Props) {
         }}
       >
         <DialogContent sx={{ p: 0 }}>
-          <MetaDataForm {...{ isEditSample, handleClose, sampleToEdit }} />
+          <MetaDataForm
+            {...{ isEditSample, handleClose, sampleToEdit, currentUserInfo }}
+          />
         </DialogContent>
       </Dialog>
     </React.Fragment>

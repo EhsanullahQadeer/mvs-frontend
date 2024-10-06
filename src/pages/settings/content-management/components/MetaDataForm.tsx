@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { updateFileMetadata, uploadedFileMetadata } from "api/sounds";
 import { Form, Formik } from "formik";
-import { ISample, IUserProfile } from "./types";
+import { ICurrentUser, ISample, IUserProfile } from "./types";
 import AlertDialog from "components/util/AlertDialog";
 import ContributersTable from "./ContributersTable";
 import UploadingFileMetaData from "./UploadingFileMetaData";
@@ -12,6 +12,7 @@ type Props = {
   isEditSample?: boolean;
   handleClose?: () => void;
   sampleToEdit?: ISample;
+  currentUserInfo?: ICurrentUser;
 };
 
 const MetaDataForm = (props: Props) => {
@@ -21,6 +22,7 @@ const MetaDataForm = (props: Props) => {
     isEditSample,
     handleClose,
     sampleToEdit,
+    currentUserInfo,
   } = props;
 
   const {
@@ -34,14 +36,19 @@ const MetaDataForm = (props: Props) => {
     s3_key,
     mime_type,
     length,
+    collaborators,
   } = sampleToEdit || {};
 
-  const [selectedComposer, setSelectedComposer] = useState([]);
+  const [selectedComposer, setSelectedComposer] = useState([
+    currentUserInfo,
+    ...(collaborators ? collaborators : []),
+  ]);
 
   const [privacyValue, setPrivacyValue] = useState(
     is_private ? "private" : "public"
   );
   const [midiFile, setMidiFile] = useState(null);
+  const [percentError, setPercentError] = useState(false);
 
   console.log("sampleToEdit ", sampleToEdit);
 
@@ -56,34 +63,71 @@ const MetaDataForm = (props: Props) => {
   const [composerData, setComposerData] = useState(
     selectedComposer.map((composer) => ({
       ...composer,
-      percentValue: 0,
+      roles: [],
+      percentValue: parseFloat((100 / selectedComposer.length).toFixed(2)),
       isEditable: false,
     }))
   );
 
   useEffect(() => {
-    setComposerData(
-      selectedComposer.map((composer) => ({
-        ...composer,
-        percentValue: 0,
-        isEditable: false,
-      }))
-    );
+    setComposerData((prevComposerData) => {
+      const updatedComposerData = selectedComposer.map((composer) => {
+        const existingComposer = prevComposerData.find(
+          (existing) => existing.id === composer.id
+        );
+
+        const percentValue = (100 / selectedComposer.length).toFixed(2);
+
+        if (existingComposer) {
+          return {
+            ...composer,
+            roles: existingComposer.roles,
+            percentValue: parseFloat(percentValue),
+            isEditable: existingComposer.isEditable || false,
+          };
+        }
+
+        return {
+          ...composer,
+          roles: composer.roles || [],
+          percentValue: parseFloat(percentValue),
+          isEditable: false,
+        };
+      });
+
+      return updatedComposerData;
+    });
+    setPercentError(false);
   }, [selectedComposer]);
 
   const handleSubmit = async (values) => {
     const { songName, songBpm, sampleKey, songType, songTags } = values;
 
-    const collaborators = composerData.map((composer) => ({
-      id: composer.id,
-      contribution: composer.percentValue,
-      roles: composer.roles,
-    }));
+    const percentSum = composerData.reduce((sum, composer) => {
+      return sum + composer.percentValue;
+    }, 0);
+
+    if (Math.ceil(percentSum) !== 100) {
+      setPercentError(true);
+      return;
+    }
+
+    const collaborators = composerData
+      .filter((data) => data.id !== currentUserInfo.id)
+      .map((composer) => ({
+        id: composer.id,
+        contribution: composer.percentValue,
+        roles: composer.roles,
+      }));
+
+    const ownerObj = composerData.find(
+      (data) => data.id === currentUserInfo.id
+    );
 
     try {
       const body = {
-        owner_roles: ["producer", "composer"],
-        owner_contribution: 40,
+        owner_roles: ownerObj ? ownerObj.roles : [],
+        owner_contribution: ownerObj ? ownerObj.percentValue : 0,
         name: songName,
         bpm: songBpm,
         key: sampleKey,
@@ -182,6 +226,9 @@ const MetaDataForm = (props: Props) => {
                       setComposerData,
                       handleOpenDeleteDialog,
                       isEditSample,
+                      currentUserInfo,
+                      percentError,
+                      setPercentError,
                     }}
                   />
                 </div>

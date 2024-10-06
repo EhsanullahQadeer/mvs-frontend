@@ -4,11 +4,13 @@ import UploadingFilesSection from "./components/UploadingFilesSection";
 import { useEffect, useState } from "react";
 import { uploadFile } from "api/sounds";
 import { CircularProgress } from "@mui/material";
+import { currentUserAPI } from "api/auth";
 
 type Props = {};
 
 const ContentManagement = (props: Props) => {
   const [loading, setLoading] = useState(false);
+  const [currentUserInfo, setCurrentUserInfo] = useState(null);
   const [uploadingFile, setUploadingFile] = useState<File>(null);
   const [fileRedisKey, setFileRedisKey] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -79,6 +81,20 @@ const ContentManagement = (props: Props) => {
     };
   }
 
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
+
+  const getCurrentUser = async () => {
+    try {
+      const response = await currentUserAPI();
+      setCurrentUserInfo(response.data);
+      console.log("user info ", response);
+    } catch (error) {
+      console.error("Error in user info:", error);
+    }
+  };
+
   return (
     <>
       <div>
@@ -95,10 +111,11 @@ const ContentManagement = (props: Props) => {
                 fileRedisKey,
                 uploadProgress,
                 handleCancel,
+                currentUserInfo
               }}
             />
           )}
-          <AttachedFilesSection {...{ setLoading }} />
+          <AttachedFilesSection {...{ setLoading, currentUserInfo }} />
         </div>
       </div>
 

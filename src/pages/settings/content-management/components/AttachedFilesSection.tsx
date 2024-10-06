@@ -9,11 +9,12 @@ import { useEffect, useState } from "react";
 import AttachedFilesTable from "./AttachedFilesTable";
 import { deleteSampleAPI, getUserSamplesAPI } from "api/sounds";
 import AlertDialog from "components/util/AlertDialog";
-import { ISample } from "./types";
+import { ICurrentUser, ISample } from "./types";
 import UpdateSamplePopup from "./UpdateSamplePopup";
 
 type Props = {
   setLoading: (value: boolean) => void;
+  currentUserInfo: ICurrentUser;
 };
 
 const tableTabs = [
@@ -23,7 +24,7 @@ const tableTabs = [
 ];
 
 const AttachedFilesSection = (props: Props) => {
-  const { setLoading } = props;
+  const { setLoading, currentUserInfo } = props;
   const [selectedTab, setSelectedTab] = useState("all");
   const [attachedFilesTableData, setAttachedFilesTableData] = useState([]);
 
@@ -105,7 +106,8 @@ const AttachedFilesSection = (props: Props) => {
         {...{
           open: openEditPopup,
           handleClose: handleCloseDialog,
-          sampleToEdit
+          sampleToEdit,
+          currentUserInfo,
         }}
       />
 

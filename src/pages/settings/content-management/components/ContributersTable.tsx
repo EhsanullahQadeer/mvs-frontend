@@ -16,18 +16,25 @@ import Paper from "@mui/material/Paper";
 import { IUserProfile } from "./types";
 import getMuiStyles from "styles/getMuiStyles";
 import { rolesArr } from "../sample-data/sampleData";
-import { useEffect } from "react";
+import { ChangeEvent, useEffect } from "react";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 
 interface Props {
   composerData: IUserProfile[];
   setComposerData: (value: any) => void;
   handleOpenDeleteDialog: (composer: IUserProfile) => void;
-  isEditSample?: boolean;
+  percentError: boolean;
+  setPercentError: (value: boolean) => void;
 }
 
 function ContributersTable(props: Props) {
-  const { composerData, setComposerData, handleOpenDeleteDialog, isEditSample } = props;
+  const {
+    composerData,
+    setComposerData,
+    handleOpenDeleteDialog,
+    percentError,
+    setPercentError,
+  } = props;
   const muiStyles = getMuiStyles();
 
   useEffect(() => {
@@ -50,6 +57,34 @@ function ContributersTable(props: Props) {
         composer.id === id ? { ...composer, roles: newRoles } : composer
       )
     );
+  };
+
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
+    let { value } = event.target;
+    let parsedValue = parseFloat(value);
+
+    if (isNaN(parsedValue)) {
+      parsedValue = 0;
+    } else if (parsedValue > 100) {
+      parsedValue = 100;
+    } else if (parsedValue < 0) {
+      parsedValue = 0;
+    }
+
+    parsedValue = Math.round(parsedValue * 100) / 100;
+
+    setComposerData((prevComposers) =>
+      prevComposers.map((composer) =>
+        composer.id === id
+          ? { ...composer, percentValue: parsedValue }
+          : composer
+      )
+    );
+
+    setPercentError(false);
   };
 
   return (
@@ -115,30 +150,39 @@ function ContributersTable(props: Props) {
                 </TableCell>
 
                 <TableCell>
-                  <div className="flex gap-2.5 items-stretch">
-                    <div className="flex items-center">
-                      {isEditable ? (
-                        <input
-                          type="number"
-                          min="1"
-                          max="100"
-                          value={percentValue}
-                          //   onChange={(e) => handleInputChange(e, id)}
-                          className="text-silver text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11"
-                        />
-                      ) : (
-                        <span className="text-silver text-sm font-semibold">
-                          {percentValue}%
-                        </span>
-                      )}
+                  <div>
+                    <div className="flex gap-2.5 items-stretch">
+                      <div className="flex items-center">
+                        {isEditable ? (
+                          <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value={percentValue}
+                            onChange={(e) => handleInputChange(e, id)}
+                            className="text-silver text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11"
+                          />
+                        ) : (
+                          <span className="text-silver text-sm font-semibold">
+                            {percentValue}%
+                          </span>
+                        )}
+                      </div>
+
+                      <div
+                        onClick={() => handleEditBtn(id)}
+                        className="py-1 px-2 border border-eclipseGray rounded text-mediumGray text-sm font-normal w-max flex items-center cursor-pointer"
+                      >
+                        {isEditable ? "Save" : "Edit"}
+                      </div>
                     </div>
 
-                    <div
-                      onClick={() => handleEditBtn(id)}
-                      className="py-1 px-2 border border-eclipseGray rounded text-mediumGray text-sm font-normal w-max flex items-center cursor-pointer"
-                    >
-                      {isEditable ? "Save" : "Edit"}
-                    </div>
+                    {percentError && (
+                      <div className="mt-0.5 text-darkRed text-[10px]">
+                        Sum of % should equal to 100.
+                      </div>
+                    )}
                   </div>
                 </TableCell>
 
