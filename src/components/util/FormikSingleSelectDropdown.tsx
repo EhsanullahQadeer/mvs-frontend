@@ -18,10 +18,21 @@ type Props = {
   label?: string;
   placeholder: string;
   dropdownItems: string[];
+  inputBgColor?: string;
+  labelColor?: string;
+  disabled?: boolean;
 };
 
-function SingleSelectDropdown(props: Props) {
-  const { name, label, placeholder, dropdownItems } = props;
+function FormikSingleSelectDropdown(props: Props) {
+  const {
+    name,
+    label,
+    placeholder,
+    dropdownItems,
+    inputBgColor,
+    labelColor,
+    disabled,
+  } = props;
   const { setFieldValue } = useFormikContext();
 
   const [itemSelected, setItemSelected] = useState("");
@@ -36,7 +47,12 @@ function SingleSelectDropdown(props: Props) {
   return (
     <div className="flex flex-col gap-1 flex-1">
       {label && (
-        <label htmlFor={name} className="text-silver text-sm font-normal">
+        <label
+          htmlFor={name}
+          className={`${
+            labelColor ? `text-${labelColor}` : "text-silver"
+          } text-sm font-normal`}
+        >
           {label}
         </label>
       )}
@@ -46,7 +62,13 @@ function SingleSelectDropdown(props: Props) {
           name={name}
           value={itemSelected}
           onChange={handleItemChange}
-          sx={muiStyles.singleSelectDropdownStyles}
+          disabled={disabled}
+          sx={{
+            ...muiStyles.singleSelectDropdownStyles,
+            ".MuiSelect-select": {
+              backgroundColor: inputBgColor ? inputBgColor : "#131313",
+            },
+          }}
           MenuProps={{
             PaperProps: {
               sx: {
@@ -64,9 +86,13 @@ function SingleSelectDropdown(props: Props) {
             <em>{placeholder}</em>
           </MenuItem>
 
-          {dropdownItems.map((item) => {
+          {dropdownItems.map((item, idx) => {
             return (
-              <MenuItem value={item} sx={muiStyles.selectDropdownMenuItem}>
+              <MenuItem
+                key={idx + item}
+                value={item}
+                sx={muiStyles.selectDropdownMenuItem}
+              >
                 {item}
               </MenuItem>
             );
@@ -77,4 +103,4 @@ function SingleSelectDropdown(props: Props) {
   );
 }
 
-export default SingleSelectDropdown;
+export default FormikSingleSelectDropdown;

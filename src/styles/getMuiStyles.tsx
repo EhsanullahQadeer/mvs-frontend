@@ -217,6 +217,41 @@ const getMuiStyles = () => {
         fontWeight: 400,
       },
     },
+
+    passwordFieldStyles: {
+      backgroundColor: "#0F0F0F",
+      color: "#666666",
+      fontSize: "14px",
+      fontWeight: "400",
+      padding: "12px 16px",
+      borderRadius: "8px",
+
+      "& .MuiOutlinedInput-notchedOutline": {
+        border: "1px solid #242424",
+      },
+
+      "&:hover": {
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: "#3d3d3d",
+        },
+      },
+
+      "&.Mui-focused": {
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: "#3d3d3d",
+        },
+      },
+
+      "& .MuiInputBase-input": {
+        padding: 0,
+        border: 0,
+        boxShadow: "none",
+      },
+
+      "& .MuiIconButton-root": {
+        color: "#666666",
+      },
+    },
   };
   return muiStyles;
 };

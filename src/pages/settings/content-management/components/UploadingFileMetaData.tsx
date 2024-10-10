@@ -7,8 +7,8 @@
  *************************************************************************/
 
 import React, { useState } from "react";
-import FormikLabeledField from "./FormikLabeledField";
-import SingleSelectDropdown from "./SingleSelectDropdown";
+import FormikLabeledField from "../../../../components/util/FormikLabeledField";
+import FormikSingleSelectDropdown from "../../../../components/util/FormikSingleSelectDropdown";
 import { songType } from "../sample-data/sampleData";
 import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import ComposerDialog from "./ComposerDialog";
@@ -123,7 +123,7 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
         </div>
 
         <div className="flex gap-5">
-          <SingleSelectDropdown
+          <FormikSingleSelectDropdown
             name="songType"
             label="Song / Sample Type"
             placeholder="Select Sample Type"

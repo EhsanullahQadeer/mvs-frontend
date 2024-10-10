@@ -26,6 +26,7 @@ import ArtistWikiProfile from "./wiki-profile/ArtistWikiProfile";
 import AccountSetting from "./settings/account/AccountSetting";
 import ContentManagement from "./settings/content-management/ContentManagement";
 import SettingsLayout from "./settings/SettingsLayout";
+import OnBoarding from "./onboarding/OnBoarding";
 
 interface IRoute {
   path: string;
@@ -160,29 +161,13 @@ const routes: IRoute[] = [
         name: "Content Management",
         component: ContentManagement,
       },
-      // {
-      //   path: "notifications/:id",
-      //   name: "Notifications",
-      //   component: Notifications,
-      // },
-      // {
-      //   path: "billing/:id",
-      //   name: "Billing",
-      //   component: Billing,
-      // },
-      // {
-      //   path: "privacy/:id",
-      //   name: "Privacy",
-      //   component: Privacy,
-      // },
-      // {
-      //   path: "monetization/:id",
-      //   name: "Monetization",
-      //   component: Monetization,
-      // },
     ],
   },
-
+  {
+    path: "/onboarding",
+    name: "Onboarding",
+    component: OnBoarding,
+  },
 ];
 
 export default routes;
