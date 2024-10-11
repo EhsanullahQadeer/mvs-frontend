@@ -33,9 +33,6 @@ const AttachedFilesSection = (props: Props) => {
     clickFunc();
   };
 
-  useEffect(() => {
-    getSamplesData();
-  }, [selectedTab]);
 
   const getSamplesData = async () => {
     setLoading(true);
@@ -54,6 +51,10 @@ const AttachedFilesSection = (props: Props) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getSamplesData();
+  }, [getSamplesData, selectedTab]);
 
   const [sampleToEdit, setSampleToEdit] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);

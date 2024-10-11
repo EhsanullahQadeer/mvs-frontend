@@ -41,7 +41,7 @@ const PersonalInformation = (props: Props) => {
     } else {
       setCitiesArr(allCities);
     }
-  }, [selectedState]);
+  }, [allCities, selectedState]);
 
   const initialValues = {
     username: "",

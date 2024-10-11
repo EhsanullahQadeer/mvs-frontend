@@ -27,7 +27,7 @@ const ContentManagement = (props: Props) => {
         trackUploadProgress(fileRedisKey);
       }
     }
-  }, [uploadingFile]);
+  }, [fileRedisKey, uploadingFile]);
 
   const handleUploadFile = async () => {
     try {

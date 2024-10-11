@@ -26,7 +26,6 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
   const {
     privacyValue,
     setPrivacyValue,
-    midiFile,
     setMidiFile,
     selectedComposer,
     setSelectedComposer,

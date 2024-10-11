@@ -48,7 +48,7 @@ const UserType = (props: Props) => {
         value: initialValues.subRole,
       });
     }
-  }, []);
+  }, [initialValues.primaryRole, initialValues.subRole]);
 
   const handleTypeSelect = (idx: number, value: string) => {
     if (primaryRole?.index === idx) {
