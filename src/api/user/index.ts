@@ -72,7 +72,7 @@ export async function userProfessionalNameSearch(
   return axiosInstance.get("/users/search/by-professional-name", { params });
 }
 
-export async function getUsersByTag(params: UserFiltersDTO, limit: 20) {
+export async function getUsersByTag(params: UserFiltersDTO, limit=20) {
   return axiosInstance.get(`/users/by-tag`, {
     params: {
       ...params,
