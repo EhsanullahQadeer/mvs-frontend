@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+
 import DropFilesSection from "./components/DropFilesSection";
 import AttachedFilesSection from "./components/AttachedFilesSection";
 import UploadingFilesSection from "./components/UploadingFilesSection";
@@ -20,6 +21,15 @@ const ContentManagement = (props: Props) => {
     setUploadingFile(null);
     setFileRedisKey("");
   };
+
+  useEffect(() => {
+    if (uploadingFile !== null) {
+      handleUploadFile();
+      if (fileRedisKey) {
+        trackUploadProgress(fileRedisKey);
+      }
+    }
+  }, [uploadingFile]);
 
   const handleUploadFile = async () => {
     try {
@@ -47,17 +57,6 @@ const ContentManagement = (props: Props) => {
       console.log("error ", error);
     }
   };
-
-
-  useEffect(() => {
-    if (uploadingFile !== null) {
-      handleUploadFile();
-      if (fileRedisKey) {
-        trackUploadProgress(fileRedisKey);
-      }
-    }
-  }, [handleUploadFile, fileRedisKey, uploadingFile]);
-
 
   function trackUploadProgress(sessionId: string) {
     const eventSource = new EventSource(
