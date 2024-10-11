@@ -83,6 +83,7 @@ const AttachedFilesSection = (props: Props) => {
       try {
         const response = await deleteSampleAPI(sampleToEdit.id);
         if (response.status === 200) {
+          // @ts-ignore: Suppressing the callable type error
           getSamplesData();
           handleCloseDialog();
         }
