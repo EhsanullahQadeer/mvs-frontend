@@ -47,6 +47,7 @@ const ContentManagement = (props: Props) => {
     }
   };
 
+
   useEffect(() => {
     if (uploadingFile !== null) {
       handleUploadFile();

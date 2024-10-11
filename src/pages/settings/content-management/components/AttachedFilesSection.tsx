@@ -5,6 +5,8 @@
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useEffect, useState } from "react";
 import AttachedFilesTable from "./AttachedFilesTable";
 import { deleteSampleAPI, getUserSamplesAPI } from "api/sounds";
@@ -33,9 +35,11 @@ const AttachedFilesSection = (props: Props) => {
     clickFunc();
   };
 
+  useEffect(() => {
+    getSamplesData();
+  }, [selectedTab]);
 
-  // Fix: Ensure useCallback returns a callable async function
-  const getSamplesData = useCallback(async () => {
+  const getSamplesData = async () => {
     setLoading(true);
     try {
       const response = await getUserSamplesAPI({
@@ -51,13 +55,7 @@ const AttachedFilesSection = (props: Props) => {
     } finally {
       setLoading(false);
     }
-  }, [selectedTab]); // Dependency is `selectedTab`
-
-  // Use useEffect to trigger getSamplesData on component mount or when selectedTab changes
-  useEffect(() => {
-    // @ts-ignore: Suppressing the callable type error
-    getSamplesData(); // Ensure the callable function is invoked
-  }, [getSamplesData]);
+  };
 
   const [sampleToEdit, setSampleToEdit] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -83,7 +81,6 @@ const AttachedFilesSection = (props: Props) => {
       try {
         const response = await deleteSampleAPI(sampleToEdit.id);
         if (response.status === 200) {
-          // @ts-ignore: Suppressing the callable type error
           getSamplesData();
           handleCloseDialog();
         }
@@ -157,7 +154,3 @@ const AttachedFilesSection = (props: Props) => {
 };
 
 export default AttachedFilesSection;
-function useCallback(arg0: () => Promise<void>, arg1: any[]) {
-  throw new Error("Function not implemented.");
-}
-
