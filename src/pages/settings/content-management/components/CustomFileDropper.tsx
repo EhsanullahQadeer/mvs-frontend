@@ -1,0 +1,133 @@
+/*************************************************************************
+ * @file CustomFileDropper.tsx
+ * @author Ehsanullah Qadeer
+ * @desc  This is the component for uploading files.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+import React, { useState } from "react";
+import uploadFileIcon from "../../../../assets/icons/uploadSheetIcon.svg";
+
+const MAX_FILE_SIZE_MB = 50;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+type Props = {
+  uploadingFile: File | null;
+  setUploadingFile: (file: File | null) => void;
+};
+
+const CustomFileDropper = (props: Props) => {
+  const { uploadingFile, setUploadingFile } = props;
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const validateFile = (file: File) => {
+    setErrorMessage("");
+
+    if (!file.type.startsWith("audio/")) {
+      setErrorMessage(`"${file.name}" is not an audio file.`);
+      return null;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setErrorMessage(`"${file.name}" exceeds the 50MB limit.`);
+      return null;
+    }
+
+    return file;
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setErrorMessage("");
+
+    const droppedFile = e.dataTransfer.files[0];
+    const validFile = validateFile(droppedFile);
+
+    if (validFile) {
+      setUploadingFile(validFile);
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessage("");
+
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+    const validFile = selectedFile ? validateFile(selectedFile) : null;
+
+    if (validFile) {
+      setUploadingFile(validFile);
+    }
+
+    e.target.value = "";
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  return (
+    <div
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      className={`${
+        uploadingFile
+          ? "border-2 border-[#0185FF] border-solid"
+          : "border border-coolGray border-dashed"
+      } bg-richBlack text-center my-3 rounded-lg`}
+    >
+      <input
+        accept="audio/*"
+        type="file"
+        onChange={handleFileUpload}
+        className="hidden"
+        id="file-upload"
+      />
+
+      <label
+        htmlFor="file-upload"
+        className="cursor-pointer flex flex-col gap-2 items-center px-5 py-10"
+      >
+        <div className="w-[74px] h-[88px]">
+          <img
+            src={uploadFileIcon}
+            alt="uploadFileIcon"
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        <div>
+          <div className="mb-2">
+            <span className="text-softGray font-semibold text-sm underline">
+              Click to upload
+            </span>
+            <span className="text-coolGray text-sm font-normal">
+              {" "}
+              or drag and drop
+            </span>
+          </div>
+
+          <p className="text-sm text-dimGray font-normal">
+            Maximum file size 50MB.
+          </p>
+        </div>
+
+        {(errorMessage || uploadingFile) && (
+          <div className="mt-4">
+            {errorMessage && (
+              <div className="text-red-500 text-sm">{errorMessage}</div>
+            )}
+
+            {uploadingFile && (
+              <div className="text-coolGray text-sm font-normal">
+                {uploadingFile.name}
+              </div>
+            )}
+          </div>
+        )}
+      </label>
+    </div>
+  );
+};
+
+export default CustomFileDropper;

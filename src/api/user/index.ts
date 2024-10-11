@@ -8,7 +8,14 @@
 
 /* LOCAL IMPORTS */
 import axiosInstance from "../axios";
-import { IGetArtistCreditsParams, IgetArtistInfoParams, IstoreSpotifyArtistBody, IUsersSearchParams, UserFiltersDTO } from "../user/types";
+import {
+  IGetArtistCreditsParams,
+  IgetArtistInfoParams,
+  IstoreSpotifyArtistBody,
+  IUserProfessionalNameSearch,
+  IUsersSearchParams,
+  UserFiltersDTO,
+} from "../user/types";
 
 export async function requestInvitationCodeWithEmailAPI(data: any) {
   return axiosInstance.post("/users/request/access", data);
@@ -58,7 +65,14 @@ export async function userArtistSearch(params: IUsersSearchParams) {
   return axiosInstance.get("/users/search", { params });
 }
 
-export async function getUsersByTag(params: UserFiltersDTO, limit) {
+
+export async function userProfessionalNameSearch(
+  params: IUserProfessionalNameSearch
+) {
+  return axiosInstance.get("/users/search/by-professional-name", { params });
+}
+
+export async function getUsersByTag(params: UserFiltersDTO, limit: 20) {
   return axiosInstance.get(`/users/by-tag`, {
     params: {
       ...params,

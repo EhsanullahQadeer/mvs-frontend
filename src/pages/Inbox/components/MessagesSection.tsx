@@ -41,7 +41,7 @@ const MessagesSection = (props: Props) => {
                       <hr />
                     </div>
 
-                    <div className="p-2.5 text-sm font-normal text-[#B2B2B2]">
+                    <div className="p-2.5 text-sm font-normal text-silver">
                       {formattedDate}
                     </div>
 

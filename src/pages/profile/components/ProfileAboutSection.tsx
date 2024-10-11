@@ -104,7 +104,7 @@ const ProfileAboutSection = (props: Props) => {
       </div>
 
       <div className="border-t border-b border-eclipseGray px-2.5 pb-6">
-        <div className="px-4 pt-5 text-[#E5E5E5] font-semibold text-base">
+        <div className="px-4 pt-5 text-platinum font-semibold text-base">
           About
         </div>
 
@@ -136,7 +136,7 @@ const ProfileAboutSection = (props: Props) => {
                   <h2 className="text-white font-semibold text-xs text-wrap">
                     {track_name}
                   </h2>
-                  <p className="text-[#E5E5E5] text-[10px] font-medium">
+                  <p className="text-platinum text-[10px] font-medium">
                     {artist_name}
                   </p>
                 </div>

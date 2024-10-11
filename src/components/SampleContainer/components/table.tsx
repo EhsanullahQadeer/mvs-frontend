@@ -279,7 +279,7 @@ const SampleTable = (
                         />
                       </svg> */}
 
-                        <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-[#181A1D]">
+                        <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-gunMetal">
                           <img src={musicIcon} alt="musicIcon" />
                         </div>
                       <div>

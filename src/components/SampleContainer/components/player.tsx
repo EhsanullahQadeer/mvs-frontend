@@ -215,7 +215,7 @@ const AudioPlayer = ({ audio_track, currTrack, isPlaying, onPlayToggle, onPrevCl
           </div>
           <div className="album-details">
             <div className="album-name">{currTrack?.filename}</div>
-            <div className="album-author">{currTrack?.composers[0].artist_name}</div>
+            <div className="album-author">{currTrack?.collaborators[0].artist_name}</div>
           </div>
         </div>
       </div> */}

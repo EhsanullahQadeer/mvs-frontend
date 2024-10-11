@@ -24,12 +24,16 @@ import CheckScrolling from "./CheckScrolling";
 import ArtistProfile from "./profile/ArtistProfile";
 import ArtistWikiProfile from "./wiki-profile/ArtistWikiProfile";
 import AccountSetting from "./settings/account/AccountSetting";
+import ContentManagement from "./settings/content-management/ContentManagement";
+import SettingsLayout from "./settings/SettingsLayout";
+import OnBoarding from "./onboarding/OnBoarding";
 
 interface IRoute {
   path: string;
   name: string;
   component: any;
   props?: any;
+  children?: IRoute[];
 }
 
 const routes: IRoute[] = [
@@ -143,9 +147,26 @@ const routes: IRoute[] = [
     component: ArtistProfile,
   },
   {
-    path: "/account-settings/:id",
-    name: "Account Settings",
-    component: AccountSetting,
+    path: "/settings",
+    name: "Settings",
+    component: SettingsLayout,
+    children: [
+      {
+        path: "account/:id",
+        name: "Account Settings",
+        component: AccountSetting,
+      },
+      {
+        path: "content-management/:id",
+        name: "Content Management",
+        component: ContentManagement,
+      },
+    ],
+  },
+  {
+    path: "/onboarding",
+    name: "Onboarding",
+    component: OnBoarding,
   },
 ];
 

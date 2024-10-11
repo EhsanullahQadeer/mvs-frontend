@@ -93,9 +93,9 @@ const MessagesDetail = (props: Props) => {
   }, [messages, notes]);
   return (
     <React.Fragment>
-      <div className="h-full w-full border-l border-eerieBlack bg-[#101113] relative">
+      <div className="h-full w-full border-l border-eerieBlack bg-richBlack relative">
         <div className="flex flex-col pt-2 h-full">
-          <div className="flex flex-col w-full max-md:max-w-full sticky top-0 bg-[#101113]">
+          <div className="flex flex-col w-full max-md:max-w-full sticky top-0 bg-richBlack">
             <div className="flex flex-wrap gap-5 justify-between items-center p-4 pt-2 w-full">
               <div className="flex gap-2 items-center">
                 <div
@@ -116,12 +116,12 @@ const MessagesDetail = (props: Props) => {
                   <div className="text-sm font-semibold text-white">
                     {displayName}
                   </div>
-                  <div className="text-xs text-[#B2B2B2] font-normal">
+                  <div className="text-xs text-silver font-normal">
                     Los Angeles, CA
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-[#B2B2B2]">
+              <div className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver">
                 <MenuIcon className="w-5 h-5" />
               </div>
             </div>

@@ -12,6 +12,12 @@ export interface IUsersSearchParams {
   query: string;
 }
 
+export interface IUserProfessionalNameSearch {
+  skip: number;
+  professionalName: string;
+  take: number;
+}
+
 export interface IGetArtistCreditsParams {
   limit: number;
   skip: number;
@@ -19,7 +25,7 @@ export interface IGetArtistCreditsParams {
   spotify_artist_id: string;
 }
 export interface IgetArtistInfoParams {
-  spotify_artist_id: string
+  spotify_artist_id: string;
 }
 
 export interface IstoreSpotifyArtistBody {

@@ -49,7 +49,7 @@ const FormikField = (props: Props) => {
             }`}
           />
         ) : (
-          <div className="text-sm font-normal text-[#E5E5E5]">{labelValue}</div>
+          <div className="text-sm font-normal text-platinum">{labelValue}</div>
         )
       ) : (
         <Field

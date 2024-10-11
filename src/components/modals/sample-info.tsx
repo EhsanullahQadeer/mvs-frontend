@@ -1,7 +1,7 @@
 /*************************************************************************
  * @file sample-info.tsx
  * @author Zohaib Ahmed
- * @desc Modal component for displaying sample information and composers.
+ * @desc Modal component for displaying sample information and collaborators.
  * 
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
@@ -60,14 +60,14 @@ const SampleInfoModal = (props: any) => {
                       {/* start */}
 
                       <div className="mt-1 text-xl font-semibold text-zinc-100 max-md:max-w-full">
-                        Composers 🎸
+                        collaborators 🎸
                       </div>
                       <div className="mt-4 text-sm leading-6 text-justify text-neutral-400 max-md:max-w-full">
                         Each sample/composition in our collection is more than
                         just sounds – it's a creative vision brought to life. We
-                        want to highlight the talented composers behind these
+                        want to highlight the talented collaborators behind these
                         sonic gems. This particular sample owes its core melody,
-                        harmony, and rhythm to the ingenuity of the composers
+                        harmony, and rhythm to the ingenuity of the collaborators
                         below:
                         <br />
                       </div>
@@ -86,7 +86,7 @@ const SampleInfoModal = (props: any) => {
                         </div>
                       </div>
                       <div className="self-start mt-3.5 ml-2.5 text-sm text-neutral-400">
-                        Composers:
+                        collaborators:
                       </div>
                       <div className="flex flex-col p-2.5 mt-3.5 text-xs text-white rounded-lg border border-solid bg-neutral-900 border-neutral-800 max-md:max-w-full">
                         

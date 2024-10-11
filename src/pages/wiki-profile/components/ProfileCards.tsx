@@ -38,7 +38,7 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
           </div>
           <div className="flex flex-col gap-0.5">
             <h2 className="text-white font-semibold text-xs text-wrap">{track_name}</h2>
-            <p className="text-[#E5E5E5] text-[10px] font-medium">
+            <p className="text-platinum text-[10px] font-medium">
               {artist_name}
             </p>
           </div>

@@ -10,6 +10,10 @@ module.exports = {
     extend: {
       colors: {
         // Add your custom colors here
+        silver: "#B2B2B2",
+        gunMetal: "#181A1D",
+        richBlack: "#101113",
+        platinum: "#E5E5E5",
         softGray: "#ccc",
         mediumGray: "#999999",
         jetBlack: "#0f0f0f",
@@ -35,6 +39,9 @@ module.exports = {
         blackMarbel: "#161616",
         darkCharcoal: "#2B2B2B",
         "slateGray-2": "#58606B"
+      },
+      boxShadow: {
+        'custom-inset': 'inset 0px 0px 4.5px 0px rgba(0, 0, 0, 0.30)',
       },
     },
   },
