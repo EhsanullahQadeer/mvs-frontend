@@ -37,3 +37,25 @@ export const userTypes = [
     iconSrc: composerIcon,
   },
 ];
+
+export const musicGenres = [
+  "Reggeation",
+  "Pop",
+  "R&B",
+  "Hip-Hop",
+  "Trap",
+  "RKT",
+  "Soul",
+  "Country",
+  "K-Pop",
+  "Rock",
+];
+
+export const publishersArr = [
+  "Sony ATV Publishing",
+  "Universal Music Publishing Group",
+  "Warner Chappel Music",
+  "BMG Rights Management",
+  "Kabalt Music Group",
+  "Concord Music Publishing",
+];

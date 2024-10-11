@@ -20,6 +20,7 @@ type Props = {
   dropdownItems: string[];
   inputBgColor?: string;
   labelColor?: string;
+  dropdownBgColor?: string;
   disabled?: boolean;
 };
 
@@ -31,6 +32,7 @@ function FormikSingleSelectDropdown(props: Props) {
     dropdownItems,
     inputBgColor,
     labelColor,
+    dropdownBgColor,
     disabled,
   } = props;
   const { setFieldValue } = useFormikContext();
@@ -72,7 +74,7 @@ function FormikSingleSelectDropdown(props: Props) {
           MenuProps={{
             PaperProps: {
               sx: {
-                backgroundColor: "#131313",
+                backgroundColor: dropdownBgColor ? dropdownBgColor : "#131313",
                 borderRadius: "8px",
 
                 ul: {

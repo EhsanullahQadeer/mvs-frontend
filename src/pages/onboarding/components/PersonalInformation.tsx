@@ -28,8 +28,7 @@ type Props = {};
 
 const PersonalInformation = (props: Props) => {
   const muiStyles = getMuiStyles();
-  const allCities = Object.values(citiesByState).flat();
-  const [citiesArr, setCitiesArr] = useState(allCities);
+  const [citiesArr, setCitiesArr] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -38,8 +37,6 @@ const PersonalInformation = (props: Props) => {
   useEffect(() => {
     if (selectedState) {
       setCitiesArr(citiesByState[selectedState] || []);
-    } else {
-      setCitiesArr(allCities);
     }
   }, [selectedState]);
 
@@ -128,6 +125,7 @@ const PersonalInformation = (props: Props) => {
                           dropdownItems={statesArr}
                           inputBgColor="#0F0F0F"
                           labelColor="white"
+                          dropdownBgColor="#1c1c1c"
                         />
 
                         <FormikSingleSelectDropdown
@@ -137,6 +135,7 @@ const PersonalInformation = (props: Props) => {
                           dropdownItems={citiesArr}
                           inputBgColor="#0F0F0F"
                           labelColor="white"
+                          dropdownBgColor="#1c1c1c"
                           disabled={!selectedState}
                         />
                       </div>

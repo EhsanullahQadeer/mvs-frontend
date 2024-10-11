@@ -7,28 +7,58 @@
  *************************************************************************/
 import { useState } from "react";
 import crownIcon2 from "../../assets/icons/crownIcon2.svg";
-import { FaChevronDown } from "react-icons/fa6";
-import { FaChevronRight } from "react-icons/fa6";
+import { FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import UserType from "./components/UserType";
 import PersonalInformation from "./components/PersonalInformation";
+import MusicIdentity from "./components/MusicIdentity";
+import UploadSampleSection from "./components/UploadSampleSection";
+import PricingSection from "./components/PricingSection";
+import ConncectWithPeople from "./components/ConncectWithPeople";
+import PaidSection from "./components/PaidSection";
 
 type Props = {};
 
 const OnBoarding = (props: Props) => {
-  const completeProgress = 100 / 7;
+  const numberOfTabs = 7;
+  const completedTabs = 2;
+  const completeProgress = 100 / (numberOfTabs - completedTabs);
 
-  const [firstOpen, setFirstOpen] = useState<boolean>(true);
-  const [secondOpen, setSecondOpen] = useState<boolean>(false);
+  const [openTab, setOpenTab] = useState<number | null>(0);
 
-  const handleFirstSectionClick = () => {
-    setFirstOpen(!firstOpen);
-    setSecondOpen(false);
+  const toggleTab = (tabIndex: number) => {
+    setOpenTab(openTab === tabIndex ? null : tabIndex);
   };
 
-  const handleSecondSectionClick = () => {
-    setSecondOpen(!secondOpen);
-    setFirstOpen(false);
-  };
+  const sections = [
+    {
+      title: "User Type",
+      component: <UserType />,
+    },
+    {
+      title: "Tell us about yourself",
+      component: <PersonalInformation />,
+    },
+    {
+      title: "Define your music identity",
+      component: <MusicIdentity />,
+    },
+    {
+      title: "Time to upload your first samples",
+      component: <UploadSampleSection />,
+    },
+    {
+      title: "Set your prices",
+      component: <PricingSection />,
+    },
+    {
+      title: "Connect with people based on your preferences",
+      component: <ConncectWithPeople />,
+    },
+    {
+      title: "Now, lets set up how you get paid",
+      component: <PaidSection />,
+    },
+  ];
 
   return (
     <div className="py-10 px-11 flex flex-col gap-4">
@@ -55,7 +85,7 @@ const OnBoarding = (props: Props) => {
 
               <div className="flex">
                 <span className="text-silver text-sm font-normal">
-                  1/7 completed
+                  {completedTabs}/{numberOfTabs} completed
                 </span>
               </div>
             </div>
@@ -69,80 +99,47 @@ const OnBoarding = (props: Props) => {
           </div>
         </div>
       </div>
-      {/* first */}
 
-      <div className="border border-eclipseGray bg-darkGray rounded-lg px-5 py-7">
+      {sections.map((section, index) => (
         <div
-          onClick={handleFirstSectionClick}
-          className="flex justify-between items-center  cursor-pointer"
+          key={index}
+          className="border border-eclipseGray bg-darkGray rounded-lg px-5 py-7"
         >
-          <div className="flex-1 flex gap-2">
-            <div
-              className={`w-7 h-7 rounded-[20px] text-xl font-semibold flex justify-center items-center transition-all duration-300 ${
-                firstOpen
-                  ? "bg-limeGreen text-black"
-                  : "bg-charcoalGray text-eclipseGray"
-              }`}
-            >
-              1
+          <div
+            onClick={() => toggleTab(index)}
+            className="flex justify-between items-center cursor-pointer"
+          >
+            <div className="flex-1 flex gap-2">
+              <div
+                className={`w-7 h-7 rounded-[20px] text-xl leading-6 font-semibold flex justify-center items-center transition-all duration-300 ${
+                  openTab === index
+                    ? "bg-limeGreen text-black"
+                    : "bg-charcoalGray text-eclipseGray"
+                }`}
+              >
+                {index + 1}
+              </div>
+              <span className="text-[19px] text-dimGray font-semibold">
+                {section.title}
+              </span>
             </div>
-            <span className="text-[19px] text-dimGray font-semibold">
-              User Type
-            </span>
-          </div>
 
-          <div className="text-coolGray w-6 h-6 flex justify-center items-center">
-            {firstOpen ? <FaChevronDown /> : <FaChevronRight />}
-          </div>
-        </div>
-
-        <div
-          className={`relative transition-all duration-300 ${
-            firstOpen
-              ? "mt-3 h-max opacity-100 z-10"
-              : "mt-0 h-0 opacity-0 -z-10"
-          }`}
-        >
-          <UserType />
-        </div>
-      </div>
-
-{/* second */}
-      <div className="border border-eclipseGray bg-darkGray rounded-lg px-5 py-7">
-        <div
-          onClick={handleSecondSectionClick}
-          className="flex justify-between items-center cursor-pointer"
-        >
-          <div className="flex-1 flex gap-2">
-            <div
-              className={`w-7 h-7 rounded-[20px] text-xl font-semibold flex justify-center items-center transition-all duration-300 ${
-                secondOpen
-                  ? "bg-limeGreen text-black"
-                  : "bg-charcoalGray text-eclipseGray"
-              }`}
-            >
-              2
+            <div className="text-coolGray w-6 h-6 flex justify-center items-center">
+              {openTab === index ? <FaChevronDown /> : <FaChevronRight />}
             </div>
-            <span className="text-[19px] text-dimGray font-semibold">
-              Tell us about yourself
-            </span>
           </div>
 
-          <div className="text-coolGray w-6 h-6 flex justify-center items-center">
-            {secondOpen ? <FaChevronDown /> : <FaChevronRight />}
+          <div
+            className={`relative transition-all duration-300 ${
+              openTab === index
+                ? "max-h-auto mt-3 block opacity-100 z-10"
+                : "max-h-0 mt-0 hidden opacity-0 -z-10"
+            }`}
+          >
+            {section.component}
           </div>
         </div>
-
-        <div
-          className={`relative transition-all duration-300 ${
-            secondOpen
-              ? "mt-3 h-max opacity-100 z-10"
-              : "mt-0 h-0 opacity-0 -z-10"
-          }`}
-        >
-          <PersonalInformation />
-        </div>
-      </div>
+      ))}
     </div>
   );
 };
