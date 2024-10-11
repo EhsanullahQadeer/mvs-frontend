@@ -317,7 +317,7 @@ const Onboarding = (props:any) => {
         target: '.onboard-11',
         content:  (
           <div style={{fontSize: "16px", textAlign: 'justify', alignItems: 'center'}}>
-            Sample Info provides insight into the composers <br/> 
+            Sample Info provides insight into the collaborators <br/> 
             behind each sample on the platform. Discover the <br/> 
             creative minds responsible for crafting the sounds <br/> 
             that inspire you

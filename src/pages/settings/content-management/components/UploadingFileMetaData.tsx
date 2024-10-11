@@ -148,7 +148,7 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
 
           <div className="flex-1 flex flex-col gap-1">
             <span className="text-silver text-sm font-normal">
-              Composers / Collaborators
+              collaborators / Collaborators
             </span>
 
             <div

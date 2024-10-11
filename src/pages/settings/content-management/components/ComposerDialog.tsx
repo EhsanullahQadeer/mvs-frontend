@@ -1,7 +1,7 @@
 /*************************************************************************
  * @file ComposerDialog.tsx
  * @author Ehsanullah Qadeer
- * @desc  This is the component for the dialog to add composers.
+ * @desc  This is the component for the dialog to add collaborators.
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/

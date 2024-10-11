@@ -18,7 +18,7 @@ export const rolesArr = [
   "Composer",
 ];
 
-export const composersArr = [
+export const collaboratorsArr = [
   {
     id: 1,
     name: "Raul Cardenas",
