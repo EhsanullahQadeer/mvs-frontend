@@ -65,6 +65,7 @@ export async function userArtistSearch(params: IUsersSearchParams) {
   return axiosInstance.get("/users/search", { params });
 }
 
+
 export async function userProfessionalNameSearch(
   params: IUserProfessionalNameSearch
 ) {

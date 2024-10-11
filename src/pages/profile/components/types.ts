@@ -51,6 +51,7 @@ type IAudioFile = {
   owner_id: string;
   is_public: boolean;
   created_at: string; // ISO date string
+
   collaborators: string[]; // assuming collaborators is an array of strings
 };
 

@@ -206,7 +206,6 @@ const AudioPlayer = ({ audio_track, currTrack, isPlaying, onPlayToggle, onPrevCl
           {/* {currTrack?.collaborators[0].artist_name} */}
         </div>
       </div>
-        
     </div>
       
       {/* <div style={{ position: 'sticky', left: 0 }}>
