@@ -20,15 +20,6 @@ const ContentManagement = (props: Props) => {
     setFileRedisKey("");
   };
 
-  useEffect(() => {
-    if (uploadingFile !== null) {
-      handleUploadFile();
-      if (fileRedisKey) {
-        trackUploadProgress(fileRedisKey);
-      }
-    }
-  }, [fileRedisKey, uploadingFile]);
-
   const handleUploadFile = async () => {
     try {
       const formData = new FormData();
@@ -55,6 +46,16 @@ const ContentManagement = (props: Props) => {
       console.log("error ", error);
     }
   };
+
+  useEffect(() => {
+    if (uploadingFile !== null) {
+      handleUploadFile();
+      if (fileRedisKey) {
+        trackUploadProgress(fileRedisKey);
+      }
+    }
+  }, [handleUploadFile, fileRedisKey, uploadingFile]);
+
 
   function trackUploadProgress(sessionId: string) {
     const eventSource = new EventSource(
