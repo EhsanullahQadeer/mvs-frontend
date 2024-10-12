@@ -2,7 +2,7 @@
  * @file routes.ts
  * @author End Quote
  * @desc Configuration of all application routes.
- * 
+ *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
@@ -53,8 +53,8 @@ const routes: IRoute[] = [
     component: LoginPage,
   },
   {
-    path: '/profile/:username',
-    name: 'Profile',
+    path: "/profile/:username",
+    name: "Profile",
     component: ProfilePage,
   },
   {
@@ -118,7 +118,7 @@ const routes: IRoute[] = [
   {
     path: "/stripe/callback",
     name: "Stripe Connect Redirect",
-    component: StripeCallback
+    component: StripeCallback,
   },
   {
     path: "/my/likes",

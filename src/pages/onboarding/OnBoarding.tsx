@@ -16,11 +16,16 @@ import PricingSection from "./components/PricingSection";
 import ConncectWithPeople from "./components/ConncectWithPeople";
 import PaidSection from "./components/PaidSection";
 import UserPersonalInformation from "./components/UserPersonalInformation";
+import { useLocation, useParams } from "react-router-dom";
 
 type Props = {};
 
 const OnBoarding = (props: Props) => {
-  const isPartner = true;
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const partner = searchParams.get("partner");
+
+  const isPartner = partner === "true";
   const numberOfTabs = isPartner ? 7 : 5;
   const completedTabs = 2;
   const completeProgress = 100 / (numberOfTabs - completedTabs);
