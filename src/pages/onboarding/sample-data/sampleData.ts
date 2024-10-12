@@ -5,6 +5,8 @@ import masteringEngineerIcon from "../../../assets/icons/userTypeIcons/mastering
 import mixingEngineerIcon from "../../../assets/icons/userTypeIcons/mixingEngineerIcon.svg";
 import composerIcon from "../../../assets/icons/userTypeIcons/composerIcon.svg";
 
+import sampleImg from "./Ellipse 730.png";
+
 export const userTypes = [
   {
     label: "Music Producer",
@@ -58,4 +60,55 @@ export const publishersArr = [
   "BMG Rights Management",
   "Kabalt Music Group",
   "Concord Music Publishing",
+];
+
+export const conncetPeopleArr = [
+  {
+    name: "Becky Hill",
+    role: "Artist",
+    thumbnaiSrc: sampleImg,
+    followers: "23k",
+  },
+  {
+    name: "Becky Hill",
+    role: "Artist",
+    thumbnaiSrc: sampleImg,
+    followers: "23k",
+  },
+  {
+    name: "Becky Hill",
+    role: "Artist",
+    thumbnaiSrc: sampleImg,
+    followers: "23k",
+  },
+  {
+    name: "Becky Hill",
+    role: "Artist",
+    thumbnaiSrc: sampleImg,
+    followers: "23k",
+  },
+  {
+    name: "Becky Hill",
+    role: "Artist",
+    thumbnaiSrc: sampleImg,
+    followers: "23k",
+  },
+  {
+    name: "Becky Hill",
+    role: "Artist",
+    thumbnaiSrc: sampleImg,
+    followers: "23k",
+  },
+  {
+    name: "Becky Hill",
+    role: "Artist",
+    thumbnaiSrc: sampleImg,
+    followers: "23k",
+  },
+  {
+    name: "Becky Hill",
+    role: "Artist",
+    thumbnaiSrc: sampleImg,
+    followers: "23k",
+  },
 ];

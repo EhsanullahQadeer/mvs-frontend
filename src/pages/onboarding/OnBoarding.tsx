@@ -15,11 +15,13 @@ import UploadSampleSection from "./components/UploadSampleSection";
 import PricingSection from "./components/PricingSection";
 import ConncectWithPeople from "./components/ConncectWithPeople";
 import PaidSection from "./components/PaidSection";
+import UserPersonalInformation from "./components/UserPersonalInformation";
 
 type Props = {};
 
 const OnBoarding = (props: Props) => {
-  const numberOfTabs = 7;
+  const isPartner = true;
+  const numberOfTabs = isPartner ? 7 : 5;
   const completedTabs = 2;
   const completeProgress = 100 / (numberOfTabs - completedTabs);
 
@@ -29,26 +31,22 @@ const OnBoarding = (props: Props) => {
     setOpenTab(openTab === tabIndex ? null : tabIndex);
   };
 
-  const sections = [
+  const commonSections = [
     {
       title: "User Type",
       component: <UserType />,
     },
     {
       title: "Tell us about yourself",
-      component: <PersonalInformation />,
+      component: isPartner ? (
+        <PersonalInformation />
+      ) : (
+        <UserPersonalInformation />
+      ),
     },
     {
       title: "Define your music identity",
-      component: <MusicIdentity />,
-    },
-    {
-      title: "Time to upload your first samples",
-      component: <UploadSampleSection />,
-    },
-    {
-      title: "Set your prices",
-      component: <PricingSection />,
+      component: <MusicIdentity {...{ isPartner }} />,
     },
     {
       title: "Connect with people based on your preferences",
@@ -59,6 +57,29 @@ const OnBoarding = (props: Props) => {
       component: <PaidSection />,
     },
   ];
+
+  const partnerSections = [
+    {
+      title: "Time to upload your first samples",
+      component: <UploadSampleSection />,
+    },
+    {
+      title: "Set your prices",
+      component: <PricingSection />,
+    },
+  ];
+
+  const getSections = (isPartner: boolean, insertPosition: number) => {
+    const sections = [...commonSections];
+
+    if (isPartner) {
+      sections.splice(insertPosition, 0, ...partnerSections);
+    }
+
+    return sections;
+  };
+
+  const sections = getSections(isPartner, 3);
 
   return (
     <div className="py-10 px-11 flex flex-col gap-4">
