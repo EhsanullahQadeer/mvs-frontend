@@ -1,7 +1,7 @@
 export interface IUserData {
   active: boolean;
   address: string | null;
-  artist_name: string;
+  professional_name: string;
   banner_image: string | null;
   city: string;
   cognito_id: string;

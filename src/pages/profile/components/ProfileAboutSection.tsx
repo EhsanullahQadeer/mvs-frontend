@@ -17,7 +17,7 @@ const ProfileAboutSection = (props: Props) => {
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(null); // Track the currently playing index
   const audioRef = useRef<HTMLAudioElement | null>(null); // Ref for the audio element
 
-  const { username, thumbnail, artist_name, bio, primary_label, sub_label } =
+  const { username, thumbnail, professional_name, bio, primary_label, sub_label } =
     artistData?.available ?? artistData ?? {};
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
@@ -53,7 +53,7 @@ const ProfileAboutSection = (props: Props) => {
         <div className="text-white flex flex-col -mt-10">
           <div className="flex flex-col gap-2 mb-3">
             <h1 className={`text-lg flex items-center gap-1 font-semibold`}>
-              {artist_name}
+              {professional_name}
               <MdVerified className="text-[#9EFF00]" />
             </h1>
 
@@ -117,7 +117,7 @@ const ProfileAboutSection = (props: Props) => {
         <div className="flex flex-col overflow-y-auto">
           {creditsData.map((value, index) => {
             const { thumbnail, track_name, artists, preview_url } = value;
-            const { artist_name } = artists[0];
+            const { professional_name } = artists[0];
             return (
               <div
                 key={index}
@@ -137,7 +137,7 @@ const ProfileAboutSection = (props: Props) => {
                     {track_name}
                   </h2>
                   <p className="text-platinum text-[10px] font-medium">
-                    {artist_name}
+                    {professional_name}
                   </p>
                 </div>
 

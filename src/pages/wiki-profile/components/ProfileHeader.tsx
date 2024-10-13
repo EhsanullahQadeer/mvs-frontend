@@ -30,7 +30,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
     setIsConnect(true);
   };
 
-  const { username, thumbnail, artist_name, bio } =
+  const { username, thumbnail, professional_name, bio } =
     artistData?.available ?? artistData ?? {};
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
@@ -72,7 +72,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
                 isWikiProfile ? "justify-center font-semibold" : ""
               }`}
             >
-              {artist_name}
+              {professional_name}
               <MdVerified
                 className={`ml-1 text-lime-400  ${
                   isWikiProfile ? "hidden" : "flex"

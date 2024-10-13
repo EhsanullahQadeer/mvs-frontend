@@ -127,7 +127,7 @@ function ContributersTable(props: Props) {
           {composerData.map((composer) => {
             const {
               id,
-              artist_name,
+              professional_name,
               roles = [],
               thumbnail,
               percentValue,
@@ -145,7 +145,7 @@ function ContributersTable(props: Props) {
                         className="w-full h-full object-cover rounded-full"
                       />
                     </div>
-                    <span className="text-base">{artist_name}</span>
+                    <span className="text-base">{professional_name}</span>
                   </div>
                 </TableCell>
 

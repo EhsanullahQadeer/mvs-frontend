@@ -15,7 +15,7 @@ const FilterResultComponent = (props: Props) => {
       <div className="flex gap-4 flex-wrap items-center self-stretch">
         {filtersData.map((result, idx) => {
           const {
-            artist_name,
+            professional_name,
             primary_label,
             thumbnail,
             city,
@@ -28,7 +28,7 @@ const FilterResultComponent = (props: Props) => {
 
           return (
             <div
-              key={artist_name + idx}
+              key={professional_name + idx}
               className={`group cursor-pointer border-[1px]  h-[239px] w-[152px] rounded-lg relative transition-all ease-in-out duration-500 border-eclipseGray hover:border-secondaryBlue`}
               style={{
                 background: `linear-gradient(
@@ -47,9 +47,9 @@ const FilterResultComponent = (props: Props) => {
               <div className="img-container h-[239px] w-[152px] rounded-lg">
                 <div className="absolute bottom-4 px-3 w-full">
                   <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1">
-                    {artist_name.length > 15
-                      ? artist_name.slice(0, 15) + "..."
-                      : artist_name}
+                    {professional_name.length > 15
+                      ? professional_name.slice(0, 15) + "..."
+                      : professional_name}
                   </span>
 
                   <div className="text-xs font-normal text-white flex gap-0.5 items-center mb-3">

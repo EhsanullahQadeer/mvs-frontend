@@ -2,7 +2,7 @@ export type ISender = {
   id: number;
   first_name: string;
   last_name: string;
-  artist_name: string;
+  professional_name: string;
   username: string;
   bio: string | null;
   email: string;

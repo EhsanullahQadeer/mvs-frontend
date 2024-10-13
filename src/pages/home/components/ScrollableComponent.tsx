@@ -11,7 +11,7 @@ import { UserFiltersDTO } from "api/user/types";
 import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 
 type Props = {
-  primaryUserLabel: string;
+  primaryUserRole: string;
   setUsersByTag: (value: any) => void;
   dataArr: any;
   title: string;
@@ -19,7 +19,7 @@ type Props = {
 const { filtersArr } = artistData;
 
 const ScrollableComponent = (props: Props) => {
-  const { primaryUserLabel, dataArr, title, setUsersByTag } = props;
+  const { primaryUserRole, dataArr, title, setUsersByTag } = props;
   const { handleArtistSelected } = useHandleArtistSelected();
 
   const [filterValue, setFilterValue] = useState<string>("");
@@ -37,7 +37,7 @@ const ScrollableComponent = (props: Props) => {
     setFilterValue(value);
 
     const params: UserFiltersDTO = {
-      primaryUserLabel: primaryUserLabel,
+      primaryUserRole: primaryUserRole,
     };
     if (value === "mostPopular") {
       params["topPopular"] = true;
@@ -122,22 +122,23 @@ const ScrollableComponent = (props: Props) => {
         {filteredData.length > 0 ? (
           filteredData.map((user, idx) => {
             const {
-              artist_name,
-              primary_label,
-              sub_label,
+              professional_name,
+              primary_role,
+              secondary_role,
               thumbnail,
               city,
               state: country,
             } = user;
-            const concatedRoles = primary_label + " | " + sub_label;
+            const concatedRoles = primary_role + " | " + secondary_role;
             const role =
-              concatedRoles.length > 17 ? primary_label : concatedRoles;
+              concatedRoles.length > 17 ? primary_role : concatedRoles;
             const concatedLocation = city + " , " + country;
             const location =
               concatedLocation.length > 17 ? country : concatedLocation;
             return (
+              
               <div
-                key={artist_name + idx}
+                key={professional_name + idx}
                 className="user-card-wrap cursor-grab carousel-inner px-1 flex transition-transform duration-1000 ease-linear"
               >
                 <div
@@ -160,9 +161,9 @@ const ScrollableComponent = (props: Props) => {
                   <div className="img-container w-[152px] h-[260px] rounded-lg">
                     <div className="absolute bottom-[18px] left-0 right-0 px-3 w-full text-center">
                       <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1 block whitespace-normal">
-                        {artist_name.length > 15
-                          ? artist_name.slice(0, 15) + "..."
-                          : artist_name}
+                        {professional_name?.length > 15
+                          ? professional_name.slice(0, 15) + "..."
+                          : professional_name}
                       </span>
 
                       <div className="max-h-0 overflow-hidden transition-all ease-in-out duration-500 group-hover:max-h-[85px] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100">
@@ -189,6 +190,7 @@ const ScrollableComponent = (props: Props) => {
                     </div>
                   </div>
                 </div>
+
               </div>
             );
           })

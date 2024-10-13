@@ -1,6 +1,6 @@
 export class UserFiltersDTO {
   tag?: string;
-  primaryUserLabel?: string;
+  primaryUserRole?: string;
   gender?: string;
   topPopular?: boolean;
   recentlyAdded?: boolean;
@@ -30,7 +30,7 @@ export interface IgetArtistInfoParams {
 
 export interface IstoreSpotifyArtistBody {
   spotify_artist_id: string;
-  artist_name: string;
+  professional_name: string;
   popularity: number;
   thumbnail: string;
   tag: string;
