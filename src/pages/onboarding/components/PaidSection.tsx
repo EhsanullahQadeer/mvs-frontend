@@ -10,9 +10,16 @@ import { ReactComponent as MvsLogo } from "../../../assets/icons/mvsLogo.svg";
 import { ReactComponent as StripeLogo } from "../../../assets/icons/stripeLogo.svg";
 import { BsArrowLeftRight } from "react-icons/bs";
 
-type Props = {};
+type Props = {
+  markSectionAsCompleted: () => void;
+};
 
 const PaidSection = (props: Props) => {
+  const { markSectionAsCompleted } = props;
+
+  const handleSubmit = () => {
+    markSectionAsCompleted();
+  };
   return (
     <div>
       <p className="text-sm font-normal text-mediumGray">
@@ -52,7 +59,10 @@ const PaidSection = (props: Props) => {
               <hr />
             </div>
 
-            <div className="mt-3 bg-limeGreen text-black w-full rounded-3xl py-2 cursor-pointer font-semibold text-base text-center">
+            <div
+              onClick={handleSubmit}
+              className="mt-3 bg-limeGreen text-black w-full rounded-3xl py-2 cursor-pointer font-semibold text-base text-center"
+            >
               Next
             </div>
           </div>

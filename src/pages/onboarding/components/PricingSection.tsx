@@ -9,9 +9,12 @@
 import { Form, Formik } from "formik";
 import PriceBox from "./PriceBox";
 
-type Props = {};
+type Props = {
+  markSectionAsCompleted: () => void;
+};
 
 const PricingSection = (props: Props) => {
+  const { markSectionAsCompleted } = props;
   const initialValues = {
     inboxFee: "",
     audioDemoFee: "",
@@ -20,6 +23,7 @@ const PricingSection = (props: Props) => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
+    markSectionAsCompleted();
   };
 
   return (

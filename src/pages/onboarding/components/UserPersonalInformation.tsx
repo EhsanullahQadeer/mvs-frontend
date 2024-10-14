@@ -9,8 +9,8 @@
 import FormikLabeledField from "components/util/FormikLabeledField";
 import FormikSingleSelectDropdown from "components/util/FormikSingleSelectDropdown";
 import { Form, Formik } from "formik";
-import { useEffect, useState } from "react";
-import { citiesByState, statesArr } from "../sample-data/SatesCities";
+import { useState } from "react";
+import { countriesList, worldRegions } from "../sample-data/countryRegions";
 import {
   FormControl,
   IconButton,
@@ -21,27 +21,21 @@ import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import getMuiStyles from "styles/getMuiStyles";
 import avatarImg from "../../../assets/img/avatar.svg";
 
-type Props = {};
+type Props = {
+  markSectionAsCompleted: () => void;
+};
 
 const UserPersonalInformation = (props: Props) => {
+  const { markSectionAsCompleted } = props;
   const muiStyles = getMuiStyles();
-  const [citiesArr, setCitiesArr] = useState([]);
-  const [selectedState, setSelectedState] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [thumbnail, setThumbnai] = useState(null);
 
-  useEffect(() => {
-    if (selectedState) {
-      setCitiesArr(citiesByState[selectedState] || []);
-    }
-  }, [selectedState]);
-
   const initialValues = {
     professionalName: "",
-    city: "",
-    state: "",
-    "date-of-birth": "",
+    country: "",
+    region: "",
   };
 
   const handleSubmit = (values) => {
@@ -55,6 +49,7 @@ const UserPersonalInformation = (props: Props) => {
     console.log("values", values);
     console.log("password", password);
     console.log("thumbnail", thumbnail);
+    markSectionAsCompleted();
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -84,10 +79,7 @@ const UserPersonalInformation = (props: Props) => {
 
       <div className="mt-[60px]">
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ values }) => {
-            const selectedState = values.state;
-            setSelectedState(selectedState);
-
+          {() => {
             return (
               <Form>
                 <>
@@ -182,34 +174,23 @@ const UserPersonalInformation = (props: Props) => {
 
                       <div className="flex gap-5">
                         <FormikSingleSelectDropdown
-                          name="state"
-                          label="State"
-                          placeholder="Select State"
-                          dropdownItems={statesArr}
+                          name="region"
+                          label="Region"
+                          placeholder="Select Region"
+                          dropdownItems={worldRegions}
                           inputBgColor="#0F0F0F"
                           labelColor="white"
                           dropdownBgColor="#1c1c1c"
                         />
 
                         <FormikSingleSelectDropdown
-                          name="city"
-                          label="City"
-                          placeholder="Select City"
-                          dropdownItems={citiesArr}
+                          name="Country"
+                          label="Country"
+                          placeholder="Select Country"
+                          dropdownItems={countriesList}
                           inputBgColor="#0F0F0F"
                           labelColor="white"
                           dropdownBgColor="#1c1c1c"
-                          disabled={!selectedState}
-                        />
-                      </div>
-
-                      <div className="flex flex-col gap-1 w-[182px]">
-                        <FormikLabeledField
-                          name="date-of-birth"
-                          label="Date of birth"
-                          type="date"
-                          inputBgColor="jetBlack"
-                          labelColor="white"
                         />
                       </div>
                     </div>

@@ -16,10 +16,11 @@ import SocialMediaLinks from "./SocialMediaLinks";
 
 type Props = {
   isPartner: boolean;
+  markSectionAsCompleted: () => void;
 };
 
 const MusicIdentity = (props: Props) => {
-  const { isPartner } = props;
+  const { isPartner, markSectionAsCompleted } = props;
   const [selectedPublishers, setSelectedPublishers] = useState([]);
 
   const initialValues = {
@@ -38,6 +39,7 @@ const MusicIdentity = (props: Props) => {
   const handleSubmit = (values) => {
     console.log("values", values);
     console.log("publisher", selectedPublishers);
+    markSectionAsCompleted();
   };
 
   return (

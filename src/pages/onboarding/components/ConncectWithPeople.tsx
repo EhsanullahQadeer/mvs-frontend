@@ -8,14 +8,18 @@
 
 import { CircularProgress } from "@mui/material";
 import useDebounce from "hooks/useDebounce";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { conncetPeopleArr } from "../sample-data/sampleData";
 import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
 
-type Props = {};
+type Props = {
+  markSectionAsCompleted: () => void;
+  isActive: boolean;
+};
 
 const ConncectWithPeople = (props: Props) => {
+  const { markSectionAsCompleted, isActive } = props;
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   // Debounce the search value
@@ -25,6 +29,12 @@ const ConncectWithPeople = (props: Props) => {
     const value = event.target.value;
     setSearchTerm(value);
   };
+
+  useEffect(() => {
+    if (isActive) {
+      markSectionAsCompleted();
+    }
+  }, [isActive]);
 
   return (
     <div>
