@@ -6,6 +6,8 @@ interface RegisterationFormProps {
   setSubmittedApplication: (value: boolean | null) => void;
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
+  registered: boolean;
+  setRegistered: (value: boolean) => void;
 }
 
 const formatPhoneNumber = (value: string) => {
@@ -25,6 +27,8 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
   setSubmittedApplication,
   isOpen,
   setIsOpen,
+  registered ,
+  setRegistered
 }) => {
   const handleSubmit = (values: {
     email: string;
@@ -33,6 +37,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
     Phone: string;
     InstagramUsername?: string;
   }) => {
+    setRegistered(true)
     console.log("Form values:", values);
   };
 
@@ -51,7 +56,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
             <div className="flex pb-3 w-full gap-2">
               <div className="flex w-full flex-col">
                 <span className="text-sm">Firstname</span>
-                <Field
+                <Field required
                   name="FirstName"
                   type="text"
                   placeholder="e.g john"
@@ -60,7 +65,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
               </div>
               <div className="flex w-full flex-col">
                 <span className="text-sm">Lastname</span>
-                <Field
+                <Field required
                   name="LastName"
                   type="text"
                   placeholder="e.g sibley"
@@ -71,7 +76,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
             <div className="flex pb-3  w-full gap-2">
               <div className="flex w-full flex-col">
                 <span>Email</span>
-                <Field
+                <Field required
                   name="email"
                   type="email"
                   placeholder="e.g abc@example.com"
@@ -80,7 +85,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
               </div>
               <div className="flex w-full flex-col">
                 <span>Phone</span>
-                <Field
+                <Field required
                   name="Phone"
                   type="text"
                   placeholder="e.g (546) 675-2345"
@@ -96,7 +101,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
             {!submittedApplication && (
               <div className="flex w-full flex-col">
                 <span>Instagram Username</span>
-                <Field
+                <Field required
                   name="InstagramUsername"
                   type="text"
                   placeholder="@knifeparty"
