@@ -13,9 +13,14 @@ import DropFilesSection from "pages/settings/content-management/components/DropF
 import UploadingFilesSection from "pages/settings/content-management/components/UploadingFilesSection";
 import { useEffect, useState } from "react";
 
-type Props = {};
+type Props = {
+  isActive: boolean;
+  markSectionAsCompleted: () => void;
+};
 
 const UploadSampleSection = (props: Props) => {
+  const isNewUser = true;
+  const { markSectionAsCompleted, isActive } = props;
   const [loading, setLoading] = useState(false);
   const [currentUserInfo, setCurrentUserInfo] = useState(null);
   const [uploadingFile, setUploadingFile] = useState<File>(null);
@@ -102,6 +107,11 @@ const UploadSampleSection = (props: Props) => {
     }
   };
 
+  useEffect(() => {
+    if (isActive) {
+      markSectionAsCompleted();
+    }
+  }, [isActive]);
   return (
     <div>
       <p className="text-sm font-normal text-mediumGray">
@@ -124,7 +134,7 @@ const UploadSampleSection = (props: Props) => {
             }}
           />
         )}
-        <AttachedFilesSection {...{ setLoading, currentUserInfo }} />
+        <AttachedFilesSection {...{ setLoading, currentUserInfo, isNewUser }} />
       </div>
     </div>
   );

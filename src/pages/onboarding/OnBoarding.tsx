@@ -15,50 +15,119 @@ import UploadSampleSection from "./components/UploadSampleSection";
 import PricingSection from "./components/PricingSection";
 import ConncectWithPeople from "./components/ConncectWithPeople";
 import PaidSection from "./components/PaidSection";
+import UserPersonalInformation from "./components/UserPersonalInformation";
+import { useLocation } from "react-router-dom";
 
-type Props = {};
+const OnBoarding = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const partner = searchParams.get("partner");
 
-const OnBoarding = (props: Props) => {
-  const numberOfTabs = 7;
-  const completedTabs = 2;
-  const completeProgress = 100 / (numberOfTabs - completedTabs);
+  const isPartner = partner === "true";
+  const numberOfTabs = isPartner ? 7 : 5;
 
-  const [openTab, setOpenTab] = useState<number | null>(0);
+  const [completedSections, setCompletedSections] = useState<string[]>([]);
+  const [openTab, setOpenTab] = useState<string | null>(null);
 
-  const toggleTab = (tabIndex: number) => {
-    setOpenTab(openTab === tabIndex ? null : tabIndex);
+  const toggleTab = (tabId: string) => {
+    setOpenTab(openTab === tabId ? null : tabId);
   };
 
-  const sections = [
+  const markSectionAsCompleted = (tabId: string) => {
+    if (!completedSections.includes(tabId)) {
+      setCompletedSections([...completedSections, tabId]);
+    }
+  };
+
+  const completeProgress = (completedSections.length / numberOfTabs) * 100;
+
+  const commonSections = [
     {
+      id: "userType",
       title: "User Type",
-      component: <UserType />,
+      component: (
+        <UserType
+          markSectionAsCompleted={() => markSectionAsCompleted("userType")}
+        />
+      ),
     },
     {
+      id: "personalInformation",
       title: "Tell us about yourself",
-      component: <PersonalInformation />,
+      component: isPartner ? (
+        <PersonalInformation
+          markSectionAsCompleted={() =>
+            markSectionAsCompleted("personalInformation")
+          }
+        />
+      ) : (
+        <UserPersonalInformation
+          markSectionAsCompleted={() =>
+            markSectionAsCompleted("personalInformation")
+          }
+        />
+      ),
     },
     {
+      id: "musicIdentity",
       title: "Define your music identity",
-      component: <MusicIdentity />,
+      component: (
+        <MusicIdentity
+          {...{
+            isPartner,
+            markSectionAsCompleted: () =>
+              markSectionAsCompleted("musicIdentity"),
+          }}
+        />
+      ),
     },
     {
-      title: "Time to upload your first samples",
-      component: <UploadSampleSection />,
-    },
-    {
-      title: "Set your prices",
-      component: <PricingSection />,
-    },
-    {
+      id: "connectWithPeople",
       title: "Connect with people based on your preferences",
-      component: <ConncectWithPeople />,
+      component: (
+        <ConncectWithPeople
+          isActive={openTab === "connectWithPeople"}
+          markSectionAsCompleted={() =>
+            markSectionAsCompleted("connectWithPeople")
+          }
+        />
+      ),
     },
     {
-      title: "Now, lets set up how you get paid",
-      component: <PaidSection />,
+      id: "paidSection",
+      title: "Now, let's set up how you get paid",
+      component: (
+        <PaidSection
+          markSectionAsCompleted={() => markSectionAsCompleted("paidSection")}
+        />
+      ),
     },
   ];
+
+  const partnerSections = [
+    {
+      id: "uploadSamples",
+      title: "Time to upload your first samples",
+      component: (
+        <UploadSampleSection
+          isActive={openTab === "uploadSamples"}
+          markSectionAsCompleted={() => markSectionAsCompleted("uploadSamples")}
+        />
+      ),
+    },
+    {
+      id: "setPrices",
+      title: "Set your prices",
+      component: (
+        <PricingSection
+          markSectionAsCompleted={() => markSectionAsCompleted("setPrices")}
+        />
+      ),
+    },
+  ];
+
+  const sections = [...commonSections];
+  if (isPartner) sections.splice(3, 0, ...partnerSections);
 
   return (
     <div className="py-10 px-11 flex flex-col gap-4">
@@ -82,10 +151,9 @@ const OnBoarding = (props: Props) => {
                   style={{ width: `${completeProgress}%` }}
                 ></div>
               </div>
-
               <div className="flex">
                 <span className="text-silver text-sm font-normal">
-                  {completedTabs}/{numberOfTabs} completed
+                  {completedSections.length}/{numberOfTabs} completed
                 </span>
               </div>
             </div>
@@ -100,38 +168,38 @@ const OnBoarding = (props: Props) => {
         </div>
       </div>
 
-      {sections.map((section, index) => (
+      {sections.map((section) => (
         <div
-          key={index}
+          key={section.id}
           className="border border-eclipseGray bg-darkGray rounded-lg px-5 py-7"
         >
           <div
-            onClick={() => toggleTab(index)}
+            onClick={() => toggleTab(section.id)}
             className="flex justify-between items-center cursor-pointer"
           >
             <div className="flex-1 flex gap-2">
               <div
                 className={`w-7 h-7 rounded-[20px] text-xl leading-6 font-semibold flex justify-center items-center transition-all duration-300 ${
-                  openTab === index
+                  openTab === section.id ||
+                  completedSections.includes(section.id)
                     ? "bg-limeGreen text-black"
                     : "bg-charcoalGray text-eclipseGray"
                 }`}
               >
-                {index + 1}
+                {sections.indexOf(section) + 1}
               </div>
               <span className="text-[19px] text-dimGray font-semibold">
                 {section.title}
               </span>
             </div>
-
             <div className="text-coolGray w-6 h-6 flex justify-center items-center">
-              {openTab === index ? <FaChevronDown /> : <FaChevronRight />}
+              {openTab === section.id ? <FaChevronDown /> : <FaChevronRight />}
             </div>
           </div>
 
           <div
             className={`relative transition-all duration-300 ${
-              openTab === index
+              openTab === section.id
                 ? "max-h-auto mt-3 block opacity-100 z-10"
                 : "max-h-0 mt-0 hidden opacity-0 -z-10"
             }`}

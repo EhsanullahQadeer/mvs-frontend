@@ -9,9 +9,12 @@
 import { useEffect, useState } from "react";
 import { userTypes } from "../sample-data/sampleData";
 
-type Props = {};
+type Props = {
+  markSectionAsCompleted: () => void;
+};
 
 const UserType = (props: Props) => {
+  const { markSectionAsCompleted } = props;
   const initialValues = {
     primaryRole: "",
     subRole: "",
@@ -75,6 +78,7 @@ const UserType = (props: Props) => {
     };
 
     console.log("submitValues ", submitValues);
+    markSectionAsCompleted();
   };
 
   return (

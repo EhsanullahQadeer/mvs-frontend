@@ -14,9 +14,13 @@ import MultiSelectDropdown from "pages/settings/account/components/MultiSelectDr
 import { useState } from "react";
 import SocialMediaLinks from "./SocialMediaLinks";
 
-type Props = {};
+type Props = {
+  isPartner: boolean;
+  markSectionAsCompleted: () => void;
+};
 
 const MusicIdentity = (props: Props) => {
+  const { isPartner, markSectionAsCompleted } = props;
   const [selectedPublishers, setSelectedPublishers] = useState([]);
 
   const initialValues = {
@@ -35,6 +39,7 @@ const MusicIdentity = (props: Props) => {
   const handleSubmit = (values) => {
     console.log("values", values);
     console.log("publisher", selectedPublishers);
+    markSectionAsCompleted();
   };
 
   return (
@@ -140,9 +145,11 @@ const MusicIdentity = (props: Props) => {
                       </div>
                     </div>
 
-                    <div>
-                      <SocialMediaLinks />
-                    </div>
+                    {isPartner && (
+                      <div>
+                        <SocialMediaLinks />
+                      </div>
+                    )}
 
                     <div className="mr-2.5 w-full flex justify-end">
                       <button
