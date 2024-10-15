@@ -27,6 +27,9 @@ import AccountSetting from "./settings/account/AccountSetting";
 import ContentManagement from "./settings/content-management/ContentManagement";
 import SettingsLayout from "./settings/SettingsLayout";
 import OnBoarding from "./onboarding/OnBoarding";
+import CreatorLogin from "./creator/CreatorLogin";
+import PartnerSubmission from "./creator/registeration/component/PartnerSubmission";
+import Registeration from "./creator/registeration";
 
 interface IRoute {
   path: string;
@@ -167,6 +170,16 @@ const routes: IRoute[] = [
     path: "/onboarding",
     name: "Onboarding",
     component: OnBoarding,
+  },
+  {
+    path: "/creator/login",
+    name: "Login",
+    component: CreatorLogin,
+  },
+  {
+    path: "/creator/signup",
+    name: "signup",
+    component: Registeration,
   },
 ];
 
