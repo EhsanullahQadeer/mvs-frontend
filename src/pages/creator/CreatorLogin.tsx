@@ -50,7 +50,7 @@ const CreatorLogin: React.FC = () => {
               name="email"
               type="email"
               placeholder="Enter your email"
-              className="w-full p-4 bg-[#0F0F0F] border border-[#242424] text-[#666666] text-sm rounded-lg "
+              className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full p-4 bg-[#0F0F0F] border border-[#242424] text-[#666666] text-sm rounded-lg "
             />
           </div>
           <div className="relative">
@@ -61,7 +61,7 @@ const CreatorLogin: React.FC = () => {
               name="password"
               type="password"
               placeholder="Enter your password"
-              className="w-full text-sm p-4 bg-[#0F0F0F] border  border-[#242424] text-[#666666] rounded-lg "
+              className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm p-4 bg-[#0F0F0F] border  border-[#242424] text-[#666666] rounded-lg "
             />
           </div>
           <div className="flex justify-end mb-3">
@@ -69,7 +69,7 @@ const CreatorLogin: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-[#9EFF00] text-sm text-black font-semibold py-3 rounded-full "
+            className=" w-full bg-[#9EFF00] text-sm text-black font-semibold py-3 rounded-full "
           >
             Login
           </button>
@@ -83,10 +83,10 @@ const CreatorLogin: React.FC = () => {
           <div className="h-px w-full bg-[#3D3D3D]"></div>
         </div>
         <div className="flex gap-3 justify-between items-center">
-          <span className="p-3 bg-gray-700 border flex justify-center bg-[#0F0F0F] cursor-pointer items-center border-[#242424] h-12 w-full rounded-lg py-2.5 text-[#666666]">
+          <span className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none p-3 bg-gray-700 border flex justify-center bg-[#0F0F0F] cursor-pointer items-center border-[#242424] h-12 w-full rounded-lg py-2.5 text-[#666666]">
             <GrApple />
           </span>
-          <span className="p-3 bg-gray-700 flex justify-center cursor-pointer items-center bg-[#0F0F0F] border border-[#242424] h-12 w-full rounded-lg py-2.5  text-white">
+          <span className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none p-3 bg-gray-700 flex justify-center cursor-pointer items-center bg-[#0F0F0F] border border-[#242424] h-12 w-full rounded-lg py-2.5  text-white">
             <FcGoogle />
           </span>
         </div>

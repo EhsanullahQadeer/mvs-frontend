@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import sharpline from "../../../assets/img/sharpline.png";
 import BecomePartner from "./component/PartnerSubmission";
 import RegisterationForm from "./component/RegisterationForm";
-import SmallCard from "./component/SmallCard";
-import leftWing from "../../../assets/img/left wing.svg";
-import RightWing from "../../../assets/img/right wing.svg";
+
 import ZigZag from "../../../assets/img/zigzag.svg";
-import artistimage from "../../../assets/img/artistImg.png";
 import Thankyou from "./component/Thankyou";
+import component from "../../../assets/img/Group 20.png";
 
 const Registeration: React.FC = () => {
   const [submittedApplication, setSubmittedApplication] = useState<
@@ -27,7 +25,10 @@ const Registeration: React.FC = () => {
             !registered ? "hidden" : "flex"
           }`}
         >
-          <Thankyou></Thankyou>
+          <Thankyou
+            setSubmittedApplication={setSubmittedApplication}
+            submittedApplication={submittedApplication}
+          />
         </div>
         <div
           style={{ backgroundImage: `url(${sharpline})` }}
@@ -62,77 +63,19 @@ const Registeration: React.FC = () => {
             registered ? "hidden" : "flex"
           }`}
         >
-          <div className="flex  relative flex-col gap-16 justify-center items-center">
-            <div className=" flex w-[740px] justify-between ">
-              <div className="w-[126px] h-[109px] ">
-                <img className="w-full h-full" src={leftWing} alt="" />
-              </div>
-              <div className="w-[126px] h-[109px]  ">
-                <img className="w-full h-full" src={RightWing} alt="" />
-              </div>
+          <div className="flex   flex-col gap-10 justify-center items-center">
+            <div className="">
+              <img src={component} alt="" />
             </div>
-            <div className="flex flex-col relative   w-[600px] items-center  gap-10 justify-between ">
-              <div className="flex justify-center   ">
-                <div className=" absolute  left-11 top-[-126px]">
-                  <SmallCard
-                    image={artistimage}
-                    name="ehsanullah"
-                    title="sibley tour"
-                    date="feb 22, 2024"
-                  />
-                </div>
-                <div className="absolute left-20 z-20 top-[-52px] ">
-                  <SmallCard
-                    image={artistimage}
-                    name="ehsanullah"
-                    title="sibley tour"
-                    date="feb 22, 2024"
-                  />
-                </div>
-                <div className=" absolute left-40 top-[-85px]  ">
-                  <SmallCard
-                    image={artistimage}
-                    name="ehsanullah"
-                    title="sibley tour"
-                    date="feb 22, 2024"
-                  />
-                </div>
-
-                <div className="absolute z-30 left-52 ">
-                  <SmallCard
-                    image={artistimage}
-                    name="ehsanullah"
-                    title="sibley tour"
-                    date="feb 22, 2024"
-                  />
-                </div>
-                <div className=" absolute left-[360px] z-20  top-[-45px]">
-                  <SmallCard
-                    image={artistimage}
-                    name="ehsanullah"
-                    title="sibley tour"
-                    date="feb 22, 2024"
-                  />
-                </div>
-                <div className="absolute left-[420px] top-[-145px]">
-                  <SmallCard
-                    image={artistimage}
-                    name="ehsanullah"
-                    title="sibley tour"
-                    date="feb 22, 2024"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col justify-center items-center gap-1 pt-36">
-                <h2 className=" font-semibold text-[#E5E5E5]  text-3xl">
-                  Sneak Peek of What's Ahead
-                </h2>
-                <p className=" text-center text-sm text-[#999999]">
-                  Discover what’s next! On the right, explore a preview of
-                  outstanding work from our partners who have made this platform
-                  possible.
-                </p>
-              </div>
+            <div className="flex flex-col justify-center items-center gap-1 w-3/4">
+              <h2 className=" font-semibold text-[#E5E5E5]  text-3xl">
+                Sneak Peek of What's Ahead
+              </h2>
+              <p className=" text-center text-sm text-[#999999]">
+                Discover what’s next! On the right, explore a preview of
+                outstanding work from our partners who have made this platform
+                possible.
+              </p>
             </div>
           </div>
         </div>
