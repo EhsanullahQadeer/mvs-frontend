@@ -26,8 +26,19 @@ const PriceBox = (props: Props) => {
   const [value, setValue] = useState("");
 
   const handleValueChange = (event) => {
-    setValue(event.target.value as string);
-    setFieldValue(`${name}`, event.target.value);
+    let inputValue = event.target.value;
+
+    const validPricePattern = /^\$?\d*\.?\d{0,2}$/;
+
+    let numericValue = inputValue.replace("$", "");
+    if (validPricePattern.test(numericValue)) {
+      if (numericValue && !inputValue.startsWith("$")) {
+        inputValue = "$" + numericValue;
+      }
+
+      setValue(inputValue);
+      setFieldValue(`${name}`, inputValue);
+    }
   };
 
   return (

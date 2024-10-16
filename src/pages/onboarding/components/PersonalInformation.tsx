@@ -9,8 +9,8 @@
 import FormikLabeledField from "components/util/FormikLabeledField";
 import FormikSingleSelectDropdown from "components/util/FormikSingleSelectDropdown";
 import { Field, Form, Formik } from "formik";
-import { useState } from "react";
-import { countriesList, worldRegions } from "../sample-data/countryRegions";
+import { useEffect, useState } from "react";
+import { countriesStates } from "../sample-data/countriesStates";
 import {
   FormControl,
   IconButton,
@@ -22,20 +22,52 @@ import getMuiStyles from "styles/getMuiStyles";
 import profileBannerBackImg from "../../../assets/img/profileBannerBackImg.png";
 import avatarImg from "../../../assets/img/avatar.svg";
 import { IoLocationOutline } from "react-icons/io5";
+import FormikOnChange from "./FormikOnChange";
 
 type Props = {
   markSectionAsCompleted: () => void;
+  formData: any;
+  setFormData: (values: any) => void;
 };
 
 const PersonalInformation = (props: Props) => {
-  const { markSectionAsCompleted } = props;
+  const { markSectionAsCompleted, formData, setFormData } = props;
   const muiStyles = getMuiStyles();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
-  const [thumbnail, setThumbnai] = useState(null);
+  const [thumbnail, setThumbnail] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [countriesArr, setCountriesArr] = useState([]);
+  const [statesArr, setStatesArr] = useState([]);
 
+  useEffect(() => {
+    const countries = Object.values(countriesStates).map(
+      (country) => country.name
+    );
+    setCountriesArr(countries);
+  }, []);
+
+  useEffect(() => {
+    if (selectedCountry) {
+      const provinces = getStatesByCountryName();
+      setStatesArr(provinces);
+    }
+  }, [selectedCountry]);
+
+  const getStatesByCountryName = () => {
+    const countryCode = Object.keys(countriesStates).find(
+      (code) => countriesStates[code].name === selectedCountry
+    );
+
+    if (countryCode && countriesStates[countryCode].divisions) {
+      return Object.values(countriesStates[countryCode].divisions);
+    }
+    return [];
+  };
+
+  const [buttonText, setButtonText] = useState("Save Changes");
   const initialValues = {
     username: "",
     professionalName: "",
@@ -61,9 +93,13 @@ const PersonalInformation = (props: Props) => {
       return;
     }
 
-    console.log("values", values);
-    console.log("password", password);
-    console.log("thumbnail", thumbnail);
+    setFormData({
+      ...formData,
+      ...values,
+      password: password,
+      thumbnail: thumbnail,
+    });
+    setButtonText("Saved");
     markSectionAsCompleted();
   };
 
@@ -85,7 +121,8 @@ const PersonalInformation = (props: Props) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setThumbnai(imageUrl);
+      setThumbnail(imageUrl);
+      setButtonText("Save Changes");
       e.target.value = null;
     }
   };
@@ -98,7 +135,10 @@ const PersonalInformation = (props: Props) => {
 
       <div className="mt-[60px]">
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ setFieldValue }) => {
+          {({ setFieldValue, values }) => {
+            const selectedCountry = values.country;
+            setSelectedCountry(selectedCountry);
+
             const handleUsernameChange = (event: any) => {
               let value = event.target.value;
               if (value && !value.startsWith("@")) {
@@ -111,6 +151,9 @@ const PersonalInformation = (props: Props) => {
             return (
               <Form>
                 <>
+                  <FormikOnChange
+                    onChange={() => setButtonText("Save Changes")}
+                  />
                   <div className="w-10/12 m-auto flex gap-10 justify-between items-center">
                     <div className="flex-1 flex gap-4 flex-col">
                       <div className="flex gap-5">
@@ -134,23 +177,24 @@ const PersonalInformation = (props: Props) => {
 
                       <div className="flex gap-5">
                         <FormikSingleSelectDropdown
-                          name="region"
-                          label="Region"
-                          placeholder="Select Region"
-                          dropdownItems={worldRegions}
+                          name="country"
+                          label="Country"
+                          placeholder="Select Country"
+                          dropdownItems={countriesArr}
                           inputBgColor="#0F0F0F"
                           labelColor="white"
                           dropdownBgColor="#1c1c1c"
                         />
 
                         <FormikSingleSelectDropdown
-                          name="country"
-                          label="Country"
-                          placeholder="Select Country"
-                          dropdownItems={countriesList}
+                          name="state"
+                          label="State"
+                          placeholder="Select State"
+                          dropdownItems={statesArr}
                           inputBgColor="#0F0F0F"
                           labelColor="white"
                           dropdownBgColor="#1c1c1c"
+                          disabled={!selectedCountry}
                         />
                       </div>
 
@@ -168,7 +212,10 @@ const PersonalInformation = (props: Props) => {
                               placeholder="Password"
                               type={showPassword ? "text" : "password"}
                               value={password}
-                              onChange={(e) => setPassword(e.target.value)}
+                              onChange={(e) => {
+                                setPassword(e.target.value);
+                                setButtonText("Save Changes");
+                              }}
                               endAdornment={
                                 <InputAdornment position="end">
                                   <IconButton
@@ -210,9 +257,10 @@ const PersonalInformation = (props: Props) => {
                               placeholder="Confirm Password"
                               type={showConfirmPassword ? "text" : "password"}
                               value={confirmPassword}
-                              onChange={(e) =>
-                                setConfirmPassword(e.target.value)
-                              }
+                              onChange={(e) => {
+                                setConfirmPassword(e.target.value);
+                                setButtonText("Save Changes");
+                              }}
                               endAdornment={
                                 <InputAdornment position="end">
                                   <IconButton
@@ -340,9 +388,13 @@ const PersonalInformation = (props: Props) => {
                   <div className="mt-[60px] mr-2.5 w-full flex justify-end">
                     <button
                       type="submit"
-                      className="bg-limeGreen py-3 px-4 rounded-[60px] text-sm font-semibold text-jetBlack cursor-pointer"
+                      className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
+                        buttonText === "Saved"
+                          ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"
+                          : "cursor-pointer bg-limeGreen border-limeGreen text-jetBlack"
+                      }`}
                     >
-                      Save Changes
+                      {buttonText}
                     </button>
                   </div>
                 </>

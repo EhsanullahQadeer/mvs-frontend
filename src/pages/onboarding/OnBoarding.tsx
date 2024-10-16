@@ -41,13 +41,23 @@ const OnBoarding = () => {
 
   const completeProgress = (completedSections.length / numberOfTabs) * 100;
 
+  const [formData, setFormData] = useState({});
+
+  const handleSubmitForm = () => {
+    console.log("formData", formData);
+  };
+
   const commonSections = [
     {
       id: "userType",
       title: "User Type",
       component: (
         <UserType
-          markSectionAsCompleted={() => markSectionAsCompleted("userType")}
+          {...{
+            markSectionAsCompleted: () => markSectionAsCompleted("userType"),
+            formData,
+            setFormData,
+          }}
         />
       ),
     },
@@ -56,15 +66,21 @@ const OnBoarding = () => {
       title: "Tell us about yourself",
       component: isPartner ? (
         <PersonalInformation
-          markSectionAsCompleted={() =>
-            markSectionAsCompleted("personalInformation")
-          }
+          {...{
+            markSectionAsCompleted: () =>
+              markSectionAsCompleted("personalInformation"),
+            formData,
+            setFormData,
+          }}
         />
       ) : (
         <UserPersonalInformation
-          markSectionAsCompleted={() =>
-            markSectionAsCompleted("personalInformation")
-          }
+          {...{
+            markSectionAsCompleted: () =>
+              markSectionAsCompleted("personalInformation"),
+            formData,
+            setFormData,
+          }}
         />
       ),
     },
@@ -77,6 +93,8 @@ const OnBoarding = () => {
             isPartner,
             markSectionAsCompleted: () =>
               markSectionAsCompleted("musicIdentity"),
+            formData,
+            setFormData,
           }}
         />
       ),
@@ -120,7 +138,11 @@ const OnBoarding = () => {
       title: "Set your prices",
       component: (
         <PricingSection
-          markSectionAsCompleted={() => markSectionAsCompleted("setPrices")}
+          {...{
+            markSectionAsCompleted: () => markSectionAsCompleted("setPrices"),
+            formData,
+            setFormData,
+          }}
         />
       ),
     },
@@ -144,18 +166,29 @@ const OnBoarding = () => {
                 steps.
               </p>
             </div>
-            <div className="flex items-center gap-3 py-1">
-              <div className="w-[291px] bg-charcoalGray rounded-full h-2 relative overflow-hidden">
-                <div
-                  className="absolute top-0 left-0 h-full bg-limeGreen transition-all duration-300 ease-in-out"
-                  style={{ width: `${completeProgress}%` }}
-                ></div>
+
+            <div className="flex gap-2 items-center justify-between">
+              <div className="flex items-center gap-3 py-1">
+                <div className="w-[291px] bg-charcoalGray rounded-full h-2 relative overflow-hidden">
+                  <div
+                    className="absolute top-0 left-0 h-full bg-limeGreen transition-all duration-300 ease-in-out"
+                    style={{ width: `${completeProgress}%` }}
+                  ></div>
+                </div>
+                <div className="flex">
+                  <span className="text-silver text-sm font-normal">
+                    {completedSections.length}/{numberOfTabs} completed
+                  </span>
+                </div>
               </div>
-              <div className="flex">
-                <span className="text-silver text-sm font-normal">
-                  {completedSections.length}/{numberOfTabs} completed
-                </span>
-              </div>
+
+              <button
+                onClick={handleSubmitForm}
+                type="submit"
+                className="bg-limeGreen py-2 px-3 rounded-[60px] text-sm font-semibold text-jetBlack cursor-pointer"
+              >
+                Complete Registration
+              </button>
             </div>
           </div>
           <div className="w-[215px] flex justify-center items-center">

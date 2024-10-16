@@ -11,10 +11,14 @@ import { userTypes } from "../sample-data/sampleData";
 
 type Props = {
   markSectionAsCompleted: () => void;
+  formData: any;
+  setFormData: (values: any) => void;
 };
 
 const UserType = (props: Props) => {
-  const { markSectionAsCompleted } = props;
+  const { markSectionAsCompleted, formData, setFormData } = props;
+  const [buttonText, setButtonText] = useState("Save Changes");
+
   const initialValues = {
     primaryRole: "",
     subRole: "",
@@ -54,6 +58,7 @@ const UserType = (props: Props) => {
   }, []);
 
   const handleTypeSelect = (idx: number, value: string) => {
+    setButtonText("Save Changes");
     if (primaryRole?.index === idx) {
       setPrimaryRole(null);
     } else if (subRole?.index === idx) {
@@ -72,12 +77,14 @@ const UserType = (props: Props) => {
     }
 
     setError(false);
-    const submitValues = {
+
+    setFormData({
+      ...formData,
       "primary-label": primaryRole.value,
       "sub-label": subRole.value,
-    };
+    });
 
-    console.log("submitValues ", submitValues);
+    setButtonText("Saved");
     markSectionAsCompleted();
   };
 
@@ -145,9 +152,13 @@ const UserType = (props: Props) => {
         <div className="mt-[60px] mr-2.5 w-full flex justify-end">
           <div
             onClick={handleSaveChanges}
-            className="bg-limeGreen py-3 px-4 rounded-[60px] text-sm font-semibold text-jetBlack cursor-pointer"
+            className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
+              buttonText === "Saved"
+                ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"
+                : "cursor-pointer bg-limeGreen border-limeGreen text-jetBlack"
+            }`}
           >
-            Save Changes
+            {buttonText}
           </div>
         </div>
       </div>

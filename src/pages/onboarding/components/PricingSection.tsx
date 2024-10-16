@@ -8,13 +8,19 @@
 
 import { Form, Formik } from "formik";
 import PriceBox from "./PriceBox";
+import FormikOnChange from "./FormikOnChange";
+import { useState } from "react";
 
 type Props = {
   markSectionAsCompleted: () => void;
+  formData: any;
+  setFormData: (values: any) => void;
 };
 
 const PricingSection = (props: Props) => {
-  const { markSectionAsCompleted } = props;
+  const { markSectionAsCompleted, formData, setFormData } = props;
+
+  const [buttonText, setButtonText] = useState("Save Changes");
   const initialValues = {
     inboxFee: "",
     audioDemoFee: "",
@@ -22,7 +28,11 @@ const PricingSection = (props: Props) => {
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
+    setFormData({
+      ...formData,
+      ...values,
+    });
+    setButtonText("Saved");
     markSectionAsCompleted();
   };
 
@@ -35,10 +45,13 @@ const PricingSection = (props: Props) => {
 
       <div className="mt-[40px]">
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ values }) => {
+          {() => {
             return (
               <Form>
                 <>
+                  <FormikOnChange
+                    onChange={() => setButtonText("Save Changes")}
+                  />
                   <div className="flex gap-5">
                     <PriceBox
                       {...{
@@ -78,9 +91,13 @@ const PricingSection = (props: Props) => {
                 <div className="mt-5 mr-5 w-full flex justify-end">
                   <button
                     type="submit"
-                    className="bg-limeGreen py-3 px-4 rounded-[60px] text-sm font-semibold text-jetBlack cursor-pointer"
+                    className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
+                      buttonText === "Saved"
+                        ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"
+                        : "cursor-pointer bg-limeGreen border-limeGreen text-jetBlack"
+                    }`}
                   >
-                    Save Changes
+                    {buttonText}
                   </button>
                 </div>
               </Form>

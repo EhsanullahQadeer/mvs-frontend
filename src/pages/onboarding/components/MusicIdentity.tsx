@@ -13,16 +13,20 @@ import { musicGenres, publishersArr } from "../sample-data/sampleData";
 import MultiSelectDropdown from "pages/settings/account/components/MultiSelectDropdown";
 import { useState } from "react";
 import SocialMediaLinks from "./SocialMediaLinks";
+import FormikOnChange from "./FormikOnChange";
 
 type Props = {
   isPartner: boolean;
   markSectionAsCompleted: () => void;
+  formData: any;
+  setFormData: (values: any) => void;
 };
 
 const MusicIdentity = (props: Props) => {
-  const { isPartner, markSectionAsCompleted } = props;
+  const { isPartner, markSectionAsCompleted, formData, setFormData } = props;
   const [selectedPublishers, setSelectedPublishers] = useState([]);
 
+  const [buttonText, setButtonText] = useState("Save Changes");
   const initialValues = {
     propertyNumber: "",
     collaborationTerms: "",
@@ -37,8 +41,12 @@ const MusicIdentity = (props: Props) => {
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
-    console.log("publisher", selectedPublishers);
+    setFormData({
+      ...formData,
+      ...values,
+      publisher: selectedPublishers,
+    });
+    setButtonText("Saved");
     markSectionAsCompleted();
   };
 
@@ -55,12 +63,17 @@ const MusicIdentity = (props: Props) => {
             return (
               <Form>
                 <>
+                  <FormikOnChange
+                    onChange={() => setButtonText("Save Changes")}
+                  />
                   <div className="flex flex-col gap-10">
                     <div className="flex gap-5">
                       <div className="flex-1">
                         <FormikLabeledField
                           name="propertyNumber"
-                          label="Intellectual Property Number (#IP)"
+                          label={`Intellectual Property Number (#IP) ${
+                            !isPartner ? "(optional)" : ""
+                          }`}
                           placeholder="IP# 123456789"
                           inputBgColor="jetBlack"
                           labelColor="white"
@@ -154,9 +167,13 @@ const MusicIdentity = (props: Props) => {
                     <div className="mr-2.5 w-full flex justify-end">
                       <button
                         type="submit"
-                        className="bg-limeGreen py-3 px-4 rounded-[60px] text-sm font-semibold text-jetBlack cursor-pointer"
+                        className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
+                          buttonText === "Saved"
+                            ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"
+                            : "cursor-pointer bg-limeGreen border-limeGreen text-jetBlack"
+                        }`}
                       >
-                        Save Changes
+                        {buttonText}
                       </button>
                     </div>
                   </div>
