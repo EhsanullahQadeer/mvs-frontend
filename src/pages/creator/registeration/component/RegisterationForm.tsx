@@ -130,7 +130,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                 />
               </div>
             )}
-            <p className="py-3 text-xs">
+            <p className="py-3 text-xs text-[#CCC]">
               By submitting your information, you agree to our{" "}
               <span className="text-[#9EFF00]">Terms of Service</span> and{" "}
               <span className="text-[#9EFF00]">Privacy Policy</span>
