@@ -56,7 +56,6 @@ const CreatorLogin: React.FC = () => {
         type: null,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const handleLogin = (values: { email: string; password: string }) => {

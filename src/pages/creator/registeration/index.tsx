@@ -7,6 +7,7 @@ import ZigZag from "../../../assets/img/zigzag.svg";
 import Thankyou from "./component/Thankyou";
 import component from "../../../assets/img/Group 20.png";
 import { CircularProgress } from "@mui/material";
+import WaitMessage from "../WaitMessage";
 
 const Registeration: React.FC = () => {
   const [submittedApplication, setSubmittedApplication] = useState<
@@ -31,10 +32,11 @@ const Registeration: React.FC = () => {
             !registered ? "hidden" : "flex"
           }`}
         >
-          <Thankyou
+          {/* <Thankyou
             setSubmittedApplication={setSubmittedApplication}
             submittedApplication={submittedApplication}
-          />
+          /> */}
+          <WaitMessage></WaitMessage>
         </div>
         <div
           style={{ backgroundImage: `url(${sharpline})` }}
