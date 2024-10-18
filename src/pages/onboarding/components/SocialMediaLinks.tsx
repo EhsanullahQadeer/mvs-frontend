@@ -28,8 +28,8 @@ const SocialMediaLinks = (props: Props) => {
               <FaInstagram className="w-6 h-6" />
             </div>
             <Field
-              id="instagram-link"
-              name="instagram-link"
+              id="instagram_link"
+              name="instagram_link"
               placeholder="@beckyhill"
               style={{
                 boxShadow: "none",
@@ -49,8 +49,8 @@ const SocialMediaLinks = (props: Props) => {
               <FaXTwitter className="w-6 h-6" />
             </div>
             <Field
-              id="twitter-link"
-              name="twitter-link"
+              id="x_link"
+              name="x_link"
               placeholder="@beckyhill"
               style={{
                 boxShadow: "none",
@@ -70,8 +70,8 @@ const SocialMediaLinks = (props: Props) => {
               <FaSpotify className="w-6 h-6" />
             </div>
             <Field
-              id="spotify-link"
-              name="spotify-link"
+              id="spotify_link"
+              name="spotify_link"
               placeholder="https://open.spotify.com/artist/example"
               style={{
                 boxShadow: "none",
@@ -91,8 +91,8 @@ const SocialMediaLinks = (props: Props) => {
               <FaSoundcloud className="w-6 h-6" />
             </div>
             <Field
-              id="soundcloud-link"
-              name="soundcloud-link"
+              id="soundcloud_link"
+              name="soundcloud_link"
               placeholder="https://soundcloud.com/example"
               style={{
                 boxShadow: "none",
@@ -112,8 +112,8 @@ const SocialMediaLinks = (props: Props) => {
               <FaFacebook className="w-6 h-6" />
             </div>
             <Field
-              id="facebook-link"
-              name="facebook-link"
+              id="facebook_link"
+              name="facebook_link"
               placeholder="https://facebook.com/example"
               style={{
                 boxShadow: "none",

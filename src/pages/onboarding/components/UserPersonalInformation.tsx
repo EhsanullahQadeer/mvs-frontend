@@ -34,6 +34,7 @@ const UserPersonalInformation = (props: Props) => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnailType, setThumbnailType] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countriesArr, setCountriesArr] = useState([]);
   const [statesArr, setStatesArr] = useState([]);
@@ -65,9 +66,9 @@ const UserPersonalInformation = (props: Props) => {
 
   const [buttonText, setButtonText] = useState("Save Changes");
   const initialValues = {
-    professionalName: "",
+    professional_name: "",
     country: "",
-    state: "",
+    region: "",
   };
 
   const handleSubmit = (values) => {
@@ -83,6 +84,7 @@ const UserPersonalInformation = (props: Props) => {
       ...values,
       password: password,
       thumbnail: thumbnail,
+      thumbnail_type: thumbnailType,
     });
     setButtonText("Saved");
     markSectionAsCompleted();
@@ -103,6 +105,7 @@ const UserPersonalInformation = (props: Props) => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setThumbnail(imageUrl);
+      setThumbnailType(file.type);
       setButtonText("Save Changes");
       e.target.value = null;
     }
@@ -157,7 +160,7 @@ const UserPersonalInformation = (props: Props) => {
                       <div className="flex gap-5">
                         <div className="flex-1 flex flex-col gap-1">
                           <FormikLabeledField
-                            name="professionalName"
+                            name="professional_name"
                             label="Professional Name"
                             placeholder="e.g Becky Hill"
                             inputBgColor="jetBlack"
@@ -230,7 +233,7 @@ const UserPersonalInformation = (props: Props) => {
                         />
 
                         <FormikSingleSelectDropdown
-                          name="state"
+                          name="region"
                           label="State"
                           placeholder="Select State"
                           dropdownItems={statesArr}

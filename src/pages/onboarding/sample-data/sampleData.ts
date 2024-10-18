@@ -64,48 +64,56 @@ export const publishersArr = [
 
 export const conncetPeopleArr = [
   {
+    id: "1",
     name: "Becky Hill",
     role: "Artist",
     thumbnaiSrc: sampleImg,
     followers: "23k",
   },
   {
+    id: "2",
     name: "Becky Hill",
     role: "Artist",
     thumbnaiSrc: sampleImg,
     followers: "23k",
   },
   {
+    id: "3",
     name: "Becky Hill",
     role: "Artist",
     thumbnaiSrc: sampleImg,
     followers: "23k",
   },
   {
+    id: "4",
     name: "Becky Hill",
     role: "Artist",
     thumbnaiSrc: sampleImg,
     followers: "23k",
   },
   {
+    id: "5",
     name: "Becky Hill",
     role: "Artist",
     thumbnaiSrc: sampleImg,
     followers: "23k",
   },
   {
+    id: "6",
     name: "Becky Hill",
     role: "Artist",
     thumbnaiSrc: sampleImg,
     followers: "23k",
   },
   {
+    id: "7",
     name: "Becky Hill",
     role: "Artist",
     thumbnaiSrc: sampleImg,
     followers: "23k",
   },
   {
+    id: "8",
     name: "Becky Hill",
     role: "Artist",
     thumbnaiSrc: sampleImg,

@@ -80,8 +80,8 @@ const UserType = (props: Props) => {
 
     setFormData({
       ...formData,
-      "primary-label": primaryRole.value,
-      "sub-label": subRole.value,
+      "primary_role": primaryRole.value,
+      "secondary_role": subRole.value,
     });
 
     setButtonText("Saved");

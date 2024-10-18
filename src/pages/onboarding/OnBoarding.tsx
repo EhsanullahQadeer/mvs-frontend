@@ -17,6 +17,8 @@ import ConncectWithPeople from "./components/ConncectWithPeople";
 import PaidSection from "./components/PaidSection";
 import UserPersonalInformation from "./components/UserPersonalInformation";
 import { useLocation } from "react-router-dom";
+import { addNewUser } from "api/user";
+import { INewUserForm } from "./components/types";
 
 const OnBoarding = () => {
   const location = useLocation();
@@ -41,9 +43,28 @@ const OnBoarding = () => {
 
   const completeProgress = (completedSections.length / numberOfTabs) * 100;
 
-  const [formData, setFormData] = useState({});
+  const [followUsers, setFollowUsers] = useState([]);
+  const [connectUsers, setConnectUsers] = useState([]);
 
-  const handleSubmitForm = () => {
+  const [formData, setFormData] = useState<INewUserForm>({});
+
+  const handleSubmitForm = async () => {
+    try {
+      const body = {
+        email: "info@gmail.com",
+        firstName: "joe",
+        lastName: "smith",
+        ...formData,
+        follow_users: followUsers,
+        connect_users: connectUsers,
+        stripe_connect_info: "",
+      };
+      const response = await addNewUser(body);
+
+      console.log("response", response);
+    } catch (error) {
+      console.log("error", error);
+    }
     console.log("formData", formData);
   };
 
@@ -104,10 +125,13 @@ const OnBoarding = () => {
       title: "Connect with people based on your preferences",
       component: (
         <ConncectWithPeople
-          isActive={openTab === "connectWithPeople"}
-          markSectionAsCompleted={() =>
-            markSectionAsCompleted("connectWithPeople")
-          }
+          {...{
+            isActive: openTab === "connectWithPeople",
+            markSectionAsCompleted: () =>
+              markSectionAsCompleted("connectWithPeople"),
+            setFollowUsers,
+            setConnectUsers,
+          }}
         />
       ),
     },

@@ -44,7 +44,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
     instagramUsername: "",
   };
 
-  const handleSubmit = (values: {
+  const handleSubmit = async (values: {
     email: string;
     firstName: string;
     lastName: string;
@@ -62,7 +62,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
         ...(submittedApplication && { instagram_username: instagramUsername }),
         user_type: submittedApplication ? "partner" : "creator",
       };
-      const response = requestInvitationCodeWithEmailAPI(body);
+      const response = await requestInvitationCodeWithEmailAPI(body);
       console.log("response", response);
 
       setRegistered(true);
@@ -87,14 +87,6 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
         validationSchema={validationSchema}
       >
         {({ values, setFieldValue }) => {
-          const handleUsernameChange = (event: any) => {
-            let value = event.target.value;
-            if (value && !value.startsWith("@")) {
-              value = "@" + value;
-            }
-
-            setFieldValue("instagramUsername", value);
-          };
           return (
             <Form className="w-full text-sm pt-10 flex flex-col justify-between">
               <div className="flex pb-3 w-full gap-2">
@@ -179,7 +171,6 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                     name="instagramUsername"
                     type="text"
                     placeholder="@knifeparty"
-                    onChange={handleUsernameChange}
                     className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg"
                   />
                 </div>

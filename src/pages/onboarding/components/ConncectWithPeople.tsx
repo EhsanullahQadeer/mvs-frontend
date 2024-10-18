@@ -15,11 +15,14 @@ import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.s
 
 type Props = {
   markSectionAsCompleted: () => void;
+  setFollowUsers: (value: any) => void;
+  setConnectUsers: (value: any) => void;
   isActive: boolean;
 };
 
 const ConncectWithPeople = (props: Props) => {
-  const { markSectionAsCompleted, isActive } = props;
+  const { markSectionAsCompleted, isActive, setFollowUsers, setConnectUsers } =
+    props;
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   // Debounce the search value
@@ -35,6 +38,14 @@ const ConncectWithPeople = (props: Props) => {
       markSectionAsCompleted();
     }
   }, [isActive]);
+
+  const handleFollowClick = (id: string) => {
+    setFollowUsers((prev) => [...prev, id]);
+  };
+
+  const handleConnectClick = (id: string) => {
+    setConnectUsers((prev) => [...prev, id]);
+  };
 
   return (
     <div>
@@ -70,7 +81,7 @@ const ConncectWithPeople = (props: Props) => {
         <div className="mt-[50px] flex justify-center">
           <div className="w-11/12 flex flex-wrap gap-5 justify-center">
             {conncetPeopleArr.map((people, idx) => {
-              const { thumbnaiSrc, name, role, followers } = people;
+              const { thumbnaiSrc, name, role, followers, id } = people;
               return (
                 <div
                   key={idx}
@@ -125,11 +136,21 @@ const ConncectWithPeople = (props: Props) => {
                     </div>
 
                     <div className="flex gap-2">
-                      <div className="rounded-3xl text-coolGray text-sm font-normal flex-1 border border-coolGray text-center py-1 cursor-pointer">
+                      <div
+                        onClick={() => {
+                          handleFollowClick(id);
+                        }}
+                        className="rounded-3xl text-coolGray text-sm font-normal flex-1 border border-coolGray text-center py-1 cursor-pointer"
+                      >
                         Follow
                       </div>
 
-                      <div className="rounded-3xl text-coolGray text-sm font-normal flex-1 border border-coolGray text-center py-1 cursor-pointer">
+                      <div
+                        onClick={() => {
+                          handleConnectClick(id);
+                        }}
+                        className="rounded-3xl text-coolGray text-sm font-normal flex-1 border border-coolGray text-center py-1 cursor-pointer"
+                      >
                         Connect
                       </div>
                     </div>

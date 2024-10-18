@@ -38,6 +38,7 @@ const PersonalInformation = (props: Props) => {
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnailType, setThumbnailType] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countriesArr, setCountriesArr] = useState([]);
   const [statesArr, setStatesArr] = useState([]);
@@ -70,11 +71,10 @@ const PersonalInformation = (props: Props) => {
   const [buttonText, setButtonText] = useState("Save Changes");
   const initialValues = {
     username: "",
-    professionalName: "",
+    professional_name: "",
     country: "",
     region: "",
     bio: "",
-    artistName: "",
   };
 
   const handleSubmit = (values) => {
@@ -98,6 +98,7 @@ const PersonalInformation = (props: Props) => {
       ...values,
       password: password,
       thumbnail: thumbnail,
+      thumbnail_type: thumbnailType,
     });
     setButtonText("Saved");
     markSectionAsCompleted();
@@ -122,6 +123,7 @@ const PersonalInformation = (props: Props) => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setThumbnail(imageUrl);
+      setThumbnailType(file.type);
       setButtonText("Save Changes");
       e.target.value = null;
     }
@@ -167,7 +169,7 @@ const PersonalInformation = (props: Props) => {
                         />
 
                         <FormikLabeledField
-                          name="professionalName"
+                          name="professional_name"
                           label="Professional Name"
                           placeholder="e.g Becky Hill"
                           inputBgColor="jetBlack"
@@ -187,7 +189,7 @@ const PersonalInformation = (props: Props) => {
                         />
 
                         <FormikSingleSelectDropdown
-                          name="state"
+                          name="region"
                           label="State"
                           placeholder="Select State"
                           dropdownItems={statesArr}
@@ -336,8 +338,8 @@ const PersonalInformation = (props: Props) => {
                         <div className="w-[231px]">
                           <div>
                             <Field
-                              id="professionalName"
-                              name="professionalName"
+                              id="professional_name"
+                              name="professional_name"
                               placeholder="Professional Name"
                               style={{
                                 boxShadow: "none",

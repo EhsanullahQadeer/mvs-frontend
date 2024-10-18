@@ -22,9 +22,9 @@ const PricingSection = (props: Props) => {
 
   const [buttonText, setButtonText] = useState("Save Changes");
   const initialValues = {
-    inboxFee: "",
-    audioDemoFee: "",
-    meetingFee: "",
+    inbox_fee: "",
+    demo_fee: "",
+    meeting_fee: "",
   };
 
   const handleSubmit = (values) => {
@@ -60,7 +60,7 @@ const PricingSection = (props: Props) => {
                         desc: "Set the price you will charge for someone to message you.",
                         fieldDesc:
                           "This fee will be applied each time a message is received from your followers.",
-                        name: "inboxFee",
+                        name: "inbox_fee",
                       }}
                     />
 
@@ -71,7 +71,7 @@ const PricingSection = (props: Props) => {
                         desc: "Set the price you will charge for someone to send an audio demo.",
                         fieldDesc:
                           "This fee will be applied each time you receive an audio demo.",
-                        name: "audioDemoFee",
+                        name: "demo_fee",
                       }}
                     />
 
@@ -82,7 +82,7 @@ const PricingSection = (props: Props) => {
                         desc: "Set the price you will charge for someone to request a meeting.",
                         fieldDesc:
                           "The default meeting duration is set to 15 minutes.",
-                        name: "meetingFee",
+                        name: "meeting_fee",
                       }}
                     />
                   </div>

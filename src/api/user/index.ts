@@ -9,6 +9,7 @@
 /* LOCAL IMPORTS */
 import axiosInstance from "../axios";
 import {
+  IAddNewUser,
   IGetArtistCreditsParams,
   IgetArtistInfoParams,
   IRequestInvitation,
@@ -20,6 +21,10 @@ import {
 
 export async function requestInvitationCodeWithEmailAPI(body: IRequestInvitation) {
   return axiosInstance.post("/users/request/access", body);
+}
+
+export async function addNewUser(body: any) {
+  return axiosInstance.post("/users/new-user", body);
 }
 
 export async function checkUsernameAvailabilityAPI(username: string) {

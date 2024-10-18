@@ -28,16 +28,18 @@ const MusicIdentity = (props: Props) => {
 
   const [buttonText, setButtonText] = useState("Save Changes");
   const initialValues = {
-    propertyNumber: "",
-    collaborationTerms: "",
+    ip_number: "",
+    collab_terms: "",
     publisher: selectedPublishers,
-    mainGenre: "",
-    subGenre: "",
-    "instagram-link": "",
-    "twitter-link": "",
-    "spotify-link": "",
-    "soundcloud-link": "",
-    "facebook-link": "",
+    main_genre: "",
+    sub_genre: "",
+    ...(isPartner && {
+      instagram_link: "",
+      x_link: "",
+      spotify_link: "",
+      soundcloud_link: "",
+      facebook_link: "",
+    }),
   };
 
   const handleSubmit = (values) => {
@@ -70,7 +72,7 @@ const MusicIdentity = (props: Props) => {
                     <div className="flex gap-5">
                       <div className="flex-1">
                         <FormikLabeledField
-                          name="propertyNumber"
+                          name="ip_number"
                           label={`Intellectual Property Number (#IP) ${
                             !isPartner ? "(optional)" : ""
                           }`}
@@ -88,7 +90,7 @@ const MusicIdentity = (props: Props) => {
 
                       <div className="flex-1">
                         <FormikLabeledField
-                          name="collaborationTerms"
+                          name="collab_terms"
                           label="Preferred Collaboration Terms (optional)"
                           placeholder="%"
                           inputBgColor="jetBlack"
@@ -122,7 +124,7 @@ const MusicIdentity = (props: Props) => {
                     <div className="flex gap-5">
                       <div className="w-[305px]">
                         <FormikSingleSelectDropdown
-                          name="mainGenre"
+                          name="main_genre"
                           label="Main genre"
                           placeholder="Select Genre"
                           dropdownItems={musicGenres}
@@ -141,7 +143,7 @@ const MusicIdentity = (props: Props) => {
 
                       <div className="w-[305px]">
                         <FormikSingleSelectDropdown
-                          name="subGenre"
+                          name="sub_genre"
                           label="Sub genre"
                           placeholder="Select Genre"
                           dropdownItems={musicGenres}
