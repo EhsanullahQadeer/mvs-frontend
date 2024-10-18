@@ -25,11 +25,15 @@ const CreatorLogin: React.FC = () => {
   const handleSignUpClick = () => {
     navigate("/creator/signup"); 
   };
+  const handleforget = () => {
+    navigate("/creator/forgot-password"); 
+  };
+
 
   return (
     <div className="flex flex-col items-center justify-center p-8 bg-[131313] text-white">
       <div
-        className="flex   text-xl items-center justify-center gap-2.5">
+        className="flex p-4  text-xl items-center justify-center gap-2.5">
         <div className="">
           <img className="h-full w-full object-cover " src={logo} alt="" />
         </div>
@@ -65,7 +69,7 @@ const CreatorLogin: React.FC = () => {
             />
           </div>
           <div className="flex justify-end mb-3">
-            <p className="text-lime-500 text-xs cursor-pointer">Forgot Password?</p>
+            <p onClick={handleforget} className="text-lime-500 text-xs cursor-pointer">Forgot Password?</p>
           </div>
           <button
             type="submit"

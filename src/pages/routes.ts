@@ -30,6 +30,8 @@ import OnBoarding from "./onboarding/OnBoarding";
 import CreatorLogin from "./creator/CreatorLogin";
 import PartnerSubmission from "./creator/registeration/component/PartnerSubmission";
 import Registeration from "./creator/registeration";
+import ForgetPassword from "./creator/forgetPasword";
+import ChangePassword from "./creator/ChangePassword";
 
 interface IRoute {
   path: string;
@@ -181,6 +183,15 @@ const routes: IRoute[] = [
     name: "signup",
     component: Registeration,
   },
+ { path: "creator/forgot-password",
+  name: "Forgot Password",
+  component: ForgetPassword,
+},
+{
+    path: "creator/new-password",
+    name: "New Password",
+    component: ChangePassword,
+},
 ];
 
 export default routes;
