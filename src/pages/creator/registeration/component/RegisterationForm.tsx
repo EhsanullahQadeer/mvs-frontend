@@ -1,13 +1,12 @@
-import React, { useState } from "react";
-import { Field, Formik } from "formik";
+import React from "react";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import { requestInvitationCodeWithEmailAPI } from "api/user";
 
 interface RegisterationFormProps {
   submittedApplication: boolean | null;
-  setSubmittedApplication: (value: boolean | null) => void;
-  isOpen: boolean;
-  setIsOpen: (value: boolean) => void;
-  registered: boolean;
   setRegistered: (value: boolean) => void;
+  setLoader: (value: boolean) => void;
 }
 
 const formatPhoneNumber = (value: string) => {
@@ -27,123 +26,179 @@ const formatPhoneNumber = (value: string) => {
 
 const RegisterationForm: React.FC<RegisterationFormProps> = ({
   submittedApplication,
-  setSubmittedApplication,
-  isOpen,
-  setIsOpen,
-  registered,
   setRegistered,
+  setLoader,
 }) => {
+  const validationSchema = Yup.object({
+    email: Yup.string().email("Email is invalid").required("Email is required"),
+    firstName: Yup.string().required("First Name is required"),
+    lastName: Yup.string().required("Last Name is required"),
+    phone: Yup.string().required("Phone Number is required"),
+  });
+
+  const initialValues = {
+    email: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    instagramUsername: "",
+  };
+
   const handleSubmit = (values: {
     email: string;
-    FirstName: string;
-    LastName: string;
-    Phone: string;
-    InstagramUsername?: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    instagramUsername?: string;
   }) => {
-    setRegistered(true);
-    console.log("Form values:", values);
+    const { email, firstName, lastName, phone, instagramUsername } = values;
+    setLoader(true);
+    try {
+      const body = {
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        phone,
+        ...(submittedApplication && { instagram_username: instagramUsername }),
+        user_type: submittedApplication ? "partner" : "creator",
+      };
+      const response = requestInvitationCodeWithEmailAPI(body);
+      console.log("response", response);
+
+      setRegistered(true);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoader(false);
+    }
   };
 
   return (
-    <div className="flex p-8 flex-col text-white bg-[#131313] rounded-lg border border-[#1C1C1C]">
+    <div className="flex p-8 flex-col text-white bg-darkGray rounded-lg border border-eerieBlack">
       <h2 className="font-semibold pb-2 text-3xl">
         Complete Your Registration
       </h2>
-      <p className="mb-4 text-sm text-[#999999]">
+      <p className="mb-4 text-sm text-mediumGray">
         Please provide the following information to request your account.
       </p>
       <Formik
-        initialValues={{
-          email: "",
-          FirstName: "",
-          LastName: "",
-          Phone: "",
-          InstagramUsername: "",
-        }}
+        initialValues={initialValues}
         onSubmit={handleSubmit}
+        validationSchema={validationSchema}
       >
-        {({ handleSubmit, values, setFieldValue }) => (
-          <form
-            className="w-full text-sm pt-10 flex flex-col justify-between"
-            onSubmit={handleSubmit}
-          >
-            <div className="flex pb-3 w-full gap-2">
-              <div className="flex w-full flex-col">
-                <span className="text-sm">Firstname</span>
-                <Field
-                  required
-                  name="FirstName"
-                  type="text"
-                  placeholder="e.g john"
-                  className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-[#0F0F0F] border border-[#242424] text-[#3D3D3D] text-sm rounded-lg"
-                />
-              </div>
-              <div className="flex w-full flex-col">
-                <span className="text-sm">Lastname</span>
-                <Field
-                  required
-                  name="LastName"
-                  type="text"
-                  placeholder="e.g sibley"
-                  className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-[#0F0F0F] border border-[#242424] text-[#3D3D3D] text-sm rounded-lg"
-                />
-              </div>
-            </div>
-            <div className="flex pb-3  w-full gap-2">
-              <div className="flex w-full flex-col">
-                <span>Email</span>
-                <Field
-                  required
-                  name="email"
-                  type="email"
-                  placeholder="e.g abc@example.com"
-                  className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-[#0F0F0F] border border-[#242424] text-[#3D3D3D] text-sm rounded-lg"
-                />
-              </div>
-              <div className="flex w-full flex-col">
-                <span>Phone</span>
-                <Field
-                  required
-                  name="Phone"
-                  type="text"
-                  placeholder="e.g (546) 675-2345"
-                  value={values.Phone}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const formattedPhoneNumber = formatPhoneNumber(
-                      e.target.value
-                    );
-                    setFieldValue("Phone", formattedPhoneNumber);
-                  }}
-                  className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-[#0F0F0F] border border-[#242424] text-[#3D3D3D] text-sm rounded-lg"
-                />
-              </div>
-            </div>
-            {!submittedApplication && (
-              <div className="flex w-full flex-col">
-                <span>Instagram Username</span>
-                <Field
-                  required
-                  name="InstagramUsername"
-                  type="text"
-                  placeholder="@knifeparty"
-                  className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-[#0F0F0F] border border-[#242424] text-[#3D3D3D] text-sm rounded-lg"
-                />
-              </div>
-            )}
-            <p className="py-3 text-xs text-[#CCC]">
-              By submitting your information, you agree to our{" "}
-              <span className="text-[#9EFF00]">Terms of Service</span> and{" "}
-              <span className="text-[#9EFF00]">Privacy Policy</span>
-            </p>
+        {({ values, setFieldValue }) => {
+          const handleUsernameChange = (event: any) => {
+            let value = event.target.value;
+            if (value && !value.startsWith("@")) {
+              value = "@" + value;
+            }
 
-            <button
-              type="submit"
-              className="w-full py-3 px-5 bg-[#9EFF00] text-black font-bold rounded-full "
-            >
-              Submit
-            </button>
-          </form>
-        )}
+            setFieldValue("instagramUsername", value);
+          };
+          return (
+            <Form className="w-full text-sm pt-10 flex flex-col justify-between">
+              <div className="flex pb-3 w-full gap-2">
+                <div className="flex w-full flex-col gap-1">
+                  <span className="text-sm">First Name</span>
+
+                  <div className="w-full">
+                    <Field
+                      name="firstName"
+                      type="text"
+                      placeholder="e.g john"
+                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg w-full"
+                    />
+
+                    <div className="text-darkRed mt-1 text-xs font-medium">
+                      <ErrorMessage name="firstName" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex w-full flex-col gap-1">
+                  <span className="text-sm">Last Name</span>
+
+                  <div className="w-full">
+                    <Field
+                      name="lastName"
+                      type="text"
+                      placeholder="e.g sibley"
+                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg w-full"
+                    />
+
+                    <div className="text-darkRed mt-1 text-xs font-medium">
+                      <ErrorMessage name="lastName" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex pb-3 w-full gap-2">
+                <div className="flex w-full flex-col gap-1">
+                  <span>Email</span>
+
+                  <div className="w-full">
+                    <Field
+                      name="email"
+                      type="email"
+                      placeholder="e.g abc@example.com"
+                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg w-full"
+                    />
+
+                    <div className="text-darkRed mt-1 text-xs font-medium">
+                      <ErrorMessage name="email" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex w-full flex-col gap-1">
+                  <span>Phone</span>
+
+                  <div className="w-full">
+                    <Field
+                      name="phone"
+                      type="text"
+                      placeholder="e.g (546) 675-2345"
+                      value={values.phone}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const formattedPhoneNumber = formatPhoneNumber(
+                          e.target.value
+                        );
+                        setFieldValue("phone", formattedPhoneNumber);
+                      }}
+                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg"
+                    />
+
+                    <div className="text-darkRed mt-1 text-xs font-medium">
+                      <ErrorMessage name="phone" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {submittedApplication && (
+                <div className="flex w-full flex-col gap-1">
+                  <span>Instagram Username</span>
+                  <Field
+                    name="instagramUsername"
+                    type="text"
+                    placeholder="@knifeparty"
+                    onChange={handleUsernameChange}
+                    className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg"
+                  />
+                </div>
+              )}
+              <p className="py-3 text-xs text-softGray">
+                By submitting your information, you agree to our{" "}
+                <span className="text-limeGreen">Terms of Service</span> and{" "}
+                <span className="text-limeGreen">Privacy Policy</span>
+              </p>
+
+              <button
+                type="submit"
+                className="w-full py-3 px-5 bg-limeGreen text-jetBlack font-semibold text-sm rounded-full"
+              >
+                Submit
+              </button>
+            </Form>
+          );
+        }}
       </Formik>
     </div>
   );

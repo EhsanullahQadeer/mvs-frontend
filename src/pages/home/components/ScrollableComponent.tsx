@@ -160,7 +160,7 @@ const ScrollableComponent = (props: Props) => {
                   <div className="img-container w-[152px] h-[260px] rounded-lg">
                     <div className="absolute bottom-[18px] left-0 right-0 px-3 w-full text-center">
                       <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1 block whitespace-normal">
-                        {artist_name.length > 15
+                        {artist_name?.length > 15
                           ? artist_name.slice(0, 15) + "..."
                           : artist_name}
                       </span>

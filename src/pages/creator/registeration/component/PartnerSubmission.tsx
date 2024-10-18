@@ -22,57 +22,59 @@ const BecomePartner: React.FC<BecomePartnerProps> = ({
   };
 
   return (
-    isOpen && (
-      <div className="flex items-center p-10  justify-center flex-col rounded-lg border border-[#1C1C1C] text-white bg-[#131313]">
-        <h2 className=" font-semibold pb-2 text-3xl">Become a partner</h2>
-        <p className="mb-4 text-sm text-[#999999]">
-          Have you submitted your Partner Application?
-        </p>
-        <div className="">
-          <form className="  rounded-lg shadow-lg w-96" onSubmit={handleSubmit}>
-            <div className="flex   gap-5 h-40 pt-5 pb-4 ">
-              <div
-                className={`border w-full flex justify-center items-center relative rounded-lg border-[#242424] bg-[#0f0f0f] ${
-                  submittedApplication === true ? "border-[#57AEFF]" : ""
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  name="submitted"
-                  value="yes"
-                  checked={submittedApplication === true}
-                  onChange={() => setSubmittedApplication(true)}
-                  className="absolute bg-transparent border border-[#242424] top-2 rounded-full right-2"
-                />
-                <span className="text-[#999999]  "> Yes</span>
-              </div>
-              <div
-                className={`border w-full flex justify-center items-center relative rounded-lg border-[#242424] bg-[#0f0f0f] ${
-                  submittedApplication === false ? "border-[#57AEFF]" : ""
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  name="submitted"
-                  value="no"
-                  checked={submittedApplication === false}
-                  onChange={() => setSubmittedApplication(false)}
-                  className="border border-[#242424] bg-transparent absolute top-2 rounded-full  right-2"
-                />
-                <span className="text-[#999999]">No</span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2 px-4 bg-[#9EFF00] text-black font-bold rounded-full "
+    <div className="flex items-center p-10 justify-center flex-col rounded-lg border border-eerieBlack text-white bg-darkGray">
+      <h2 className="pb-2 text-[28px] font-semibold">Become a partner</h2>
+      <p className="mb-5 font-normal text-sm text-mediumGray">
+        Have you submitted your Partner Application?
+      </p>
+      <div>
+        <form className="rounded-lg shadow-lg w-96" onSubmit={handleSubmit}>
+          <div className="flex gap-5 h-40 pb-4 ">
+            <div
+              className={`border w-full flex justify-center items-center relative rounded-lg ${
+                submittedApplication === true
+                  ? "border-[#57AEFF] bg-[#282B30] text-white"
+                  : "border-eclipseGray bg-jetBlack text-mediumGray"
+              }`}
             >
-              Next
-            </button>
-          </form>
-        </div>
+              <input
+                type="checkbox"
+                name="submitted"
+                value="yes"
+                checked={submittedApplication === true}
+                onChange={() => setSubmittedApplication(true)}
+                className="absolute bg-transparent border border-eclipseGray top-2 rounded-full right-2"
+              />
+              <span className="font-semibold">Yes</span>
+            </div>
+            <div
+              className={`border w-full flex justify-center items-center relative rounded-lg ${
+                submittedApplication === false
+                  ? "border-[#57AEFF] bg-[#282B30] text-white"
+                  : "border-eclipseGray bg-jetBlack text-mediumGray"
+              }`}
+            >
+              <input
+                type="checkbox"
+                name="submitted"
+                value="no"
+                checked={submittedApplication === false}
+                onChange={() => setSubmittedApplication(false)}
+                className="border border-eclipseGray bg-transparent absolute top-2 rounded-full right-2"
+              />
+              <span className="font-semibold">No</span>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-limeGreen text-jetBlack font-semibold rounded-full text-sm"
+          >
+            Next
+          </button>
+        </form>
       </div>
-    )
+    </div>
   );
 };
 

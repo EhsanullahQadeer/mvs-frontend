@@ -36,3 +36,12 @@ export interface IstoreSpotifyArtistBody {
   tag: string;
   followers: number;
 }
+
+export interface IRequestInvitation {
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  instagramUsername?: string;
+  user_type?: string;
+}

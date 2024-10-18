@@ -11,14 +11,15 @@ import axiosInstance from "../axios";
 import {
   IGetArtistCreditsParams,
   IgetArtistInfoParams,
+  IRequestInvitation,
   IstoreSpotifyArtistBody,
   IUserProfessionalNameSearch,
   IUsersSearchParams,
   UserFiltersDTO,
 } from "../user/types";
 
-export async function requestInvitationCodeWithEmailAPI(data: any) {
-  return axiosInstance.post("/users/request/access", data);
+export async function requestInvitationCodeWithEmailAPI(body: IRequestInvitation) {
+  return axiosInstance.post("/users/request/access", body);
 }
 
 export async function checkUsernameAvailabilityAPI(username: string) {
