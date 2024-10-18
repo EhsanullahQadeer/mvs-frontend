@@ -79,9 +79,8 @@ const CreatorLogin: React.FC = () => {
     navigate("/creator/signup");
   };
   const handleforget = () => {
-    navigate("/creator/forgot-password"); 
+    navigate("/creator/forgot-password");
   };
-
 
   return (
     <div
@@ -145,7 +144,7 @@ const CreatorLogin: React.FC = () => {
             <ErrorMessage name="password" />
           </div>
 
-          <div className="flex justify-end mt-2 mb-6">
+          <div onClick={handleforget} className="flex justify-end mt-2 mb-6">
             <p className="text-limeGreen text-xs cursor-pointer">
               Forgot Password?
             </p>
