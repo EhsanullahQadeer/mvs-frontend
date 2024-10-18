@@ -78,6 +78,10 @@ const CreatorLogin: React.FC = () => {
   const handleSignUpClick = () => {
     navigate("/creator/signup");
   };
+  const handleforget = () => {
+    navigate("/creator/forgot-password"); 
+  };
+
 
   return (
     <div
