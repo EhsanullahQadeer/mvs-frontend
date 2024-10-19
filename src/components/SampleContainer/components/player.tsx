@@ -278,7 +278,7 @@ const AudioPlayer = ({
       <div className="volume-container mx-5 max-w-max">
         {/* Volume Button */}
         <button className="volume-button" id="muteButton">
-          {isMuted || volume == 0 ? (
+          {isMuted || volume === 0 ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
