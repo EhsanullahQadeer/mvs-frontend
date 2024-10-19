@@ -53,6 +53,12 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
   }) => {
     const { email, firstName, lastName, phone, instagramUsername } = values;
     setLoader(true);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ email, firstName, lastName })
+    );
+    
     try {
       const body = {
         email,
@@ -64,7 +70,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
       };
       const response = await requestInvitationCodeWithEmailAPI(body);
       console.log("response", response);
-
+      
       setRegistered(true);
     } catch (error) {
       console.log("error", error);

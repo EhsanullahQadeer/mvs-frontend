@@ -48,19 +48,23 @@ const OnBoarding = () => {
 
   const [formData, setFormData] = useState<INewUserForm>({});
 
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const handleSubmitForm = async () => {
     try {
+      const { email, firstName, lastName } = user;
+
       const body = {
-        email: "info@gmail.com",
-        firstName: "joe",
-        lastName: "smith",
+        email,
+        firstName,
+        lastName,
         ...formData,
         follow_users: followUsers,
         connect_users: connectUsers,
         stripe_connect_info: "",
       };
       const response = await addNewUser(body);
-
+      localStorage.removeItem("user");
       console.log("response", response);
     } catch (error) {
       console.log("error", error);
