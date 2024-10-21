@@ -24,6 +24,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+const searchedContributorsPadding = 1;
+const thumbnailSize = 10;
+const searchedContributorItemYPadding = 3;
+// const 16.5 = (((thumbnailSize+(searchedContributorItemYPadding*2)) * maxDisplayContributors) + (searchedContributorsPadding*2))/4;
+// Had to be done this way because tailwind works weird
+const dropdownItemMaxHeight = `max-h-[16.5rem]`;
+
 interface Props {
   openComposerDialog: boolean;
   setOpenComposerDialog: (value: boolean) => void;
@@ -164,8 +171,7 @@ function ComposerDialog(props: Props) {
           <div className="text-silver text-xs font-normal p-2">
             Contributors to this sample
           </div>
-
-          <div className="bg-eclipseGray rounded-lg p-1 overflow-y-auto custom-dropdown">
+          <div className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}>
             {searchResults.length ? (
               searchResults.map((composer, idx) => {
                 const { thumbnail, professional_name, primary_label, sub_label } =
@@ -177,9 +183,9 @@ function ComposerDialog(props: Props) {
                       handleClose();
                     }}
                     key={professional_name + idx}
-                    className="px-2.5 py-3 cursor-pointer flex gap-2.5 hover:bg-gunMetal rounded"
+                    className={`px-2.5 py-${searchedContributorItemYPadding} cursor-pointer flex gap-2.5 hover:bg-gunMetal rounded`}
                   >
-                    <div className="w-10 h-10 rounded-full">
+                    <div className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}>
                       <img
                         src={thumbnail}
                         alt="thumbnail"
