@@ -49,6 +49,7 @@ function ComposerDialog(props: Props) {
   const [isMatchedComposer, setIsMatchedComposer] = useState(false);
   const [composerToAdd, setComposerToAdd] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [selected,setSelected] = useState([]);
   // Debounce the search value
   const debouncedSearchValue = useDebounce(searchTerm, 300);
 
@@ -77,7 +78,7 @@ function ComposerDialog(props: Props) {
             professionalName: debouncedSearchValue,
             take: 10,
           });
-          console.log("list response with serach", response.data);
+          // console.log("list response with serach", response.data);
           setSearchResults(response.data.users);
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -91,14 +92,20 @@ function ComposerDialog(props: Props) {
   }, [debouncedSearchValue]);
 
   const handleButtonClick = () => {
-    if (composerToAdd) {
-      handleAddComposer(composerToAdd);
+    if (selected.length > 0) {
+      selected.forEach((composer)=>handleAddComposer(composer));
       handleClose();
     }
     if (isInvite) {
       console.log("search term", searchTerm);
     }
   };
+
+  const handleSelectingContributor = (selectedComposer) => {
+    if (!(selected.includes(selectedComposer))) {
+      setSelected([...selected,selectedComposer]);
+    }
+  }
 
   const isOwner = false;
 
@@ -170,6 +177,14 @@ function ComposerDialog(props: Props) {
         <div className="flex flex-col gap-1 overflow-hidden">
           <div className="text-silver text-xs font-normal p-2">
             Contributors to this sample
+            <div>
+              {
+              selected.map((composer,idx) => {
+                const { professional_name } = composer;
+                return (<div>{professional_name}</div>)
+              }
+              )}
+            </div>
           </div>
           <div className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}>
             {searchResults.length ? (
@@ -179,8 +194,7 @@ function ComposerDialog(props: Props) {
                 return (
                   <div
                     onClick={() => {
-                      handleAddComposer(composer);
-                      handleClose();
+                      handleSelectingContributor(composer);
                     }}
                     key={professional_name + idx}
                     className={`px-2.5 py-${searchedContributorItemYPadding} cursor-pointer flex gap-2.5 hover:bg-gunMetal rounded`}
