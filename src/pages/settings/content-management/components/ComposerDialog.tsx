@@ -33,6 +33,7 @@ const dropdownItemMaxHeight = `max-h-[16.5rem]`;
 
 interface Props {
   openComposerDialog: boolean;
+  contributors: any[];
   setOpenComposerDialog: (value: boolean) => void;
   handleAddComposer: (value: any) => void;
 }
@@ -42,12 +43,11 @@ function ComposerDialog(props: Props) {
     openComposerDialog,
     setOpenComposerDialog,
     handleAddComposer,
+    contributors,
   } = props;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isInvite, setIsInvite] = useState(false);
-  const [isMatchedComposer, setIsMatchedComposer] = useState(false);
-  const [composerToAdd, setComposerToAdd] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selected,setSelected] = useState([]);
   // Debounce the search value
@@ -58,9 +58,8 @@ function ComposerDialog(props: Props) {
   const handleClose = () => {
     setOpenComposerDialog(false);
     setIsInvite(false);
-    setIsMatchedComposer(false);
-    setComposerToAdd(null);
     setSearchTerm("");
+    setSelected([]);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,11 +100,30 @@ function ComposerDialog(props: Props) {
     }
   };
 
+  const isNotSelected = (selectedComposer) => {
+    for (const a of selected) {
+      if (a.id === selectedComposer.id){
+        return false;
+      }
+    }
+    for (const a of contributors) {
+      if (a.id === selectedComposer.id){
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleDeleteSelectedContributor = (index) => {
+    const newSelected  = selected.filter((s,i) => i !== index);
+    setSelected(newSelected);
+  };
+
   const handleSelectingContributor = (selectedComposer) => {
-    if (!(selected.includes(selectedComposer))) {
+    if (isNotSelected(selectedComposer)) {
       setSelected([...selected,selectedComposer]);
     }
-  }
+  };
 
   const isOwner = false;
 
@@ -162,10 +180,8 @@ function ComposerDialog(props: Props) {
 
           <div
             className={`${
-              isInvite
+              selected.length > 0
                 ? "bg-[#059669] text-softGray cursor-pointer"
-                : isMatchedComposer
-                ? "bg-blue-500 text-softGray cursor-pointer"
                 : "bg-eclipseGray text-dimGray pointer-events-none"
             } rounded-lg text-sm font-semibold w-[69px] flex justify-center items-center`}
             onClick={handleButtonClick}
@@ -181,7 +197,13 @@ function ComposerDialog(props: Props) {
               {
               selected.map((composer,idx) => {
                 const { professional_name } = composer;
-                return (<div>{professional_name}</div>)
+                return (
+                <div
+                  key={professional_name+idx+selected}
+                  onClick={() =>handleDeleteSelectedContributor(idx)}
+                >
+                  {professional_name}
+                </div>)
               }
               )}
             </div>
