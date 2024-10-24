@@ -3,10 +3,20 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { requestInvitationCodeWithEmailAPI } from "api/user";
 import NavigateBackButton from "components/buttons/NavigateBack";
+import { AxiosResponse } from "axios";
+
+
+interface ResponseDTO<T = any> { // T defaults to 'any' if not specified
+  message: string;
+  error: boolean;
+  errorCode?: string;
+  results?: T; // Generic type for results
+}
 
 interface RegisterationFormProps {
   registerAsPartner: boolean | null;
   setRegistered: (value: boolean) => void;
+  setAlreadyRegistered: (value: boolean) => void;
   setLoader: (value: boolean) => void;
   setIsOpen: (value: boolean) => void;
   setIsNotPartner: (value: boolean) => void; // New prop
@@ -30,6 +40,7 @@ const formatPhoneNumber = (value: string) => {
 const RegisterationForm: React.FC<RegisterationFormProps> = ({
   registerAsPartner,
   setRegistered,
+  setAlreadyRegistered,
   setLoader,
   setIsOpen,
   setIsNotPartner
@@ -65,22 +76,36 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
         user_type: registerAsPartner ? "partner" : "creator",
       };
   
-      const response = await requestInvitationCodeWithEmailAPI(body);
-      setRegistered(true);
+      const response: AxiosResponse<ResponseDTO> = await requestInvitationCodeWithEmailAPI(body);
       
-    } catch (error) {
-      const errorMessage = error?.response?.data?.message || "";
+      // Check if the backend returned an error
+      if (response.data.error) {
+        const errorCode = response.data.errorCode; // Access the errorCode directly
+        const existingUserType = response.data.results?.user_type; // Access user type from results
   
-      if (errorMessage.includes('already been requested')) {
-        if (registerAsPartner) {
+        console.log("existingUserType:", existingUserType); // Debugging
+  
+        if (errorCode === 'INVITATION_ALREADY_REQUESTED') {
+          setAlreadyRegistered(true);
           setRegistered(true);
+  
+          if (existingUserType === 'partner') {
+            setIsNotPartner(false); // It's a partner
+          } else if (existingUserType === 'creator') {
+            setIsNotPartner(true); // It's a creator
+          } else {
+            console.log("Unknown user type");
+          }
         } else {
-          setRegistered(true); 
-          setIsNotPartner(true); 
+          console.log("Unhandled errorCode:", errorCode);
         }
       } else {
-        console.log("Error:", error);
+        // No error, proceed with registration
+        setRegistered(true);
+        console.log('response', response);
       }
+    } catch (error) {
+      console.log("Unhandled exception:", error);
     } finally {
       setLoader(false);
     }

@@ -7,12 +7,18 @@ import ZigZag from "../../../assets/img/zigzag.svg";
 import component from "../../../assets/img/Group 20.png";
 import { CircularProgress } from "@mui/material";
 import WaitMessage from "../WaitMessage";
-import CheckCreatorInvite from "./component/CheckCreatorInvite";
+import RegistrationCreatorThankYou from "./component/RegisterCreatorThankYou";
+import RegistrationPartnerThankYou from "./component/RegistrationPartnerThankYou";
+import WaitMessageCreators from "../WaitMessageCreators";
+
+
+
 
 const Registration: React.FC = () => {
   const [registerAsPartner, setRegisterAsPartner] = useState<boolean | null>(null);
   const [isOpen, setIsOpen] = useState(true);
   const [registered, setRegistered] = useState(false);
+  const [AlreadyRegistered, setAlreadyRegistered] = useState(false);
   const [loader, setLoader] = useState(false);
   const [isNotPartner, setIsNotPartner] = useState(false); // New state for non-partners
 
@@ -31,18 +37,29 @@ const Registration: React.FC = () => {
             !registered ? "hidden" : "flex"
           }`}
         >
-          {/* @TODO fix this renderization */}
-          <div
-            className={`w-full h-screen justify-center items-center ${
-              !registered && !isNotPartner ? "hidden" : "flex"
-            }`}
-          >
-            {registerAsPartner && registered ? (
-              <WaitMessage />
-            ) : isNotPartner && registered ? (
-              <CheckCreatorInvite/>
-            ) : null}
-          </div>
+          {AlreadyRegistered ? (
+            !isNotPartner ? (
+              <>
+                {console.log("AlreadyRegistered is true, isNotPartner is false (Partner)")}
+                <WaitMessage />
+              </>
+            ) : (
+              <>
+                {console.log("AlreadyRegistered is true, isNotPartner is true (Creator)")}
+                <WaitMessageCreators />
+              </>
+            )
+          ) : registerAsPartner ? (
+            <>
+              {console.log("AlreadyRegistered is false, registerAsPartner is true")}
+              <RegistrationPartnerThankYou />
+            </>
+          ) : (
+            <>
+              {console.log("AlreadyRegistered is false, registerAsPartner is false")}
+              <RegistrationCreatorThankYou />
+            </>
+          )}
         </div>
         <div
           style={{ backgroundImage: `url(${sharpline})` }}
@@ -64,6 +81,7 @@ const Registration: React.FC = () => {
               <RegisterationForm
                 setRegistered={setRegistered}
                 registerAsPartner={registerAsPartner}
+                setAlreadyRegistered={setAlreadyRegistered}
                 setLoader={setLoader}
                 setIsOpen={setIsOpen}
                 setIsNotPartner={setIsNotPartner}
@@ -71,6 +89,7 @@ const Registration: React.FC = () => {
             </div>
           )}
         </div>
+
         <div
           className={`w-1/2 flex-col justify-center ${
             registered ? "hidden" : "flex"

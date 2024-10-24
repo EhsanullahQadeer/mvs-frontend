@@ -5,9 +5,8 @@ interface ThankyouProps {
   submittedApplication: boolean | null;
   setSubmittedApplication: (value: boolean | null) => void;
 }
-const Thankyou: React.FC<ThankyouProps> = ({
-  submittedApplication,
-  setSubmittedApplication,
+const RegistrationPartnerThankYou: React.FC = ({
+
 }) => {
   const navigate = useNavigate();
   const handleButton = () => {
@@ -35,14 +34,14 @@ const Thankyou: React.FC<ThankyouProps> = ({
           <button
             onClick={handleButton}
             className={`bg-[#9EFF00] rounded-full text-sm px-5 py-3  justify-center items-center font-semibold ${
-              submittedApplication ? "hidden" : "flex"
+              true ? "hidden" : "flex"
             }`}
           >
             Back to Home
           </button>
           <button
             className={`bg-[#9EFF00] rounded-full text-sm px-5 py-3  justify-center items-center font-semibold ${
-              !submittedApplication ? "hidden" : "flex"
+              !true ? "hidden" : "flex"
             }`}
           >
             Re-send email
@@ -56,4 +55,4 @@ const Thankyou: React.FC<ThankyouProps> = ({
   );
 };
 
-export default Thankyou;
+export default RegistrationPartnerThankYou;
