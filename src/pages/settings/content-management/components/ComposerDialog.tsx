@@ -49,7 +49,7 @@ function ComposerDialog(props: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isInvite, setIsInvite] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState(null);
+  const [selected,setSelected] = useState(null);
   // Debounce the search value
   const debouncedSearchValue = useDebounce(searchTerm, 300);
 
@@ -91,8 +91,8 @@ function ComposerDialog(props: Props) {
 
   const handleButtonClick = () => {
     if (selected) {
-      handleAddComposer(selected);
-      setSelected(null);
+      handleAddComposer(selected)
+      setSelected(null)
       setSearchTerm("");
     }
     if (isInvite) {
@@ -102,12 +102,13 @@ function ComposerDialog(props: Props) {
 
   const isSelected = (selectedComposer) => {
     for (const a of contributors) {
-      if (a.id === selectedComposer.id) {
+      if (a.id === selectedComposer.id){
         return true;
       }
     }
     return false;
   };
+
 
   const handleSelectingContributor = (selectedComposer) => {
     if (!isSelected(selectedComposer)) {
@@ -181,64 +182,54 @@ function ComposerDialog(props: Props) {
               {isInvite ? "Invite" : "Add"}
             </div>
           </div>
-          <div
-            className={`flex flex-col bg-eerieBlack absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown`}
-          >
-            {searchResults.map((composer, idx) => {
-              const { thumbnail, professional_name, primary_label, sub_label } =
-                composer;
-              return (
-                <div
-                  onClick={() => {
-                    handleSelectingContributor(composer);
-                  }}
-                  key={professional_name + idx}
-                  className={`px-2.5 py-${searchedContributorItemYPadding} cursor-pointer flex gap-2.5 hover:bg-darkGray rounded`}
-                >
+          <div className={`flex flex-col bg-eerieBlack absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown`}>
+              {searchResults.map((composer, idx) => {
+                const { thumbnail, professional_name, primary_label, sub_label } =
+                  composer;
+                return (
                   <div
-                    className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}
+                    onClick={() => {
+                      handleSelectingContributor(composer);
+                    }}
+                    key={professional_name + idx}
+                    className={`px-2.5 py-${searchedContributorItemYPadding} cursor-pointer flex gap-2.5 hover:bg-darkGray rounded`}
                   >
-                    <img
-                      src={thumbnail}
-                      alt="thumbnail"
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  </div>
+                    <div className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}>
+                      <img
+                        src={thumbnail}
+                        alt="thumbnail"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    </div>
 
-                  <div className="flex-1 flex justify-between items-center">
-                    <div>
-                      <div className="flex items-center">
-                        <span className="text-sm font-semibold text-white">
-                          {professional_name}
-                        </span>
-
-                        {isOwner && (
-                          <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">
-                            You
+                    <div className="flex-1 flex justify-between items-center">
+                      <div>
+                        <div className="flex items-center">
+                          <span className="text-sm font-semibold text-white">
+                            {professional_name}
                           </span>
-                        )}
-                      </div>
 
-                      <div className="text-sm font-normal text-dimGray flex gap-1">
-                        {`${primary_label} / ${sub_label}`}
+                          {isOwner && (
+                            <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">
+                              You
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="text-sm font-normal text-dimGray flex gap-1">
+                          {`${primary_label} / ${sub_label}`}
+                        </div>
                       </div>
+                      {isOwner && (
+                        <div className="text-coolGray text-xs font-normal">
+                          Owner
+                        </div>
+                      )}
                     </div>
-                    {isOwner && (
-                      <div className="text-coolGray text-xs font-normal">
-                        Owner
-                      </div>
-                    )}
+                    {isSelected(composer)?<div className="text-coolGray text-xs font-normal content-center">Already added</div>:""}
                   </div>
-                  {isSelected(composer) ? (
-                    <div className="text-coolGray text-xs font-normal content-center">
-                      Already added
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
 
@@ -246,25 +237,17 @@ function ComposerDialog(props: Props) {
           <div className="text-silver text-xs font-normal p-2">
             Contributors to this sample
           </div>
-          <div
-            className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}
-          >
+          <div className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}>
             {contributors.length ? (
               contributors.map((composer, idx) => {
-                const {
-                  thumbnail,
-                  professional_name,
-                  primary_label,
-                  sub_label,
-                } = composer;
+                const { thumbnail, professional_name, primary_label, sub_label } =
+                  composer;
                 return (
                   <div
                     key={"contributor" + idx}
                     className={`px-2.5 py-${searchedContributorItemYPadding} flex gap-2.5 rounded`}
                   >
-                    <div
-                      className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}
-                    >
+                    <div className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}>
                       <img
                         src={thumbnail}
                         alt={`${professional_name} thumbnail`}
