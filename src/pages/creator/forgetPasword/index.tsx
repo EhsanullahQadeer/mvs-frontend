@@ -10,23 +10,22 @@ const validationSchema = Yup.object({
   email: Yup.string().email("Email is invalid").required("Email is required"),
 });
 
-const ForgetPassword: React.FC = () => {
+const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
   const handleBack = () => {
-    navigate("/creator/login");
+    navigate("/");
   };
+  
   const handleSubmit = async (values: { email: string }) => {
     const { email } = values;
     try {
-      const response = await forgotPasswordAPI({
+      const response = forgotPasswordAPI({
         email,
       });
       localStorage.setItem("user", JSON.stringify({ email }));
-      console.log("response ", response);
-
-      navigate("/creator/forgot-password-verification");
+      navigate("/forgot-password-sent");
     } catch (error) {
       console.log("error", error);
     }
@@ -35,8 +34,8 @@ const ForgetPassword: React.FC = () => {
   return (
     <>
       <div className="p-8 w-full min-h-full bg-darkGray text-white flex justify-center items-center">
-        {pathname === "/creator/forgot-password-verification" && <CheckEmail />}
-        {pathname === "/creator/forgot-password" && (
+        {pathname === "/forgot-password-sent" && <CheckEmail />}
+        {pathname === "/forgot-password" && (
           <div className="flex flex-col items-center justify-center">
             <div className="flex text-xl items-center justify-center gap-2.5">
               <div className="">
@@ -101,4 +100,4 @@ const ForgetPassword: React.FC = () => {
   );
 };
 
-export default ForgetPassword;
+export default ForgotPassword;

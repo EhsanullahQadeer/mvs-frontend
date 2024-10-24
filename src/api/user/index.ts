@@ -96,7 +96,30 @@ export async function getArtistInfo(params: IgetArtistInfoParams) {
     params,
   });
 }
-
 export async function storeSpotifyArtist(body: IstoreSpotifyArtistBody) {
   return axiosInstance.post(`/misc/store-artist-wiki`, body);
 }
+// =======================================================================================
+export async function verifyAndRetrieveInviteCodeDetails(inviteCode: string) {
+  return axiosInstance.post('/users/verify/invite-code', {
+    invite_code: inviteCode,
+  });
+}
+
+export async function verifyChangePasswordCode(code: string) {
+  return axiosInstance.post('/auth/verify/change-password-code', {
+    invite_code: code,
+  });
+}
+// =======================================================================================
+
+
+export const resendInvitationCodeAPI = async (email: string) => {
+  try {
+    const response = await axiosInstance.post('/users/request/resend-invitation-code', { email });
+    return response.data;
+  } catch (error) {
+    console.error('Error resending invitation code:', error);
+    throw error;
+  }
+};

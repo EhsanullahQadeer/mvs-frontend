@@ -5,7 +5,7 @@ import successIcon from "../../../assets/icons/success.svg";
 const ChangeSuccessfully: React.FC = () => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/home");
+    navigate("/");
   };
   return (
     <>

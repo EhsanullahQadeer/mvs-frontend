@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import EmailIcon from "../../../assets/icons/checkEmail.svg";
-import { forgotPasswordAPI } from "api/auth"; // Import your forgotPasswordAPI
+import EmailIcon from "../../../../assets/icons/checkEmail.svg";
 import { useNavigate } from "react-router-dom";
+import { resendInvitationCodeAPI } from "api/user";
 
-const CheckEmail: React.FC = () => {
+const CheckCreatorInvite: React.FC = () => {
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(60);
-  const [attempts, setAttempts] = useState(0);
+  const [attempts, setAttempts] = useState(0); 
   const navigate = useNavigate();
-  
-  // Retrieve email from localStorage (from your previous flow)
+
+  // Retrieve email from localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const email = user?.email;
 
@@ -31,18 +31,22 @@ const CheckEmail: React.FC = () => {
     };
   }, [isCooldown, cooldownTime]);
 
-  const handleResendEmail = async () => {
+  const handleResendInvite = async () => {
     if (!isCooldown && email) {
       try {
-        await forgotPasswordAPI({ email });
-        console.log("Resend email successful");
+        await resendInvitationCodeAPI(email); // Call your API to resend the code
+        console.log("Resend invitation code successful");
 
         setIsCooldown(true);
         setAttempts((prev) => prev + 1);
       } catch (error) {
-        console.error("Error resending email", error);
+        console.error("Error resending invitation code", error);
       }
     }
+  };
+
+  const handleGoBack = () => {
+    navigate(-1); // Navigate back to the previous page
   };
 
   return (
@@ -58,24 +62,29 @@ const CheckEmail: React.FC = () => {
           </p>
           <button
             type="button"
-            className=" w-72  my-5  border text-platinum border-platinum text-sm font-semibold py-3 rounded-full "
-            onClick={handleResendEmail}
-            disabled={isCooldown || attempts >= 3} // Disable during cooldown or if max attempts reached
+            className="w-72 my-5 border text-platinum border-platinum text-sm font-semibold py-3 rounded-full"
+            onClick={handleResendInvite}
+            disabled={isCooldown}
           >
-            {isCooldown ? `Re-send in ${cooldownTime}s` : "Re-send Email"}
+            {isCooldown ? `Re-send in ${cooldownTime}s` : "Re-send Invite Code"}
+          </button>
+
+          <button
+            type="button"
+            className="w-72 my-3 border text-limeGreen border-limeGreen text-sm font-semibold py-3 rounded-full"
+            onClick={handleGoBack}
+          >
+            Go Back
           </button>
         </div>
-        <p className="py-3.5 w-72 px-2 text-center text-xs text-softGray">
+        <p className="w-72 px-2 text-center text-xs text-softGray">
           By submitting your information, you agree to our{" "}
           <span className="text-limeGreen">Terms of Service</span> and{" "}
           <span className="text-limeGreen">Privacy Policy</span>
         </p>
-        {attempts >= 3 && (
-          <p className="text-xs text-red-500">You've reached the maximum resend attempts.</p>
-        )}
       </div>
     </>
   );
 };
 
-export default CheckEmail;
+export default CheckCreatorInvite;

@@ -26,6 +26,11 @@ const SignupPage = () => {
   const [show_signup, setSignup] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileTypes = ["JPG", "PNG", "JPEG"];
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [usernameError, setUsernameError] = useState(null);
+  const [username, setUsername] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [userSignup, setUserSignup] = useState({
     FirstName: "",
@@ -40,12 +45,6 @@ const SignupPage = () => {
     name: "",
     phone: ""
   });
-
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [usernameError, setUsernameError] = useState(null);
-  const [username, setUsername] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     const data = {

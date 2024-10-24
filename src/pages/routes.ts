@@ -11,7 +11,6 @@ import LoginPage from "./login";
 import SignupPage from "pages/Signup/signup";
 import RequestInfoPage from "pages/Signup/TalentProfiles/request-info";
 import ThankyouPage from "pages/thankyou";
-import ForgotPasswordPage from "pages/forgot-password";
 import Home from "./home/Home";
 import TermsOfService from "pages/terms";
 import SamplesPage from "pages/samples";
@@ -32,6 +31,9 @@ import PartnerSubmission from "./creator/registeration/component/PartnerSubmissi
 import Registeration from "./creator/registeration";
 import ForgetPassword from "./creator/forgetPasword";
 import ChangePassword from "./creator/ChangePassword/ChangePassword";
+import Onboarding from "components/onBoarding/onboard";
+import ForgotPassword from "./creator/forgetPasword";
+import Registration from "./creator/registeration";
 
 interface IRoute {
   path: string;
@@ -53,63 +55,100 @@ const routes: IRoute[] = [
     component: CheckScrolling,
   },
   {
-    path: "/",
-    name: "Login",
-    component: LoginPage,
-  },
-  {
     path: "/profile/:username",
     name: "Profile",
     component: ProfilePage,
   },
+
+  // Onboarding ==========================================================================
+  {
+    path: "/",
+    name: "Login",
+    component: CreatorLogin,
+  },
   {
     path: "/login",
     name: "Login",
-    component: LoginPage,
+    component: CreatorLogin,
   },
   {
     path: "/signup",
     name: "Signup",
-    component: SignupPage,
+    component: Registration,
   },
+  {
+    path: "/forgot-password",
+    name: "Forgot Password",
+    component: ForgetPassword,
+  },
+  {
+    path: "/forgot-password-sent",
+    name: "Forgot Password",
+    component: ForgetPassword,
+  },
+  {
+    path: "/new-password/:id",
+    name: "New Password",
+    component: ChangePassword,
+  },
+  {
+    path: "/password-changed-successfully",
+    name: "New Password",
+    component: ChangePassword,
+  },
+  {
+    path: "/onboarding/:id",
+    name: "Onboarding",
+    component: OnBoarding,
+  },
+  // ===================================================================================== 
+
+
   {
     path: "/request-info",
     name: "Request Info",
     component: RequestInfoPage,
   },
   {
-    path: "/inbox",
-    name: "Inbox",
-    component: InboxPage,
-  },
-  {
     path: "/thank-you",
     name: "Thank you",
     component: ThankyouPage,
   },
+
+
+
+
+
+  // Inbox 
   {
-    path: "/forgot-password",
-    name: "Forgot Password",
-    component: ForgotPasswordPage,
+    path: "/inbox",
+    name: "Inbox",
+    component: InboxPage,
   },
 
-  {
-    path: "/new-password",
-    name: "New Password",
-    component: ForgotPasswordPage,
-  },
+  // {
+  //   path: "/forgot-password",
+  //   name: "Forgot Password",
+  //   component: ForgotPasswordPage,
+  // },
 
-  {
-    path: "/forgot-password-success",
-    name: "Forgot Password Success",
-    component: ForgotPasswordPage,
-  },
+  // {
+  //   path: "/new-password",
+  //   name: "New Password",
+  //   component: ForgotPasswordPage,
+  // },
 
-  {
-    path: "/forgot-password/reset",
-    name: "Forgot Password",
-    component: ForgotPasswordPage,
-  },
+  // {
+  //   path: "/forgot-password-success",
+  //   name: "Forgot Password Success",
+  //   component: ForgotPasswordPage,
+  // },
+
+  // {
+  //   path: "/forgot-password/reset",
+  //   name: "Forgot Password",
+  //   component: ForgotPasswordPage,
+  // },
   {
     path: "/terms-of-service",
     name: "Terms of Service",
@@ -167,41 +206,6 @@ const routes: IRoute[] = [
         component: ContentManagement,
       },
     ],
-  },
-  {
-    path: "/onboarding",
-    name: "Onboarding",
-    component: OnBoarding,
-  },
-  {
-    path: "/creator/login",
-    name: "Login",
-    component: CreatorLogin,
-  },
-  {
-    path: "/creator/signup",
-    name: "signup",
-    component: Registeration,
-  },
-  { 
-    path: "creator/forgot-password",
-    name: "Forgot Password",
-    component: ForgetPassword,
-  },
-  { 
-    path: "creator/forgot-password-verification",
-    name: "Forgot Password",
-    component: ForgetPassword,
-  },
-  {
-    path: "creator/new-password",
-    name: "New Password",
-    component: ChangePassword,
-  },
-  {
-    path: "creator/new-password-success",
-    name: "New Password",
-    component: ChangePassword,
   },
 ];
 

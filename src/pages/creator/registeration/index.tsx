@@ -4,18 +4,17 @@ import BecomePartner from "./component/PartnerSubmission";
 import RegisterationForm from "./component/RegisterationForm";
 
 import ZigZag from "../../../assets/img/zigzag.svg";
-import Thankyou from "./component/Thankyou";
 import component from "../../../assets/img/Group 20.png";
 import { CircularProgress } from "@mui/material";
 import WaitMessage from "../WaitMessage";
+import CheckCreatorInvite from "./component/CheckCreatorInvite";
 
-const Registeration: React.FC = () => {
-  const [submittedApplication, setSubmittedApplication] = useState<
-    boolean | null
-  >(null);
+const Registration: React.FC = () => {
+  const [registerAsPartner, setRegisterAsPartner] = useState<boolean | null>(null);
   const [isOpen, setIsOpen] = useState(true);
   const [registered, setRegistered] = useState(false);
   const [loader, setLoader] = useState(false);
+  const [isNotPartner, setIsNotPartner] = useState(false); // New state for non-partners
 
   return (
     <div
@@ -32,11 +31,18 @@ const Registeration: React.FC = () => {
             !registered ? "hidden" : "flex"
           }`}
         >
-          {/* <Thankyou
-            setSubmittedApplication={setSubmittedApplication}
-            submittedApplication={submittedApplication}
-          /> */}
-          <WaitMessage></WaitMessage>
+          {/* @TODO fix this renderization */}
+          <div
+            className={`w-full h-screen justify-center items-center ${
+              !registered && !isNotPartner ? "hidden" : "flex"
+            }`}
+          >
+            {registerAsPartner && registered ? (
+              <WaitMessage />
+            ) : isNotPartner && registered ? (
+              <CheckCreatorInvite/>
+            ) : null}
+          </div>
         </div>
         <div
           style={{ backgroundImage: `url(${sharpline})` }}
@@ -47,8 +53,8 @@ const Registeration: React.FC = () => {
           {isOpen ? (
             <div className="z-50 flex items-center justify-center">
               <BecomePartner
-                setSubmittedApplication={setSubmittedApplication}
-                submittedApplication={submittedApplication}
+                setRegisterAsPartner={setRegisterAsPartner}
+                registerAsPartner={registerAsPartner}
                 setIsOpen={setIsOpen}
                 isOpen={isOpen}
               />
@@ -57,8 +63,10 @@ const Registeration: React.FC = () => {
             <div className="z-50 flex items-center justify-center">
               <RegisterationForm
                 setRegistered={setRegistered}
-                submittedApplication={submittedApplication}
+                registerAsPartner={registerAsPartner}
                 setLoader={setLoader}
+                setIsOpen={setIsOpen}
+                setIsNotPartner={setIsNotPartner}
               />
             </div>
           )}
@@ -104,4 +112,4 @@ const Registeration: React.FC = () => {
   );
 };
 
-export default Registeration;
+export default Registration;

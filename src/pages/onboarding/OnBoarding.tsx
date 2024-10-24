@@ -5,7 +5,7 @@
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import crownIcon2 from "../../assets/icons/crownIcon2.svg";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import UserType from "./components/UserType";
@@ -16,16 +16,45 @@ import PricingSection from "./components/PricingSection";
 import ConncectWithPeople from "./components/ConncectWithPeople";
 import PaidSection from "./components/PaidSection";
 import UserPersonalInformation from "./components/UserPersonalInformation";
-import { useLocation } from "react-router-dom";
-import { addNewUser } from "api/user";
+import { useLocation, useParams } from "react-router-dom";
+import { addNewUser, verifyAndRetrieveInviteCodeDetails } from "api/user";
 import { INewUserForm } from "./components/types";
 
 const OnBoarding = () => {
+
+  const { id } = useParams();
+  const [isValidCode, setIsValidCode] = useState(null);
+  const [checkingInviteCodeValidity, setCheckingInviteCodeValidity] = useState(true);
+  const [userType, setUserType] = useState("");
+  const [isPartner, setIsPartner] = useState(false); // Use state for isPartner
+  useEffect(() => {
+    const checkInviteCode = async () => {
+      if (id) {
+        try {
+          const response = await verifyAndRetrieveInviteCodeDetails(id);
+          if (response && response.data && response.data.results && response.data.results.user_type) {
+            const user_type = response.data.results.user_type;
+            setIsPartner(user_type === "partner");
+            setIsValidCode(true);
+            setUserType(user_type);
+          } else {
+            setIsValidCode(false);
+          }
+        } catch (error) {
+          console.error("Error verifying invite code:", error);
+          setIsValidCode(false);
+        } finally {
+          setCheckingInviteCodeValidity(false);
+        }
+      }
+    };
+
+    checkInviteCode();
+  }, [id]);
+
+
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const partner = searchParams.get("partner");
-
-  const isPartner = partner === "true";
   const numberOfTabs = isPartner ? 7 : 5;
 
   const [completedSections, setCompletedSections] = useState<string[]>([]);

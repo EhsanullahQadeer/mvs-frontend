@@ -2,11 +2,14 @@ import React from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { requestInvitationCodeWithEmailAPI } from "api/user";
+import NavigateBackButton from "components/buttons/NavigateBack";
 
 interface RegisterationFormProps {
-  submittedApplication: boolean | null;
+  registerAsPartner: boolean | null;
   setRegistered: (value: boolean) => void;
   setLoader: (value: boolean) => void;
+  setIsOpen: (value: boolean) => void;
+  setIsNotPartner: (value: boolean) => void; // New prop
 }
 
 const formatPhoneNumber = (value: string) => {
@@ -25,9 +28,11 @@ const formatPhoneNumber = (value: string) => {
 };
 
 const RegisterationForm: React.FC<RegisterationFormProps> = ({
-  submittedApplication,
+  registerAsPartner,
   setRegistered,
   setLoader,
+  setIsOpen,
+  setIsNotPartner
 }) => {
   const validationSchema = Yup.object({
     email: Yup.string().email("Email is invalid").required("Email is required"),
@@ -44,36 +49,38 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
     instagramUsername: "",
   };
 
-  const handleSubmit = async (values: {
-    email: string;
-    firstName: string;
-    lastName: string;
-    phone: string;
-    instagramUsername?: string;
-  }) => {
+  const handleSubmit = async (values: { email: string; firstName: string; lastName: string; phone: string; instagramUsername?: string }) => {
     const { email, firstName, lastName, phone, instagramUsername } = values;
     setLoader(true);
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ email, firstName, lastName })
-    );
-    
+  
+    localStorage.setItem("user", JSON.stringify({ email, firstName, lastName }));
+  
     try {
       const body = {
         email,
         first_name: firstName,
         last_name: lastName,
         phone,
-        ...(submittedApplication && { instagram_username: instagramUsername }),
-        user_type: submittedApplication ? "partner" : "creator",
+        ...(registerAsPartner && { instagram_username: instagramUsername }),
+        user_type: registerAsPartner ? "partner" : "creator",
       };
+  
       const response = await requestInvitationCodeWithEmailAPI(body);
-      console.log("response", response);
-      
       setRegistered(true);
+      
     } catch (error) {
-      console.log("error", error);
+      const errorMessage = error?.response?.data?.message || "";
+  
+      if (errorMessage.includes('already been requested')) {
+        if (registerAsPartner) {
+          setRegistered(true);
+        } else {
+          setRegistered(true); 
+          setIsNotPartner(true); 
+        }
+      } else {
+        console.log("Error:", error);
+      }
     } finally {
       setLoader(false);
     }
@@ -95,6 +102,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
         {({ values, setFieldValue }) => {
           return (
             <Form className="w-full text-sm pt-10 flex flex-col justify-between">
+
               <div className="flex pb-3 w-full gap-2">
                 <div className="flex w-full flex-col gap-1">
                   <span className="text-sm">First Name</span>
@@ -112,6 +120,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                     </div>
                   </div>
                 </div>
+
                 <div className="flex w-full flex-col gap-1">
                   <span className="text-sm">Last Name</span>
 
@@ -129,6 +138,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                   </div>
                 </div>
               </div>
+
               <div className="flex pb-3 w-full gap-2">
                 <div className="flex w-full flex-col gap-1">
                   <span>Email</span>
@@ -170,13 +180,14 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                   </div>
                 </div>
               </div>
-              {submittedApplication && (
+
+              {registerAsPartner && (
                 <div className="flex w-full flex-col gap-1">
                   <span>Instagram Username</span>
                   <Field
                     name="instagramUsername"
                     type="text"
-                    placeholder="@knifeparty"
+                    placeholder="@username"
                     className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg"
                   />
                 </div>
@@ -187,12 +198,17 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                 <span className="text-limeGreen">Privacy Policy</span>
               </p>
 
-              <button
-                type="submit"
-                className="w-full py-3 px-5 bg-limeGreen text-jetBlack font-semibold text-sm rounded-full"
-              >
-                Submit
-              </button>
+              <div className='space-y-4'>
+                <button
+                  type="submit"
+                  className="w-full py-2 px-4 bg-limeGreen text-jetBlack font-semibold text-sm rounded-full"
+                >
+                  Submit
+                </button>
+                <NavigateBackButton
+                  switchState={setIsOpen}
+                />
+              </div>
             </Form>
           );
         }}
