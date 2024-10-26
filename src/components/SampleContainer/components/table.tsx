@@ -4,41 +4,45 @@
 import DropDown from "components/util/dropdown";
 import AudioPlayer from "./player";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import playButton from '../../../assets/img/player/play-circle.svg'
-import pauseButton from '../../../assets/img/player/pause-circle.svg'
+import playButton from "../../../assets/img/player/play-circle.svg";
+import pauseButton from "../../../assets/img/player/pause-circle.svg";
 import musicBeam from "../../../assets/icons/musicBeam.svg";
 import playIcon from "../../../assets/icons/playIcon.svg";
 import musicIcon from "../../../assets/icons/musicIcon.svg";
 import { AudioTrackType } from "../player-container";
 import { AudioTrack, useWaveform, Waveform } from "./waveform";
-import Avatar from "react-avatar"; 
+import Avatar from "react-avatar";
 
-
-const SampleTable = ( 
-  samples
-) => {
-
+const SampleTable = (samples) => {
   const rowRefs = useRef<Array<HTMLTableRowElement | null>>([]);
   const formatDuration = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-    const paddedMinutes = minutes.toString().padStart(2, '0');
-    const paddedSeconds = seconds.toString().padStart(2, '0');
-  
+    const paddedMinutes = minutes.toString().padStart(2, "0");
+    const paddedSeconds = seconds.toString().padStart(2, "0");
+
     if (hours > 0) {
       return `${hours}:${paddedMinutes}:${paddedSeconds}`; // Show hours only if they are greater than 0
     }
-    
-    return `${minutes}:${paddedSeconds}`; // If no hours, show MM:SS
-  };  
 
-  const { loadTracks, armTrack, tracks, current, loading, playTrack, pauseTrack } = useWaveform();
+    return `${minutes}:${paddedSeconds}`; // If no hours, show MM:SS
+  };
+
+  const {
+    loadTracks,
+    armTrack,
+    tracks,
+    current,
+    loading,
+    playTrack,
+    pauseTrack,
+  } = useWaveform();
   // const { currentTrack, playTrack, isPaused, pauseTrack } = useContext(PlayerContext);
 
   const [currPlayingId, setCurrentPlaying] = useState(0);
   const [currPlayingIdx, setCurrentPlayingIndex] = useState(0);
-  const [isPlaying, setPlaying] = useState(false); 
+  const [isPlaying, setPlaying] = useState(false);
   const [currTrack, setTrack] = useState(null);
 
   // Load all the tracks at once when the component mounts to show their waveforms
@@ -46,19 +50,18 @@ const SampleTable = (
     const trackSources = Object.values(samples.samples).map((sample: any) => ({
       id: sample.id,
       src: sample.s3_key,
-      duration: sample.duration
+      duration: sample.duration,
     }));
     loadTracks(trackSources, { reset: true });
   }, [samples, loadTracks]);
 
-  
   const handlePlayToggle = (
-    sample: AudioTrackType, 
+    sample: AudioTrackType,
     clickedSampleIndex: number
   ) => {
     const audio_track: AudioTrack = {
-      id: sample.id,        // Set the id from currentSample
-      src: sample.s3_key    // Set the src from currentSample
+      id: sample.id, // Set the id from currentSample
+      src: sample.s3_key, // Set the src from currentSample
     };
     if (!current || current.id !== sample.id) {
       // If no track is currently playing, or a new track is selected
@@ -82,17 +85,19 @@ const SampleTable = (
   const handlePrevTrack = () => {
     if (currPlayingIdx > 0) {
       const prevIndex = currPlayingIdx - 1;
-      const prevSample = Object.values(samples.samples)[prevIndex] as AudioTrackType;
+      const prevSample = Object.values(samples.samples)[
+        prevIndex
+      ] as AudioTrackType;
       const audio_track: AudioTrack = {
         id: prevSample.id,
         src: prevSample.s3_key,
       };
-  
+
       setCurrentPlaying(prevSample.id); // Set the previous track as the current one
       setCurrentPlayingIndex(prevIndex);
       setTrack(prevSample); // Update the current track in state
       armTrack(prevSample.id); // Arm the track
-      playTrack(audio_track);  // Play the previous track
+      playTrack(audio_track); // Play the previous track
       setPlaying(true);
     }
   };
@@ -100,30 +105,29 @@ const SampleTable = (
   const handleNextTrack = () => {
     if (currPlayingIdx < Object.values(samples.samples).length - 1) {
       const nextIndex = currPlayingIdx + 1;
-      const nextSample = Object.values(samples.samples)[nextIndex] as AudioTrackType;
+      const nextSample = Object.values(samples.samples)[
+        nextIndex
+      ] as AudioTrackType;
       const audio_track: AudioTrack = {
         id: nextSample.id,
         src: nextSample.s3_key,
       };
-  
+
       setCurrentPlaying(nextSample.id); // Set the next track as the current one
       setCurrentPlayingIndex(nextIndex);
       setTrack(nextSample); // Update the current track in state
       armTrack(nextSample.id); // Arm the track
-      playTrack(audio_track);  // Play the next track
+      playTrack(audio_track); // Play the next track
       setPlaying(true);
     }
   };
 
   const handleKeyDown = useCallback(
     (event) => {
-      const handleTrackSwitch = (
-        sample: AudioTrackType, 
-        index: number
-      ) => {
+      const handleTrackSwitch = (sample: AudioTrackType, index: number) => {
         const audio_track: AudioTrack = {
-          id: sample.id,        // Set the id from currentSample
-          src: sample.s3_key    // Set the src from currentSample
+          id: sample.id, // Set the id from currentSample
+          src: sample.s3_key, // Set the src from currentSample
         };
         setCurrentPlaying(sample.id); // Set the current playing track ID
         setCurrentPlayingIndex(index); // Update the playing index
@@ -133,17 +137,22 @@ const SampleTable = (
         setPlaying(true); // Update play state to true
         // Scroll the current row into view
         if (rowRefs.current[index]) {
-          rowRefs.current[index]?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          rowRefs.current[index]?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
         }
       };
-  
-      if (event.key === "ArrowUp" || event.key === "ArrowDown"){
+
+      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
         event.preventDefault();
         if (event.key === "ArrowUp") {
           if (currPlayingIdx > 0) {
             const prevIndex = currPlayingIdx - 1;
-            const prevSample = Object.values(samples.samples)[prevIndex] as AudioTrackType;
-    
+            const prevSample = Object.values(samples.samples)[
+              prevIndex
+            ] as AudioTrackType;
+
             if (isPlaying) {
               pauseTrack(); // Pause the current track first
               setPlaying(false); // Ensure UI reflects the paused state
@@ -155,8 +164,10 @@ const SampleTable = (
         } else if (event.key === "ArrowDown") {
           if (currPlayingIdx < Object.values(samples.samples).length - 1) {
             const nextIndex = currPlayingIdx + 1;
-            const nextSample = Object.values(samples.samples)[nextIndex] as AudioTrackType;
-    
+            const nextSample = Object.values(samples.samples)[
+              nextIndex
+            ] as AudioTrackType;
+
             if (isPlaying) {
               pauseTrack(); // Pause the current track first
               setPlaying(false); // Ensure UI reflects the paused state
@@ -169,74 +180,126 @@ const SampleTable = (
       } else if (event.code === "Space" || event.key === " ") {
         // Prevent the default scroll behavior of the spacebar
         event.preventDefault();
-  
-        const currentSample = Object.values(samples.samples)[currPlayingIdx] as AudioTrackType;
+
+        const currentSample = Object.values(samples.samples)[
+          currPlayingIdx
+        ] as AudioTrackType;
         const audio_track: AudioTrack = {
-          id: currentSample.id,        // Set the id from currentSample
-          src: currentSample.s3_key    // Set the src from currentSample
+          id: currentSample.id, // Set the id from currentSample
+          src: currentSample.s3_key, // Set the src from currentSample
         };
         if (isPlaying) {
           pauseTrack(); // Pause the current track
           setPlaying(false); // Update UI to show pause button
         } else {
-          armTrack(currentSample.id);     // Arm the track when spacebar is pressed
-          playTrack(audio_track);         // Play the sample using the created AudioTrack object
-          setPlaying(true); 
+          armTrack(currentSample.id); // Arm the track when spacebar is pressed
+          playTrack(audio_track); // Play the sample using the created AudioTrack object
+          setPlaying(true);
         }
       }
     },
-    [currPlayingIdx, isPlaying, samples, pauseTrack, handlePlayToggle, armTrack, playTrack]
+    [
+      currPlayingIdx,
+      isPlaying,
+      samples,
+      pauseTrack,
+      handlePlayToggle,
+      armTrack,
+      playTrack,
+    ]
   );
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);
 
-  return(
+  return (
     <>
       <table
         className="divide-y divide-[#1F1F1F] border-t border-[#1F1F1F] w-full"
-        style={{ width: '100%' }}
+        style={{ width: "100%" }}
       >
         <thead>
           <tr>
-            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-normal text-softGray sm:pl-4">Sample</th>
-            <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray">Filename</th>
+            <th
+              scope="col"
+              className="py-3.5 pl-4 pr-3 text-left text-sm font-normal text-softGray sm:pl-4"
+            >
+              Sample
+            </th>
+            <th
+              scope="col"
+              className="px-3 py-3.5 text-left text-sm font-normal text-softGray"
+            >
+              Filename
+            </th>
             {/* <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray"></th> */}
-            <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray">Time</th>
-            <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray">Key</th>
-            <th scope="col" className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray">BPM</th>
-            <th scope="col" className="meta-sample px-3 py-3.5 text-left text-sm font-normal text-softGray">Status</th>
-            <th scope="col" className="considering-avatar px-3 py-3.5 text-center text-sm font-normal text-softGray">Considering</th>
-            <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray">Actions</th>
+            <th
+              scope="col"
+              className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray"
+            >
+              Time
+            </th>
+            <th
+              scope="col"
+              className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray"
+            >
+              Key
+            </th>
+            <th
+              scope="col"
+              className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray"
+            >
+              BPM
+            </th>
+            <th
+              scope="col"
+              className="meta-sample px-3 py-3.5 text-left text-sm font-normal text-softGray"
+            >
+              Status
+            </th>
+            <th
+              scope="col"
+              className="considering-avatar px-3 py-3.5 text-center text-sm font-normal text-softGray"
+            >
+              Considering
+            </th>
+            <th
+              scope="col"
+              className="px-3 py-3.5 text-left text-sm font-normal text-softGray"
+            >
+              Actions
+            </th>
           </tr>
-          </thead>
-          <tbody className="">
-          {samples && Object.values(samples.samples).map((sample: any, map_index) => {
-            const considering_list = samples[map_index]?.considering?.split(',') || [];
-            return(
-              <>
-                <tr
-                  key={sample.id}
-                  id={`sample-item-${sample.id}`}
-                  className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${currPlayingId === sample.id ? 'active-sample' : ''}`}
-                  ref={(el) => (rowRefs.current[map_index] = el)}  // Attach ref to each row
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCurrentPlaying(sample.id);
-                    setCurrentPlayingIndex(map_index);  
-                    handlePlayToggle(sample, map_index);
-                  }}
-                >
-                  {/* Thumbnail */}
-                  <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm">
-                    <div
-                      className="flex items-center gap-5"
-                    >
-                      {/* <div className="thumbnail-container">
+        </thead>
+        <tbody className="">
+          {samples &&
+            Object.values(samples.samples).map((sample: any, map_index) => {
+              const considering_list =
+                samples[map_index]?.considering?.split(",") || [];
+              return (
+                <>
+                  <tr
+                    key={sample.id}
+                    id={`sample-item-${sample.id}`}
+                    className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${
+                      currPlayingId === sample.id ? "active-sample" : ""
+                    }`}
+                    ref={(el) => (rowRefs.current[map_index] = el)} // Attach ref to each row
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentPlaying(sample.id);
+                      setCurrentPlayingIndex(map_index);
+                      handlePlayToggle(sample, map_index);
+                    }}
+                  >
+                    {/* Thumbnail */}
+                    <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm">
+                      <div className="flex items-center gap-5">
+                        {/* <div className="thumbnail-container">
                         <img
                           className={
                             currPlayingId !== sample.id
@@ -264,7 +327,7 @@ const SampleTable = (
                           }}
                         />
                       </div> */}
-                      {/* <svg
+                        {/* <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width={20}
                         height={20}
@@ -282,31 +345,34 @@ const SampleTable = (
                         <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-gunMetal">
                           <img src={musicIcon} alt="musicIcon" />
                         </div>
-                      <div>
-                      <img
-                        src={currPlayingId === sample.id ? playIcon : musicBeam}
-                        alt="icon"
-                      />
+                        <div>
+                          <img
+                            src={
+                              currPlayingId === sample.id ? playIcon : musicBeam
+                            }
+                            alt="icon"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Sample info */}
-                  <td
-                    className="row-play px-3 py-4 text-xs text-mediumGray font-['Mona-Sans-M'] max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
-                    data-index={map_index}
-                    onClick={()=>{
-                    }}
-                  >
-                    {sample.filename}
-                    <br />
-                    <span className="text-[10px] font-semibold text-coolGray">
-                      {sample.composers.find(composer => composer.id === sample.owner_id)?.artist_name || ''}
-                    </span>
-                  </td>
-                  
-                  {/* Waveform */}
-                  {/* <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                    {/* Sample info */}
+                    <td
+                      className="row-play px-3 py-4 text-xs text-mediumGray font-['Mona-Sans-M'] max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
+                      data-index={map_index}
+                      onClick={() => {}}
+                    >
+                      {sample.filename}
+                      <br />
+                      <span className="text-[10px] font-semibold text-coolGray">
+                        {sample.collaborators.find(
+                          (composer) => composer.id === sample.owner_id
+                        )?.professional_name || ""}
+                      </span>
+                    </td>
+
+                    {/* Waveform */}
+                    {/* <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
                     <div className="flex flex-col items-center justify-center h-full">
                       <div className="h-[50px]">
                         {tracks.find((t) => t.id === sample.id) && (
@@ -327,21 +393,21 @@ const SampleTable = (
                     </div>
                   </td> */}
 
-                  {/* Sample Duration */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
-                    {formatDuration(sample?.length)}
-                  </td>
-                  {/* Sample Key */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
-                    {sample?.keys}
-                  </td>
-                  {/* Sample BPM */}
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
-                    {sample?.bpm}
-                  </td>
+                    {/* Sample Duration */}
+                    <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
+                      {formatDuration(sample?.length)}
+                    </td>
+                    {/* Sample Key */}
+                    <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
+                      {sample?.keys}
+                    </td>
+                    {/* Sample BPM */}
+                    <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
+                      {sample?.bpm}
+                    </td>
 
-                  <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
-                  <span className="bg-blackMarbel border-[1px] border-[#222222] rounded-lg text-white px-2 py-1 flex gap-1.5 w-max items-center">
+                    <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
+                      <span className="bg-blackMarbel border-[1px] border-[#222222] rounded-lg text-white px-2 py-1 flex gap-1.5 w-max items-center">
                         <div
                           className={`w-[7px] h-[7px] rounded-full bg-[#25BA00]`}
                         ></div>
@@ -349,44 +415,41 @@ const SampleTable = (
                           Available
                         </span>
                       </span>
-                  </td>
+                    </td>
 
-                  {/* Considering List */}
-                  <td className="considering-avatar whitespace-nowrap text-sm text-mediumGray text-center">
-                    {
-                      considering_list.length > 0 &&
-                      considering_list.slice(0, 3).map((person, idx) => {
-                        return (
-                          <Avatar
-                            key={idx}
-                            name={person}
-                            round={true}
-                            title={person}
-                            size="30"
-                            className="flex ml-[5px] mb-[3px] cursor-pointer"
-                            onClick={() => {
-                              // setSample(x);
-                              // setConsidering(true);
-                            }}
-                          />
-                        );
-                      })
-                    }
-                     <span
-                      onClick={() => {
-                        // setSample(x);
-                        // setConsidering(true);
-                      }}
-                      className="cursor-pointer text-xs ml-[10px] mt-[10px] text-dimGray underline font-['Mona-Sans-M']"
+                    {/* Considering List */}
+                    <td className="considering-avatar whitespace-nowrap text-sm text-mediumGray text-center">
+                      {considering_list.length > 0 &&
+                        considering_list.slice(0, 3).map((person, idx) => {
+                          return (
+                            <Avatar
+                              key={idx}
+                              name={person}
+                              round={true}
+                              title={person}
+                              size="30"
+                              className="flex ml-[5px] mb-[3px] cursor-pointer"
+                              onClick={() => {
+                                // setSample(x);
+                                // setConsidering(true);
+                              }}
+                            />
+                          );
+                        })}
+                      <span
+                        onClick={() => {
+                          // setSample(x);
+                          // setConsidering(true);
+                        }}
+                        className="cursor-pointer text-xs ml-[10px] mt-[10px] text-dimGray underline font-['Mona-Sans-M']"
                       >
                         View All
-                    </span>
-                  </td>
+                      </span>
+                    </td>
 
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                    <div className="flex items-center gap-4">
-
-                      {/* <div className="onboard-7 toggle-container">
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                      <div className="flex items-center gap-4">
+                        {/* <div className="onboard-7 toggle-container">
                         {parseInt(sample.is_liked) === 1 ? (
                           <Toggle is_liked={true} sample={x} />
                         ) : (
@@ -394,8 +457,7 @@ const SampleTable = (
                         )}
                       </div> */}
 
-
-                      {/* <a
+                        {/* <a
                         href="#"
                         className="onboard-8 download-link cursor-pointer"
                         onClick={async (e) => {
@@ -422,21 +484,21 @@ const SampleTable = (
                         </svg>
                       </a> */}
 
-                      <div className="dropdown-container">
-                        <DropDown
-                          sample={sample} 
-                          index={map_index}
-                          getSamples={"getSamples"}
-                          // page={current_page}
-                          // sound={sound}
-                        /> 
+                        <div className="dropdown-container">
+                          <DropDown
+                            sample={sample}
+                            index={map_index}
+                            getSamples={"getSamples"}
+                            // page={current_page}
+                            // sound={sound}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                </tr>
-              </>
-            )
-          })}
+                    </td>
+                  </tr>
+                </>
+              );
+            })}
         </tbody>
       </table>
       <div className="pb-[42px]"></div>
@@ -450,17 +512,17 @@ const SampleTable = (
       )}
       {/* Bottom audio player */}
       {currTrack && (
-        <AudioPlayer 
+        <AudioPlayer
           audio_track={current}
-          currTrack={currTrack}          
+          currTrack={currTrack}
           isPlaying={isPlaying}
-          onPlayToggle={() => handlePlayToggle(currTrack, currPlayingIdx)}  // Pass the parameters
-          onPrevClick={() => handlePrevTrack()}  // Handle previous track
-          onNextClick={() => handleNextTrack()}  // Handle next track
-          />
+          onPlayToggle={() => handlePlayToggle(currTrack, currPlayingIdx)} // Pass the parameters
+          onPrevClick={() => handlePrevTrack()} // Handle previous track
+          onNextClick={() => handleNextTrack()} // Handle next track
+        />
       )}
     </>
-  )
-}
+  );
+};
 
 export default SampleTable;

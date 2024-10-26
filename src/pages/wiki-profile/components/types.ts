@@ -1,7 +1,7 @@
 export interface IUserData {
   active: boolean;
   address: string | null;
-  artist_name: string;
+  professional_name: string;
   banner_image: string | null;
   city: string;
   cognito_id: string;
@@ -51,7 +51,7 @@ type IAudioFile = {
   owner_id: string;
   is_public: boolean;
   created_at: string; // ISO date string
-  composers: string[]; // assuming composers is an array of strings
+  collaborators: string[]; // assuming collaborators is an array of strings
 };
 
 export type MusicTableArr = IAudioFile[];

@@ -23,11 +23,12 @@ type Props = {
   markSectionAsCompleted: () => void;
   setFollowUsers: (value: any) => void;
   setConnectUsers: (value: any) => void;
+  isPartner: boolean;
   isActive: boolean;
 };
 
 const ConncectWithPeople = (props: Props) => {
-  const { markSectionAsCompleted, setFollowUsers, setConnectUsers } = props;
+  const { markSectionAsCompleted, setFollowUsers, setConnectUsers, isPartner } = props;
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [peopleList, setPeopleList] = useState([]);
@@ -235,7 +236,7 @@ const ConncectWithPeople = (props: Props) => {
           onClick={markSectionAsCompleted}
           className="py-3 px-4 rounded-[60px] text-sm font-semibold border cursor-pointer bg-limeGreen border-limeGreen text-jetBlack"
         >
-          Complete Sign Up
+          {!isPartner ? "Complete Sign Up" : "Continue"}
         </button>
       </div>
       </div>

@@ -79,13 +79,14 @@ export async function searchAllUsers(query: string, limit: number) {
   return axiosInstance.get("/users/search", { params });
 }
 
+
 export async function userProfessionalNameSearch(
   params: IUserProfessionalNameSearch
 ) {
   return axiosInstance.get("/users/search/by-professional-name", { params });
 }
 
-export async function getUsersByTag(params: UserFiltersDTO, limit: 20) {
+export async function getUsersByTag(params: UserFiltersDTO, limit=20) {
   return axiosInstance.get(`/users/by-tag`, {
     params: {
       ...params,

@@ -1,7 +1,7 @@
 /*************************************************************************
  * @file ComposerDialog.tsx
  * @author Ehsanullah Qadeer
- * @desc  This is the component for the dialog to add composers.
+ * @desc  This is the component for the dialog to add collaborators.
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
@@ -168,7 +168,7 @@ function ComposerDialog(props: Props) {
           <div className="bg-eclipseGray rounded-lg p-1 overflow-y-auto custom-dropdown">
             {searchResults.length ? (
               searchResults.map((composer, idx) => {
-                const { thumbnail, artist_name, primary_label, sub_label } =
+                const { thumbnail, professional_name, primary_label, sub_label } =
                   composer;
                 return (
                   <div
@@ -176,7 +176,7 @@ function ComposerDialog(props: Props) {
                       handleAddComposer(composer);
                       handleClose();
                     }}
-                    key={artist_name + idx}
+                    key={professional_name + idx}
                     className="px-2.5 py-3 cursor-pointer flex gap-2.5 hover:bg-gunMetal rounded"
                   >
                     <div className="w-10 h-10 rounded-full">
@@ -191,7 +191,7 @@ function ComposerDialog(props: Props) {
                       <div>
                         <div className="flex items-center">
                           <span className="text-sm font-semibold text-white">
-                            {artist_name}
+                            {professional_name}
                           </span>
 
                           {isOwner && (

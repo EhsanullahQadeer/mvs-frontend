@@ -110,7 +110,7 @@ const OnBoarding = () => {
 
   useEffect(() => {
     const submitAndRedirect = async () => {
-      if (completedSections.length === numberOfTabs && !isPartner) {
+      if (completedSections.length === numberOfTabs) {
         await handleSubmitForm();
         console.log('formikData', formData);
         const email = userEmail;
@@ -218,6 +218,7 @@ const OnBoarding = () => {
             markSectionAsCompleted: () =>
               markSectionAsCompleted("connectWithPeople"),
             setFollowUsers,
+            isPartner,
             setConnectUsers,
           }}
         />
@@ -263,7 +264,7 @@ const OnBoarding = () => {
   ];
 
   const sections = [...commonSections];
-  if (isPartner) sections.splice(3, 0, ...partnerSections);
+  if (isPartner) sections.splice(4, 0, ...partnerSections);
 
 
   // If the code is invalid, show the InvalidCodeMessage

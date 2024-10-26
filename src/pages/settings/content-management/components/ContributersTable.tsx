@@ -1,7 +1,7 @@
 /*************************************************************************
  * @file ContributersTable.tsx
  * @author Ehsanullah Qadeer
- * @desc ContributersTable for content management page to show the list of contributers that are selected through composers dialog.
+ * @desc ContributersTable for content management page to show the list of contributers that are selected through collaborators dialog.
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
@@ -52,8 +52,8 @@ function ContributersTable(props: Props) {
   };
 
   const handleRolesChange = (id: number, newRoles: string[]) => {
-    setComposerData((prevComposers) =>
-      prevComposers.map((composer) =>
+    setComposerData((prevcollaborators) =>
+      prevcollaborators.map((composer) =>
         composer.id === id ? { ...composer, roles: newRoles } : composer
       )
     );
@@ -76,8 +76,8 @@ function ContributersTable(props: Props) {
 
     parsedValue = Math.round(parsedValue * 100) / 100;
 
-    setComposerData((prevComposers) =>
-      prevComposers.map((composer) =>
+    setComposerData((prevcollaborators) =>
+      prevcollaborators.map((composer) =>
         composer.id === id
           ? { ...composer, percentValue: parsedValue }
           : composer
@@ -127,7 +127,7 @@ function ContributersTable(props: Props) {
           {composerData.map((composer) => {
             const {
               id,
-              artist_name,
+              professional_name,
               roles = [],
               thumbnail,
               percentValue,
@@ -145,7 +145,7 @@ function ContributersTable(props: Props) {
                         className="w-full h-full object-cover rounded-full"
                       />
                     </div>
-                    <span className="text-base">{artist_name}</span>
+                    <span className="text-base">{professional_name}</span>
                   </div>
                 </TableCell>
 

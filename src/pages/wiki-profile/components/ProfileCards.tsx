@@ -21,7 +21,7 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
     track_name,
     artists,
   } = props;
-  const { artist_name } = artists[0];
+  const { professional_name } = artists[0];
 
   return (
     <>
@@ -39,7 +39,7 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
           <div className="flex flex-col gap-0.5">
             <h2 className="text-white font-semibold text-xs text-wrap">{track_name}</h2>
             <p className="text-platinum text-[10px] font-medium">
-              {artist_name}
+              {professional_name}
             </p>
           </div>
         </div>

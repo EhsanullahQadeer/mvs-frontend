@@ -328,7 +328,7 @@ const RequestSplitSheetModal = (props: any) => {
                               </div>
                               <div className="mt-4 text-sm leading-6 text-justify text-stone-300 max-md:max-w-full">
                               Submit Request: Submitting a split sheet confirms your agreement to standard terms for 
-                              exclusive sample use. A split agreement is required. Our composers typically request a 
+                              exclusive sample use. A split agreement is required. Our collaborators typically request a 
                               minimum of 1% master royalty, 15% writer's share, and 15% publisher's share, but we're 
                               open to negotiation for a fair deal. <br/>
                               <br/>

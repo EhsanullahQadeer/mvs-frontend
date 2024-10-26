@@ -31,7 +31,7 @@ export interface IUserProfile {
   id?: number;
   first_name?: string | null;
   last_name?: string | null;
-  artist_name?: string;
+  professional_name?: string;
   username?: string;
   bio?: string;
   email?: string | null;
@@ -101,7 +101,7 @@ export interface ICurrentUser {
   id: number;
   first_name: string | null;
   last_name: string | null;
-  artist_name: string | null;
+  professional_name: string | null;
   username: string | null;
   bio: string | null;
   email: string;

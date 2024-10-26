@@ -2,36 +2,35 @@
  * @file Header.tsx
  * @author End Quote
  * @desc Provides layout and navigation for the application.
- * 
+ *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
 /* IMPORTS */
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Fragment } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import Avatar from 'react-avatar';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import Avatar from "react-avatar";
 
 /* LOCAL IMPORTS */
-import UserSettingsModal from 'components/modals/user-settings';
-import ContactModal from 'components/modals/contact-us';
-import { useHeaderHooks } from './Header.hooks';
-import { classNames, HeaderProps } from './Header.types';
-import { useLambdaEvent } from 'services/WebSocket/useLambdaEvent.hook';
+import UserSettingsModal from "components/modals/user-settings";
+import ContactModal from "components/modals/contact-us";
+import { useHeaderHooks } from "./Header.hooks";
+import { classNames, HeaderProps } from "./Header.types";
+import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
 
 const Header: React.FC<HeaderProps> = () => {
   /* States and Hooks */
   const {
     state,
-    contact_us, 
-    setContactUs, 
-    user_settings, 
+    contact_us,
+    setContactUs,
+    user_settings,
     setUserSettings,
-    onboardGuide, 
-    LogOut 
+    onboardGuide,
+    LogOut,
   } = useHeaderHooks();
-
 
   /**
    * TEMPORARY CODE: Depicted here for demonstrative purposes
@@ -40,15 +39,14 @@ const Header: React.FC<HeaderProps> = () => {
   const [isHighlighted, setIsHighlighted] = useState(false);
 
   // Handle NEW_MESSAGE event
-  useLambdaEvent('NEW_MESSAGE', () => {
+  useLambdaEvent("NEW_MESSAGE", () => {
     setIsHighlighted(true);
-    console.log('NOTIFICATION RECEIVED!!');
+    console.log("NOTIFICATION RECEIVED!!");
     setTimeout(() => {
       setIsHighlighted(false);
     }, 10000); // 10 seconds
   });
   /* END TEMPORARY CODE */
-
 
   const navigate = useNavigate();
 
@@ -56,7 +54,9 @@ const Header: React.FC<HeaderProps> = () => {
     <Fragment>
       <div className="topbar w-[100%] py-[12px] bg-[#141414] flex justify-between">
         <div className="search ml-0 ml-[19px] ">
-          <label htmlFor="simple-search" className="sr-only">Search</label>
+          <label htmlFor="simple-search" className="sr-only">
+            Search
+          </label>
           <div className="relative w-[400px]">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
@@ -84,30 +84,35 @@ const Header: React.FC<HeaderProps> = () => {
         </div>
 
         <div className="flex items-center space-x-4 px-[40px]">
-
-
-        <button className={`relative bg-transparent rounded-full ${isHighlighted ? 'bg-red-900' : 'bg-blue-900'}`}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6 text-gray-400"
-          > 
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-            />
-          </svg>
-        </button>
-
+          <button
+            className={`relative bg-transparent rounded-full ${
+              isHighlighted ? "bg-red-900" : "bg-blue-900"
+            }`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6 text-gray-400"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+              />
+            </svg>
+          </button>
 
           <Menu as="div" className="user relative">
             <Menu.Button>
               {state?.auth?.user?.thumbnail ? (
-                <Avatar src={state?.auth?.user?.thumbnail} size="30" round={true} />
+                <Avatar
+                  src={state?.auth?.user?.thumbnail}
+                  size="30"
+                  round={true}
+                />
               ) : (
                 <Avatar name={state?.auth?.user?.name} size="40" round={true} />
               )}
@@ -148,7 +153,9 @@ const Header: React.FC<HeaderProps> = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">Home</p>
+                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                        Home
+                      </p>
                     </div>
                   )}
                 </Menu.Item>
@@ -156,7 +163,11 @@ const Header: React.FC<HeaderProps> = () => {
                 <Menu.Item>
                   {({ active }) => (
                     <div
-                      onClick={() => navigate(`/profile/${state?.auth?.user?.profile?.Username}`)}
+                      onClick={() =>
+                        navigate(
+                          `/profile/${state?.auth?.user?.profile?.Username}`
+                        )
+                      }
                       className={classNames(
                         active
                           ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"
@@ -178,7 +189,9 @@ const Header: React.FC<HeaderProps> = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">Profile</p>
+                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                        Profile
+                      </p>
                     </div>
                   )}
                 </Menu.Item>
@@ -186,7 +199,7 @@ const Header: React.FC<HeaderProps> = () => {
                 <Menu.Item>
                   {({ active }) => (
                     <div
-                      onClick={() => setUserSettings(true)}
+                      onClick={() => navigate("/settings/")}
                       className={classNames(
                         active
                           ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"
@@ -215,7 +228,9 @@ const Header: React.FC<HeaderProps> = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">Settings</p>
+                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                        Settings
+                      </p>
                     </div>
                   )}
                 </Menu.Item>
@@ -245,7 +260,9 @@ const Header: React.FC<HeaderProps> = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">Terms of service</p>
+                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                        Terms of service
+                      </p>
                     </div>
                   )}
                 </Menu.Item>
@@ -275,7 +292,9 @@ const Header: React.FC<HeaderProps> = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">Contact Us</p>
+                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                        Contact Us
+                      </p>
                     </div>
                   )}
                 </Menu.Item>
@@ -305,7 +324,9 @@ const Header: React.FC<HeaderProps> = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">Onboarding Guide</p>
+                      <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                        Onboarding Guide
+                      </p>
                     </div>
                   )}
                 </Menu.Item>
@@ -335,7 +356,9 @@ const Header: React.FC<HeaderProps> = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <button className="text-[#fff] font-['Mona-Sans-M'] text-[14px] pl-[8px]">Logout</button>
+                      <button className="text-[#fff] font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                        Logout
+                      </button>
                     </div>
                   )}
                 </Menu.Item>
@@ -350,7 +373,10 @@ const Header: React.FC<HeaderProps> = () => {
       )}
 
       {user_settings && (
-        <UserSettingsModal openModal={user_settings} setModal={setUserSettings} />
+        <UserSettingsModal
+          openModal={user_settings}
+          setModal={setUserSettings}
+        />
       )}
     </Fragment>
   );

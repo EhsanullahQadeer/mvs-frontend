@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import DropFilesSection from "./components/DropFilesSection";
 import AttachedFilesSection from "./components/AttachedFilesSection";
 import UploadingFilesSection from "./components/UploadingFilesSection";

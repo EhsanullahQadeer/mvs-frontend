@@ -33,7 +33,7 @@ const Home = (
     // Run all promises concurrently
     const results = await Promise.all(
       userTags.map(async (tag) => {
-        const users = await getUsersByTag({ primaryUserLabel: tag }, 20);
+        const users = await getUsersByTag({ primaryUserRole: tag }, 50);
         return { 
           tag, 
           users: users.data 
@@ -63,10 +63,10 @@ const Home = (
     const fetchFilteredUsers = async () => {
       if (filterValue) {
         const params: UserFiltersDTO = { 
-          primaryUserLabel: filterValue, 
+          primaryUserRole: filterValue, 
           limit: 50
         };
-        const user = await getUsersByTag(params, 20);
+        const user = await getUsersByTag(params, 50);
         setFiltersData(user.data);
       }
       else {
@@ -87,7 +87,7 @@ const Home = (
         Object.entries(usersByTag).map(([key, value]) => (
           <ScrollableComponent
             key={key}
-            primaryUserLabel={key}
+            primaryUserRole={key}
             dataArr={value}
             title={userTagsObj[key]}
             setUsersByTag={setUsersByTag}

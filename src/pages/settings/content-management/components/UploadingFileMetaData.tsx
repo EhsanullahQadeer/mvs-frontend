@@ -26,7 +26,6 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
   const {
     privacyValue,
     setPrivacyValue,
-    midiFile,
     setMidiFile,
     selectedComposer,
     setSelectedComposer,
@@ -148,7 +147,7 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
 
           <div className="flex-1 flex flex-col gap-1">
             <span className="text-silver text-sm font-normal">
-              Composers / Collaborators
+              collaborators / Collaborators
             </span>
 
             <div
@@ -157,14 +156,14 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
             >
               {selectedComposer.length ? (
                 selectedComposer.map((composer, idx) => {
-                  const { artist_name } = composer;
+                  const { professional_name } = composer;
                   return (
                     <div
-                      key={artist_name + idx}
+                      key={professional_name + idx}
                       className="flex gap-2 py-1 px-3 rounded-[20px] bg-eerieBlack border border-eerieBlack items-center"
                     >
                       <span className="text-xs text-mediumGray font-normal">
-                        {artist_name}
+                        {professional_name}
                       </span>
                       <div className="w-2.5 h-2.5 cursor-pointer text-mediumGray flex justify-center items-center">
                         <CancelIcon className="w-2 h-2" />

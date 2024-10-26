@@ -5,6 +5,8 @@
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useEffect, useState } from "react";
 import AttachedFilesTable from "./AttachedFilesTable";
 import { deleteSampleAPI, getUserSamplesAPI } from "api/sounds";

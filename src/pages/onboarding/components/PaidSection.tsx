@@ -1,11 +1,3 @@
-/*************************************************************************
- * @file PaidSection.tsx
- * @author Ehsanullah Qadeer
- * @desc  This is the component for PaidSection of the user while registeration.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-
 import { ReactComponent as MvsLogo } from "../../../assets/icons/mvsLogo.svg";
 import { ReactComponent as StripeLogo } from "../../../assets/icons/stripeLogo.svg";
 import { BsArrowLeftRight } from "react-icons/bs";
@@ -18,8 +10,9 @@ const PaidSection = (props: Props) => {
   const { markSectionAsCompleted } = props;
 
   const handleSubmit = () => {
-    markSectionAsCompleted();
+    
   };
+
   return (
     <div>
       <p className="text-sm font-normal text-mediumGray">
@@ -46,7 +39,7 @@ const PaidSection = (props: Props) => {
             <p className="text-coolGray">
               <span className="text-white">MVSSIVE </span>
               automatically keeps your account in sync with your Stripe account.
-              By continuing you are agreeing to MVSSIV's{" "}
+              By continuing you are agreeing to MVSSIVE's{" "}
               <span className="text-limeGreen">terms and conditions.</span>
             </p>
 
@@ -65,6 +58,14 @@ const PaidSection = (props: Props) => {
             >
               Next
             </div>
+            <div className="flex justify-between mt-3">
+            <button
+              onClick={markSectionAsCompleted}
+              className="bg-gray-500 text-white py-2 px-4 rounded"
+            >
+              Skip
+            </button>
+          </div>
           </div>
         </div>
       </div>

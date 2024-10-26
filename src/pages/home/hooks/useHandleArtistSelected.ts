@@ -12,13 +12,13 @@ const useHandleArtistSelected = () => {
   const navigate = useNavigate();
 
   const handleArtistSelected = async (option: ArtistOption) => {
-    const { spotify_artist_id, artist_name, is_placeholder_account, popularity, thumbnail, tag,
+    const { spotify_artist_id, professional_name, is_placeholder_account, popularity, thumbnail, tag,
       followers,username
     } =
       option;
     if (is_placeholder_account !== false && !is_placeholder_account) {
       // API call
-      await storeSpotifyArtist({ spotify_artist_id, artist_name, popularity, thumbnail, tag, followers });
+      await storeSpotifyArtist({ spotify_artist_id, professional_name, popularity, thumbnail, tag, followers });
 
       // Once the API call is done, navigate to the profile page
       navigate(`/artist-wiki-profile/${spotify_artist_id}`);
