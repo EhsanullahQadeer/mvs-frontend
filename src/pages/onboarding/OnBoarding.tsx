@@ -16,29 +16,51 @@ import PricingSection from "./components/PricingSection";
 import ConncectWithPeople from "./components/ConncectWithPeople";
 import PaidSection from "./components/PaidSection";
 import UserPersonalInformation from "./components/UserPersonalInformation";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { addNewUser, verifyAndRetrieveInviteCodeDetails } from "api/user";
 import { INewUserForm } from "./components/types";
+import InvalidCodeMessage from "./components/InvalidCodeExpired";
+import { registerAPI } from "api/auth";
+import { useDispatch } from "react-redux";
+import { login } from "redux/actions";
 
 const OnBoarding = () => {
 
   const { id } = useParams();
+  const navigate = useNavigate();
   const [isValidCode, setIsValidCode] = useState(null);
   const [checkingInviteCodeValidity, setCheckingInviteCodeValidity] = useState(true);
   const [userType, setUserType] = useState("");
-  const [isPartner, setIsPartner] = useState(false); // Use state for isPartner
+  const [isPartner, setIsPartner] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [userFirstName, setUserFirstName] = useState("");
+  const [userLastName, setUserLastName]   = useState("");
+
   useEffect(() => {
     const checkInviteCode = async () => {
       if (id) {
         try {
           const response = await verifyAndRetrieveInviteCodeDetails(id);
-          if (response && response.data && response.data.results && response.data.results.user_type) {
+          console.log('response', response);
+          
+          // Check if the error field exists and is true
+          if (response?.data?.error) {
+            console.log('Error occurred:', response.data.message);
+            setIsValidCode(false); // Invalid code, mark as invalid
+          } else if (response?.data?.results?.user_type) {
+            // If there's no error and user_type is available
             const user_type = response.data.results.user_type;
             setIsPartner(user_type === "partner");
             setIsValidCode(true);
             setUserType(user_type);
+            setUserEmail(response?.data?.results?.email);
+            setUserFirstName(response?.data?.results?.first_name);
+            setUserLastName(response?.data?.results?.last_name);
           } else {
             setIsValidCode(false);
+            setUserEmail(response?.data?.results?.email);
+            setUserFirstName(response?.data?.results?.first_name);
+            setUserLastName(response?.data?.results?.last_name);
           }
         } catch (error) {
           console.error("Error verifying invite code:", error);
@@ -48,41 +70,72 @@ const OnBoarding = () => {
         }
       }
     };
-
+  
     checkInviteCode();
   }, [id]);
 
-
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const numberOfTabs = isPartner ? 7 : 5;
-
+  const numberOfTabs = isPartner ? 6 : 4;
   const [completedSections, setCompletedSections] = useState<string[]>([]);
   const [openTab, setOpenTab] = useState<string | null>(null);
+  const completeProgress = (completedSections.length / numberOfTabs) * 100;
+  const [followUsers, setFollowUsers] = useState([]);
+  const [connectUsers, setConnectUsers] = useState([]);
+  const [formData, setFormData] = useState<INewUserForm>({});
+  const user = JSON.parse(localStorage.getItem("user"));
+  const dispatch: any = useDispatch();
+
 
   const toggleTab = (tabId: string) => {
-    setOpenTab(openTab === tabId ? null : tabId);
+    const currentIndex = sections.findIndex(section => section.id === tabId);
+    
+    if (currentIndex === 0 || completedSections.includes(sections[currentIndex - 1].id)) {
+      setOpenTab(openTab === tabId ? null : tabId);
+    } else {
+      console.log("You must complete the previous section first.");
+    }
   };
 
   const markSectionAsCompleted = (tabId: string) => {
     if (!completedSections.includes(tabId)) {
       setCompletedSections([...completedSections, tabId]);
     }
+    const currentIndex = sections.findIndex((section) => section.id === tabId);
+    const nextSection = sections[currentIndex + 1];
+    if (nextSection) {
+      setOpenTab(nextSection.id);
+    }
   };
 
-  const completeProgress = (completedSections.length / numberOfTabs) * 100;
-
-  const [followUsers, setFollowUsers] = useState([]);
-  const [connectUsers, setConnectUsers] = useState([]);
-
-  const [formData, setFormData] = useState<INewUserForm>({});
-
-  const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    const submitAndRedirect = async () => {
+      if (completedSections.length === numberOfTabs && !isPartner) {
+        await handleSubmitForm();
+        console.log('formikData', formData);
+        const email = userEmail;
+        const password = formData.password;
+        
+        localStorage.removeItem("persist:root");
+        dispatch(
+          login({
+            email,
+            password,
+          })
+        );
+        navigate("/home");
+      }
+    };
+  
+    submitAndRedirect();
+  }, [completedSections, numberOfTabs, isPartner, navigate, formData]);
 
   const handleSubmitForm = async () => {
     try {
-      const { email, firstName, lastName } = user;
 
+      const firstName = userFirstName;
+      const email = userEmail;
+      const lastName = userLastName;
       const body = {
         email,
         firstName,
@@ -91,14 +144,16 @@ const OnBoarding = () => {
         follow_users: followUsers,
         connect_users: connectUsers,
         stripe_connect_info: "",
+        bio: formData.bio || "",
       };
+
+      console.log('body', body);
+
       const response = await addNewUser(body);
       localStorage.removeItem("user");
-      console.log("response", response);
     } catch (error) {
       console.log("error", error);
     }
-    console.log("formData", formData);
   };
 
   const commonSections = [
@@ -168,28 +223,21 @@ const OnBoarding = () => {
         />
       ),
     },
-    {
-      id: "paidSection",
-      title: "Now, let's set up how you get paid",
-      component: (
-        <PaidSection
-          markSectionAsCompleted={() => markSectionAsCompleted("paidSection")}
-        />
-      ),
-    },
   ];
 
   const partnerSections = [
-    {
-      id: "uploadSamples",
-      title: "Time to upload your first samples",
-      component: (
-        <UploadSampleSection
-          isActive={openTab === "uploadSamples"}
-          markSectionAsCompleted={() => markSectionAsCompleted("uploadSamples")}
-        />
-      ),
-    },
+    // {
+    //   id: "uploadSamples",
+    //   title: "Time to upload your first samples",
+    //   component: (
+    //     <UploadSampleSection
+    //       isActive={openTab === "uploadSamples"}
+    //       markSectionAsCompleted={() => markSectionAsCompleted("uploadSamples")}
+    //       formData={formData}
+    //       setFormData={setFormData}
+    //     />
+    //   ),
+    // },
     {
       id: "setPrices",
       title: "Set your prices",
@@ -203,10 +251,25 @@ const OnBoarding = () => {
         />
       ),
     },
+    {
+      id: "paidSection",
+      title: "Now, let's set up how you get paid",
+      component: (
+        <PaidSection
+          markSectionAsCompleted={() => markSectionAsCompleted("paidSection")}
+        />
+      ),
+    },
   ];
 
   const sections = [...commonSections];
   if (isPartner) sections.splice(3, 0, ...partnerSections);
+
+
+  // If the code is invalid, show the InvalidCodeMessage
+  if (!isValidCode) {
+    return <InvalidCodeMessage />;
+  }
 
   return (
     <div className="py-10 px-11 flex flex-col gap-4">
@@ -238,14 +301,6 @@ const OnBoarding = () => {
                   </span>
                 </div>
               </div>
-
-              <button
-                onClick={handleSubmitForm}
-                type="submit"
-                className="bg-limeGreen py-2 px-3 rounded-[60px] text-sm font-semibold text-jetBlack cursor-pointer"
-              >
-                Complete Registration
-              </button>
             </div>
           </div>
           <div className="w-[215px] flex justify-center items-center">
@@ -258,46 +313,67 @@ const OnBoarding = () => {
         </div>
       </div>
 
-      {sections.map((section) => (
-        <div
-          key={section.id}
-          className="border border-eclipseGray bg-darkGray rounded-lg px-5 py-7"
-        >
-          <div
-            onClick={() => toggleTab(section.id)}
-            className="flex justify-between items-center cursor-pointer"
-          >
-            <div className="flex-1 flex gap-2">
-              <div
-                className={`w-7 h-7 rounded-[20px] text-xl leading-6 font-semibold flex justify-center items-center transition-all duration-300 ${
-                  openTab === section.id ||
-                  completedSections.includes(section.id)
-                    ? "bg-limeGreen text-black"
-                    : "bg-charcoalGray text-eclipseGray"
-                }`}
-              >
-                {sections.indexOf(section) + 1}
-              </div>
-              <span className="text-[19px] text-dimGray font-semibold">
-                {section.title}
-              </span>
-            </div>
-            <div className="text-coolGray w-6 h-6 flex justify-center items-center">
-              {openTab === section.id ? <FaChevronDown /> : <FaChevronRight />}
-            </div>
-          </div>
+      {sections.map((section, index) => {
+        const isAccessible = index === 0 || completedSections.includes(sections[index - 1].id);
 
+        return (
           <div
-            className={`relative transition-all duration-300 ${
-              openTab === section.id
-                ? "max-h-auto mt-3 block opacity-100 z-10"
-                : "max-h-0 mt-0 hidden opacity-0 -z-10"
+            key={section.id}
+            className={`border border-eclipseGray bg-darkGray rounded-lg px-5 py-7 ${
+              !isAccessible ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {section.component}
+            {/* Section Header */}
+            <div
+              onClick={() => isAccessible && toggleTab(section.id)} // Only toggle if the section is accessible
+              className={`flex justify-between items-center cursor-pointer ${
+                !isAccessible ? "pointer-events-none" : ""
+              }`}
+            >
+              <div className="flex-1 flex gap-2">
+                <div
+                  className={`w-7 h-7 rounded-[20px] text-xl leading-6 font-semibold flex justify-center items-center transition-all duration-300 ${
+                    openTab === section.id || completedSections.includes(section.id)
+                      ? "bg-limeGreen text-black"
+                      : "bg-charcoalGray text-eclipseGray"
+                  }`}
+                >
+                  {index + 1}
+                </div>
+                <span className="text-[19px] text-dimGray font-semibold">
+                  {section.title}
+                </span>
+              </div>
+              <div className="text-coolGray w-6 h-6 flex justify-center items-center">
+                {openTab === section.id ? <FaChevronDown /> : <FaChevronRight />}
+              </div>
+            </div>
+
+            {/* Section Content */}
+            <div
+              className={`relative transition-all duration-300 ${
+                openTab === section.id
+                  ? "max-h-auto mt-3 block opacity-100 z-10"
+                  : "max-h-0 mt-0 hidden opacity-0 -z-10"
+              }`}
+            >
+              {section.component}
+
+              {/* Back Button */}
+              {index > 0 && (
+                <button
+                  className="mt-4 bg-gray-500 text-white py-2 px-4 rounded"
+                  onClick={() => setOpenTab(sections[index - 1].id)} // Navigate to the previous section
+                >
+                  Back
+                </button>
+              )}
+
+
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

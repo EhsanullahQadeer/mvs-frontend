@@ -18,6 +18,7 @@ type Props = {
 const UserType = (props: Props) => {
   const { markSectionAsCompleted, formData, setFormData } = props;
   const [buttonText, setButtonText] = useState("Save Changes");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const initialValues = {
     primaryRole: "",
@@ -85,6 +86,7 @@ const UserType = (props: Props) => {
     });
 
     setButtonText("Saved");
+    setIsButtonDisabled(true);
     markSectionAsCompleted();
   };
 
@@ -151,7 +153,7 @@ const UserType = (props: Props) => {
 
         <div className="mt-[60px] mr-2.5 w-full flex justify-end">
           <div
-            onClick={handleSaveChanges}
+            onClick={buttonText !== "Saved" ? handleSaveChanges : undefined}
             className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
               buttonText === "Saved"
                 ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"

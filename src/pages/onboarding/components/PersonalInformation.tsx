@@ -23,6 +23,7 @@ import profileBannerBackImg from "../../../assets/img/profileBannerBackImg.png";
 import avatarImg from "../../../assets/img/avatar.svg";
 import { IoLocationOutline } from "react-icons/io5";
 import FormikOnChange from "./FormikOnChange";
+import { checkUsernameIsAvailable } from "api/user";
 
 type Props = {
   markSectionAsCompleted: () => void;
@@ -42,6 +43,8 @@ const PersonalInformation = (props: Props) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countriesArr, setCountriesArr] = useState([]);
   const [statesArr, setStatesArr] = useState([]);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
 
   useEffect(() => {
     const countries = Object.values(countriesStates).map(
@@ -77,7 +80,7 @@ const PersonalInformation = (props: Props) => {
     bio: "",
   };
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     setPasswordError(false);
     setConfirmPasswordError(false);
     const passwordIsValid = isValidPassword(password);
@@ -93,6 +96,24 @@ const PersonalInformation = (props: Props) => {
       return;
     }
 
+
+    const sanitizedUsername = values.username.startsWith('@')
+      ? values.username.substring(1)
+      : values.username;
+
+    try {
+      const response = await checkUsernameIsAvailable(sanitizedUsername);
+      if (!response.data.available) {
+        setUsernameError("Username is already taken. Please choose another.");
+        return;
+      }
+      setUsernameError("");
+    } catch (error) {
+      console.error("Error checking username availability", error);
+      setUsernameError("An error occurred while checking username availability.");
+      return;
+    }
+
     setFormData({
       ...formData,
       ...values,
@@ -101,6 +122,7 @@ const PersonalInformation = (props: Props) => {
       thumbnail_type: thumbnailType,
     });
     setButtonText("Saved");
+    setIsButtonDisabled(true); // Disable the button
     markSectionAsCompleted();
   };
 
@@ -159,22 +181,31 @@ const PersonalInformation = (props: Props) => {
                   <div className="w-10/12 m-auto flex gap-10 justify-between items-center">
                     <div className="flex-1 flex gap-4 flex-col">
                       <div className="flex gap-5">
-                        <FormikLabeledField
-                          name="username"
-                          label="User Name"
-                          placeholder="e.g @beckyhill"
-                          handleInputChange={handleUsernameChange}
-                          inputBgColor="jetBlack"
-                          labelColor="white"
-                        />
+                        <div className="flex flex-col gap-1 flex-1">
+                          <FormikLabeledField
+                            name="username"
+                            label="User Name"
+                            placeholder="e.g @beckyhill"
+                            handleInputChange={handleUsernameChange}
+                            inputBgColor="jetBlack"
+                            labelColor="white"
+                          />
+                          {usernameError && (
+                            <div className="mt-1 text-[10px] font-normal text-darkRed">
+                              {usernameError}
+                            </div>
+                          )}
+                        </div>
 
-                        <FormikLabeledField
-                          name="professional_name"
-                          label="Professional Name"
-                          placeholder="e.g Becky Hill"
-                          inputBgColor="jetBlack"
-                          labelColor="white"
-                        />
+                        <div className="flex flex-col gap-1 flex-1">
+                          <FormikLabeledField
+                            name="professional_name"
+                            label="Professional Name"
+                            placeholder="e.g Becky Hill"
+                            inputBgColor="jetBlack"
+                            labelColor="white"
+                          />
+                        </div>
                       </div>
 
                       <div className="flex gap-5">
@@ -390,6 +421,7 @@ const PersonalInformation = (props: Props) => {
                   <div className="mt-[60px] mr-2.5 w-full flex justify-end">
                     <button
                       type="submit"
+                      disabled={isButtonDisabled} 
                       className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
                         buttonText === "Saved"
                           ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"

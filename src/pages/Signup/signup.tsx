@@ -121,10 +121,6 @@ const SignupPage = () => {
 
     setIsSubmitting(true);
 
-    /**
-     * Validate username availability in MongoDB
-     * set Email to null.
-     */
     try {
       const rspUsername = await checkUsernameAvailabilityAPI(username);
       console.log(rspUsername);

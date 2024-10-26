@@ -19,6 +19,7 @@ type Props = {
 
 const PricingSection = (props: Props) => {
   const { markSectionAsCompleted, formData, setFormData } = props;
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const [buttonText, setButtonText] = useState("Save Changes");
   const initialValues = {
@@ -33,6 +34,7 @@ const PricingSection = (props: Props) => {
       ...values,
     });
     setButtonText("Saved");
+    setIsButtonDisabled(true); // Disable the button
     markSectionAsCompleted();
   };
 
@@ -91,6 +93,7 @@ const PricingSection = (props: Props) => {
                 <div className="mt-5 mr-5 w-full flex justify-end">
                   <button
                     type="submit"
+                    disabled={isButtonDisabled} // Disable the button when text is "Saved"
                     className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
                       buttonText === "Saved"
                         ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"

@@ -5,17 +5,19 @@
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
-
 import { currentUserAPI } from "api/auth";
 import { uploadFile } from "api/sounds";
 import AttachedFilesSection from "pages/settings/content-management/components/AttachedFilesSection";
 import DropFilesSection from "pages/settings/content-management/components/DropFilesSection";
 import UploadingFilesSection from "pages/settings/content-management/components/UploadingFilesSection";
 import { useEffect, useState } from "react";
+import { INewUserForm } from "./types";
 
 type Props = {
   isActive: boolean;
   markSectionAsCompleted: () => void;
+  formData: INewUserForm; // Ensure INewUserForm is correctly imported or defined
+  setFormData: (values: any) => void; // Add setFormData prop
 };
 
 const UploadSampleSection = (props: Props) => {
@@ -26,6 +28,7 @@ const UploadSampleSection = (props: Props) => {
   const [uploadingFile, setUploadingFile] = useState<File>(null);
   const [fileRedisKey, setFileRedisKey] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
+
   const handleCancel = () => {
     setUploadProgress(0);
     setUploadingFile(null);
@@ -46,23 +49,26 @@ const UploadSampleSection = (props: Props) => {
       const formData = new FormData();
       formData.append("file", uploadingFile);
 
-      const uploadResponse = await uploadFile(formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        maxBodyLength: Infinity,
-        maxContentLength: Infinity,
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          console.log(
-            `Client-to-Backend Upload Progress: ${percentCompleted}%`
-          );
-          setUploadProgress(percentCompleted);
-        },
-      });
-      setFileRedisKey(uploadResponse.data.redis_key);
+      // const uploadResponse = await uploadFile(formData, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      //   maxBodyLength: Infinity,
+      //   maxContentLength: Infinity,
+      //   onUploadProgress: (progressEvent) => {
+      //     const percentCompleted = Math.round(
+      //       (progressEvent.loaded * 100) / progressEvent.total
+      //     );
+      //     console.log(
+      //       `Client-to-Backend Upload Progress: ${percentCompleted}%`
+      //     );
+      //     setUploadProgress(percentCompleted);
+      //     if (percentCompleted === 100) {
+      //       markSectionAsCompleted();
+      //     }
+      //   },
+      // });
+      // setFileRedisKey(uploadResponse.data.redis_key);
     } catch (error) {
       console.log("error ", error);
     }
@@ -79,6 +85,8 @@ const UploadSampleSection = (props: Props) => {
       if (data.progress === 100) {
         console.log("Upload complete!");
         eventSource.close();
+        // Mark section as completed when progress is 100%
+        markSectionAsCompleted();
       } else if (data.progress === -1) {
         console.error("Upload failed!");
         eventSource.close();
@@ -93,25 +101,6 @@ const UploadSampleSection = (props: Props) => {
     };
   }
 
-  useEffect(() => {
-    getCurrentUser();
-  }, []);
-
-  const getCurrentUser = async () => {
-    try {
-      const response = await currentUserAPI();
-      setCurrentUserInfo(response.data);
-      console.log("user info ", response);
-    } catch (error) {
-      console.error("Error in user info:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (isActive) {
-      markSectionAsCompleted();
-    }
-  }, [isActive]);
   return (
     <div>
       <p className="text-sm font-normal text-mediumGray">

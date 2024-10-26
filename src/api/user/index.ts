@@ -31,6 +31,9 @@ export async function checkUsernameAvailabilityAPI(username: string) {
   return axiosInstance.post(`/users/validate-username?username=${username}`);
 }
 
+
+
+
 export async function validateEmailAPI(email?: string) {
   return axiosInstance.post(`/users/validate-email?email=${email}`);
 }
@@ -68,6 +71,11 @@ export async function artistProfileAPI(username: string) {
 }
 
 export async function userArtistSearch(params: IUsersSearchParams) {
+  return axiosInstance.get("/users/search-users", { params });
+}
+
+export async function searchAllUsers(query: string, limit: number) {
+  const params = { query, limit }; 
   return axiosInstance.get("/users/search", { params });
 }
 
@@ -105,15 +113,26 @@ export async function verifyAndRetrieveInviteCodeDetails(inviteCode: string) {
     invite_code: inviteCode,
   });
 }
-
+// =======================================================================================
 export async function verifyChangePasswordCode(code: string) {
   return axiosInstance.post('/auth/verify/change-password-code', {
     invite_code: code,
   });
 }
 // =======================================================================================
-
-
+export async function checkUsernameIsAvailable(username: string) {
+  return axiosInstance.get(`/users/check-username-is-available?username=${username}`);
+}
+// =======================================================================================
+export async function getTopPopularUsers(paginationDto: {skip, take}) {
+  return axiosInstance.get(`/users/get-top-popular`, {
+    params: {
+      skip: paginationDto.skip,
+      take: paginationDto.take,
+    },
+  });
+}
+// =======================================================================================
 export const resendInvitationCodeAPI = async (email: string) => {
   try {
     const response = await axiosInstance.post('/users/request/resend-invitation-code', { email });

@@ -38,6 +38,8 @@ const UserPersonalInformation = (props: Props) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countriesArr, setCountriesArr] = useState([]);
   const [statesArr, setStatesArr] = useState([]);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
 
   useEffect(() => {
     const countries = Object.values(countriesStates).map(
@@ -65,6 +67,7 @@ const UserPersonalInformation = (props: Props) => {
   };
 
   const [buttonText, setButtonText] = useState("Save Changes");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const initialValues = {
     professional_name: "",
     country: "",
@@ -73,12 +76,21 @@ const UserPersonalInformation = (props: Props) => {
 
   const handleSubmit = (values) => {
     setPasswordError(false);
+    setConfirmPasswordError(false);
+    
     const passwordIsValid = isValidPassword(password);
-
+    const passwordsMatch = password === confirmPassword;
+  
     if (!passwordIsValid) {
       setPasswordError(true);
       return;
     }
+  
+    if (!passwordsMatch) {
+      setConfirmPasswordError(true);
+      return;
+    }
+  
     setFormData({
       ...formData,
       ...values,
@@ -87,6 +99,7 @@ const UserPersonalInformation = (props: Props) => {
       thumbnail_type: thumbnailType,
     });
     setButtonText("Saved");
+    setIsButtonDisabled(true);
     markSectionAsCompleted();
   };
 
@@ -96,8 +109,7 @@ const UserPersonalInformation = (props: Props) => {
 
   const isValidPassword = (password) => {
     const hasMinLength = password.length >= 8;
-    const hasTwoNumbers = (password.match(/\d/g) || []).length >= 2;
-    return hasMinLength && hasTwoNumbers;
+    return hasMinLength;
   };
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,9 +228,47 @@ const UserPersonalInformation = (props: Props) => {
                               passwordError ? "text-darkRed" : "text-dimGray"
                             }`}
                           >
-                            at least 8 characters and at least 2 numbers
+                            at least 8 characters
                           </div>
                         </div>
+
+                        <div className="flex-1 flex flex-col gap-1">
+                          <label htmlFor="confirmPassword" className="text-white text-sm font-normal">
+                            Confirm Password
+                          </label>
+                          <FormControl fullWidth variant="outlined">
+                            <OutlinedInput
+                              id="confirmPassword"
+                              placeholder="Confirm Password"
+                              type={showPassword ? "text" : "password"}
+                              value={confirmPassword}
+                              onChange={(e) => {
+                                setConfirmPassword(e.target.value);
+                                setButtonText("Save Changes");
+                              }}
+                              endAdornment={
+                                <InputAdornment position="end">
+                                  <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    edge="end"
+                                  >
+                                    {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
+                                  </IconButton>
+                                </InputAdornment>
+                              }
+                              sx={muiStyles.passwordFieldStyles}
+                            />
+                          </FormControl>
+
+                          {confirmPasswordError && (
+                            <div className="mt-1.5 text-[10px] font-normal text-darkRed">
+                              Passwords do not match.
+                            </div>
+                          )}
+                        </div>
+
+
                       </div>
 
                       <div className="flex gap-5">
@@ -249,6 +299,7 @@ const UserPersonalInformation = (props: Props) => {
                   <div className="mt-[60px] mr-2.5 w-full flex justify-end">
                     <button
                       type="submit"
+                      disabled={isButtonDisabled}
                       className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
                         buttonText === "Saved"
                           ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"

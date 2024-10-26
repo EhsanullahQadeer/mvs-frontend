@@ -46,6 +46,16 @@ export interface IRequestInvitation {
   user_type?: string;
 }
 
+export interface IUserFollowConnection {
+  id: number;
+  primary_role: string;
+  professional_name?: string;
+  thumbnail?: string;
+  followers?: number;
+  main_genre?: string;
+  sub_genre?: string;
+}
+
 export interface IAddNewUser {
   email: "string";
   firstName: "string";
