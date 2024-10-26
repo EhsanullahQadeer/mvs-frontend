@@ -10,7 +10,7 @@ import FormikLabeledField from "components/util/FormikLabeledField";
 import FormikSingleSelectDropdown from "components/util/FormikSingleSelectDropdown";
 import { Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
-import { citiesByState, statesArr } from "../sample-data/SatesCities";
+import { countriesStates } from "../sample-data/countriesStates";
 import {
   FormControl,
   IconButton,
@@ -22,53 +22,117 @@ import getMuiStyles from "styles/getMuiStyles";
 import profileBannerBackImg from "../../../assets/img/profileBannerBackImg.png";
 import avatarImg from "../../../assets/img/avatar.svg";
 import { IoLocationOutline } from "react-icons/io5";
-import { FaBirthdayCake } from "react-icons/fa";
+import FormikOnChange from "./FormikOnChange";
+import { checkUsernameIsAvailable } from "api/user";
 
-type Props = {};
+type Props = {
+  markSectionAsCompleted: () => void;
+  formData: any;
+  setFormData: (values: any) => void;
+};
 
 const PersonalInformation = (props: Props) => {
+  const { markSectionAsCompleted, formData, setFormData } = props;
   const muiStyles = getMuiStyles();
-  const allCities = Object.values(citiesByState).flat();
-  const [citiesArr, setCitiesArr] = useState(allCities);
-  const [selectedState, setSelectedState] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
-  const [thumbnail, setThumbnai] = useState(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnailType, setThumbnailType] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [countriesArr, setCountriesArr] = useState([]);
+  const [statesArr, setStatesArr] = useState([]);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
 
   useEffect(() => {
-    if (selectedState) {
-      setCitiesArr(citiesByState[selectedState] || []);
-    } else {
-      setCitiesArr(allCities);
-    }
-  }, [allCities, selectedState]);
+    const countries = Object.values(countriesStates).map(
+      (country) => country.name
+    );
+    setCountriesArr(countries);
+  }, []);
 
-  const initialValues = {
-    username: "",
-    professionalName: "",
-    city: "",
-    state: "",
-    "date-of-birth": "",
-    bio: "",
-    artistName: "",
+  useEffect(() => {
+    if (selectedCountry) {
+      const provinces = getStatesByCountryName();
+      setStatesArr(provinces);
+    }
+  }, [selectedCountry]);
+
+  const getStatesByCountryName = () => {
+    const countryCode = Object.keys(countriesStates).find(
+      (code) => countriesStates[code].name === selectedCountry
+    );
+
+    if (countryCode && countriesStates[countryCode].divisions) {
+      return Object.values(countriesStates[countryCode].divisions);
+    }
+    return [];
   };
 
-  const handleSubmit = (values) => {
+  const [buttonText, setButtonText] = useState("Save Changes");
+  const initialValues = {
+    username: "",
+    professional_name: "",
+    country: "",
+    region: "",
+    bio: "",
+  };
+
+  const handleSubmit = async (values) => {
     setPasswordError(false);
+    setConfirmPasswordError(false);
     const passwordIsValid = isValidPassword(password);
+    const passwordsMatch = password === confirmPassword;
 
     if (!passwordIsValid) {
       setPasswordError(true);
       return;
     }
-    console.log("values", values);
-    console.log("password", password);
-    console.log("thumbnail", thumbnail);
+
+    if (!passwordsMatch) {
+      setConfirmPasswordError(true);
+      return;
+    }
+
+
+    const sanitizedUsername = values.username.startsWith('@')
+      ? values.username.substring(1)
+      : values.username;
+
+    try {
+      const response = await checkUsernameIsAvailable(sanitizedUsername);
+      if (!response.data.available) {
+        setUsernameError("Username is already taken. Please choose another.");
+        return;
+      }
+      setUsernameError("");
+    } catch (error) {
+      console.error("Error checking username availability", error);
+      setUsernameError("An error occurred while checking username availability.");
+      return;
+    }
+
+    setFormData({
+      ...formData,
+      ...values,
+      password: password,
+      thumbnail: thumbnail,
+      thumbnail_type: thumbnailType,
+    });
+    setButtonText("Saved");
+    setIsButtonDisabled(true); // Disable the button
+    markSectionAsCompleted();
   };
 
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword((show) => !show);
 
   const isValidPassword = (password) => {
     const hasMinLength = password.length >= 8;
@@ -80,7 +144,9 @@ const PersonalInformation = (props: Props) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setThumbnai(imageUrl);
+      setThumbnail(imageUrl);
+      setThumbnailType(file.type);
+      setButtonText("Save Changes");
       e.target.value = null;
     }
   };
@@ -93,104 +159,168 @@ const PersonalInformation = (props: Props) => {
 
       <div className="mt-[60px]">
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ values }) => {
-            const selectedState = values.state;
-            setSelectedState(selectedState);
+          {({ setFieldValue, values }) => {
+            const selectedCountry = values.country;
+            setSelectedCountry(selectedCountry);
+
+            const handleUsernameChange = (event: any) => {
+              let value = event.target.value;
+              if (value && !value.startsWith("@")) {
+                value = "@" + value;
+              }
+
+              setFieldValue("username", value);
+            };
 
             return (
               <Form>
                 <>
+                  <FormikOnChange
+                    onChange={() => setButtonText("Save Changes")}
+                  />
                   <div className="w-10/12 m-auto flex gap-10 justify-between items-center">
                     <div className="flex-1 flex gap-4 flex-col">
                       <div className="flex gap-5">
-                        <FormikLabeledField
-                          name="username"
-                          label="User Name"
-                          placeholder="e.g @beckyhill"
-                          inputBgColor="jetBlack"
-                          labelColor="white"
-                        />
+                        <div className="flex flex-col gap-1 flex-1">
+                          <FormikLabeledField
+                            name="username"
+                            label="User Name"
+                            placeholder="e.g @beckyhill"
+                            handleInputChange={handleUsernameChange}
+                            inputBgColor="jetBlack"
+                            labelColor="white"
+                          />
+                          {usernameError && (
+                            <div className="mt-1 text-[10px] font-normal text-darkRed">
+                              {usernameError}
+                            </div>
+                          )}
+                        </div>
 
-                        <FormikLabeledField
-                          name="professionalName"
-                          label="Professional Name"
-                          placeholder="e.g Becky Hill"
-                          inputBgColor="jetBlack"
-                          labelColor="white"
-                        />
+                        <div className="flex flex-col gap-1 flex-1">
+                          <FormikLabeledField
+                            name="professional_name"
+                            label="Professional Name"
+                            placeholder="e.g Becky Hill"
+                            inputBgColor="jetBlack"
+                            labelColor="white"
+                          />
+                        </div>
                       </div>
 
                       <div className="flex gap-5">
                         <FormikSingleSelectDropdown
-                          name="state"
+                          name="country"
+                          label="Country"
+                          placeholder="Select Country"
+                          dropdownItems={countriesArr}
+                          inputBgColor="#0F0F0F"
+                          labelColor="white"
+                          dropdownBgColor="#1c1c1c"
+                        />
+
+                        <FormikSingleSelectDropdown
+                          name="region"
                           label="State"
                           placeholder="Select State"
                           dropdownItems={statesArr}
                           inputBgColor="#0F0F0F"
                           labelColor="white"
-                        />
-
-                        <FormikSingleSelectDropdown
-                          name="city"
-                          label="City"
-                          placeholder="Select City"
-                          dropdownItems={citiesArr}
-                          inputBgColor="#0F0F0F"
-                          labelColor="white"
-                          disabled={!selectedState}
+                          dropdownBgColor="#1c1c1c"
+                          disabled={!selectedCountry}
                         />
                       </div>
 
-                      <div className="flex flex-col gap-1">
-                        <label
-                          htmlFor="password"
-                          className="text-white text-sm font-normal"
-                        >
-                          Set Password
-                        </label>
-                        <FormControl fullWidth variant="outlined">
-                          <OutlinedInput
-                            id="password"
-                            placeholder="Password"
-                            type={showPassword ? "text" : "password"}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            endAdornment={
-                              <InputAdornment position="end">
-                                <IconButton
-                                  aria-label="toggle password visibility"
-                                  onClick={handleClickShowPassword}
-                                  edge="end"
-                                >
-                                  {showPassword ? (
-                                    <MdVisibilityOff />
-                                  ) : (
-                                    <MdVisibility />
-                                  )}
-                                </IconButton>
-                              </InputAdornment>
-                            }
-                            sx={muiStyles.passwordFieldStyles}
-                          />
-                        </FormControl>
+                      <div className="flex gap-5">
+                        <div className="flex-1 flex flex-col gap-1">
+                          <label
+                            htmlFor="password"
+                            className="text-white text-sm font-normal"
+                          >
+                            Set Password
+                          </label>
+                          <FormControl fullWidth variant="outlined">
+                            <OutlinedInput
+                              id="password"
+                              placeholder="Password"
+                              type={showPassword ? "text" : "password"}
+                              value={password}
+                              onChange={(e) => {
+                                setPassword(e.target.value);
+                                setButtonText("Save Changes");
+                              }}
+                              endAdornment={
+                                <InputAdornment position="end">
+                                  <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    edge="end"
+                                  >
+                                    {showPassword ? (
+                                      <MdVisibilityOff />
+                                    ) : (
+                                      <MdVisibility />
+                                    )}
+                                  </IconButton>
+                                </InputAdornment>
+                              }
+                              sx={muiStyles.passwordFieldStyles}
+                            />
+                          </FormControl>
 
-                        <div
-                          className={`mt-1.5 text-[10px] font-normal ${
-                            passwordError ? "text-darkRed" : "text-dimGray"
-                          }`}
-                        >
-                          at least 8 characters and at least 2 numbers
+                          <div
+                            className={`mt-1.5 text-[10px] font-normal ${
+                              passwordError ? "text-darkRed" : "text-dimGray"
+                            }`}
+                          >
+                            at least 8 characters and at least 2 numbers
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex flex-col gap-1 w-[182px]">
-                        <FormikLabeledField
-                          name="date-of-birth"
-                          label="Date of birth"
-                          type="date"
-                          inputBgColor="jetBlack"
-                          labelColor="white"
-                        />
+                        <div className="flex-1 flex flex-col gap-1">
+                          <label
+                            htmlFor="confirmPassword"
+                            className="text-white text-sm font-normal"
+                          >
+                            Confirm Password
+                          </label>
+                          <FormControl fullWidth variant="outlined">
+                            <OutlinedInput
+                              id="confirmPassword"
+                              placeholder="Confirm Password"
+                              type={showConfirmPassword ? "text" : "password"}
+                              value={confirmPassword}
+                              onChange={(e) => {
+                                setConfirmPassword(e.target.value);
+                                setButtonText("Save Changes");
+                              }}
+                              endAdornment={
+                                <InputAdornment position="end">
+                                  <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowConfirmPassword}
+                                    edge="end"
+                                  >
+                                    {showConfirmPassword ? (
+                                      <MdVisibilityOff />
+                                    ) : (
+                                      <MdVisibility />
+                                    )}
+                                  </IconButton>
+                                </InputAdornment>
+                              }
+                              sx={muiStyles.passwordFieldStyles}
+                            />
+                          </FormControl>
+
+                          {confirmPasswordError && (
+                            <div
+                              className={`mt-1.5 text-[10px] font-normal text-darkRed`}
+                            >
+                              Passwords should be similar
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex flex-col gap-1">
@@ -239,9 +369,9 @@ const PersonalInformation = (props: Props) => {
                         <div className="w-[231px]">
                           <div>
                             <Field
-                              id="artistName"
-                              name="artistName"
-                              placeholder="Artist Name"
+                              id="professional_name"
+                              name="professional_name"
+                              placeholder="Professional Name"
                               style={{
                                 boxShadow: "none",
                               }}
@@ -253,6 +383,7 @@ const PersonalInformation = (props: Props) => {
                               id="username"
                               name="username"
                               placeholder="@Username"
+                              onChange={handleUsernameChange}
                               style={{
                                 boxShadow: "none",
                               }}
@@ -261,18 +392,11 @@ const PersonalInformation = (props: Props) => {
                           </div>
                         </div>
 
-                        <div className="w-full flex items-center justify-between gap-2">
+                        <div className="w-full flex items-center justify-center gap-2">
                           <div className="text-white flex items-center gap-1">
                             <IoLocationOutline className="w-4 h-4" />
                             <span className="text-[10px] font-medium">
                               City, State
-                            </span>
-                          </div>
-                          <div className="text-white flex items-center gap-1">
-                            <FaBirthdayCake className="w-4 h-4" />
-                            <span className="text-[10px] font-medium">
-                              Month 28th, year{" "}
-                              <span className="text-platinum">(Years)</span>
                             </span>
                           </div>
                         </div>
@@ -297,9 +421,14 @@ const PersonalInformation = (props: Props) => {
                   <div className="mt-[60px] mr-2.5 w-full flex justify-end">
                     <button
                       type="submit"
-                      className="bg-limeGreen py-3 px-4 rounded-[60px] text-sm font-semibold text-jetBlack cursor-pointer"
+                      disabled={isButtonDisabled} 
+                      className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
+                        buttonText === "Saved"
+                          ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"
+                          : "cursor-pointer bg-limeGreen border-limeGreen text-jetBlack"
+                      }`}
                     >
-                      Save Changes
+                      {buttonText}
                     </button>
                   </div>
                 </>

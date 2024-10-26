@@ -26,8 +26,27 @@ export async function sendVerificationEmailAPI(data: any) {
   return axiosInstance.post('/auth/send-email-address-verification-email', data);
 }
 
-export async function resetPasswordAPI(data: any) {
-  return axiosInstance.post('/auth/confirm/password', data);
+export async function updateUserPassword(userData: {
+  email: string;
+  newPassword: string;
+}): Promise<{ errorCode?: string; message?: string; error?: boolean }> {
+  try {
+    const response = await axiosInstance.post('/auth/update/user-password', userData);
+    return response.data; // Ensure the backend sends a proper response with errorCode
+  } catch (error) {
+    if (error.response && error.response.data) {
+      return {
+        error: true,
+        errorCode: error.response.data.errorCode, // This should come from the backend
+        message: error.response.data.message,
+      };
+    } else {
+      return {
+        error: true,
+        message: 'An unknown error occurred',
+      };
+    }
+  }
 }
 
 export async function forgotPasswordAPI(data: any) {

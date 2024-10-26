@@ -9,8 +9,11 @@ interface Props {
   selectedSkills: string[];
   setSelectedSkills: (value: any) => void;
   label: string;
-  isEditable: boolean;
+  isEditable?: boolean;
   name: string;
+  inputBgColor?: string;
+  labelColor?: string;
+  screen?: string;
 }
 
 const MultiSelectDropdown = (props: Props) => {
@@ -19,8 +22,11 @@ const MultiSelectDropdown = (props: Props) => {
     selectedSkills,
     setSelectedSkills,
     label,
-    isEditable,
+    isEditable = true,
     name,
+    inputBgColor,
+    labelColor,
+    screen,
   } = props;
 
   // hook for mui styles
@@ -35,7 +41,13 @@ const MultiSelectDropdown = (props: Props) => {
 
   return (
     <div className="flex-1">
-      <div className="text-gray text-sm font-medium mb-1">{label}</div>
+      <div
+        className={`${
+          labelColor ? `text-${labelColor}` : "text-gray"
+        } text-sm font-medium mb-1`}
+      >
+        {label}
+      </div>
       <FormControl fullWidth variant="outlined">
         <Select
           labelId="skills-label"
@@ -46,7 +58,14 @@ const MultiSelectDropdown = (props: Props) => {
           onChange={handleChange}
           renderValue={() => null}
           disabled={!isEditable}
-          sx={muiStyles.SelectDropdown}
+          sx={{
+            ...(screen === "onBoarding"
+              ? muiStyles.singleSelectDropdownStyles
+              : muiStyles.SelectDropdown),
+            ".MuiSelect-select": {
+              backgroundColor: inputBgColor ? inputBgColor : "#161616",
+            },
+          }}
           MenuProps={{
             PaperProps: {
               sx: {
@@ -76,9 +95,27 @@ const MultiSelectDropdown = (props: Props) => {
       </FormControl>
 
       {/* show selected items container */}
-      <div className="mt-1 flex flex-wrap gap-2 border-[1px] border-charcoalGray p-2 rounded-lg min-h-12">
+      <div
+        className={`mt-1 flex flex-wrap gap-2 border-[1px] rounded-lg min-h-12 ${
+          screen === "onBoarding"
+            ? "bg-jetBlack border-eclipseGray p-3"
+            : "bg-transparent border-charcoalGray p-2"
+        }`}
+      >
         {selectedSkills.map((skill, idx) => (
-          <Chip key={skill + idx} label={skill} sx={muiStyles.muiChip} />
+          <Chip
+            key={skill + idx}
+            label={skill}
+            sx={{
+              ...muiStyles.muiChip,
+              ...(screen === "onBoarding" && {
+                color: "#999999",
+                borderRadius: "20px",
+                backgroundColor: "#1C1C1C",
+                height: "auto"
+              }),
+            }}
+          />
         ))}
       </div>
     </div>

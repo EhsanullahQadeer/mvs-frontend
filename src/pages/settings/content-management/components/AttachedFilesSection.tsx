@@ -17,6 +17,7 @@ import UpdateSamplePopup from "./UpdateSamplePopup";
 type Props = {
   setLoading: (value: boolean) => void;
   currentUserInfo: ICurrentUser;
+  isNewUser?: boolean;
 };
 
 const tableTabs = [
@@ -26,7 +27,7 @@ const tableTabs = [
 ];
 
 const AttachedFilesSection = (props: Props) => {
-  const { setLoading, currentUserInfo } = props;
+  const { setLoading, currentUserInfo, isNewUser } = props;
   const [selectedTab, setSelectedTab] = useState("all");
   const [attachedFilesTableData, setAttachedFilesTableData] = useState([]);
 
@@ -36,7 +37,9 @@ const AttachedFilesSection = (props: Props) => {
   };
 
   useEffect(() => {
-    getSamplesData();
+    if (!isNewUser) {
+      getSamplesData();
+    }
   }, [selectedTab]);
 
   const getSamplesData = async () => {
