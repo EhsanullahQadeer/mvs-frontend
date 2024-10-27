@@ -1,3 +1,14 @@
+/*************************************************************************
+ * @file SecurityModal.tsx
+ * @author Ramiro Santos
+ * @desc  Component for the security modal. 
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
+
+
+//THIRD PARTY IMPORTS 
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import PasswordField from './PasswordSecurityField'; 

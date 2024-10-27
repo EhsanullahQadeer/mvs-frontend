@@ -6,7 +6,10 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+// THIRD PARTY IMPORTS
 import React, { useState } from 'react';
+
+// LOCAL IMPORTS
 import { InputModal, ConfirmationModal } from './SecurityModal';
 
 const DeactivateSecurityComponent = () => {

@@ -1,7 +1,7 @@
 /*************************************************************************
- * @file DeactivateSecrurityComponent.tsx
+ * @file PasswordSecurityComponent.tsx
  * @author Ramiro Santos
- * @desc  Component for the Deactivation security page. 
+ * @desc  Component for the Password security page. 
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
