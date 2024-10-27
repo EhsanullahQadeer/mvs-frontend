@@ -186,7 +186,7 @@ const Header: React.FC<HeaderProps> = () => {
                 <Menu.Item>
                   {({ active }) => (
                     <div
-                      onClick={() => setUserSettings(true)}
+                      onClick={() => navigate("/settings/")}
                       className={classNames(
                         active
                           ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"

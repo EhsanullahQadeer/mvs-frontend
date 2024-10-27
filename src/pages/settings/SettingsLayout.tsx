@@ -13,6 +13,7 @@ const SettingsLayout = () => {
   const tabs = [
     { name: "Account", path: "account/1" },
     { name: "Content Management", path: "content-management/1" },
+    { name: "Security", path: "security/1" },
     // { name: "Notifications", path: "notifications/1" },
     // { name: "Billing", path: "billing/1" },
     // { name: "Privacy", path: "privacy/1" },

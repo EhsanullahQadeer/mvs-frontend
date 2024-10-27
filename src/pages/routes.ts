@@ -27,6 +27,7 @@ import AccountSetting from "./settings/account/AccountSetting";
 import ContentManagement from "./settings/content-management/ContentManagement";
 import SettingsLayout from "./settings/SettingsLayout";
 import OnBoarding from "./onboarding/OnBoarding";
+import SecuritySettings from "./settings/security/SecuritySettings"
 
 interface IRoute {
   path: string;
@@ -160,6 +161,11 @@ const routes: IRoute[] = [
         path: "content-management/:id",
         name: "Content Management",
         component: ContentManagement,
+      },
+      {
+        path: "security/:id",
+        name: "Security",
+        component: SecuritySettings,
       },
     ],
   },
