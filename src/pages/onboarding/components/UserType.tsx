@@ -9,9 +9,17 @@
 import { useEffect, useState } from "react";
 import { userTypes } from "../sample-data/sampleData";
 
-type Props = {};
+type Props = {
+  markSectionAsCompleted: () => void;
+  formData: any;
+  setFormData: (values: any) => void;
+};
 
 const UserType = (props: Props) => {
+  const { markSectionAsCompleted, formData, setFormData } = props;
+  const [buttonText, setButtonText] = useState("Save Changes");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
   const initialValues = {
     primaryRole: "",
     subRole: "",
@@ -51,6 +59,7 @@ const UserType = (props: Props) => {
   }, [initialValues.primaryRole, initialValues.subRole]);
 
   const handleTypeSelect = (idx: number, value: string) => {
+    setButtonText("Save Changes");
     if (primaryRole?.index === idx) {
       setPrimaryRole(null);
     } else if (subRole?.index === idx) {
@@ -69,12 +78,16 @@ const UserType = (props: Props) => {
     }
 
     setError(false);
-    const submitValues = {
-      "primary-label": primaryRole.value,
-      "sub-label": subRole.value,
-    };
 
-    console.log("submitValues ", submitValues);
+    setFormData({
+      ...formData,
+      "primary_role": primaryRole.value,
+      "secondary_role": subRole.value,
+    });
+
+    setButtonText("Saved");
+    setIsButtonDisabled(true);
+    markSectionAsCompleted();
   };
 
   return (
@@ -140,10 +153,14 @@ const UserType = (props: Props) => {
 
         <div className="mt-[60px] mr-2.5 w-full flex justify-end">
           <div
-            onClick={handleSaveChanges}
-            className="bg-limeGreen py-3 px-4 rounded-[60px] text-sm font-semibold text-jetBlack cursor-pointer"
+            onClick={buttonText !== "Saved" ? handleSaveChanges : undefined}
+            className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
+              buttonText === "Saved"
+                ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"
+                : "cursor-pointer bg-limeGreen border-limeGreen text-jetBlack"
+            }`}
           >
-            Save Changes
+            {buttonText}
           </div>
         </div>
       </div>

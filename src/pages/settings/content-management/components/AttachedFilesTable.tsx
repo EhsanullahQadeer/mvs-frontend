@@ -197,91 +197,121 @@ const AttachedFilesTable = (props: Props) => {
               <TableCell />
             </TableRow>
           </TableHead>
-          <TableBody sx={muiStyles.tableBody}>
-            {sortedData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, idx) => {
-                const { filename, thumbnail, name, created_at } = row;
+          <TableBody sx={{ ...muiStyles.tableBody }}>
+            {sortedData.length > 0 ? (
+              sortedData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, idx) => {
+                  const { filename, thumbnail, name, created_at } = row;
 
-                const isItemSelected = selected.includes(row.id);
-                const labelId = `enhanced-table-checkbox-${idx}`;
+                  const isItemSelected = selected.includes(row.id);
+                  const labelId = `enhanced-table-checkbox-${idx}`;
 
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={idx}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell
-                      padding="checkbox"
-                      onClick={(event) => handleClick(event, row.id)}
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={idx}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
-                      <Checkbox
-                        sx={muiStyles.tableCheckbox}
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                      />
-                    </TableCell>
+                      <TableCell
+                        padding="checkbox"
+                        onClick={(event) => handleClick(event, row.id)}
+                      >
+                        <Checkbox
+                          sx={muiStyles.tableCheckbox}
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            "aria-labelledby": labelId,
+                          }}
+                        />
+                      </TableCell>
 
-                    <TableCell onClick={(event) => handleClick(event, row.id)}>
-                      <div className="flex flex-row gap-2.5 items-center">
-                        <div className="border border-charcoalGray py-2.5 px-1.5 bg-eerieBlack rounded">
-                          <div className="w-4 h-4">
+                      <TableCell
+                        onClick={(event) => handleClick(event, row.id)}
+                      >
+                        <div className="flex flex-row gap-2.5 items-center">
+                          <div className="border border-charcoalGray py-2.5 px-1.5 bg-eerieBlack rounded">
+                            <div className="w-4 h-4">
+                              <img
+                                src={musicBeam}
+                                alt="musicBeam"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+                          <span>{filename}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell
+                        onClick={(event) => handleClick(event, row.id)}
+                      >
+                        {formattedDate(created_at)}
+                      </TableCell>
+                      <TableCell
+                        onClick={(event) => handleClick(event, row.id)}
+                      >
+                        {name}
+                      </TableCell>
+                      <TableCell
+                        onClick={(event) => handleClick(event, row.id)}
+                      >
+                        <div className="flex gap-2.5 items-center">
+                          <div className="rounded-full w-8 h-8">
                             <img
-                              src={musicBeam}
-                              alt="musicBeam"
-                              className="w-full h-full object-cover"
+                              src={thumbnail}
+                              alt=""
+                              className="rounded-full w-full h-full"
                             />
                           </div>
-                        </div>
-                        <span>{filename}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell onClick={(event) => handleClick(event, row.id)}>
-                      {formattedDate(created_at)}
-                    </TableCell>
-                    <TableCell onClick={(event) => handleClick(event, row.id)}>
-                      {name}
-                    </TableCell>
-                    <TableCell onClick={(event) => handleClick(event, row.id)}>
-                      <div className="flex gap-2.5 items-center">
-                        <div className="rounded-full w-8 h-8">
-                          <img
-                            src={thumbnail}
-                            alt=""
-                            className="rounded-full w-full h-full"
-                          />
-                        </div>
 
-                        <div className="text-sm font-medium whitespace-nowrap">
-                          {name}
+                          <div className="text-sm font-medium whitespace-nowrap">
+                            {name}
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell align="right" sx={{ verticalAlign: "middle" }}>
-                      <div className="flex gap-2 justify-end">
-                        <div
-                          onClick={() => handleOpenDialog("delete", row)}
-                          className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
-                        >
-                          Delete
+                      </TableCell>
+                      <TableCell align="right" sx={{ verticalAlign: "middle" }}>
+                        <div className="flex gap-2 justify-end">
+                          <div
+                            onClick={() => handleOpenDialog("delete", row)}
+                            className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
+                          >
+                            Delete
+                          </div>
+                          <div
+                            onClick={() => handleOpenDialog("edit", row)}
+                            className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
+                          >
+                            Edit
+                          </div>
                         </div>
-                        <div
-                          onClick={() => handleOpenDialog("edit", row)}
-                          className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
-                        >
-                          Edit
-                        </div>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+            ) : (
+              <TableRow
+                sx={{
+                  cursor: "auto !important",
+                  ":hover": { backgroundColor: "#0F0F0F !important" },
+                }}
+              >
+                <TableCell colSpan={columns.length + 2}>
+                  <div className="w-full h-80 flex justify-center items-center">
+                    <div className="text-sm text-center">
+                      <span className="text-white underline">
+                        Empty Library
+                      </span>{" "}
+                      <span className="text-dimGray">
+                        your files will <br /> appear here
+                      </span>
+                    </div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
