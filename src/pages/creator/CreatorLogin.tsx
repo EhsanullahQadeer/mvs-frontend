@@ -144,10 +144,17 @@ const CreatorLogin: React.FC = () => {
             <ErrorMessage name="password" />
           </div>
 
-          <div onClick={handleforget} className="flex justify-end mt-2 mb-6">
-            <p className="text-limeGreen text-xs cursor-pointer">
+          <div className="flex justify-end mt-2 mb-6">
+            <a 
+              href="#" 
+              onClick={(e) => {
+                e.preventDefault();
+                handleforget();
+              }} 
+              className="text-limeGreen text-xs cursor-pointer hover:underline inline-block"
+            >
               Forgot Password?
-            </p>
+            </a>
           </div>
           <button
             type="submit"
