@@ -81,6 +81,7 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
     <>
       <ComposerDialog
         {...{
+          contributors:selectedComposer,
           openComposerDialog,
           setOpenComposerDialog,
           handleAddComposer,
