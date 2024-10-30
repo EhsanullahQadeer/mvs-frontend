@@ -182,7 +182,7 @@ function ComposerDialog(props: Props) {
               {isInvite ? "Invite" : "Add"}
             </div>
           </div>
-          <div className={`flex flex-col bg-eerieBlack absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown`}>
+          <div className={`flex flex-col bg-[#1C1C17] absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown`}>
               {searchResults.map((composer, idx) => {
                 const { thumbnail, professional_name, primary_label, sub_label } =
                   composer;
