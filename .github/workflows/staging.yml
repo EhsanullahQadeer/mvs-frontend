@@ -11,43 +11,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-      # Setup npmrc to ensure correct registry is used
       - name: Setup npmrc
         run: echo "registry=https://registry.npmjs.org/" > ~/.npmrc
-
-      # Setup Node.js
       - uses: actions/setup-node@v2
         with:
           node-version: 20
-
-      # Install pnpm using npm as a fallback
       - name: Install pnpm
         run: npm install -g pnpm@7.0.1
-
-      # Verify pnpm installation
       - name: Verify pnpm
         run: pnpm --version
-
-      # Install dependencies and build the project
       - run: yarn install
       - run: yarn build
         env:
+          CI: false
           REACT_APP_API_URL: https://staging-api.mvssive.net
           REACT_APP_STRIPE_PUBLISHABLE_KEY: ${{ secrets.REACT_APP_STRIPE_PUBLISHABLE_KEY_STAGING }}
           REACT_APP_APIGATEWAY_URL: ${{ secrets.REACT_APP_APIGATEWAY_URL_STAGING }}
-
-      # Configure AWS credentials
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # Sync build files to S3
       - run: aws s3 sync ./build s3://${{ secrets.AWS_BUCKET_NAME_STAGING }}
 
-      # Invalidate CloudFront cache
       - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
         env:

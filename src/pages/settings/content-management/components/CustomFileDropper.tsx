@@ -51,14 +51,11 @@ const CustomFileDropper = (props: Props) => {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMessage("");
-
     const selectedFile = e.target.files ? e.target.files[0] : null;
     const validFile = selectedFile ? validateFile(selectedFile) : null;
-
     if (validFile) {
       setUploadingFile(validFile);
     }
-
     e.target.value = "";
   };
 
