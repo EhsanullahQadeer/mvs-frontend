@@ -1,16 +1,27 @@
+import axiosInstance from "api/axios";
 import { ReactComponent as MvsLogo } from "../../../assets/icons/mvsLogo.svg";
 import { ReactComponent as StripeLogo } from "../../../assets/icons/stripeLogo.svg";
 import { BsArrowLeftRight } from "react-icons/bs";
+import { handleConnectWithStripe } from "api/stripe";
 
 type Props = {
+  user: { results?: { user?: { id?: number } } };
   markSectionAsCompleted: () => void;
 };
 
-const PaidSection = (props: Props) => {
-  const { markSectionAsCompleted } = props;
+const PaidSection = (
+  props: Props
+) => {
 
-  const handleSubmit = () => {
-    
+  const { markSectionAsCompleted, user } = props;
+
+  const handleSubmit = async () => {
+    const url = await handleConnectWithStripe(user.results?.user.id);
+    if (url) {
+      window.location.href = url;
+    } else {
+      console.error("Failed to retrieve Stripe URL");
+    }
   };
 
   return (
