@@ -16,7 +16,6 @@ import TermsOfService from "pages/terms";
 import SamplesPage from "pages/samples";
 import MyLikesPage from "pages/my-likes";
 import MyDownloadsPage from "pages/downloaded-samples";
-import ProfilePage from "pages/ProfilePage";
 import InboxPage from "pages/Inbox";
 import StripeCallback from "pages/StripeCallback";
 import CheckScrolling from "./CheckScrolling";
@@ -54,11 +53,6 @@ const routes: IRoute[] = [
     path: "/check-scrolling",
     name: "CheckScrolling",
     component: CheckScrolling,
-  },
-  {
-    path: "/profile/:username",
-    name: "Profile",
-    component: ProfilePage,
   },
 
   // Onboarding ==========================================================================
