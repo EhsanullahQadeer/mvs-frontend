@@ -102,19 +102,19 @@ const AudioPlayer = ({
         let currentTime = audioRef.current.currentTime;
 
         if (event.key === "ArrowLeft") {
-          currentTime -= audioRef.current.duration * 0.1; // Go back 10%
+          currentTime -= audioRef.current.duration * 0.07;
           if (currentTime < 0) {
             currentTime = 0;
           }
         } else if (event.key === "ArrowRight") {
-          currentTime += audioRef.current.duration * 0.1; // Go forward 10%
+          currentTime += audioRef.current.duration * 0.07;
           if (currentTime > audioRef.current.duration) {
             currentTime = audioRef.current.duration;
           }
         }
 
-        audioRef.current.currentTime = currentTime; // Set new currentTime
-        setProgress((currentTime / audioRef.current.duration) * 100); // Update progress
+        audioRef.current.currentTime = currentTime;
+        setProgress((currentTime / audioRef.current.duration) * 100);
       }
     };
 
