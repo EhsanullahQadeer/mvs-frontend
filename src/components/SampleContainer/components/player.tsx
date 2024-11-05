@@ -35,19 +35,7 @@ const AudioPlayer = ({
   const [isMuted, setIsMuted] = useState(false);
   const [prevVol, setPrevVol] = useState(0.5);
   const { audioRef, metadata } = useContext(waveformCtx);
-
-  // Handlers for skipping tracks
-  const handlePrevClick = () => {
-    console.log("Previous track");
-    // Logic to switch to the previous track
-  };
-
-  const handleNextClick = () => {
-    console.log("Next track");
-    // Logic to switch to the next track
-  };
-
-  // Volume control
+  
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(event.target.value); // Using parseFloat for finer control
     setVolume(newVolume);
@@ -56,7 +44,6 @@ const AudioPlayer = ({
     }
   };
 
-  
   const toggleMute = () => {
     if (isMuted) {
       setVolume(prevVol);
@@ -72,7 +59,6 @@ const AudioPlayer = ({
     }
     setIsMuted(!isMuted);
   };
-
 
   const muteButton = document.getElementById("muteButton");
   useEffect(() => {
