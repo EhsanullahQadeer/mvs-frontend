@@ -27,56 +27,52 @@ const AudioPlayer = ({
   onNextClick,
 }) => {
 
-const [playing, setPlaying] = useState(false);
-const [volume, setVolume] = useState(0.5);
-const [currentSampleIndex, setCurrentSampleIndex] = useState(0);
-const [progress, setProgress] = useState(0);
-const [duration, setDuration] = useState(0);
-const [isMuted, setIsMuted] = useState(false);
-const [prevVol, setPrevVol] = useState(0.5);
-const { audioRef, metadata } = useContext(waveformCtx);
+  const [playing, setPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.5);
+  const [currentSampleIndex, setCurrentSampleIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [prevVol, setPrevVol] = useState(0.5);
+  const { audioRef, metadata } = useContext(waveformCtx);
 
-// Handlers for skipping tracks
-const handlePrevClick = () => {
-  console.log("Previous track");
-  // Logic to switch to the previous track
-};
+  // Handlers for skipping tracks
+  const handlePrevClick = () => {
+    console.log("Previous track");
+    // Logic to switch to the previous track
+  };
 
-const handleNextClick = () => {
-  console.log("Next track");
-  // Logic to switch to the next track
-};
+  const handleNextClick = () => {
+    console.log("Next track");
+    // Logic to switch to the next track
+  };
 
-// Volume control
-const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const newVolume = parseFloat(event.target.value); // Using parseFloat for finer control
-  setVolume(newVolume);
-  if (audioRef.current) {
-    audioRef.current.volume = newVolume;
-  }
-};
-
-// Mute toggle logic
-const toggleMute = () => {
-  if (isMuted) {
-    setVolume(prevVol);
-    if (audioRef.current) {
-      audioRef.current.volume = prevVol;
-    }
-  } else {
-    setPrevVol(volume);
-    setVolume(0);
-    if (audioRef.current) {
-      audioRef.current.volume = 0;
-    }
-  }
-  setIsMuted(!isMuted);
-};
+  // Volume control
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(event.target.value); // Using parseFloat for finer control
     setVolume(newVolume);
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
   };
+
+  
+  const toggleMute = () => {
+    if (isMuted) {
+      setVolume(prevVol);
+      if (audioRef.current) {
+        audioRef.current.volume = prevVol;
+      }
+    } else {
+      setPrevVol(volume);
+      setVolume(0);
+      if (audioRef.current) {
+        audioRef.current.volume = 0;
+      }
+    }
+    setIsMuted(!isMuted);
+  };
+
 
   const muteButton = document.getElementById("muteButton");
   useEffect(() => {
