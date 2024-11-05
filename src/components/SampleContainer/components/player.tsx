@@ -9,7 +9,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import WaveformPlayer from "components/AudioPlayer/audio-player";
-import { useContext, useEffect, useState, useCallback } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { PlayerContext } from "../player-container";
 import skipBack from "../../../assets/img/player/skip-back.svg";
 import skipNext from "../../../assets/img/player/skip-forward.svg";
@@ -26,33 +26,86 @@ const AudioPlayer = ({
   onPrevClick,
   onNextClick,
 }) => {
-  // const { currentTrack, isPlaying, playTrack, pauseTrack } = useContext(PlayerContext);
 
-  // State variables to be used in Artist Profile Page
-  const [playing, setPlaying] = useState(false);
-  const [volume, setVolume] = useState(50);
-  const [currentSampleIndex, setCurrentSampleIndex] = useState(0);
-  const [progress, setProgress] = useState(0); // State to track audio progress percentage
-  const [duration, setDuration] = useState(0); // To store the actual duration
-  const { audioRef, metadata } = useContext(waveformCtx); // Get audioRef and metadata from context
+const [playing, setPlaying] = useState(false);
+const [volume, setVolume] = useState(0.5);
+const [currentSampleIndex, setCurrentSampleIndex] = useState(0);
+const [progress, setProgress] = useState(0);
+const [duration, setDuration] = useState(0);
+const [isMuted, setIsMuted] = useState(false);
+const [prevVol, setPrevVol] = useState(0.5);
+const { audioRef, metadata } = useContext(waveformCtx);
 
-  // Handlers for skipping tracks
-  const handlePrevClick = () => {
-    console.log("Previous track");
-    // Logic to switch to the previous track
-  };
+// Handlers for skipping tracks
+const handlePrevClick = () => {
+  console.log("Previous track");
+  // Logic to switch to the previous track
+};
 
-  const handleNextClick = () => {
-    console.log("Next track");
-    // Logic to switch to the next track
-  };
+const handleNextClick = () => {
+  console.log("Next track");
+  // Logic to switch to the next track
+};
 
-  // Volume control
-  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseInt(event.target.value);
+// Volume control
+const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const newVolume = parseFloat(event.target.value); // Using parseFloat for finer control
+  setVolume(newVolume);
+  if (audioRef.current) {
+    audioRef.current.volume = newVolume;
+  }
+};
+
+// Mute toggle logic
+const toggleMute = () => {
+  if (isMuted) {
+    setVolume(prevVol);
+    if (audioRef.current) {
+      audioRef.current.volume = prevVol;
+    }
+  } else {
+    setPrevVol(volume);
+    setVolume(0);
+    if (audioRef.current) {
+      audioRef.current.volume = 0;
+    }
+  }
+  setIsMuted(!isMuted);
+};
     setVolume(newVolume);
-    // Update the audio volume here, e.g., using audio element or context
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
   };
+
+  const muteButton = document.getElementById("muteButton");
+  useEffect(() => {
+    if (muteButton) {
+      const handleMuteToggle = () => {
+        if (isMuted) {
+          setVolume(prevVol);
+          if (audioRef.current) {
+            // setting Volume will take place after event listener, need to set to prevVol instead
+            audioRef.current.volume = prevVol;
+          }
+        } else {
+          setPrevVol(volume);
+          setVolume(0);
+          if (audioRef.current) {
+            // can't use volume here, need to use 0
+            audioRef.current.volume = 0;
+          }
+        }
+        setIsMuted(!isMuted);
+      };
+
+      muteButton.addEventListener("click", handleMuteToggle);
+
+      return () => {
+        muteButton.removeEventListener("click", handleMuteToggle);
+      };
+    }
+  });
 
   // Handlers for dragging the volume slider
   const handleMouseMove = (event: MouseEvent) => {
@@ -290,34 +343,49 @@ const AudioPlayer = ({
       {/* Volume Control */}
       <div className="volume-container mx-5 max-w-max">
         {/* Volume Button */}
-        <button className="volume-button">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z"
-            />
-          </svg>
+        <button className="volume-button" id="muteButton">
+          {isMuted || volume === 0 ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z"
+              />
+            </svg>
+          )}
         </button>
         <div className="volume-slider-wrapper">
           <input
+            id="volume-level"
             type="range"
             min="0"
-            max="100"
-            className="volume-input"
+            max="1"
+            step="0.02"
             onChange={handleVolumeChange}
             value={volume}
           />
-          <div className="volume-slider" onMouseDown={handleMouseDown}>
-            <div className="volume-level" style={{ width: `${volume}%` }}></div>
-          </div>
         </div>
       </div>
     </div>

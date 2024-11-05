@@ -81,25 +81,6 @@ const ArtistProfile = () => {
     getArtistData();
   }, [getArtistData]);
 
-  // useEffect(() => {
-  //   if (artistData) {
-  //     getMusicTableData(artistData.cognito_id);
-  //   }
-  // }, [artistData]);
-
-  // const getMusicTableData = async (cognito_id: string) => {
-  //   try {
-  //     const response = await getUserSamplesAPI({ cognito_id });
-  //     if (response.data) {
-  //       console.log("getMusicTableData", response.data.results);
-  //       setMusicTableArr(response.data.results);
-  //       return;
-  //     }
-  //   } catch (e) {
-  //     return;
-  //   }
-  // };
-
   console.log("artist", artistData);
   return (
     <Theme>
