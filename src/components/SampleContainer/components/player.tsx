@@ -26,22 +26,38 @@ const AudioPlayer = ({
   onPrevClick,
   onNextClick,
 }) => {
-  // const { currentTrack, isPlaying, playTrack, pauseTrack } = useContext(PlayerContext);
 
-  // States for handling playback and volume
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [currentSampleIndex, setCurrentSampleIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [prevVol, setPrevVol] = useState(0.5);
-
-  // Volume control
+  const { audioRef, metadata } = useContext(waveformCtx);
+  
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(event.target.value);
+    const newVolume = parseFloat(event.target.value); // Using parseFloat for finer control
     setVolume(newVolume);
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
+  };
+
+  const toggleMute = () => {
+    if (isMuted) {
+      setVolume(prevVol);
+      if (audioRef.current) {
+        audioRef.current.volume = prevVol;
+      }
+    } else {
+      setPrevVol(volume);
+      setVolume(0);
+      if (audioRef.current) {
+        audioRef.current.volume = 0;
+      }
+    }
+    setIsMuted(!isMuted);
   };
 
   const muteButton = document.getElementById("muteButton");
@@ -84,14 +100,11 @@ const AudioPlayer = ({
     );
     setVolume(newVolume);
   };
-  const [progress, setProgress] = useState(0); // State to track audio progress percentage
-  const [duration, setDuration] = useState(0); // To store the actual duration
 
   const handleMouseDown = () => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
   };
-  const { audioRef, metadata } = useContext(waveformCtx); // Get audioRef and metadata from context
 
   const handleMouseUp = () => {
     window.removeEventListener("mousemove", handleMouseMove);
@@ -116,6 +129,41 @@ const AudioPlayer = ({
     }
     requestAnimationFrame(updateProgress); // Continuously update using requestAnimationFrame
   };
+
+  // Listener for Left and Right arrow keys to jump 10% forward or back in the sample
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (audioRef.current && audioRef.current.duration > 0) {
+        let currentTime = audioRef.current.currentTime;
+
+        if (event.key === "ArrowLeft") {
+          currentTime -= audioRef.current.duration * 0.07;
+          if (currentTime < 0) {
+            currentTime = 0;
+          }
+        } else if (event.key === "ArrowRight") {
+          currentTime += audioRef.current.duration * 0.07;
+          if (currentTime > audioRef.current.duration) {
+            currentTime = audioRef.current.duration;
+          }
+        }
+
+        audioRef.current.currentTime = currentTime;
+        setProgress((currentTime / audioRef.current.duration) * 100);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Start updating progress when audio plays
+    audioRef.current.addEventListener("play", updateProgress);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      audioRef.current.removeEventListener("play", updateProgress);
+    };
+  }, []);
 
   useEffect(() => {
     if (audioRef.current) {
