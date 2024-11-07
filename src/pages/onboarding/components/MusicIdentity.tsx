@@ -30,6 +30,11 @@ const validationSchema = Yup.object().shape({
     then: Yup.string().required("Intellectual Property Number is required for partners."),
     otherwise: Yup.string().notRequired(),
   }),
+  collab_terms: Yup.number()
+  .nullable()  // Since it's optional
+  .min(0, "Percentage must be at least 0")
+  .max(100, "Percentage must be less than 100")
+  .typeError("Enter a valid number between 0 and 100")
 });
 
 const MusicIdentity = (props: Props) => {
@@ -87,9 +92,8 @@ const MusicIdentity = (props: Props) => {
                     <div className="flex-1">
                       <FormikLabeledField
                         name="ip_number"
-                        label={`Intellectual Property Number (#IP) ${
-                          !isPartner ? "(optional)" : ""
-                        }`}
+                        label={`Intellectual Property Number (#IP) ${!isPartner ? "(optional)" : ""
+                          }`}
                         placeholder="IP# 123456789"
                         inputBgColor="jetBlack"
                         labelColor="white"
@@ -116,6 +120,12 @@ const MusicIdentity = (props: Props) => {
                         inputBgColor="jetBlack"
                         labelColor="white"
                       />
+                      {/* Error message displayed using Formik's errors object */}
+                      {typeof errors.collab_terms === "string" && touched.collab_terms && (
+                        <div className="mt-1.5 text-[10px] font-normal text-darkRed">
+                          {errors.collab_terms}
+                        </div>
+                      )}
                       <p className="px-2 mt-3 text-xs font-normal text-dimGray">
                         Tell us your preferred starting percentage for any song or sample that uses your work or lands a placement. This
                         will help us set clear expectations and make collaboration smoother.
@@ -123,15 +133,15 @@ const MusicIdentity = (props: Props) => {
                     </div>
 
                     <div className="flex-1">
-                    <FormikSingleSelectDropdown
-                      name="publisher"
-                      label="Publisher (optional)"
-                      placeholder="Publisher"
-                      dropdownItems={publishersArr}
-                      inputBgColor="#0F0F0F"
-                      labelColor="white"
-                      dropdownBgColor="#1c1c1c"
-                    />
+                      <FormikSingleSelectDropdown
+                        name="publisher"
+                        label="Publisher (optional)"
+                        placeholder="Publisher"
+                        dropdownItems={publishersArr}
+                        inputBgColor="#0F0F0F"
+                        labelColor="white"
+                        dropdownBgColor="#1c1c1c"
+                      />
                     </div>
                   </div>
 
@@ -178,11 +188,10 @@ const MusicIdentity = (props: Props) => {
                     <button
                       type="submit"
                       disabled={isButtonDisabled}
-                      className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
-                        buttonText === "Saved"
+                      className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${buttonText === "Saved"
                           ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"
                           : "cursor-pointer bg-limeGreen border-limeGreen text-jetBlack"
-                      }`}
+                        }`}
                     >
                       {buttonText}
                     </button>
