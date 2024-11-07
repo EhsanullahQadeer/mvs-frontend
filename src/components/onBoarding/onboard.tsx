@@ -35,7 +35,7 @@ const Onboarding = (props:any) => {
     // Construct the payload with user data
     const payload = {
       ...user,
-      first_visit: true
+      first_visit: false
     };
 
     try {
