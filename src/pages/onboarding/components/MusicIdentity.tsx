@@ -27,13 +27,15 @@ type Props = {
 const validationSchema = Yup.object().shape({
   ip_number: Yup.string().when("isPartner", {
     is: true,
-    then: Yup.string().required("Intellectual Property Number is required for partners."),
+    then: Yup.string()
+    .required("Intellectual Property Number is required for partners.")
+    .test('len', 'Must be exactly 9 characters', val => val && val.length === 9),
     otherwise: Yup.string().notRequired(),
   }),
   collab_terms: Yup.number()
   .nullable()  // Since it's optional
-  .min(0, "Percentage must be at least 0")
-  .max(100, "Percentage must be less than 100")
+  .min(1, "Percentage must be at least 1%")
+  .max(100, "Percentage must be less than 100%")
   .typeError("Enter a valid number between 0 and 100")
 });
 
