@@ -54,6 +54,7 @@ export const musicGenres = [
 ];
 
 export const publishersArr = [
+  "N/A",
   "Sony ATV Publishing",
   "Universal Music Publishing Group",
   "Warner Chappel Music",
