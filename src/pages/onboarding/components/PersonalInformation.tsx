@@ -80,6 +80,15 @@ const PersonalInformation = (props: Props) => {
     bio: "",
   };
 
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+    });
+  };
+
   const handleSubmit = async (values) => {
     setPasswordError(false);
     setConfirmPasswordError(false);
@@ -95,7 +104,6 @@ const PersonalInformation = (props: Props) => {
       setConfirmPasswordError(true);
       return;
     }
-
 
     const sanitizedUsername = values.username.startsWith('@')
       ? values.username.substring(1)
@@ -140,16 +148,21 @@ const PersonalInformation = (props: Props) => {
     return hasMinLength && hasTwoNumbers;
   };
 
-  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setThumbnail(imageUrl);
-      setThumbnailType(file.type);
-      setButtonText("Save Changes");
-      e.target.value = null;
+      try {
+        const base64Thumbnail = await convertFileToBase64(file);
+        setThumbnail(base64Thumbnail);
+        setThumbnailType(file.type);
+        setButtonText("Save Changes");
+      } catch (error) {
+        console.error("Error converting file to base64", error);
+      }
     }
+    e.target.value = null;
   };
+  
   return (
     <div>
       <p className="text-sm font-normal text-mediumGray">
