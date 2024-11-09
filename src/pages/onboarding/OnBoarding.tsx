@@ -23,6 +23,7 @@ import InvalidCodeMessage from "./components/InvalidCodeExpired";
 import { registerAPI } from "api/auth";
 import { useDispatch } from "react-redux";
 import { login } from "redux/actions";
+import LoadingScreen from "components/SampleContainer/components/loading";
 
 const OnBoarding = () => {
 
@@ -32,23 +33,30 @@ const OnBoarding = () => {
   const [checkingInviteCodeValidity, setCheckingInviteCodeValidity] = useState(true);
   const [userType, setUserType] = useState("");
   const [isPartner, setIsPartner] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null)
   const [userEmail, setUserEmail] = useState("");
   const [userFirstName, setUserFirstName] = useState("");
   const [userLastName, setUserLastName]   = useState("");
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const numberOfTabs = isPartner ? 5 : 4;
+  const [completedSections, setCompletedSections] = useState<string[]>([]);
+  const [openTab, setOpenTab] = useState<string | null>(null);
+  const completeProgress = (completedSections.length / numberOfTabs) * 100;
+  const [followUsers, setFollowUsers] = useState([]);
+  const [connectUsers, setConnectUsers] = useState([]);
+  const [formData, setFormData] = useState<INewUserForm>({});
+  const dispatch: any = useDispatch();
 
   useEffect(() => {
     const checkInviteCode = async () => {
       if (id) {
         try {
           const response = await verifyAndRetrieveInviteCodeDetails(id);
-          console.log('response', response);
-          
-          // Check if the error field exists and is true
           if (response?.data?.error) {
-            console.log('Error occurred:', response.data.message);
-            setIsValidCode(false); // Invalid code, mark as invalid
+            setIsValidCode(false);
           } else if (response?.data?.results?.user_type) {
-            // If there's no error and user_type is available
             const user_type = response.data.results.user_type;
             setIsPartner(user_type === "partner");
             setIsValidCode(true);
@@ -74,22 +82,8 @@ const OnBoarding = () => {
     checkInviteCode();
   }, [id]);
 
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const numberOfTabs = isPartner ? 6 : 4;
-  const [completedSections, setCompletedSections] = useState<string[]>([]);
-  const [openTab, setOpenTab] = useState<string | null>(null);
-  const completeProgress = (completedSections.length / numberOfTabs) * 100;
-  const [followUsers, setFollowUsers] = useState([]);
-  const [connectUsers, setConnectUsers] = useState([]);
-  const [formData, setFormData] = useState<INewUserForm>({});
-  const user = JSON.parse(localStorage.getItem("user"));
-  const dispatch: any = useDispatch();
-
-
   const toggleTab = (tabId: string) => {
     const currentIndex = sections.findIndex(section => section.id === tabId);
-    
     if (currentIndex === 0 || completedSections.includes(sections[currentIndex - 1].id)) {
       setOpenTab(openTab === tabId ? null : tabId);
     } else {
@@ -103,19 +97,18 @@ const OnBoarding = () => {
     }
     const currentIndex = sections.findIndex((section) => section.id === tabId);
     const nextSection = sections[currentIndex + 1];
-    if (nextSection) {
+    if (nextSection && nextSection.id !== "paidSection") {
       setOpenTab(nextSection.id);
     }
   };
 
   useEffect(() => {
     const submitAndRedirect = async () => {
-      if (completedSections.length === numberOfTabs) {
+      setLoading(true);
+      if (!isPartner && completedSections.length === numberOfTabs) {
         await handleSubmitForm();
-        console.log('formikData', formData);
         const email = userEmail;
         const password = formData.password;
-        
         localStorage.removeItem("persist:root");
         dispatch(
           login({
@@ -125,14 +118,20 @@ const OnBoarding = () => {
         );
         navigate("/home");
       }
+      else if (isPartner && completedSections.length === numberOfTabs) {
+        const user = await handleSubmitForm();
+        console.log('user', user);
+        setUser(user);
+        localStorage.removeItem("persist:root");
+        setOpenTab("paidSection");
+      }
+      setLoading(false);
     };
-  
     submitAndRedirect();
   }, [completedSections, numberOfTabs, isPartner, navigate, formData]);
 
   const handleSubmitForm = async () => {
     try {
-
       const firstName = userFirstName;
       const email = userEmail;
       const lastName = userLastName;
@@ -146,11 +145,9 @@ const OnBoarding = () => {
         stripe_connect_info: "",
         bio: formData.bio || "",
       };
-
-      console.log('body', body);
-
       const response = await addNewUser(body);
       localStorage.removeItem("user");
+      return response.data;
     } catch (error) {
       console.log("error", error);
     }
@@ -227,18 +224,6 @@ const OnBoarding = () => {
   ];
 
   const partnerSections = [
-    // {
-    //   id: "uploadSamples",
-    //   title: "Time to upload your first samples",
-    //   component: (
-    //     <UploadSampleSection
-    //       isActive={openTab === "uploadSamples"}
-    //       markSectionAsCompleted={() => markSectionAsCompleted("uploadSamples")}
-    //       formData={formData}
-    //       setFormData={setFormData}
-    //     />
-    //   ),
-    // },
     {
       id: "setPrices",
       title: "Set your prices",
@@ -257,6 +242,7 @@ const OnBoarding = () => {
       title: "Now, let's set up how you get paid",
       component: (
         <PaidSection
+          user={user}
           markSectionAsCompleted={() => markSectionAsCompleted("paidSection")}
         />
       ),
@@ -266,8 +252,6 @@ const OnBoarding = () => {
   const sections = [...commonSections];
   if (isPartner) sections.splice(4, 0, ...partnerSections);
 
-
-  // If the code is invalid, show the InvalidCodeMessage
   if (!isValidCode) {
     return <InvalidCodeMessage />;
   }

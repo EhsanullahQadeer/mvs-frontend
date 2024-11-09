@@ -1,7 +1,7 @@
 /*************************************************************************
- * @file index.tsx
+ * @file api/stripe/index.tsx
  * @author End Quote
- * @desc Manages the Chatbox component states and hooks.
+ * @desc 
  * 
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
@@ -13,12 +13,30 @@ import { Stripe, StripeElements } from '@stripe/stripe-js';
 
 /* LOCAL IMPORTS */
 import axios from "api/axios";
-import { config } from "config/ConfigManager";
+
+export const handleConnectWithStripe = async (
+  userId: number,
+) => {
+  try {
+    const response = await axios.post(`/stripe/connect?userId=${userId}`);
+    const url = response.data.url;
+
+    if (url) {
+      return url;
+    } else {
+      console.error('Stripe URL not received.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error initiating Stripe Connect:', error);
+    return null;
+  }
+};
 
 export const handlePaymentIntentAPI = async (
   stripe: Stripe | null,
   elements: StripeElements | null,
-  amount: number // Payment amount
+  amount: number
 ) => {
 
   // Grab the user's credit card information
@@ -77,8 +95,6 @@ export const handleRefundAPI = async (
   }
 };
 
-export const handlePaymentConfirmAPI = async (
-
-) => {
+export const handlePaymentConfirmAPI = async () => {
 
 }
