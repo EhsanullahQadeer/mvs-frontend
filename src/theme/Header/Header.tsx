@@ -163,11 +163,9 @@ const Header: React.FC<HeaderProps> = () => {
                 <Menu.Item>
                   {({ active }) => (
                     <div
-                      onClick={() =>
-                        navigate(
-                          `/profile/${state?.auth?.user?.profile?.Username}`
-                        )
-                      }
+                      onClick={() => {
+                        navigate(`/artist-profile/${state?.auth?.user?.username}`);
+                      }}
                       className={classNames(
                         active
                           ? "flex items-center px-[12px] py-[8px] cursor-pointer bg-[#0014CD]"

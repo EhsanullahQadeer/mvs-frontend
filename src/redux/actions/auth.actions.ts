@@ -70,31 +70,11 @@ export function fetchCurrentUser() {
     dispatch: Dispatch
   ) {
     try {
-      // Fetching user details from /auth/me
       const userResponse = await axios.get(`/auth/me`);
       const user = userResponse.data;
-      console.log('User data from /auth/me:', user);
-
-      // Fetching additional profile details from /profiles/details
-      const profileResponse = await axios.get(`/users/get-user-profile-details`, {
-        params: {
-          UserId: user.UserId
-        }
-      });
-      const profileDetails = profileResponse.data.available;
-      console.log('Profile details:', profileDetails);
-
-      // Combining both results
-      const combinedUserDetails = {
-        ...user,
-        profile: profileDetails,
-      };
-      console.log( 'Combined user details:', combinedUserDetails );
-
-      // Dispatching combined result
       dispatch({
         type: ActionType.CURRENT_USER,
-        payload: combinedUserDetails,
+        payload: user,
       });
     } catch (error) {
       console.error('Error fetching user details:', error);
