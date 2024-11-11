@@ -162,11 +162,11 @@ export function SearchHeader(props: IAppProps) {
                         alt={option.artist_name || option.professional_name}
                         className="w-10 h-10 rounded-md"
                       />
-                      <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
-                        <span className="text-gainsboro text-sm">
+                      <div className="flex items-center gap-3">
+                        <span className="text-gainsboro text-sm w-32">
                           {option.artist_name || option.professional_name}
                         </span>
-                        <span className="text-charcoalGray text-xs">
+                        <span className="text-charcoalGray text-xs ml-auto">
                           From{" "}
                           <span className="text-coolGray">{option.type}</span>
                         </span>
