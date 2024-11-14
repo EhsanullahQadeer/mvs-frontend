@@ -38,9 +38,10 @@ export function SearchHeader(props: IAppProps) {
       const response = await spotifySearchTopArtist({
         limit: 10,
       });
-      console.log("list response withput serach", response.data.results);
-
-      setTopRatedArtist(response.data.results);
+      const validResults = response.data.results.filter(result => 
+        result && (result.artist_name || result.professional_name)
+      );
+      setTopRatedArtist(validResults);
     })();
   }, []);
 
@@ -112,8 +113,10 @@ export function SearchHeader(props: IAppProps) {
               <Autocomplete
                 inputValue={searchInput}
                 freeSolo
-                getOptionLabel={(option) => option.professional_name || ""}
-                options={topResults}
+                getOptionLabel={(option) => option.artist_name || option.professional_name || ""}
+                options={topResults.filter(option => 
+                  option && (option.artist_name || option.professional_name)
+                )}
                 PopperComponent={CustomPopper}
                 groupBy={() => "Top Results"}
                 ListboxProps={{
@@ -137,35 +140,40 @@ export function SearchHeader(props: IAppProps) {
                     <div className="h-4 sticky bottom-0 bg-eerieBlack"></div>
                   </li>
                 )}
-                renderOption={(props, option, { selected, index }) => (
-                  <li
-                    {...props}
-                    className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-jetBlack ${
-                      props["aria-selected"] ? "bg-jetBlack" : ""
-                    }`}
-                    onClick={async (e) => {
-                      // Prevent default navigation behavior
-                      e.preventDefault();
-
-                      handleArtistSelected(option);
-                    }}
-                  >
-                    <img
-                      src={option.thumbnail}
-                      alt={option.professional_name}
-                      className="w-10 h-10 rounded-md"
-                    />
-                    <div className="flex gap-x-4 gap-y-1 flex-wrap items-center">
-                      <span className="text-gainsboro text-sm">
-                        {option.professional_name}
-                      </span>
-                      <span className="text-charcoalGray text-xs">
-                        From{" "}
-                        <span className="text-coolGray">{option.type}</span>
-                      </span>
-                    </div>
-                  </li>
-                )}
+                renderOption={(props, option) => {
+                  // Create a truly unique key using spotify_artist_id and timestamp
+                  const uniqueKey = `${option.spotify_artist_id}-${Date.now()}`;
+                  
+                  return (
+                    <li
+                      {...props}
+                      key={uniqueKey}
+                      className={`flex items-center gap-3 cursor-pointer p-2 mb-1 rounded-md hover:bg-jetBlack ${
+                        props["aria-selected"] ? "bg-jetBlack" : ""
+                      }`}
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation(); // Add this to prevent event bubbling
+                        handleArtistSelected(option);
+                      }}
+                    >
+                      <img
+                        src={option.thumbnail}
+                        alt={option.artist_name || option.professional_name}
+                        className="w-10 h-10 rounded-md"
+                      />
+                      <div className="flex items-center gap-3">
+                        <span className="text-gainsboro text-sm w-32">
+                          {option.artist_name || option.professional_name}
+                        </span>
+                        <span className="text-charcoalGray text-xs ml-auto">
+                          From{" "}
+                          <span className="text-coolGray">{option.type}</span>
+                        </span>
+                      </div>
+                    </li>
+                  );
+                }}
                 renderInput={(params) => (
                   <TextField
                     onChange={handleSearchInput}
