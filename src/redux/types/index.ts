@@ -9,10 +9,12 @@
 /* LOCAL IMPORTS */
 import AuthActionTypes from './auth.types';
 import SoundActionTypes from './sounds.types';
+import BreadcrumbActionTypes from './breadcrumb.types';
 
 const ActionType = {
   ...AuthActionTypes,
   ...SoundActionTypes,
+  ...BreadcrumbActionTypes,
 };
 
 export default ActionType;

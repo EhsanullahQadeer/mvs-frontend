@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { uploadFile } from "api/sounds";
 import { CircularProgress } from "@mui/material";
 import { currentUserAPI } from "api/auth";
+import { useDispatch } from "react-redux";
+import { popBreadcrumb, setBreadcrumbs } from "redux/actions/breadcrumb.actions";
 
 type Props = {};
 
@@ -21,6 +23,21 @@ const ContentManagement = (props: Props) => {
     setUploadingFile(null);
     setFileRedisKey("");
   };
+
+    // Set breadcrumbs (nav bar) for content management page
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+      dispatch(
+        setBreadcrumbs([
+          { name: 'Settings', path: '/settings' },
+          { name: 'Content Management', path: '/settings/content-management' }
+        ]));
+        return () => {
+          // Pop current breadcrumb on unmount
+          dispatch(popBreadcrumb());
+        }; 
+    }, [dispatch]);
 
   useEffect(() => {
     if (uploadingFile !== null) {

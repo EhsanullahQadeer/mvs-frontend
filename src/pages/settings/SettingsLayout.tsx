@@ -6,7 +6,10 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { NavLink, Outlet } from "react-router-dom";
+import { setBreadcrumbs } from "redux/actions/breadcrumb.actions";
 import Theme from "theme";
 
 const SettingsLayout = () => {
@@ -19,6 +22,15 @@ const SettingsLayout = () => {
     // { name: "Privacy", path: "privacy/1" },
     // { name: "Monetization", path: "monetization/1" },
   ];
+
+  // Set breadcrumbs (nav bar) for settings page
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setBreadcrumbs([
+      { name: 'Settings', path: '/settings' },
+    ]));
+  }, [dispatch]);
 
   return (
     <Theme>

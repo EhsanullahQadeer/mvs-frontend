@@ -10,8 +10,19 @@
 /* IMPORTS */
 import Theme from "theme";
 import MessagesList from "./components/MessagesList";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { setBreadcrumbs } from "redux/actions/breadcrumb.actions";
 
 const InboxPage = () => {
+  // Set breadcrumbs (nav bar) for inbox page
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setBreadcrumbs([
+      { name: 'DMs', path: '/inbox' },
+    ]));
+  }, [dispatch]);
   return (
     <Theme isOverflowHidden={true}>
       <div className="flex overflow-hidden grow">

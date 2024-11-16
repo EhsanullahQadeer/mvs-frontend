@@ -19,6 +19,7 @@ import ContactModal from "components/modals/contact-us";
 import { useHeaderHooks } from "./Header.hooks";
 import { classNames, HeaderProps } from "./Header.types";
 import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
+import Breadcrumb from "theme/Breadcrumb/Breadcrumb";
 
 const Header: React.FC<HeaderProps> = () => {
   /* States and Hooks */
@@ -52,42 +53,16 @@ const Header: React.FC<HeaderProps> = () => {
 
   return (
     <Fragment>
-      <div className="topbar w-[100%] py-[12px] bg-[#141414] flex justify-between">
-        <div className="search ml-0 ml-[19px] ">
-          <label htmlFor="simple-search" className="sr-only">
-            Search
-          </label>
-          <div className="relative w-[400px]">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={24}
-                height={25}
-                viewBox="0 0 24 25"
-                fill="none"
-              >
-                <path
-                  d="M21 21.5L16.7 17.2M19 11.5C19 15.9183 15.4183 19.5 11 19.5C6.58172 19.5 3 15.9183 3 11.5C3 7.08172 6.58172 3.5 11 3.5C15.4183 3.5 19 7.08172 19 11.5Z"
-                  stroke="#4C4C4C"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <input
-              type="text"
-              id="simple-search"
-              className="bg-jetBlack font-['Mona-Sans-M'] border border-[#191919] text-[#4c4c4c] text-sm rounded-[100px] w-[400px] h-[45px] pl-10 py-2.5"
-              placeholder="search guitars, synths, and more..."
-            />
-          </div>
-        </div>
+      <div className="topbar w-[100%] bg-[#08090A] flex items-center justify-between">
 
-        <div className="flex items-center space-x-4 px-[40px]">
+        <Breadcrumb />
+
+
+        {/* Hidden profile button */}
+        <div className="hidden flex items-center space-x-4 px-[40px]">
           <button
-            className={`relative bg-transparent rounded-full ${
-              isHighlighted ? "bg-red-900" : "bg-blue-900"
-            }`}
+            className={`relative bg-transparent rounded-full ${isHighlighted ? "bg-red-900" : "bg-blue-900"
+              }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

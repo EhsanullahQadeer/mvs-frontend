@@ -19,7 +19,7 @@ import { RootState } from './reducers';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'sounds'],
+  whitelist: ['auth', 'sounds', 'breadcrumb'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

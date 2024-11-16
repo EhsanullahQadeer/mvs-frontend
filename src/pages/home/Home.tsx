@@ -7,6 +7,8 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+
+
 /* LOCAL IMPORTS */
 import Theme from "theme";
 import { SearchHeader } from "./components/SearchHeader";
@@ -17,14 +19,26 @@ import { userTags, userTagsObj } from "utils/usersTags";
 import { getUsersByTag } from "api/user";
 import { UserFiltersDTO } from "api/user/types";
 
-
+/* IMPORTS */
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setBreadcrumbs } from "redux/actions/breadcrumb.actions";
+
 const Home = (
 
 ) => {
   const [filterValue, setFilterValue] = useState<string>("");
   const [filtersData, setFiltersData] = useState([]);
   const [usersByTag, setUsersByTag] = useState<Record<string, any>>({});
+
+  // Set breadcrumbs (nav bar) for home page
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setBreadcrumbs([
+      { name: 'Home', path: '/' },
+    ]));
+  }, [dispatch]);
 
   // Fetch users by tags with Promise.all
   const fetchUsersByTags = async () => {
