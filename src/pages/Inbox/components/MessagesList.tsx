@@ -324,6 +324,7 @@ const MessagesList = () => {
                   getNotes,
                   notes,
                   currentUserInfo,
+                  onClose: () => {setActiveConversation(null)}
                 }}
               />
             )

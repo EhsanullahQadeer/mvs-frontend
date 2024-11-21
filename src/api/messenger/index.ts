@@ -110,6 +110,14 @@ export const getConversationsList = async (
   return axiosInstance.get(`/messenger/get-conversations/`, { params });
 };
 
+export const getConversationWithUser = async (recipient_id: number) => {
+  return axiosInstance.get(`/messenger/get-conversation-with-user`, {
+    params: {
+      recipient_id
+    }
+  });
+};
+
 export async function getConversationsById(
   params: IGetConversationByIdParams,
   id: number

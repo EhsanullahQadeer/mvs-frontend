@@ -68,7 +68,7 @@ const Footer = ({
         formData.append("audioFile", recordedAudio || "");
         await replyToMessage(formData);
       } else {
-        formData.append("conversationId", id.toString());
+        formData.append("conversationId", conversation.id?.toString() || "");
         formData.append(
           "creditPaymentAmount",
           isDemo ? creditPaymentAmount.toString() : "0"

@@ -30,6 +30,7 @@ type Props = {
   getNotes: (conversation_id: string) => void;
   notes: INotes[];
   currentUserInfo: ICurrentUser;
+  onClose: () => void;  
 };
 
 const MessagesDetail = (props: Props) => {
@@ -41,6 +42,7 @@ const MessagesDetail = (props: Props) => {
     notes,
     conversation,
     currentUserInfo,
+    onClose,
   } = props;
   const navigate = useNavigate();
   const { id, thumbnail, displayName, conversation_id } = conversation;
@@ -117,8 +119,16 @@ const MessagesDetail = (props: Props) => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver">
-                <MenuIcon className="w-5 h-5" />
+              <div className="flex items-center gap-2">
+                <div className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver">
+                  <MenuIcon className="w-5 h-5" />
+                </div>
+                <button 
+                  onClick={onClose}
+                  className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver hover:bg-[#2f2f2f]"
+                >
+                  ✕
+                </button>
               </div>
             </div>
             <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-y border-eerieBlack">
@@ -168,15 +178,26 @@ const MessagesDetail = (props: Props) => {
                 <>
                   {tab === 0 && (
                     <>
-                      <MessagesSection
-                        {...{
-                          messages,
-                          handleDemoBtn,
-                          handleReviewBtn,
-                          handleThreadReply,
-                          currentUserInfo,
-                        }}
-                      />
+                      {Array.isArray(messages) && messages.length > 0 && messages[0]?.messages?.length > 0 ? (
+                        <MessagesSection
+                          {...{
+                            messages,
+                            handleDemoBtn,
+                            handleReviewBtn,
+                            handleThreadReply,
+                            currentUserInfo,
+                          }}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center h-full text-center px-4">
+                          <div className="text-limeGreen text-xl mb-2">
+                            Start your conversation!
+                          </div>
+                          <p className="text-coolGray text-sm max-w-md">
+                            Send a message to begin connecting with {displayName}.
+                          </p>
+                        </div>
+                      )}
                     </>
                   )}
 
