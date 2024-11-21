@@ -1,7 +1,8 @@
-import moment from "moment";
 import featuredIcon from "../../../assets/icons/featured-icon.svg";
 import starIcon from "../../../assets/icons/star.svg";
 import { IMessage } from "./types";
+import { useNavigate } from "react-router-dom";
+import { lastMsgTimeStamp } from "../handlers/mediaUtils";
 
 interface Props {
   conversation: IMessage;
@@ -13,7 +14,7 @@ export const Conversations = (props: Props) => {
   const {
     conversation: {
       UnreadCount,
-      conversation_id,
+      id,
       thumbnail,
       displayName,
       last_message_summary,
@@ -22,28 +23,18 @@ export const Conversations = (props: Props) => {
     activeConversation,
     getMessagesNotes,
   } = props;
+  const navigate = useNavigate();
 
-  const lastMsgTimeStamp = () => {
-    const lastUpdated = moment(last_updated_timestamp);
-    const today = moment().startOf("day");
-    const yesterday = moment().subtract(1, "days").startOf("day");
-
-    if (lastUpdated.isSame(today, "d")) {
-      return lastUpdated.format("h:mm A");
-    } else if (lastUpdated.isSame(yesterday, "d")) {
-      return "Yesterday";
-    } else {
-      return lastUpdated.format("MMMM D");
-    }
+  const handleConvoSelect = (conversation, id) => {
+    getMessagesNotes(conversation, id);
+    navigate(`/inbox/${id}`);
   };
 
   return (
     <>
       <div
         className={`cursor-pointer hover:bg-[#242424] flex justify-between items-center px-3 py-2 w-full border-b border-[#68717E] border-opacity-20 max-md:max-w-full ${
-          activeConversation?.conversation_id === conversation_id
-            ? "bg-[#242424]"
-            : "bg-transparent"
+          activeConversation?.id === id ? "bg-[#242424]" : "bg-transparent"
         }`}
       >
         <div className="flex flex-wrap flex-1 shrink gap-3 items-center self-stretch my-auto w-full basis-0 min-w-[240px] max-md:max-w-full">
@@ -71,7 +62,7 @@ export const Conversations = (props: Props) => {
               <div
                 className="flex gap-1 items-center self-stretch my-auto"
                 onClick={() => {
-                  getMessagesNotes(props.conversation, conversation_id);
+                  handleConvoSelect(props.conversation, id);
                 }}
               >
                 <div className="flex overflow-hidden flex-col justify-center items-center self-stretch p-2 my-auto w-8">
@@ -118,14 +109,14 @@ export const Conversations = (props: Props) => {
               UnreadCount ? "text-white" : "text-mediumGray"
             } basis-6 min-w-[240px]`}
             onClick={() => {
-              getMessagesNotes(props.conversation, conversation_id);
+              handleConvoSelect(props.conversation, id);
             }}
           >
             <div className="flex-1 shrink gap-2.5 self-stretch p-2.5 max-w-full text-sm font-semibold leading-none w-[150px] truncate">
               {last_message_summary}
             </div>
             <div className="px-2 text-xs leading-none font-semibold">
-              {lastMsgTimeStamp()}
+              {lastMsgTimeStamp(last_updated_timestamp)}
             </div>
           </div>
           {UnreadCount > 0 && (

@@ -10,6 +10,7 @@ module.exports = {
     extend: {
       colors: {
         // Add your custom colors here
+        grayishSilver: "#B9B9B9",
         silver: "#B2B2B2",
         gunMetal: "#181A1D",
         richBlack: "#101113",

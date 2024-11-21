@@ -141,7 +141,7 @@ const UserType = (props: Props) => {
               <div
                 className={`absolute top-3.5 right-3.5 text-white font-semibold w-6 h-6 rounded-xl flex justify-center items-center ${
                   isSelected
-                    ? "border border-[#CCCCCC] bg-[#0185FF]"
+                    ? "border border-softGray bg-[#0185FF]"
                     : "border-[1.5px] border-eclipseGray"
                 }`}
               >

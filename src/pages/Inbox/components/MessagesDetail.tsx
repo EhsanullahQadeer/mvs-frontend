@@ -15,22 +15,21 @@ import React from "react";
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 import MessagesSection from "./MessagesSection";
 import Footer from "./Footer";
-import { IMessage, IMessagesData, INotes } from "./types";
+import { ICurrentUser, IMessage, IMessagesData, INotes } from "./types";
 import InfoSection from "./InfoSection";
 import NotesSection from "./NotesSection";
-import { sendInboxMessage } from "api/messenger";
 import { CircularProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { toggleMessageToRead } from "api/messenger";
 
 type Props = {
   conversation: IMessage;
   loading: boolean;
   messages: IMessagesData;
-  getConversationMessages: (
-    conversation: IMessage,
-    conversation_id: string
-  ) => Promise<void>;
+  getConversationMessages: (conversation: IMessage) => Promise<void>;
   getNotes: (conversation_id: string) => void;
   notes: INotes[];
+  currentUserInfo: ICurrentUser;
 };
 
 const MessagesDetail = (props: Props) => {
@@ -41,8 +40,10 @@ const MessagesDetail = (props: Props) => {
     getNotes,
     notes,
     conversation,
+    currentUserInfo,
   } = props;
-  const { conversation_id, thumbnail, displayName, recipient } = conversation;
+  const navigate = useNavigate();
+  const { id, thumbnail, displayName, conversation_id } = conversation;
   const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
   const headerTabs = [
     {
@@ -53,35 +54,8 @@ const MessagesDetail = (props: Props) => {
     { label: "Notes", value: 2 },
   ];
 
-  const [tip, setTip] = useState(0);
-  const [message, setMessage] = useState("");
   const [tab, setTab] = useState(0);
 
-  const validateTip = (e) => {
-    const value = e.target.value.replace(/\D/g, "");
-    setTip(value);
-  };
-
-  useEffect(() => {}, [props]);
-
-  const newMessage = async () => {
-    const key = messages[messages.length - 1]["messages"];
-    const index = key.length - 1;
-    const _msg = messages[messages.length - 1]["messages"].push(key[index]);
-
-    messages[messages.length - 1]["messages"][index].message = message;
-
-    const payload = {
-      recipient_id: recipient,
-      conversation_id,
-      message,
-    };
-    setOverlayLoading(true);
-    await sendInboxMessage(payload);
-    setMessage("");
-    await getConversationMessages(conversation, conversation_id);
-    setOverlayLoading(false);
-  };
   const messagesRef = useRef(null);
   useEffect(() => {
     setTimeout(() => {
@@ -91,6 +65,28 @@ const MessagesDetail = (props: Props) => {
       }
     });
   }, [messages, notes]);
+
+  const handleDemoBtn = (msgId: number) => {
+    localStorage.setItem("msgId", msgId.toString());
+    navigate(`/inbox/${id}/thread`);
+  };
+
+  const handleReviewBtn = async (msgId: number) => {
+    localStorage.setItem("msgId", msgId.toString());
+    navigate(`/inbox/${id}/thread`);
+    try {
+      await toggleMessageToRead({ messageId: msgId });
+      await getConversationMessages(conversation);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const handleThreadReply = (msgId: number) => {
+    localStorage.setItem("msgId", msgId.toString());
+    navigate(`/inbox/${id}/thread`);
+  };
+
   return (
     <React.Fragment>
       <div className="h-full w-full border-l border-eerieBlack bg-richBlack relative">
@@ -103,7 +99,7 @@ const MessagesDetail = (props: Props) => {
                     background:
                       "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
                   }}
-                  className="flex rounded-full p-0.5 w-12 aspect-square"
+                  className="flex rounded-full p-0.5 w-12 h-12 aspect-square"
                 >
                   <img
                     alt=""
@@ -136,8 +132,8 @@ const MessagesDetail = (props: Props) => {
                     }}
                     className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
                       tab === value
-                        ? "text-jetBlack bg-[#9EFF00] text-xs"
-                        : "text-[#848484] bg-[#242424] text-[10px]"
+                        ? "text-jetBlack bg-limeGreen text-xs"
+                        : "text-coolGray bg-eclipseGray text-[10px]"
                     }`}
                   >
                     {label}
@@ -165,14 +161,22 @@ const MessagesDetail = (props: Props) => {
             <div
               ref={messagesRef}
               className={
-                "flex flex-col px-4 flex-1 py-3  overflow custom-dropdown overflow-y-auto"
+                "flex flex-col flex-1 py-3 overflow custom-dropdown overflow-y-auto"
               }
             >
               {!loading && (
                 <>
                   {tab === 0 && (
                     <>
-                      <MessagesSection {...{ messages }} />
+                      <MessagesSection
+                        {...{
+                          messages,
+                          handleDemoBtn,
+                          handleReviewBtn,
+                          handleThreadReply,
+                          currentUserInfo,
+                        }}
+                      />
                     </>
                   )}
 
@@ -201,10 +205,10 @@ const MessagesDetail = (props: Props) => {
 
           <Footer
             {...{
-              message,
-              setMessage,
-              newMessage,
-              conversation: conversation,
+              conversation,
+              setOverlayLoading,
+              getConversationMessages,
+              currentUserInfo,
             }}
           />
         </div>

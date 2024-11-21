@@ -11,14 +11,15 @@
 /* LOCAL IMPORTS */
 import axiosInstance from "api/axios";
 import axios from "api/axios";
-import { config } from "config/ConfigManager";
 import {
   IAddNoteApiPayloads,
   IDeleteNoteApiParams,
   IGetConversationByIdParams,
   IGetConversationNotesParams,
   IGetConversationsListParams,
+  IReplyToMessagePayloads,
   ISendInboxMessagePayloads,
+  IToggleMessageToReadPayloads,
   IUpdateNoteApiParams,
 } from "./types";
 
@@ -111,7 +112,7 @@ export const getConversationsList = async (
 
 export async function getConversationsById(
   params: IGetConversationByIdParams,
-  id: string
+  id: number
 ) {
   return axiosInstance.get(`/messenger/conversation/${id}`, { params });
 }
@@ -128,10 +129,24 @@ export async function sendInboxMessage(payload: ISendInboxMessagePayloads) {
   return axiosInstance.post("/messenger/send-message", payload);
 }
 
+export async function replyToMessage(payload: IReplyToMessagePayloads) {
+  return axiosInstance.post("/messenger/reply-to-message", payload);
+}
+
+export async function toggleMessageToRead(
+  payload: IToggleMessageToReadPayloads
+) {
+  return axiosInstance.post("/messenger/toggle-message-is-read", payload);
+}
+
 export async function addNoteApi(params: IAddNoteApiPayloads) {
-  return axiosInstance.post("/messenger/add-note", {}, {
-    params,
-  });
+  return axiosInstance.post(
+    "/messenger/add-note",
+    {},
+    {
+      params,
+    }
+  );
 }
 
 export async function updateNoteApi(params: IUpdateNoteApiParams) {
@@ -139,7 +154,11 @@ export async function updateNoteApi(params: IUpdateNoteApiParams) {
 }
 
 export async function deleteNoteApi(params: IDeleteNoteApiParams) {
-  return axiosInstance.post("/messenger/delete-note", {}, {
-    params,
-  });
+  return axiosInstance.post(
+    "/messenger/delete-note",
+    {},
+    {
+      params,
+    }
+  );
 }

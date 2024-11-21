@@ -18,6 +18,7 @@ import routes from "./pages/routes";
 import { store, persistor } from "./redux/store";
 import "./assets/css/global.scss";
 import { WebSocketProvider } from "services/WebSocket/APIGatewayManager.context";
+import NotFoundPage from "pages/NotFoundPage";
 
 const renderRoutes = (routes: any[]) => {
   return routes.map((route, index) => (
@@ -35,16 +36,8 @@ const Application: React.FunctionComponent<{}> = (props) => {
   return (
     <BrowserRouter>
       <Routes>
-      {renderRoutes(routes)}
-        {/* {routes.map((route, index) => (
-          <Route
-            key={index}
-            path={route.path}
-            element={
-              <route.component name={route.name} {...props} {...route.props} />
-            }
-          />
-        ))} */}
+        {renderRoutes(routes)}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

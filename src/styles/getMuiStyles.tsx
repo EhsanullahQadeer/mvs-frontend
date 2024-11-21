@@ -252,6 +252,35 @@ const getMuiStyles = () => {
         color: "#666666",
       },
     },
+
+    switchToggleStyle: {
+      padding: 0,
+      height: "25px",
+      width: "48px",
+      borderRadius: "20px",
+
+      "& .MuiButtonBase-root": {
+        padding: "1px",
+        height: "23px",
+
+        "&.Mui-checked": {
+          transform: "translateX(24px)",
+          color: "#fff",
+        },
+      },
+
+      "& .MuiSwitch-track": {
+        backgroundColor: "#242424",
+        borderRadius: "20px",
+        opacity: 1,
+      },
+
+      "& .css-5ryogn-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+        {
+          backgroundColor: "#9EFF00",
+          opacity: 1,
+        },
+    },
   };
   return muiStyles;
 };

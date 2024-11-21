@@ -98,7 +98,7 @@ const ArtistProfile = () => {
                         onClick={() => setSelectedTab(tab)}
                         className={`py-2 px-3 text-sm flex items-center justify-center border border-eclipseGray ${
                           selectedTab === tab
-                            ? "text-[#CCCCCC] bg-eerieBlack"
+                            ? "text-softGray bg-eerieBlack"
                             : "text-charcoalGray bg-darkGray"
                         } ${index === 0 && "rounded-l-md border-r-0"} ${
                           index === 2 && "rounded-r-md border-l-0"

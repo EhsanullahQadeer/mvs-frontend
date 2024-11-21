@@ -2,7 +2,7 @@ type Props = {};
 
 const InfoSection = (props: Props) => {
   return (
-    <div className="flex flex-col w-[100%]">
+    <div className="flex flex-col w-[100%] px-4">
       <div className="flex gap-4 justify-center items-center w-full">
         <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-0">
           <div className="gap-2.5 self-stretch py-2.5 w-full text-xs font-semibold leading-none text-white">

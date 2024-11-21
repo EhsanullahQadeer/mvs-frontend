@@ -30,12 +30,16 @@ import {
 import moment from "moment";
 import { IMessage, INotes } from "./types";
 import { CircularProgress } from "@mui/material";
+import { useParams } from "react-router-dom";
+import FeedbackThread from "./FeedbackThread";
+import { currentUserAPI } from "api/auth";
 
 const MessagesList = () => {
   const [conversations, setConversations] = useState([]);
+  const { id, thread } = useParams();
 
   const [activeConversation, setActiveConversation] = useState(null);
-
+  const [currentUserInfo, setCurrentUserInfo] = useState(null);
   const [messages, setMessages] = useState([]);
 
   const [notes, setNotes] = useState<INotes[]>([]);
@@ -69,16 +73,13 @@ const MessagesList = () => {
     }
   };
 
-  const getConversationMessages = async (
-    conversation: IMessage,
-    conversation_id: string
-  ) => {
+  const getConversationMessages = async (conversation: IMessage) => {
     setActiveConversation(conversation);
     const _msgs = await getConversationsById(
       {
         limit: 10,
       },
-      conversation_id
+      conversation.id
     );
 
     const results = _msgs.data.messages;
@@ -120,9 +121,45 @@ const MessagesList = () => {
     selectedConvoId: string
   ) => {
     setLoading(true);
-    await getConversationMessages(selectedConvo, selectedConvoId);
+    await getConversationMessages(selectedConvo);
     await getNotes(selectedConvoId);
     setLoading(false);
+  };
+
+  useEffect(() => {
+    if (id && conversations.length > 0) {
+      const conversation = conversations.find(
+        (convo) => convo.id === Number(id)
+      );
+
+      if (conversation) {
+        getMessagesNotes(conversation, id);
+      }
+    }
+  }, [id, conversations]);
+
+  const headerTabs = [
+    {
+      label: "Priority Inbox",
+      value: 0,
+    },
+    { label: "General Inbox", value: 1 },
+  ];
+
+  const [tab, setTab] = useState(0);
+
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
+
+  const getCurrentUser = async () => {
+    try {
+      const response = await currentUserAPI();
+      setCurrentUserInfo(response.data);
+      console.log("user info ", response);
+    } catch (error) {
+      console.error("Error in user info:", error);
+    }
   };
 
   return (
@@ -202,7 +239,28 @@ const MessagesList = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col mt-1 w-full flex-1 overflow-y-auto overflow-x-hidden custom-dropdown">
+
+        <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-y border-eerieBlack">
+          {headerTabs.map((headerTab) => {
+            const { label, value } = headerTab;
+            return (
+              <div
+                key={value}
+                onClick={() => {
+                  setTab(value);
+                }}
+                className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
+                  tab === value
+                    ? "text-jetBlack bg-limeGreen text-xs"
+                    : "text-coolGray bg-eclipseGray text-[10px]"
+                }`}
+              >
+                {label}
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex flex-col w-full flex-1 overflow-y-auto overflow-x-hidden custom-dropdown">
           <div className="flex flex-col pb-1 w-full flex-1 relative">
             {/* List Item */}
 
@@ -245,18 +303,31 @@ const MessagesList = () => {
         </div>
       </div>
       <div className="flex-1">
-        {activeConversation && (
-          <MessagesDetail
-            {...{
-              messages,
-              conversation: activeConversation,
-              loading,
-              getConversationMessages,
-              getNotes,
-              notes,
-            }}
-          />
-        )}
+        {id &&
+          (thread ? (
+            <FeedbackThread
+              {...{
+                conversation: activeConversation,
+                messages,
+                currentUserInfo,
+                getConversationMessages,
+              }}
+            />
+          ) : (
+            activeConversation && (
+              <MessagesDetail
+                {...{
+                  messages,
+                  conversation: activeConversation,
+                  loading,
+                  getConversationMessages,
+                  getNotes,
+                  notes,
+                  currentUserInfo,
+                }}
+              />
+            )
+          ))}
       </div>
     </React.Fragment>
   );

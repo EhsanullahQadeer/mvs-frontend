@@ -1,6 +1,6 @@
 import { addNoteApi, deleteNoteApi } from "api/messenger";
 import moment from "moment";
-import React, { useState } from "react";
+import { useState } from "react";
 import { INotes } from "./types";
 type Props = {
   notes: INotes[];
@@ -34,7 +34,7 @@ const NotesSection = (props: Props) => {
     setOverlayLoading(false);
   };
   return (
-    <div className="flex flex-col p-4 max-w-[100%]">
+    <div className="flex flex-col py-4 px-8 max-w-[100%]">
       {/* Content */}
       <textarea
         value={noteText}

@@ -1,7 +1,28 @@
-export interface ISendInboxMessagePayloads {
-  recipient_id: string;
-  conversation_id: string;
-  message: string;
+export type ISendInboxMessagePayloads =
+  | {
+      senderId: number;
+      recipientId: number;
+      conversationId: number;
+      message: string;
+      creditPaymentAmount: number;
+      isDemo: boolean;
+      audioFile: any;
+    }
+  | FormData;
+
+export type IReplyToMessagePayloads =
+  | {
+      senderId: number;
+      recipientId: number;
+      messageId: number;
+      replyContent: string;
+      isDemoReply: boolean;
+      audioFile: any;
+    }
+  | FormData;
+
+export interface IToggleMessageToReadPayloads {
+  messageId: number;
 }
 
 export interface IAddNoteApiPayloads {

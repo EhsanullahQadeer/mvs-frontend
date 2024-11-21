@@ -31,6 +31,9 @@ import PartnerSubmission from "./creator/registeration/component/PartnerSubmissi
 import Registeration from "./creator/registeration";
 import ForgetPassword from "./creator/forgetPasword";
 import ChangePassword from "./creator/ChangePassword/ChangePassword";
+import Notifications from "./settings/notifications/Notifications";
+import Privacy from "./settings/privacy/Privacy";
+import Monetization from "./settings/monetization/Monetization";
 import Onboarding from "components/onBoarding/onboard";
 import ForgotPassword from "./creator/forgetPasword";
 import Registration from "./creator/registeration";
@@ -103,6 +106,16 @@ const routes: IRoute[] = [
     path: "/request-info",
     name: "Request Info",
     component: RequestInfoPage,
+  },
+  {
+    path: "/inbox/:id?",
+    name: "Inbox",
+    component: InboxPage,
+  },
+  {
+    path: "/inbox/:id?/:thread?",
+    name: "Inbox",
+    component: InboxPage,
   },
   {
     path: "/thank-you",
@@ -201,12 +214,62 @@ const routes: IRoute[] = [
         component: ContentManagement,
       },
       {
+        path: "notifications/:id",
+        name: "Notifications",
+        component: Notifications,
+      },
+      {
+        path: "privacy/:id",
+        name: "Privacy",
+        component: Privacy,
+      },
+      {
+        path: "monetization/:id",
+        name: "Monetization",
+        component: Monetization,
+      },
+      {
         path: "security/:id",
         name: "Security",
         component: SecuritySettings,
       },
     ],
   },
-];
+  {
+    path: "/onboarding",
+    name: "Onboarding",
+    component: OnBoarding,
+  },
+  {
+    path: "/creator/login",
+    name: "Login",
+    component: CreatorLogin,
+  },
+  {
+    path: "/creator/signup",
+    name: "signup",
+    component: Registeration,
+  },
+  {
+    path: "creator/forgot-password",
+    name: "Forgot Password",
+    component: ForgetPassword,
+  },
+  {
+    path: "creator/forgot-password-verification",
+    name: "Forgot Password",
+    component: ForgetPassword,
+  },
+  {
+    path: "creator/new-password",
+    name: "New Password",
+    component: ChangePassword,
+  },
+  {
+    path: "creator/new-password-success",
+    name: "New Password",
+    component: ChangePassword,
+  },
+]
 
 export default routes;

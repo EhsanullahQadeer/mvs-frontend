@@ -400,7 +400,7 @@ const PersonalInformation = (props: Props) => {
                               style={{
                                 boxShadow: "none",
                               }}
-                              className="w-full text-center border-none text-sm font-normal text-[#CCCCCC] bg-transparent p-0"
+                              className="w-full text-center border-none text-sm font-normal text-softGray bg-transparent p-0"
                             />
                           </div>
                         </div>
@@ -425,7 +425,7 @@ const PersonalInformation = (props: Props) => {
                           style={{
                             boxShadow: "none",
                           }}
-                          className="w-full border-none text-sm font-normal text-[#CCCCCC] bg-transparent p-0 resize-none"
+                          className="w-full border-none text-sm font-normal text-softGray bg-transparent p-0 resize-none"
                         />
                       </div>
                     </div>
