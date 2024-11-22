@@ -24,15 +24,12 @@ export async function requestInvitationCodeWithEmailAPI(body: IRequestInvitation
 }
 
 export async function addNewUser(body: any) {
-  return axiosInstance.post("/users/new-user", body);
+  return axiosInstance.post("/users/user", body);
 }
 
 export async function checkUsernameAvailabilityAPI(username: string) {
   return axiosInstance.post(`/users/validate-username?username=${username}`);
 }
-
-
-
 
 export async function validateEmailAPI(email?: string) {
   return axiosInstance.post(`/users/validate-email?email=${email}`);
