@@ -238,7 +238,7 @@ const SampleTable = (samples) => {
             >
               Filename
             </th>
-            {/* <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray"></th> */}
+            <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray"></th>
             <th
               scope="col"
               className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray"
@@ -304,18 +304,27 @@ const SampleTable = (samples) => {
                         <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-gunMetal">
                           <img src={musicIcon} alt="musicIcon" />
                         </div>
-                        <div>
+                        <div className="relative w-4 h-4 cursor-pointer group">
+                          {/* Play icon - shown on hover */}
                           <img
-                            src={
-                              currPlayingId === sample.id ? playIcon : musicBeam
-                            }
-                            alt="icon"
+                            src={playIcon}
+                            alt="Play"
+                            className="absolute top-0 left-0 w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
                           />
-                        </div>
-                        <div style={{ width: "16px", height: "16px" }}>
-                          <AnimatedWaveGraphic
-                            playing={isPlaying && currPlayingId === sample.id}
-                          />
+                          {/* Wave or beam icon - hidden on hover */}
+                          <div className="absolute top-0 left-0 w-4 h-4 group-hover:opacity-0 transition-opacity duration-200">
+                            {currPlayingId === sample.id ? (
+                              <AnimatedWaveGraphic
+                                playing={isPlaying && currPlayingId === sample.id}
+                              />
+                            ) : (
+                              <img
+                                src={musicBeam}
+                                alt="Music"
+                                className="w-4 h-4"
+                              />
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -340,9 +349,10 @@ const SampleTable = (samples) => {
                     <div className="flex flex-col items-center justify-center h-full">
                       <div className="h-[50px]">
                         {tracks.find((t) => t.id === sample.id) && (
-                          <Waveform
+                            <Waveform
                             track={tracks.find((t) => t.id === sample.id)}
-                            columns={120}
+                            trackDuration={sample.length}
+                            columns={60}
                             hover_cursor={false}
                             options={{
                               colors: {

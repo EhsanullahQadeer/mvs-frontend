@@ -34,7 +34,7 @@ export const waveStyles = (
   gridTemplateColumns: `repeat(${props.segments}, 1fr)`,
   height: '100%',
   position: 'relative',
-  width: '350px',
+  width: '125px',
 }) as CSSProperties
 
 type SegmentStyleProps = {

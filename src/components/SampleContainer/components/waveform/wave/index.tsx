@@ -10,6 +10,7 @@ import { waveStyles } from '../styles'
 
 type WaveProps = {
   columns?: number
+  trackDuration?: number
   track: AudioTrack
   options?: Partial<WaveformConfig>
   hover_cursor?: boolean
@@ -17,6 +18,7 @@ type WaveProps = {
 
 export const Waveform = ({
   columns = 60,
+  trackDuration = 30,
   track,
   options = {},
   hover_cursor,
@@ -33,13 +35,35 @@ export const Waveform = ({
       ...options.colors,
     },
   }
+  const [actualDuration, setActualDuration] = useState<number>(0);
+  
+  // Calculate columns based on duration
+  const calculateColumns = (duration: number) => {
+    console.log('duration', duration);
+    // Base ratio: 60 columns for 30 seconds
+    const baseRatio = 60 / 30;
+    // Calculate columns based on duration, with min and max limits
+    const calculatedColumns = Math.round(duration * baseRatio);
+    console.log('columns', calculatedColumns);
+    return Math.min(Math.max(calculatedColumns, 40), 50);
+  };
+
+  // Calculate columns based on trackDuration
+  const [dynamicColumns, setDynamicColumns] = useState(() => {
+    return calculateColumns(trackDuration);
+  });
+
+  useEffect(() => {
+    const newColumns = calculateColumns(trackDuration);
+    setDynamicColumns(newColumns);
+  }, [trackDuration]);
+
   const {
     activeIndex,
     duration,
     isCurrentPlaying,
     segments,
-  } = useWave(track, columns, audioRef)
-
+  } = useWave(track, dynamicColumns, audioRef)
 
   const styles = waveStyles({
     activeColor: configOptions.colors.active,
@@ -59,7 +83,7 @@ export const Waveform = ({
     if (containerRef.current && segments.length > 0) {
       const rect = containerRef.current.getBoundingClientRect();
       const hoverX = e.clientX - rect.left; // X position relative to the container
-      const segmentWidth = rect.width / columns; // Calculate the width of each segment
+      const segmentWidth = rect.width / dynamicColumns; // Calculate the width of each segment
       const hoverIndex = Math.min(Math.floor(hoverX / segmentWidth), segments.length - 1); // Determine which segment is being hovered
       setHoverSegmentIndex(hoverIndex); // Update the state with the hovered segment index
     }
@@ -69,23 +93,6 @@ export const Waveform = ({
   const handleMouseLeave = () => {
     setHoverSegmentIndex(null); // Reset hover position when mouse leaves
   };
-  const [actualDuration, setActualDuration] = useState<number>(0); // Use actualDuration instead of static duration
-
-  // Set the actual duration after the audio's metadata has loaded
-  useEffect(() => {
-  if (audioRef.current) {
-    const handleMetadataLoaded = () => {
-      setActualDuration(audioRef.current?.duration || 0); // Set the actual duration once metadata is loaded
-      console.log(`Audio duration set to: ${audioRef.current?.duration}`);
-    };
-
-    audioRef.current.addEventListener('loadedmetadata', handleMetadataLoaded);
-
-    return () => {
-      audioRef.current?.removeEventListener('loadedmetadata', handleMetadataLoaded);
-    };
-  }
-}, [audioRef]); 
 
   // Function to handle clicks on the waveform
   const handleWaveformClick = (e: React.MouseEvent<HTMLDivElement>) => {
