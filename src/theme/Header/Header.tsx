@@ -139,7 +139,7 @@ const Header: React.FC<HeaderProps> = () => {
                   {({ active }) => (
                     <div
                       onClick={() => {
-                        navigate(`/artist-profile/${state?.auth?.user?.username}`);
+                        navigate(`/profile/${state?.auth?.user?.username}`);
                       }}
                       className={classNames(
                         active

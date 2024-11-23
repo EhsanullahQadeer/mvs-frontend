@@ -17,6 +17,7 @@ export interface IUserData {
   id: number;
   is_admin: boolean;
   is_partner: boolean;
+  is_claimed: boolean;
   is_placeholder_account: boolean | null;
   last_name: string;
   metrics_last_updated: string | null; // ISO date string or null

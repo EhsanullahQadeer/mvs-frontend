@@ -68,7 +68,11 @@ const ConncectWithPeople = (props: Props) => {
       try {
         const paginationDto = { skip: 0, take: 21 };
         if (debouncedSearchValue) {
-          const response = await searchAllUsers(debouncedSearchValue, paginationDto.take);          
+          const response = await searchAllUsers(
+            debouncedSearchValue, 
+            paginationDto.take,
+            "true"
+          );          
           setPeopleList(response?.data || []);
         } else {
           const response = await getTopPopularUsers(paginationDto);

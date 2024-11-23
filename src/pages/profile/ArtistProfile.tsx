@@ -16,7 +16,7 @@ import MusicTable from "./components/MusicTable";
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { artistProfileAPI, getArtistCredits, getArtistInfo } from "api/user";
+import { artistProfileAPI, getSpotifyArtistTopTracks } from "api/user";
 import {
   IArtistProfileData,
   // MusicTableArr
@@ -64,8 +64,8 @@ const ArtistProfile = () => {
 
   const getCredits = async (spotifyId: string) => {
     try {
-      const response = await getArtistCredits({
-        spotify_artist_id: spotifyId,
+      const response = await getSpotifyArtistTopTracks({
+        spotifyId,
         skip: 0,
         limit: 10,
         take: 10,

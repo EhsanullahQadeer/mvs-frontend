@@ -1,5 +1,12 @@
+/*****************************************************************************************
+ * @file SearchHeader.tsx
+ * @author Ehsanullah Qadeer
+ * @desc Search header component.
+ * 
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ ****************************************************************************************/
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
 import banner from "../../../assets/img/welcome-banner.svg";
 import leftWing from "../../../assets/img/left wing.svg";
 import rightWing from "../../../assets/img/right wing.svg";
@@ -10,72 +17,21 @@ import { Autocomplete, TextField } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
 import { MdCancel } from "react-icons/md";
 import CustomPopper from "./CutomPopperSearch";
-import { spotifySearch, spotifySearchTopArtist } from "api/spotify";
-import useDebounce from "hooks/useDebounce";
 import CircularProgress from "@mui/material/CircularProgress";
-import { userArtistSearch } from "api/user";
 import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
-export interface IAppProps {}
+import { useSearchHeader } from '../hooks/useSearchHeader';
 
-export function SearchHeader(props: IAppProps) {
+export function SearchHeader() {
+  const { topResults, searchInput, setSearchInput, loading, loadTopArtists } = useSearchHeader();
   const { handleArtistSelected } = useHandleArtistSelected();
-  const [topRatedArtist, setTopRatedArtist] = useState([]);
-  const [spotifySearchResult, setSpotifySearchResult] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  // Debounce the search value
-  const debouncedSearchValue = useDebounce(searchInput, 300);
-  const topResults = spotifySearchResult.length
-    ? spotifySearchResult
-    : topRatedArtist;
 
   const handleCancelBtn = () => {
     setSearchInput("");
   };
 
-  useEffect(() => {
-    (async () => {
-      const response = await spotifySearchTopArtist({
-        limit: 10,
-      });
-      const validResults = response.data.results.filter(result => 
-        result && (result.artist_name || result.professional_name)
-      );
-      setTopRatedArtist(validResults);
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (debouncedSearchValue) {
-      (async () => {
-        try {
-          setLoading(true);
-          const spotifyResponse = await userArtistSearch({
-            limit: 10,
-            query: debouncedSearchValue,
-          });
-          console.log("list response with serach", spotifyResponse.data);
-          setSpotifySearchResult(spotifyResponse.data);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        } finally {
-          setLoading(false);
-        }
-      })();
-    } else {
-      setSpotifySearchResult([]);
-    }
-  }, [debouncedSearchValue]);
-
   const handleSearchInput = (e) => {
     setSearchInput(e.target.value);
   };
-
-  useEffect(() => {
-    console.log("topRatedArtist", topRatedArtist);
-
-  } , [topRatedArtist])
-  
 
   return (
     <div className="search-header-wrap w-full relative">
@@ -94,7 +50,8 @@ export function SearchHeader(props: IAppProps) {
                   alt="frquesncy-icon"
                 />
                 <div className="text-center">
-                  <h1 className="text-[32px] text-gainsboro font-semibold leading-[38px] tracking-[-0.64px] relative">
+                  <h1 className="text-[32px] text-gainsboro font-semibold leading-[38px] 
+                      tracking-[-0.64px] relative">
                     Welcome to MVSSIVE!
                     <img
                       className="absolute right-[15px] top-[-40px]"
@@ -113,9 +70,14 @@ export function SearchHeader(props: IAppProps) {
               <Autocomplete
                 inputValue={searchInput}
                 freeSolo
-                getOptionLabel={(option) => option.artist_name || option.professional_name || ""}
+                onFocus={() => {
+                  if (topResults.length === 0) {
+                    loadTopArtists();
+                  }
+                }}
+                getOptionLabel={(option) => option.professionalName || ""}
                 options={topResults.filter(option => 
-                  option && (option.artist_name || option.professional_name)
+                  option && (option.professionalName)
                 )}
                 PopperComponent={CustomPopper}
                 groupBy={() => "Top Results"}
@@ -141,9 +103,7 @@ export function SearchHeader(props: IAppProps) {
                   </li>
                 )}
                 renderOption={(props, option) => {
-                  // Create a truly unique key using spotify_artist_id and timestamp
-                  const uniqueKey = `${option.spotify_artist_id}-${Date.now()}`;
-                  
+                  const uniqueKey = option.spotifyId || option.id;
                   return (
                     <li
                       {...props}
@@ -153,18 +113,18 @@ export function SearchHeader(props: IAppProps) {
                       }`}
                       onClick={async (e) => {
                         e.preventDefault();
-                        e.stopPropagation(); // Add this to prevent event bubbling
+                        e.stopPropagation();
                         handleArtistSelected(option);
                       }}
                     >
                       <img
                         src={option.thumbnail}
-                        alt={option.artist_name || option.professional_name}
+                        alt={option.professionalName}
                         className="w-10 h-10 rounded-md"
                       />
                       <div className="flex items-center gap-3">
                         <span className="text-gainsboro text-sm w-32">
-                          {option.artist_name || option.professional_name}
+                          {option.professionalName}
                         </span>
                         <span className="text-charcoalGray text-xs ml-auto">
                           From{" "}

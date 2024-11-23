@@ -112,7 +112,7 @@ const ProfileButton: React.FC = () => {
                                 {({ active }) => (
                                     <div
                                         onClick={() => {
-                                            navigate(`/artist-profile/${state?.auth?.user?.username}`);
+                                            navigate(`/profile/${state?.auth?.user?.username}`);
                                         }}
                                         className={classNames(
                                             active

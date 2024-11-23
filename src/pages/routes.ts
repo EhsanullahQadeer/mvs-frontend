@@ -189,12 +189,12 @@ const routes: IRoute[] = [
     component: SamplesPage,
   },
   {
-    path: "/artist-wiki-profile/:spotify_artist_id",
+    path: "/wiki/:spotify_artist_id",
     name: "Artist Profile",
     component: ArtistWikiProfile,
   },
   {
-    path: "/artist-profile/:username",
+    path: "/profile/:username",
     name: "Artist Profile",
     component: ArtistProfile,
   },

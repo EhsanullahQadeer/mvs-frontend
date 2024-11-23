@@ -15,7 +15,9 @@ type Props = {
   creditsData: { thumbnail: string; track_name: string; artists: any, preview_url: any }[];
 };
 
-const ProfileAboutSection = (props: Props) => {
+const ProfileAboutSection = (
+  props: Props
+) => {
   const { artistData, creditsData } = props;
   const [hoveredRow, setHoveredRow] = useState<number | null>(null); // State to track hovered row
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(null); // Track the currently playing index
@@ -238,7 +240,7 @@ const ProfileAboutSection = (props: Props) => {
         <h2 className={`text-white mb-3.5 text-base font-normal`}>Credits</h2>
 
         <div className="flex flex-col overflow-y-auto">
-          {creditsData.map((value, index) => {
+          {creditsData?.map((value, index) => {
             const { thumbnail, track_name, artists, preview_url } = value;
             const { professional_name } = artists[0];
             return (

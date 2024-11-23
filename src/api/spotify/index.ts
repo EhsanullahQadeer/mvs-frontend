@@ -10,13 +10,17 @@
 import axiosInstance from '../axios';
 import { IspotifySearchParams, IspotifySearchTopArtistParams } from './types';
 
+export interface IPaginationDto {
+  skip: number;
+  take: number;
+}
+
 export async function spotifySearch(params:IspotifySearchParams) {
     return axiosInstance.get("/spotify/search", { params });
-  }
-  
+}
+
 export async function spotifySearchTopArtist(
-  params:IspotifySearchTopArtistParams
+  params: IPaginationDto
 ) {
-    return axiosInstance.get("/spotify/top-artists", { params });
-  }
-  
+  return axiosInstance.get("/users/top-popular", { params });
+}

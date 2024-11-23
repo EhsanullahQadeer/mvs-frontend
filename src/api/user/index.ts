@@ -10,10 +10,10 @@
 import axiosInstance from "../axios";
 import {
   IAddNewUser,
+  IcreateWikiProfileBody,
   IGetArtistCreditsParams,
   IgetArtistInfoParams,
   IRequestInvitation,
-  IstoreSpotifyArtistBody,
   IUserProfessionalNameSearch,
   IUsersSearchParams,
   UserFiltersDTO,
@@ -68,14 +68,22 @@ export async function artistProfileAPI(username: string) {
 }
 
 export async function userArtistSearch(params: IUsersSearchParams) {
-  return axiosInstance.get("/users/search-users", { params });
-}
-
-export async function searchAllUsers(query: string, limit: number) {
-  const params = { query, limit }; 
   return axiosInstance.get("/users/search", { params });
 }
 
+export async function getUserBySpotifyId(spotifyId: string) {
+  return axiosInstance.get(`/users/by-spotify-id/${spotifyId}`);
+}
+
+export async function searchAllUsers(
+  query: string, 
+  limit: number, 
+  searchSpotify: string = "false"
+) {
+  const params = { query, limit, searchSpotify }; 
+  console.log('Sending params:', params);
+  return axiosInstance.get("/users/search", { params });
+}
 
 export async function userProfessionalNameSearch(
   params: IUserProfessionalNameSearch
@@ -92,8 +100,8 @@ export async function getUsersByTag(params: UserFiltersDTO, limit=20) {
   });
 }
 
-export async function getArtistCredits(params: IGetArtistCreditsParams) {
-  return axiosInstance.get(`/users/get-artist-credits`, {
+export async function getSpotifyArtistTopTracks(params: IGetArtistCreditsParams) {
+  return axiosInstance.get(`/spotify/artist-top-tracks`, {
     params,
   });
 }
@@ -102,9 +110,10 @@ export async function getArtistInfo(params: IgetArtistInfoParams) {
     params,
   });
 }
-export async function storeSpotifyArtist(body: IstoreSpotifyArtistBody) {
-  return axiosInstance.post(`/misc/store-artist-wiki`, body);
+export async function createWikiProfile(body: IcreateWikiProfileBody) {
+  return axiosInstance.post(`/users/wiki-profile`, body);
 }
+
 // =======================================================================================
 export async function verifyAndRetrieveInviteCodeDetails(inviteCode: string) {
   return axiosInstance.post('/users/verify/invite-code', {

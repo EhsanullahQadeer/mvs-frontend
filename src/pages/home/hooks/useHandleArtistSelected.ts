@@ -1,28 +1,37 @@
-import { storeSpotifyArtist } from "api/user";
-import { IstoreSpotifyArtistBody } from "api/user/types";
+import { createWikiProfile } from "api/user";
+import { IcreateWikiProfileBody } from "api/user/types";
 import { useNavigate } from "react-router-dom";
 
 
-interface ArtistOption extends IstoreSpotifyArtistBody {
-  is_claimed?: boolean;
+interface ArtistOption extends IcreateWikiProfileBody {
+  isClaimed?: boolean;
   username?:string;
 }
+
 const useHandleArtistSelected = () => {
   const navigate = useNavigate();
 
   const handleArtistSelected = async (option: ArtistOption) => {
-    const { spotify_artist_id, professional_name, is_claimed, popularity, thumbnail, tag,
+    const { spotifyId, professionalName, isClaimed, popularity, thumbnail, tag,
       followers, username
     } = option;
-
-    if (is_claimed === true) {
-      navigate(`/artist-profile/${username}`);
+    console.log('options', option);
+    if (isClaimed === true || username) {
+      navigate(`/profile/${username}`);
+    } else if (isClaimed === false) {
+      navigate(`/wiki/${spotifyId}`);
     } else {
-      await storeSpotifyArtist({ spotify_artist_id, professional_name, popularity, thumbnail, tag, followers });
-      navigate(`/artist-wiki-profile/${spotify_artist_id}`);
+      const wikiProfile = await createWikiProfile({ 
+        spotifyId,
+        professionalName,
+        popularity,
+        thumbnail,
+        tag,
+        followers
+      });
+      navigate(`/wiki/${wikiProfile.data?.results?.spotify_id}`);
     }
   };
-
   return { handleArtistSelected };
 };
 

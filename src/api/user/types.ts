@@ -22,15 +22,15 @@ export interface IGetArtistCreditsParams {
   limit: number;
   skip: number;
   take: number;
-  spotify_artist_id: string;
+  spotifyId: string;
 }
 export interface IgetArtistInfoParams {
-  spotify_artist_id: string;
+  spotifyId: string;
 }
 
-export interface IstoreSpotifyArtistBody {
-  spotify_artist_id: string;
-  professional_name: string;
+export interface IcreateWikiProfileBody {
+  spotifyId: string;
+  professionalName: string;
   popularity: number;
   thumbnail: string;
   tag: string;
