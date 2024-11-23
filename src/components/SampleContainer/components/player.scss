@@ -1,0 +1,130 @@
+.sample-container {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 100px;
+}
+
+@media (max-width: 768px) {
+  .sample-container {
+    flex-direction: column;
+  }
+}
+
+.vol-control {
+  --volume: 50%;
+  background-color: #525252;
+  border-radius: 10px;
+  height: 6px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+
+  &> input[type="range"] {
+    background: transparent;
+    height: 0;
+    width: 100%;
+    opacity: 0;
+    position: absolute;
+    z-index: 1;
+  }
+
+  &__slider {
+    background-color: #ffffff;
+    border-radius: 10px;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    right: var(--volume);
+    top: 0;
+    width: 100%;
+  }
+}
+
+.wave-icon {
+  align-items: center;
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(6, 1px);
+  height: 100%;
+  width: 100%;
+
+  &> .segment {
+    background-color: #999999;
+    border-radius: 10px;
+    height: 100%;
+    transition: height var(--wave-animation-duration) linear;
+    width: 100%;
+
+    &:nth-child(1), &:nth-child(6) {
+      height: 20%;
+    }
+    &:nth-child(2) {
+      height: 55%;
+    }
+    &:nth-child(3) {
+      height: 68%;
+    }
+    &:nth-child(4) {
+      height: 45%;
+    }
+    &:nth-child(5) {
+      height: 72%;
+    }
+  }
+
+  &--playing {
+    &> .segment {
+      animation-duration: var(--wave-animation-duration);
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      background-color: rgb(158, 255, 0);
+      height: 80%;
+      transform: scaleY(0.4);
+
+      &:nth-child(1), &:nth-child(6) {
+        animation-name: wave-pulse-sm;
+        transform: scaleY(1.1);
+      }
+
+      &:nth-child(2) {
+        animation-name: wave-pulse-md;
+      }
+      &:nth-child(3) {
+        animation-name: wave-pulse-sm;
+      }
+      &:nth-child(4) {
+        animation-name: wave-pulse-lg;
+      }
+      &:nth-child(5) {
+        animation-name: wave-pulse-sm;
+      }
+    }
+  }
+}
+
+@keyframes wave-pulse-xs {
+  25% { transform: scaleY(0.4); }
+  50% { transform: scaleY(0.24); }
+  75% { transform: scaleY(0.65); }
+}
+
+@keyframes wave-pulse-sm {
+  25% { transform: scaleY(0.6); }
+  50% { transform: scaleY(0.4); }
+  75% { transform: scaleY(0.8); }
+}
+
+@keyframes wave-pulse-md {
+  25% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+  75% { transform: scaleY(0.6); }
+}
+
+@keyframes wave-pulse-lg {
+  25% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+  75% { transform: scaleY(1.2); }
+}
+

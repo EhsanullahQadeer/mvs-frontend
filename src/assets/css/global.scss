@@ -145,21 +145,110 @@ body {
 }
 
 .bottom-audio-player {
-  display: flex;
-  min-width: 0; /* Allows shrinking below content size without overflow */
-  align-items: center; /* To align items vertically in the center */
-  z-index: 1000; /* Ensure it stays above other content */
+  --audio-duration: 0s;
+  --audio-play-state: paused;
+  --progress-animation: audio-progress-line;
+  --progress-content: "";
+
+  align-items: center;
+  box-sizing: border-box;
+  grid-template-columns: auto max-content minmax(10.5rem, max-content);
+  min-width: 0;
+  align-items: center;
+  z-index: 1000;
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #1a1a1a; /* Dark background for visibility */
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* Adds a shadow for better separation */
-  z-index: 1000; /* Ensure it stays above other content */
+  background-color: #1a1a1a;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  border-top: 2px solid #1f1f1f;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  height: 66px;
+
+  & > div:first-child {
+    flex: 0 0 auto;
+  }
+
+  & > div:nth-child(2) {
+    flex: 0 1 auto;
+  }
+
+  & > div:nth-child(3) {
+    flex: 0 0 auto;
+  }
+
+  &::before {
+    background-color: #00000000;
+    content: "";
+    height: 3px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+  }
+
+  &::after {
+    animation-name: var(--progress-animation);
+    animation-duration: var(--audio-duration);
+    animation-play-state: paused;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+    background-color: rgb(158, 255, 0);
+    content: var(--progress-content);
+    height: 3px;
+    left: 0;
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    width: var(--progress-width, 0%);
+    z-index: 2;
+  }
+
+  &--idle {
+    &::after {
+      opacity: 0;
+      width: var(--progress-width, 0%);
+      content: "";
+    }
+  }
+
+  &--switch {
+    &::after {
+      animation: none;
+      width: 30%;
+    }
+  }
+
+  &--completed {
+    &::after {
+      width: 100%;
+    }
+  }
+
+  &--playing {
+    animation-play-state: running;
+  }
 }
-/* Specific control to make the first container not to take more than needed */
-.bottom-audio-player > div:first-child {
-  flex: 0 1 auto; /* Do not grow beyond content size, allow shrink */
+
+/* Media query to hide the middle child when the window is too small */
+@media (max-width: 600px) {
+  .parent-container > div:nth-child(2) {
+    display: none; /* Hide the middle child when window width is less than 600px */
+  }
+}
+
+@keyframes audio-progress-line {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
 }
 
 .two-divs {
@@ -172,11 +261,6 @@ body {
   .two-divs {
     padding: 0 5px; /* Decrease padding for smaller screens */
   }
-}
-
-/* If the middle container needs to be bigger */
-.bottom-audio-player > div:nth-child(3) {
-  flex: 2; /* Allows the middle container to take twice the space of the other two */
 }
 
 /* Apply styles for the custom dropdown class */
@@ -229,32 +313,12 @@ body {
   width: 100%;
 }
 
-// .bottom-audio-player {
-//   display: flex;
-//   justify-content: center; /* Horizontally center the inner container */
-
-//   position: fixed;
-//   left: 0;
-//   right: 0;
-//   bottom: 0;
-//   padding: 25px;
-//   background-color: #1a1a1a; /* Dark background for visibility */
-//   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* Adds a shadow for better separation */
-//   z-index: 1000; /* Ensure it stays above other content */
-// }\
-
 .sample-container {
   flex: 2; /* This will make each container take half the width of the parent */
   display: flex;
   align-items: center; /* To align items vertically in the center */
   justify-content: flex-start; /* For sample-container content alignment */
   padding: 0 100px; /* Give some padding inside each container */
-}
-
-.volume-container {
-  display: flex;
-  align-items: center; /* Center items vertically */
-  gap: 0 10px; /* Space between the button and the slider */
 }
 
 .volume-button {
@@ -265,8 +329,12 @@ body {
 }
 
 .volume-slider-wrapper {
+  /* Contains entire volume control slider */
   position: relative;
-  padding-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .volume-input {
@@ -302,22 +370,13 @@ body {
   border-radius: 10px; /* Round the slider by 5px */
 }
 
-// .volume-level {
-//   -webkit-appearance: none;
-//   background-color: #ddd;
-//   height: 10px;
-//   overflow: hidden;
-//   width: 100%;
-//   border-radius: 5px;
-// }
-
 #volume-level {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
   cursor: pointer;
   outline: none;
-  border-radius: 50%;
+  background-color: #1a1a1a;
 }
 
 #volume-level::-webkit-slider-runnable-track {
@@ -335,6 +394,30 @@ body {
   border-radius: 50%;
   background-color: white;
   box-shadow: -402px 0 0 400px rgb(255, 255, 255);
+}
+
+/* Firefox */
+#volume-level::-moz-range-track {
+  height: 5px;
+  background: #484848;
+  border-radius: 5px;
+}
+
+/* Firefox - Slider Progress (Left side before the thumb) */
+#volume-level::-moz-range-progress {
+  background: white; /* Set the color for the filled (left) side */
+  border-radius: 5px;
+  height: 5px;
+  box-shadow: 2px 0 0 0 white;
+}
+
+/* Firefox - Slider Thumb */
+#volume-level::-moz-range-thumb {
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  background-color: white;
+  border: none; /* Remove default border for Firefox */
 }
 
 .album-info {
@@ -400,6 +483,8 @@ body {
   display: flex;
   align-items: center; /* Aligns items vertically in the center */
   justify-content: flex-start; /* Aligns container content to the end */
+  height: 32px;
+  margin-right: 20px;
 }
 
 // .audio-container {
@@ -421,6 +506,7 @@ body {
   cursor: pointer;
   flex: 0 0 auto; /* Do not grow or shrink, use auto width */
   z-index: 10;
+  margin-bottom: 0 !important;
 }
 
 .audio-player {
@@ -431,6 +517,7 @@ body {
 
 .volume-container {
   justify-content: flex-end; /* Align to the end (right) */
+  flex: 0 0 auto; /* Do not grow or shrink, use auto width */
 }
 
 // .audio {
@@ -935,9 +1022,6 @@ td {
   }
   .album-details {
     margin-top: 10px; /* Add some margin between the album art and album details */
-  }
-  .control-container {
-    flex-direction: column; /* Stack the control buttons vertically */
   }
   .control-button {
     margin-bottom: 10px; /* Add some margin between the control buttons */

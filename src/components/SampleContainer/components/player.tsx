@@ -8,36 +8,44 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import WaveformPlayer from "components/AudioPlayer/audio-player";
-import React, { useContext, useEffect, useState, useCallback } from "react";
-import { PlayerContext } from "../player-container";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import skipBack from "../../../assets/img/player/skip-back.svg";
 import skipNext from "../../../assets/img/player/skip-forward.svg";
 import pauseButton from "../../../assets/img/player/pause-circle.svg";
 import playButton from "../../../assets/img/player/play-circle.svg";
-import musicBeam from "../../../assets/icons/musicBeam.svg";
-import { useWaveform, Waveform, waveformCtx } from "./waveform";
+import { waveformCtx } from "./waveform";
+import { AnimatedWaveGraphic } from "./wave-graphic";
+import "./player.scss";
 
 const AudioPlayer = ({
-  audio_track,
   currTrack,
   isPlaying,
   onPlayToggle,
   onPrevClick,
   onNextClick,
 }) => {
-
-  const [playing, setPlaying] = useState(false);
+  const bottomAudioPlayerRef = useRef<HTMLDivElement>(null);
+  const [trackId, setTrackId] = useState<number | null>(null);
+  const [changingTrack, setChangingTrack] = useState<boolean>(false);
+  const [idle, setIdle] = useState<boolean>(true);
+  const [playbackEnded, setPlaybackEnded] = useState<boolean>(false);
   const [volume, setVolume] = useState(0.5);
-  const [currentSampleIndex, setCurrentSampleIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [prevVol, setPrevVol] = useState(0.5);
-  const { audioRef, metadata } = useContext(waveformCtx);
-  
+  const { audioRef } = useContext(waveformCtx);
+  const [sampleNameVisible, setSampleNameVisible] = useState(true);
+  const [sampleTitleWidth, setSampleTitleWidth] = useState(0);
+  const sampleTitleWidthRef = useRef(sampleTitleWidth); // Ref to hold the latest value
+
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(event.target.value); // Using parseFloat for finer control
+    const newVolume = parseFloat(event.target.value);
     setVolume(newVolume);
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
@@ -60,79 +68,79 @@ const AudioPlayer = ({
     setIsMuted(!isMuted);
   };
 
-  const muteButton = document.getElementById("muteButton");
   useEffect(() => {
-    if (muteButton) {
-      const handleMuteToggle = () => {
-        if (isMuted) {
-          setVolume(prevVol);
-          if (audioRef.current) {
-            // setting Volume will take place after event listener, need to set to prevVol instead
-            audioRef.current.volume = prevVol;
-          }
-        } else {
-          setPrevVol(volume);
-          setVolume(0);
-          if (audioRef.current) {
-            // can't use volume here, need to use 0
-            audioRef.current.volume = 0;
-          }
-        }
-        setIsMuted(!isMuted);
-      };
+    let animationFrameId: number;
 
-      muteButton.addEventListener("click", handleMuteToggle);
-
-      return () => {
-        muteButton.removeEventListener("click", handleMuteToggle);
-      };
-    }
-  });
-
-  // Handlers for dragging the volume slider
-  const handleMouseMove = (event: MouseEvent) => {
-    const slider = document
-      .querySelector(".volume-slider")!
-      .getBoundingClientRect();
-    const newVolume = Math.max(
-      0,
-      Math.min(100, ((event.clientX - slider.left) / slider.width) * 100)
-    );
-    setVolume(newVolume);
-  };
-
-  const handleMouseDown = () => {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleMouseUp = () => {
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseUp);
-  };
-
-  useEffect(() => {
-    // Clean up listeners on unmount
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+    const updateProgress = () => {
+      if (audioRef.current && audioRef.current.duration > 0) {
+        const currentTime = audioRef.current.currentTime;
+        setProgress((currentTime / audioRef.current.duration) * 100);
+        animationFrameId = requestAnimationFrame(updateProgress);
+      }
     };
-  }, [handleMouseUp]);
 
-  // Update progress using requestAnimationFrame for smooth updates
-  const updateProgress = () => {
-    if (audioRef.current && audioRef.current.duration > 0) {
-      const currentTime = audioRef.current.currentTime;
-      const duration = audioRef.current.duration;
-      setProgress((currentTime / duration) * 100); // Calculate percentage
-      setDuration(duration); // Set the correct duration
+    const startProgressUpdate = () => {
+      if (audioRef.current && !audioRef.current.paused) {
+        animationFrameId = requestAnimationFrame(updateProgress);
+      }
+    };
+
+    const stopProgressUpdate = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+
+    if (audioRef.current) {
+      audioRef.current.addEventListener("play", startProgressUpdate);
+      audioRef.current.addEventListener("pause", stopProgressUpdate);
+      audioRef.current.addEventListener("ended", stopProgressUpdate);
     }
-    requestAnimationFrame(updateProgress); // Continuously update using requestAnimationFrame
-  };
 
-  // Listener for Left and Right arrow keys to jump 10% forward or back in the sample
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.removeEventListener("play", startProgressUpdate);
+        audioRef.current.removeEventListener("pause", stopProgressUpdate);
+        audioRef.current.removeEventListener("ended", stopProgressUpdate);
+      }
+      stopProgressUpdate();
+    };
+  }, [audioRef]);
+
+  // Needed to reset the progress bar in the bottom audio player
+  const changeTrack = useCallback(() => {
+    const current = bottomAudioPlayerRef.current;
+    if (current) {
+      current.style.setProperty("--progress-animation", "none");
+      current.style.setProperty("--progress-content", "none");
+    }
+    setChangingTrack(true);
+    setPlaybackEnded(false);
+    setIdle(true);
+    setProgress(0);
+    setTimeout(() => {
+      if (current) {
+        current.style.setProperty("--progress-content", "");
+        current.style.setProperty(
+          "--progress-animation",
+          "audio-progress-line"
+        );
+      }
+      setChangingTrack(false);
+    });
+  }, [bottomAudioPlayerRef]);
+
+  // Needed to reset the progress bar in the bottom audio player
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    if (currTrack && currTrack.id !== trackId) {
+      setTrackId(currTrack?.id);
+      changeTrack();
+    }
+  }, [changeTrack, currTrack, trackId]);
+
+  // Left & Right Arrow Key Functionality
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (audioRef.current && audioRef.current.duration > 0) {
         let currentTime = audioRef.current.currentTime;
 
@@ -155,137 +163,111 @@ const AudioPlayer = ({
 
     window.addEventListener("keydown", handleKeyDown);
 
-    // Start updating progress when audio plays
-    audioRef.current.addEventListener("play", updateProgress);
-
-    // Cleanup on unmount
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      audioRef.current.removeEventListener("play", updateProgress);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.addEventListener("loadedmetadata", () => {
-        if (audioRef.current) {
-          setDuration(audioRef.current.duration); // Set duration when metadata is loaded
-        }
-      });
-
-      // Start progress updates with requestAnimationFrame
-      requestAnimationFrame(updateProgress);
-    }
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.removeEventListener("loadedmetadata", () => {});
-      }
     };
   }, [audioRef]);
 
-  const segments = 10000; // Number of segments for the progress bar
-  const segmentArray = Array.from({ length: segments }, (_, i) => i);
+  // Updates the CSS property for song progress so that bottom audio player progress bar syncs properly
+  useEffect(() => {
+    const current = bottomAudioPlayerRef.current;
+    if (current) {
+      current.style.setProperty("--progress-width", `${progress}%`);
+    }
+  }, [progress]);
+
+  // Sets variables for idling
+  useEffect(() => {
+    let current = audioRef.current || null;
+
+    if (current) {
+      current.addEventListener("ended", () => {
+        setPlaybackEnded(true);
+      });
+      current.addEventListener("play", () => {
+        // Sets the sample name width globally, this will be used for window resizing. Dynamic and changes with each song.
+        setSampleTitleWidth(
+          document.getElementById("trackInfo").getBoundingClientRect().width
+        );
+        setIdle(false);
+      });
+    }
+
+    return () => {
+      current = null;
+    };
+  }, [audioRef, sampleTitleWidth]);
+
+  // Horizontal window resize handler. Will only hide the sample name. Keeps control buttons and volume control.
+  const handleResize = () => {
+    if (sampleTitleWidthRef.current !== 0) {
+      setSampleNameVisible(
+        window.innerWidth >= sampleTitleWidthRef.current + 303
+      );
+    } else {
+      setSampleNameVisible(window.innerWidth >= sampleTitleWidth + 303);
+    }
+  };
+
+  // This effect will run whenever `sampleTitleWidth` changes
+  // For window resize handling
+  useEffect(() => {
+    setSampleTitleWidth(sampleTitleWidth);
+    sampleTitleWidthRef.current = sampleTitleWidth;
+  }, [sampleTitleWidth]); // Only run when sampleTitleWidth changes
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Check visibility on initial mount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const className = [
+    "bottom-audio-player",
+    ...(isPlaying ? ["bottom-audio-player--playing"] : []),
+    ...(changingTrack ? ["bottom-audio-player--switch"] : []),
+    ...(playbackEnded ? ["bottom-audio-player--completed"] : []),
+    ...(idle ? ["bottom-audio-player--idle"] : []),
+  ].join(" ");
 
   return (
     <div
-      className="bottom-audio-player"
+      className={className}
+      ref={bottomAudioPlayerRef}
       style={{
-        borderTop: "2px solid #1F1F1F",
-        width: "100%",
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
+        justifyContent: "space-between",
       }}
     >
-      {/* Control buttons and waveform */}
-      <div
-        className="mx-5"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {/* Previous, Play/Pause, and Next buttons */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div className="control-container">
-            <button className="control-button pr-2" onClick={onPrevClick}>
-              <img src={skipBack} alt="Previous" />
-            </button>
-            <button className="control-button" onClick={onPlayToggle}>
-              {isPlaying ? (
-                <img src={pauseButton} alt="Pause" />
-              ) : (
-                <img src={playButton} alt="Play" />
-              )}
-            </button>
-            <button className="control-button pl-2" onClick={onNextClick}>
-              <img src={skipNext} alt="Next" />
-            </button>
-          </div>
-        </div>
-
-        {/* Segmented progress bar */}
-
-        <div></div>
-
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            height: "3px",
-            backgroundColor: "#ccc",
-            position: "absolute",
-            top: 0,
-            left: 0,
-          }}
-        >
-          {segmentArray.map((segment) => {
-            const segmentWidth = 100 / segments; // Width of each segment in percentage
-            const segmentProgress = (segment / segments) * 100; // Progress represented by this segment
-
-            // Determine the color based on the progress
-            const backgroundColor =
-              progress >= segmentProgress ? "#9EFF00" : "#101113";
-
-            return (
-              <div
-                key={segment}
-                style={{
-                  width: `${segmentWidth}%`, // Equal width for each segment
-                  height: "100%",
-                  backgroundColor,
-                }}
-              />
-            );
-          })}
-        </div>
-
-        {/* Audio Player Component */}
-        {/* <div className="h-[50px]" style={{ marginLeft: '20px' }}>
-        <Waveform
-          track={audio_track}
-          columns={120}
-          hover_cursor={true}
-          options={{
-            colors: {
-              default: 'white',
-            },
-            activeHeight: '0%',
-            radius: '50px',
-          }}
-        />
-      </div> */}
+      {/* Control buttons */}
+      <div className="control-container">
+        <button className="control-button pr-2" onClick={onPrevClick}>
+          <img src={skipBack} alt="Previous" />
+        </button>
+        <button className="control-button" onClick={onPlayToggle}>
+          {isPlaying ? (
+            <img src={pauseButton} alt="Pause" />
+          ) : (
+            <img src={playButton} alt="Play" />
+          )}
+        </button>
+        <button className="control-button pl-2" onClick={onNextClick}>
+          <img src={skipNext} alt="Next" />
+        </button>
       </div>
 
-      <div className="border-l border-r border-eclipseGray p-4 flex gap-2 items-center">
+      {/* Track Info and Waveform */}
+      <div
+        className="border-l border-r border-eclipseGFray p-4 flex gap-2 items-center"
+        style={{
+          display: sampleNameVisible ? "flex" : "none",
+          alignItems: "center",
+        }}
+        id="trackInfo"
+      >
         <div className="h-8 w-8">
           <img
             src={currTrack?.thumbnail}
@@ -295,7 +277,7 @@ const AudioPlayer = ({
         </div>
 
         <div className="h-6 w-6">
-          <img src={musicBeam} alt="musicBeam" className="w-full h-full" />
+          <AnimatedWaveGraphic playing={isPlaying} />
         </div>
 
         <div>
@@ -303,29 +285,17 @@ const AudioPlayer = ({
             {currTrack?.filename}
           </div>
           <div className="text-dimGray text-sm font-normal">
-            {/* {currTrack?.collaborators[0].artist_name} */}
+            {currTrack?.collaborators[0]?.artist_name}
           </div>
         </div>
       </div>
 
-      {/* <div style={{ position: 'sticky', left: 0 }}>
-        <div className="sample-container">
-          <div className="album-art">
-            <img src={currTrack?.thumbnail || ''} alt="Album Art" />
-          </div>
-          <div className="album-details">
-            <div className="album-name">{currTrack?.filename}</div>
-            <div className="album-author">{currTrack?.collaborators[0].artist_name}</div>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div style={{ paddingLeft: '70px' }}></div> */}
-
       {/* Volume Control */}
-      <div className="volume-container mx-5 max-w-max">
-        {/* Volume Button */}
-        <button className="volume-button" id="muteButton">
+      <div
+        className="volume-container mx-5 max-w-max"
+        style={{ display: "flex", alignItems: "center" }}
+      >
+        <button className="volume-button" id="muteButton" onClick={toggleMute}>
           {isMuted || volume === 0 ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"

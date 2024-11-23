@@ -12,6 +12,8 @@ import musicIcon from "../../../assets/icons/musicIcon.svg";
 import { AudioTrackType } from "../player-container";
 import { AudioTrack, useWaveform, Waveform } from "./waveform";
 import Avatar from "react-avatar";
+import { AnimatedWaveGraphic } from "./wave-graphic";
+
 
 const SampleTable = (samples) => {
   const rowRefs = useRef<Array<HTMLTableRowElement | null>>([]);
@@ -299,49 +301,6 @@ const SampleTable = (samples) => {
                     {/* Thumbnail */}
                     <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm">
                       <div className="flex items-center gap-5">
-                        {/* <div className="thumbnail-container">
-                        <img
-                          className={
-                            currPlayingId !== sample.id
-                              ? "thumbnail cursor-pointer mr-[32px]" 
-                              : "play-pause-icon cursor-pointer mr-[32px]"
-                          }
-                          style={
-                            currPlayingId !== sample.id
-                              ? { width: '32px', height: '32px', borderRadius: '4px' }
-                              : { width: '15px', height: '15px', borderRadius: '4px' }
-                          }
-                          src={
-                            currPlayingId === sample.id
-                              ? (isPlaying
-                                  ? pauseButton
-                                  : playButton )
-                              : sample?.thumbnail
-                          }
-                          alt={
-                            currPlayingId === sample.id
-                              ? "Playing"
-                              : "Thumbnail"
-                          } 
-                          onClick={async (e) => {
-                          }}
-                        />
-                      </div> */}
-                        {/* <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={20}
-                        height={20}
-                        viewBox="0 0 20 20"
-                        fill="none">
-                        <path
-                          d="M1.66675 8.33333V10.8333M5.00008 5V14.1667M8.33342 2.5V17.5M11.6667 6.66667V12.5M15.0001 4.16667V15M18.3334 8.33333V10.8333"
-                          stroke="#CECFDA"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg> */}
-
                         <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-gunMetal">
                           <img src={musicIcon} alt="musicIcon" />
                         </div>
@@ -351,6 +310,11 @@ const SampleTable = (samples) => {
                               currPlayingId === sample.id ? playIcon : musicBeam
                             }
                             alt="icon"
+                          />
+                        </div>
+                        <div style={{ width: "16px", height: "16px" }}>
+                          <AnimatedWaveGraphic
+                            playing={isPlaying && currPlayingId === sample.id}
                           />
                         </div>
                       </div>
@@ -372,7 +336,7 @@ const SampleTable = (samples) => {
                     </td>
 
                     {/* Waveform */}
-                    {/* <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                    <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
                     <div className="flex flex-col items-center justify-center h-full">
                       <div className="h-[50px]">
                         {tracks.find((t) => t.id === sample.id) && (
@@ -391,7 +355,7 @@ const SampleTable = (samples) => {
                         )}
                       </div>
                     </div>
-                  </td> */}
+                  </td>
 
                     {/* Sample Duration */}
                     <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
@@ -513,7 +477,6 @@ const SampleTable = (samples) => {
       {/* Bottom audio player */}
       {currTrack && (
         <AudioPlayer
-          audio_track={current}
           currTrack={currTrack}
           isPlaying={isPlaying}
           onPlayToggle={() => handlePlayToggle(currTrack, currPlayingIdx)} // Pass the parameters
