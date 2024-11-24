@@ -49,23 +49,29 @@ const MessagesList = () => {
 
   const [loading_conversations, setLoadingConversations] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   useEffect(() => {
     getConversationList();
   }, []);
 
-  const getConversationList = async () => {
+  const getConversationList = async (page = currentPage) => {
     try {
       setLoadingConversations(true);
+      const skip = (page - 1) * itemsPerPage;
+      
       const response = await getConversationsList({
         searchTerm: "",
         order: true,
-        skip: 0,
-        take: 10,
-        limit: 10,
+        skip: skip,
+        take: itemsPerPage,
+        limit: itemsPerPage,
       });
-
-      setTotal(response.data.count);
+      console.log("response", response);
+      setTotal(response.data.total);
       setConversations(response.data.conversations);
+      setCurrentPage(page);
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -143,7 +149,10 @@ const MessagesList = () => {
       label: "Priority Inbox",
       value: 0,
     },
-    { label: "General Inbox", value: 1 },
+    { 
+      label: "General Inbox", 
+      value: 1 
+    },
   ];
 
   const [tab, setTab] = useState(0);
@@ -159,6 +168,19 @@ const MessagesList = () => {
       console.log("user info ", response);
     } catch (error) {
       console.error("Error in user info:", error);
+    }
+  };
+
+  const handleNextPage = () => {
+    const totalPages = Math.ceil(total / itemsPerPage);
+    if (currentPage < totalPages) {
+      getConversationList(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      getConversationList(currentPage - 1);
     }
   };
 
@@ -220,20 +242,25 @@ const MessagesList = () => {
             </div>
             <div className="flex gap-3 items-center self-stretch my-auto">
               <div className="gap-2.5 self-stretch p-2.5 my-auto text-sm leading-none text-neutral-400">
-                1-{total > 20 ? 20 : total} of {total}
+                {((currentPage - 1) * itemsPerPage) + 1}-
+                {Math.min(currentPage * itemsPerPage, total)} of {total}
               </div>
               <div className="flex gap-2 justify-center items-center self-stretch my-auto">
                 <img
                   loading="lazy"
                   src="https://assets.mvssive.net/cursor-left.svg"
-                  className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square cursor-pointer"
+                  className={`object-contain shrink-0 self-stretch my-auto w-6 aspect-square 
+                    ${currentPage > 1 ? 'cursor-pointer opacity-100' : 'opacity-50'}`}
                   alt="cursor-left"
+                  onClick={currentPage > 1 ? handlePrevPage : undefined}
                 />
                 <img
                   loading="lazy"
                   src="https://assets.mvssive.net/cursor-right.svg"
-                  className="object-contain shrink-0 self-stretch my-auto w-6 aspect-square cursor-pointer"
+                  className={`object-contain shrink-0 self-stretch my-auto w-6 aspect-square 
+                    ${currentPage < Math.ceil(total / itemsPerPage) ? 'cursor-pointer opacity-100' : 'opacity-50'}`}
                   alt="cursor-right"
+                  onClick={currentPage < Math.ceil(total / itemsPerPage) ? handleNextPage : undefined}
                 />
               </div>
             </div>
