@@ -180,23 +180,34 @@ const SampleTable = (samples) => {
           }
         }
       } else if (event.code === "Space" || event.key === " ") {
-        // Prevent the default scroll behavior of the spacebar
-        event.preventDefault();
+        // Check if the active element is an input, textarea, or contenteditable element
+        const activeElement = document.activeElement;
+        const isInputFocused = activeElement instanceof HTMLElement && (
+          activeElement.tagName === 'INPUT' ||
+          activeElement.tagName === 'TEXTAREA' ||
+          activeElement.isContentEditable
+        );
 
-        const currentSample = Object.values(samples.samples)[
-          currPlayingIdx
-        ] as AudioTrackType;
-        const audio_track: AudioTrack = {
-          id: currentSample.id, // Set the id from currentSample
-          src: currentSample.s3_key, // Set the src from currentSample
-        };
-        if (isPlaying) {
-          pauseTrack(); // Pause the current track
-          setPlaying(false); // Update UI to show pause button
-        } else {
-          armTrack(currentSample.id); // Arm the track when spacebar is pressed
-          playTrack(audio_track); // Play the sample using the created AudioTrack object
-          setPlaying(true);
+        // Only handle space if we're not focused on an input element
+        if (!isInputFocused) {
+          // Prevent the default scroll behavior of the spacebar
+          event.preventDefault();
+
+          const currentSample = Object.values(samples.samples)[
+            currPlayingIdx
+          ] as AudioTrackType;
+          const audio_track: AudioTrack = {
+            id: currentSample.id,
+            src: currentSample.s3_key,
+          };
+          if (isPlaying) {
+            pauseTrack();
+            setPlaying(false);
+          } else {
+            armTrack(currentSample.id);
+            playTrack(audio_track);
+            setPlaying(true);
+          }
         }
       }
     },
@@ -238,7 +249,7 @@ const SampleTable = (samples) => {
             >
               Filename
             </th>
-            <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray"></th>
+            {/* <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray"></th> */}
             <th
               scope="col"
               className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray"
@@ -345,7 +356,7 @@ const SampleTable = (samples) => {
                     </td>
 
                     {/* Waveform */}
-                    <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
+                    {/* <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
                     <div className="flex flex-col items-center justify-center h-full">
                       <div className="h-[50px]">
                         {tracks.find((t) => t.id === sample.id) && (
@@ -365,7 +376,7 @@ const SampleTable = (samples) => {
                         )}
                       </div>
                     </div>
-                  </td>
+                  </td> */}
 
                     {/* Sample Duration */}
                     <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
