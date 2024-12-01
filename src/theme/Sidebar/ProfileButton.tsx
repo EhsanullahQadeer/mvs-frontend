@@ -54,23 +54,17 @@ const ProfileButton: React.FC = () => {
     <Fragment>
       <div className="flex items-center justify-center">
         <Menu as="div" className="user relative">
-          <div>
-            <Menu.Button className="inline-flex w-full justify-center focus:outline-none">
-              <div className="w-10 h-10 flex items-center justify-center">
-                {state?.auth?.user?.thumbnail ? (
-                  <Avatar
-                    src={state?.auth?.user?.thumbnail}
-                    size="34"
-                    round={true}
-                  />
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-white">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                  </svg>
-                )}
-              </div>
-            </Menu.Button>
-          </div>
+          <Menu.Button>
+            {state?.auth?.user?.thumbnail ? (
+              <Avatar
+                src={state?.auth?.user?.thumbnail}
+                size="34"
+                round={true}
+              />
+            ) : (
+              <Avatar name={state?.auth?.user?.name} size="40" round={true} />
+            )}
+          </Menu.Button>
           <Transition
             as={Fragment}
             enter="transition ease-out duration-100"
@@ -213,7 +207,7 @@ const ProfileButton: React.FC = () => {
                       />
                     </svg>
                     <p className="text-[#BBBBBB] font-['Mona-Sans-M'] text-[14px] pl-[8px]">
-                      Terms of service
+                      Terms and Conditions
                     </p>
                   </div>
                 )}

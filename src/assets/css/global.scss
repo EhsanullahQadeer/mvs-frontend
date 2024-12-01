@@ -1391,7 +1391,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .audio-1 .rap-pin {
-  background-color: #B7B7B7 !important;
+  background-color: #b7b7b7 !important;
   height: 10px !important;
   width: 10px !important;
   top: -4px !important;
@@ -1429,14 +1429,14 @@ input[type="number"]::-webkit-outer-spin-button {
 .audio-1 .rap-controls {
   color: #ffffff;
 }
-.audio-1 .rap-total-time{
+.audio-1 .rap-total-time {
   text-align: left !important;
   font-size: 10px;
 }
-.audio-2 .rap-total-time{
+.audio-2 .rap-total-time {
   text-align: left !important;
   font-size: 16px;
-  color: #B2B2B2;
+  color: #b2b2b2;
 }
 .audio-1 .rap-slider {
   margin-left: 0 !important;
@@ -1454,6 +1454,65 @@ input[type="number"]::-webkit-outer-spin-button {
 .not-found-text {
   font-family: "Paytone-One", sans-serif;
 }
+
+// Terms and Conditions Page Styling
+.tou-white {
+  padding: 0 20px 5px 20px;
+  color: white;
+  font-size: medium;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.tou-grey {
+  padding: 0 20px 0 60px;
+  color: grey;
+  font-size: medium;
+  font-weight: 400;
+  line-height: 1;
+  list-style-type: disc;
+}
+
+// Terms and Conditions Page Circle Animation - START
+.rippleContainer {
+  width: 100%;
+  height: 350px;
+  display: grid;
+  overflow: hidden;
+  position: relative;
+}
+
+.growingCircles {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  background-color: transparent;         /* Make the background transparent */
+  opacity: 0;
+  box-shadow: 0 0 0 2px rgb(190, 242, 100); /* Initial box-shadow same as border width */
+  animation: scaleIn 10s infinite linear;
+}
+
+.lockImg {
+  z-index: 100;
+  padding: 50px;
+}
+
+.lockImg img {
+  width: 50px;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(.1);
+    opacity: .5;
+  }
+  to {
+    transform: scale(8.5);
+    opacity: 0;
+  }
+}
+// Terms and Conditions Page Circle Animation - END
 
 @tailwind base;
 @tailwind components;

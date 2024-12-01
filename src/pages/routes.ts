@@ -12,7 +12,7 @@ import SignupPage from "pages/Signup/signup";
 import RequestInfoPage from "pages/Signup/TalentProfiles/request-info";
 import ThankyouPage from "pages/thankyou";
 import Home from "./home/Home";
-import TermsOfService from "pages/terms";
+import TermsAndConditions from "pages/terms";
 import SamplesPage from "pages/samples";
 import MyLikesPage from "pages/my-likes";
 import MyDownloadsPage from "pages/downloaded-samples";
@@ -160,7 +160,7 @@ const routes: IRoute[] = [
   {
     path: "/terms-of-service",
     name: "Terms of Service",
-    component: TermsOfService,
+    component: TermsAndConditions,
   },
   {
     path: "/sound/samples/:id",

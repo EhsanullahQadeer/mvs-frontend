@@ -2,7 +2,7 @@
  * @file Header.tsx
  * @author End Quote
  * @desc Provides layout and navigation for the application.
- * 
+ *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
@@ -24,8 +24,10 @@ export interface RootState {
   };
 }
 
-export interface HeaderProps {}
+export interface HeaderProps {
+  headerTitle?: string;
+}
 
 export function classNames(...classes: string[]): string {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }

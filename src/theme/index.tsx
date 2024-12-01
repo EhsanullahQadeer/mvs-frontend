@@ -12,8 +12,13 @@ import Sidebar from "./Sidebar";
 import mvssive_text from "../assets/img/massive_text.svg";
 import mvssive_mini from "../assets/img/M-logo.png";
 
-const Theme = (props: any) => {
+interface ThemeProps {
+  isOverflowHidden?: boolean;
+  children?: React.ReactNode;
+  headerTitle?: string; // Add the `text` prop here to pass to Header
+}
 
+const Theme = (props: ThemeProps) => {
   return (
     <div className="grid grid-rows-[69px,1fr] grid-cols-[90px,1fr] h-screen bg-[#08090A]">
       <div
@@ -22,15 +27,22 @@ const Theme = (props: any) => {
         onClick={() => (window.location.href = "/home")}
         style={{ cursor: "pointer" }}
       >
-        <svg width="18" height="15" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0.872337 0.454545H5.22603L8.91921 9.46023H9.08967L12.7828 0.454545H17.1365V15H13.7132V6.06534H13.5925L10.0982 14.9077H7.91069L4.41637 6.01562H4.29563V15H0.872337V0.454545Z"
-            fill="#9EFF00" />
+        <svg
+          width="18"
+          height="15"
+          viewBox="0 0 18 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.872337 0.454545H5.22603L8.91921 9.46023H9.08967L12.7828 0.454545H17.1365V15H13.7132V6.06534H13.5925L10.0982 14.9077H7.91069L4.41637 6.01562H4.29563V15H0.872337V0.454545Z"
+            fill="#9EFF00"
+          />
         </svg>
-
       </div>
       {/* Header */}
       <div className="onboard-14 row-start-1 col-start-2 border-b-2 border-[#1F1F1F] flex items-center pl-[20px]">
-        <Header />
+        <Header headerTitle={props.headerTitle} />
       </div>
 
       {/* Sidebar */}
@@ -40,8 +52,9 @@ const Theme = (props: any) => {
 
       {/* Main content */}
       <div
-        className={`row-start-2 col-start-2 flex flex-col ${props.isOverflowHidden ? "overflow-hidden" : "overflow-auto"
-          }`}
+        className={`row-start-2 col-start-2 flex flex-col ${
+          props.isOverflowHidden ? "overflow-hidden" : "overflow-auto"
+        }`}
       >
         {props.children}
       </div>
