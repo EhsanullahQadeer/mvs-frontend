@@ -8,7 +8,7 @@
     "@fontsource-variable/karla": "^5.0.18",
     "@fontsource-variable/mulish": "^5.0.16",
     "@headlessui/react": "^1.6.4",
-    "@heroicons/react": "^2.0.18",
+    "@heroicons/react": "^2.2.0",
     "@material-ui/core": "^4.12.4",
     "@material-ui/styles": "^4.11.5",
     "@mui/icons-material": "^5.10.6",

@@ -17,6 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "redux/actions";
 import cookie from "js-cookie";
 import { CircularProgress } from "@mui/material";
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid'; // v2 import syntax
+
 
 interface RootState {
   auth: any;
@@ -33,6 +35,11 @@ const CreatorLogin: React.FC = () => {
   const user = useSelector((state: RootState) => state);
   const [errors, setErrors] = useState(false);
   const [loader, setLoader] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(true);
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
   useEffect(() => {
     if (cookie.get("token")) {
@@ -40,15 +47,12 @@ const CreatorLogin: React.FC = () => {
 
       return;
     }
-    console.log(user);
-
     if (user.auth.type === "USER_LOGIN_SUCCESS" && cookie.get("token")) {
       localStorage.removeItem("persist:root");
       navigate("/home");
       setLoader(false);
       setErrors(false);
     } else if (user.auth.type === "USER_LOGIN_FAIL") {
-      console.log("====== LOGIN DONE =====");
       setLoader(false);
       setErrors(true);
 
@@ -129,15 +133,23 @@ const CreatorLogin: React.FC = () => {
             </div>
           </div>
           <div className="relative">
-            <span className="absolute inset-y-0 right-3 flex items-center text-dimGray">
-              <RiLockLine />
-            </span>
             <Field
               name="password"
-              type="password"
+              type={passwordVisible ? "password" : "text"} // Conditionally change the input type
               placeholder="Enter your password"
               className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm p-4 bg-jetBlack border  border-eclipseGray text-dimGray rounded-lg"
             />
+            <button
+        type="button"
+        onClick={togglePasswordVisibility}
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 focus:outline-none"
+      >
+        {passwordVisible ? (
+          <EyeSlashIcon className="w-5 h-5" />
+        ) : (
+          <EyeIcon className="w-5 h-5" />
+        )}
+      </button>
           </div>
 
           <div className="text-darkRed mt-1 text-xs font-medium">
