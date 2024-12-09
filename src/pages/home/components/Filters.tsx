@@ -1,4 +1,3 @@
-import { IoIosArrowDown } from "react-icons/io";
 import { userTagsObj } from "utils/usersTags";
 
 interface Props {
@@ -25,11 +24,6 @@ const Filters = (props: Props) => {
       </div>
 
       <div className="flex max-w-[1381px] items-center justify-between flex-wrap gap-2">
-        <div className="p-2 flex justify-between items-center gap-[6px] border-[1px] border-bottonBorder bg-darkGray rounded-lg text-charcoalGray text-xs font-normal">
-          Filter By
-          <IoIosArrowDown height={16} width={16} />
-        </div>
-
         <div className="flex gap-2 flex-wrap">
           {Object.entries(userTagsObj).map(([value, label], idx) => {
             return (
@@ -47,7 +41,6 @@ const Filters = (props: Props) => {
             );
           })}
         </div>
-        <div></div>
       </div>
     </div>
   );
