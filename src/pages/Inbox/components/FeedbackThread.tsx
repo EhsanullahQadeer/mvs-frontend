@@ -122,11 +122,11 @@ const FeedbackThread = (props: Props) => {
                 </div>
 
                 <div className="text-white text-base font-semibold">
-                  Message Unlocked
+                  Action Required
                 </div>
 
                 <div className="text-coolGray text-sm font-normal w-64">
-                  To receive your payment , please provide your feedback on the
+                  To receive your payment, please provide your feedback on the
                   demo.
                 </div>
               </div>
