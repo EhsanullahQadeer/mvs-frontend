@@ -44,7 +44,7 @@ export const useHeaderHooks = () => {
       if (update_user.data.error) {
         console.error('Error updating user:', update_user.data.error);
       } else {
-        await dispatch(fetchCurrentUser());
+        await dispatch(fetchCurrentUser() as any);
         console.log('User updated successfully:', update_user.data);
         navigate('/');
       }
@@ -57,7 +57,7 @@ export const useHeaderHooks = () => {
     if (!token) {
       navigate('/login');
     } else {
-      dispatch( fetchCurrentUser() );
+      dispatch( fetchCurrentUser() as any );
     }
   }, [token, navigate, dispatch]);
 

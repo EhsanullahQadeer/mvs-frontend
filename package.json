@@ -67,7 +67,7 @@
     "react-phone-input-2": "^2.15.1",
     "react-photo-collage": "^1.0.9",
     "react-player": "^2.13.0",
-    "react-redux": "^7.2.6",
+    "react-redux": "^8.1.0",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.1",
     "react-select": "^5.7.0",
@@ -90,7 +90,8 @@
     "wavesurfer.js": "^7.7.10",
     "web-vitals": "^0.2.4",
     "yarn": "^1.22.22",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "@reduxjs/toolkit": "^1.9.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -119,7 +120,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/js-cookie": "^3.0.1",
-    "@types/react-redux": "^7.1.24",
+    "@types/react-redux": "^7.1.25",
     "@types/react-router-dom": "^5.1.7",
     "@types/redux": "^3.6.0",
     "@types/redux-thunk": "^2.1.0",

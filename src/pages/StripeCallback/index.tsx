@@ -30,7 +30,7 @@ const StripeCallback: React.FC = (
   // Fetch user information when the component mounts
   useEffect(() => {
     if (!user) {
-      dispatch(fetchCurrentUser());
+      dispatch(fetchCurrentUser() as any);
     }
   }, [dispatch, user]);
 
