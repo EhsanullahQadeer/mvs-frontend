@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import AttachedFilesTable from "./AttachedFilesTable";
 import { deleteSampleAPI, getUserSamplesAPI } from "api/sounds";
 import AlertDialog from "components/util/AlertDialog";
-import { ICurrentUser, ISample } from "./types";
+import { ICurrentUser, ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "./types";
 import UpdateSamplePopup from "./UpdateSamplePopup";
 
 type Props = {
@@ -26,10 +26,16 @@ const tableTabs = [
   { label: "Shared files", value: "collaborator", func: () => {} },
 ];
 
+const defaultSampleSearchConstraints: ISampleSearchConstraints = {
+  skip: 0,
+  take: 10,
+};
+
 const AttachedFilesSection = (props: Props) => {
   const { setLoading, currentUserInfo, isNewUser } = props;
   const [selectedTab, setSelectedTab] = useState("all");
-  const [attachedFilesTableData, setAttachedFilesTableData] = useState([]);
+  const [sampleSearchConstraints, setSampleSearchConstraints] = useState(defaultSampleSearchConstraints);
+  const [getUserSamplesResponse, setGetUserSamplesResponse] = useState<IGetUserSamplesResponse>();
 
   const handleTabClick = (value: string, clickFunc: () => void) => {
     setSelectedTab(value);
@@ -40,19 +46,19 @@ const AttachedFilesSection = (props: Props) => {
     if (!isNewUser) {
       getSamplesData();
     }
-  }, [selectedTab]);
+  }, [selectedTab,sampleSearchConstraints]);
 
   const getSamplesData = async () => {
     setLoading(true);
     try {
       const response = await getUserSamplesAPI({
-        user_id: 1,
-        skip: 0,
-        take: 10,
+        user_id: currentUserInfo.id,
+        skip: sampleSearchConstraints.skip,
+        take: sampleSearchConstraints.take,
         filter: selectedTab,
       });
-      const samples = response.data.results.samples;
-      setAttachedFilesTableData(samples);
+      const samples:IGetUserSamplesResponse = response.data.results;
+      setGetUserSamplesResponse(samples);
     } catch (error) {
       console.log("error while fetching samples data: ", error);
     } finally {
@@ -144,14 +150,17 @@ const AttachedFilesSection = (props: Props) => {
         })}
       </div>
 
+      {getUserSamplesResponse &&(
       <div>
         <AttachedFilesTable
           {...{
-            attachedFilesTableData,
+            getUserSamplesResponse,
             handleOpenDialog,
+            sampleSearchConstraints,
+            setSampleSearchConstraints
           }}
         />
-      </div>
+      </div>)}
     </div>
   );
 };

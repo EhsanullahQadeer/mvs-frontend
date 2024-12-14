@@ -116,7 +116,8 @@ const ContentManagement = (props: Props) => {
 
   return (
     <>
-      <div>
+      {currentUserInfo &&
+      (<div>
         <h2 className="text-white px-3 py-4 text-xl font-semibold border-b border-eclipseGray">
           Content Management
         </h2>
@@ -136,7 +137,8 @@ const ContentManagement = (props: Props) => {
           )}
           <AttachedFilesSection {...{ setLoading, currentUserInfo }} />
         </div>
-      </div>
+      </div>)
+      }
 
       {loading && (
         <>

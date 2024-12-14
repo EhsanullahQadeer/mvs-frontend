@@ -138,3 +138,21 @@ export interface ICurrentUser {
   isEditable?: boolean;
   roles?: string[];
 }
+
+export interface ISampleSearchConstraints {
+  skip: number;
+  take: number;
+}
+
+export interface IPagination {
+  currentPage: number;
+  totalPages: number;
+  limit: number;
+} 
+
+export interface IGetUserSamplesResponse {
+  samples: ISample[];
+  total: number;
+  pagination: IPagination;
+
+}

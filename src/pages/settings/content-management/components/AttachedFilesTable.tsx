@@ -25,7 +25,7 @@ import moment from "moment";
 
 import React, { useState } from "react";
 import { Checkbox } from "@mui/material";
-import { ISample } from "./types";
+import { ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "./types";
 
 interface Column {
   id: "filename" | "created_at" | "artist" | "uploadedBy";
@@ -48,16 +48,20 @@ interface Data {
 }
 
 interface Props {
-  attachedFilesTableData: ISample[];
+  getUserSamplesResponse:IGetUserSamplesResponse;
   handleOpenDialog: (action: string, sample: ISample) => void;
+  sampleSearchConstraints: ISampleSearchConstraints;
+  setSampleSearchConstraints: (value:ISampleSearchConstraints) => void;
 }
 
 const AttachedFilesTable = (props: Props) => {
-  const { attachedFilesTableData, handleOpenDialog } = props;
-  console.log("");
+  const { 
+    getUserSamplesResponse, 
+    handleOpenDialog,
+    sampleSearchConstraints={skip:0,take:10},
+    setSampleSearchConstraints
+   } = props;
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<keyof Data>("filename");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -71,20 +75,23 @@ const AttachedFilesTable = (props: Props) => {
     setOrderBy(property);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+  const handleChangePage = (event: any, newPage: number) => {
+    const constraintChange = {...sampleSearchConstraints};
+    constraintChange.skip = newPage;
+    setSampleSearchConstraints(constraintChange);
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+    setSampleSearchConstraints({
+      skip: 0,
+      take: +event.target.value
+    });
   };
 
   const muiStyles = getMuiStyles();
-
-  const sortedData = attachedFilesTableData.sort((a, b) => {
+  const sortedData = getUserSamplesResponse.samples.sort((a, b) => {
     const isAsc = order === "asc";
     switch (orderBy) {
       case "filename":
@@ -128,7 +135,7 @@ const AttachedFilesTable = (props: Props) => {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = attachedFilesTableData.map((n) => n.id);
+      const newSelected = getUserSamplesResponse.samples.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -171,11 +178,11 @@ const AttachedFilesTable = (props: Props) => {
                   color="primary"
                   indeterminate={
                     selected.length > 0 &&
-                    selected.length < attachedFilesTableData.length
+                    selected.length < getUserSamplesResponse.samples.length
                   }
                   checked={
-                    attachedFilesTableData.length > 0 &&
-                    selected.length === attachedFilesTableData.length
+                    getUserSamplesResponse.samples.length > 0 &&
+                    selected.length === getUserSamplesResponse.samples.length
                   }
                   onChange={handleSelectAllClick}
                   inputProps={{
@@ -200,7 +207,6 @@ const AttachedFilesTable = (props: Props) => {
           <TableBody sx={{ ...muiStyles.tableBody }}>
             {sortedData.length > 0 ? (
               sortedData
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, idx) => {
                   const { filename, thumbnail, name, created_at } = row;
 
@@ -322,9 +328,9 @@ const AttachedFilesTable = (props: Props) => {
           { value: 50, label: "View 50" },
         ]}
         component="div"
-        count={attachedFilesTableData.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
+        count={getUserSamplesResponse.total}
+        rowsPerPage={sampleSearchConstraints.take}
+        page={sampleSearchConstraints.skip}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         labelDisplayedRows={({ to, count }) => `${to} of ${count}`}
