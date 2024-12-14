@@ -35,6 +35,13 @@ export async function validateEmailAPI(email?: string) {
   return axiosInstance.post(`/users/validate-email?email=${email}`);
 }
 
+export async function requestEmailChange(newEmail: string) {
+  return axiosInstance.post("/users/request-email-change", { newEmail });
+}
+
+export async function updateEmail(newEmail: string, code: number) {
+  return axiosInstance.put("/users/email", { newEmail, code });
+}
 export async function verifyCodeAPI(data: any) {
   return axiosInstance.post("/users/verify/code", data);
 }
@@ -125,6 +132,9 @@ export async function verifyChangePasswordCode(code: string) {
   return axiosInstance.post('/auth/verify/change-password-code', {
     invite_code: code,
   });
+}
+export async function validatePasswordAPI(password?: string) {
+  return axiosInstance.post(`/users/validate-password`, { password });
 }
 // =======================================================================================
 export async function checkUsernameIsAvailable(username: string) {

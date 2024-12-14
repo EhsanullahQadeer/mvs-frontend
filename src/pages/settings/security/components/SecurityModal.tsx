@@ -211,79 +211,144 @@ interface EmailInputModalProps {
     text: string;
     onSubmit: (password: string) => void;
     onClose: () => void;
-  }
-  
-  export const EmailInputModal: React.FC<InputModalProps> = ({ title, text, onSubmit, onClose }) => {
+    hasError?: boolean;
+}
+
+export const EmailInputModal: React.FC<EmailInputModalProps> = ({ 
+    title, 
+    text, 
+    onSubmit, 
+    onClose,
+    hasError 
+}) => {
     return (
-      <ModalOverlay>
-        <ModalContent>
-          <TitleRow>
-            <ModalTitle>{title}</ModalTitle>
-            <CloseButton onClick={onClose}>&times;</CloseButton>
-          </TitleRow>
-          <Divider />
-          <ModalText>{text}</ModalText>
-          <Formik
-            initialValues={{ currentPassword: '' }}
-            onSubmit={(values) => {
-              onSubmit(values.currentPassword);
-            }}
-          >
-            {({ isSubmitting }) => (
-              <Form>
-                <PasswordFieldWrapper>
-                  <PasswordField name="currentPassword" placeholder="Enter Password" mode={false}/>
-                </PasswordFieldWrapper>
-                <div className="flex justify-end mt-4">
-                  <button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="text-black bg-[#9EFF00] px-4 py-2 rounded-full hover:bg-[#8CE000] transition-colors"
-                  >
-                    Continue      
-                  </button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </ModalContent>
-      </ModalOverlay>
+        <ModalOverlay>
+            <ModalContent>
+                <TitleRow>
+                    <ModalTitle>{title}</ModalTitle>
+                    <CloseButton onClick={onClose}>&times;</CloseButton>
+                </TitleRow>
+                <Divider />
+                <ModalText>{text}</ModalText>
+                <Formik
+                    initialValues={{ currentPassword: '' }}
+                    onSubmit={(values) => {
+                        onSubmit(values.currentPassword);
+                    }}
+                >
+                    {({ isSubmitting }) => (
+                        <Form>
+                            <PasswordFieldWrapper>
+                                <PasswordField name="currentPassword" placeholder="Enter Password" mode={false}/>
+                                {hasError && (
+                                    <div className="text-red-500 text-sm mt-2">
+                                        Incorrect password. Please try again.
+                                    </div>
+                                )}
+                            </PasswordFieldWrapper>
+                            <div className="flex justify-end mt-4">
+                                <button 
+                                    type="submit" 
+                                    className="text-black bg-[#9EFF00] px-4 py-2 rounded-full hover:bg-[#8CE000] transition-colors"
+                                >
+                                    Continue      
+                                </button>
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
+            </ModalContent>
+        </ModalOverlay>
     );
-  };
-  
-  // Modal with title, text, and 2 buttons
-  interface EmailConfirmationModalProps {
+};
+
+// Modal with title, text, and 2 buttons
+interface EmailConfirmationModalProps {
     title: string;
     text: string;
-    onConfirm: () => void;
+    onConfirm: (code: string) => void;
     onCancel: () => void;
-  }
-  
-  export const EmailConfirmationModal: React.FC<ConfirmationModalProps> = ({ title, text, onConfirm, onCancel }) => {
+    hasError?: boolean;
+}
+
+export const EmailConfirmationModal: React.FC<EmailConfirmationModalProps> = ({ 
+    title, 
+    text, 
+    onConfirm, 
+    onCancel,
+    hasError 
+}) => {
+    const [code, setCode] = useState(['', '', '', '', '', '']);
+    const inputRefs = Array(6).fill(0).map(() => React.createRef<HTMLInputElement>());
+
+    const handleInputChange = (index: number, value: string) => {
+      if (!/^\d*$/.test(value)) return; // Only allow digits
+
+      const newCode = [...code];
+      newCode[index] = value;
+      setCode(newCode);
+
+      // Move to next input if value is entered
+      if (value && index < 5) {
+        inputRefs[index + 1].current?.focus();
+      }
+    };
+
+    const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+      if (e.key === 'Backspace' && !code[index] && index > 0) {
+        inputRefs[index - 1].current?.focus();
+      }
+    };
+
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-        <div className="bg-[#08090A] p-6 rounded-lg max-w-2xl w-full border border-[#333333]">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-white">{title}</h2>
-          </div>
-          <hr className="border-t border-[#333333] my-4" />
-          <p className="text-[#848484] mb-8">{text}</p>
-          <div className="flex justify-end gap-5 mt-10">
-            <button 
-              onClick={onCancel}
-              className="bg-[#08090A] text-[#848484] border border-[#848484] px-4 py-2 rounded-full hover:bg-[#1a1a1a] transition-colors"
-            >
-              Cancel
-            </button>
-            <button 
-              onClick={onConfirm}
-              className="bg-[#9EFF00] text-black px-4 py-2 rounded-full hover:bg-[#8CE000] transition-colors"
-            >
-              Delete Account
-            </button>
-          </div>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-[#08090A] p-6 rounded-lg max-w-2xl w-full border border-[#333333]">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-semibold text-white">{title}</h2>
+                </div>
+                <hr className="border-t border-[#333333] my-4" />
+                <p className="text-[#848484] mb-8">{text}</p>
+                
+                {/* Code input section */}
+                <div className="flex justify-center gap-2 mb-8">
+                    {code.map((digit, index) => (
+                        <input
+                            key={index}
+                            ref={inputRefs[index]}
+                            type="text"
+                            maxLength={1}
+                            value={digit}
+                            onChange={(e) => handleInputChange(index, e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(index, e)}
+                            className="w-12 h-12 text-center bg-[#1a1a1a] border border-[#333333] rounded-md text-white focus:border-[#9EFF00] focus:outline-none"
+                        />
+                    ))}
+                </div>
+
+                {/* Add error message */}
+                {hasError && (
+                    <div className="text-red-500 text-sm text-center mb-4">
+                        Incorrect verification code. Please try again.
+                    </div>
+                )}
+
+                <div className="flex justify-end gap-5 mt-10">
+                    <button 
+                        onClick={onCancel}
+                        className="bg-[#08090A] text-[#848484] border border-[#848484] px-4 py-2 rounded-full hover:bg-[#1a1a1a] transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        onClick={() => onConfirm(code.join(''))}
+                        disabled={code.some(digit => !digit)}
+                        className="bg-[#9EFF00] text-black px-4 py-2 rounded-full hover:bg-[#8CE000] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Verify
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     );
-  };
+};
   
