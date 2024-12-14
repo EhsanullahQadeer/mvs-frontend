@@ -20,10 +20,12 @@ import InboxPage from "pages/Inbox";
 import StripeCallback from "pages/StripeCallback";
 import CheckScrolling from "./CheckScrolling";
 import ArtistProfile from "./profile/ArtistProfile";
+//Settings
 import ArtistWikiProfile from "./wiki-profile/ArtistWikiProfile";
 import AccountSetting from "./settings/account/AccountSetting";
 import ContentManagement from "./settings/content-management/ContentManagement";
 import SettingsLayout from "./settings/SettingsLayout";
+import BillingLayout from "./settings/billing/BillingSettings";
 import OnBoarding from "./onboarding/OnBoarding";
 import SecuritySettings from "./settings/security/SecuritySettings"
 import CreatorLogin from "./creator/CreatorLogin";
@@ -232,6 +234,11 @@ const routes: IRoute[] = [
         path: "security/:id",
         name: "Security",
         component: SecuritySettings,
+      },
+      {
+        path: "billing/:id",
+        name: "Billing",
+        component: BillingLayout,
       },
     ],
   },
