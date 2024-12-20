@@ -132,70 +132,70 @@ const SamplesContainer = ({ user_id = 0 }) => {
   const [samples, setSamples] = useState<AudioTrackType[]>([]);
   const [currentPage, setCurrentPage] = useState(0); // To track the current page
   // @todo: this value is only present for MVP purposes, should remove later.
-  const samplesPerPage = 100; // The number of samples per page
+  const samplesPerPage = 10; // The number of samples per page
 
   const [allSamples, setAllSamples] = useState<AudioTrackType[]>([]); // To store all the samples
   const [currentSamples, setCurrentSamples] = useState<AudioTrackType[]>([]); // To store the samples for the current page
+  const [totalCount, setTotalCount] = useState(0); // Add this state
 
   // Fetch all user samples from the server once
-  const fetchAllUserSamples = async () => {
+  const fetchUserSamples = async (page: number) => {
     setLoading(true);
-    const _sound = await getUserSamplesAPI({
-      user_id,
-      skip: 0,
-      take: samplesPerPage,
-    });
+    const skip = page;
+    
+    try {
+      console.log(`Fetching page ${page + 1} with skip: ${skip}, take: ${samplesPerPage}`);
+      const _sound = await getUserSamplesAPI({
+        user_id,
+        skip,
+        take: samplesPerPage,
+      });
 
-    // Assuming `samples` is the object you showed in the screenshot.
-    const samplesArray = Object.values(
-      _sound?.data?.results?.samples || {}
-    ) as AudioTrackType[]; // Cast to AudioTrackType[]
-    console.log("samples", samplesArray);
-    setAllSamples(samplesArray); // Store all samples
-    paginateSamples(samplesArray, 0); // Load the first page of samples
-    setLoading(false);
+      const samplesArray = Object.values(
+        _sound?.data?.results?.samples || {}
+      ) as AudioTrackType[];
+      
+      console.log(`Received ${samplesArray.length} samples`);
+      setCurrentSamples(samplesArray);
+      
+      if (_sound?.data?.results?.total !== undefined) {
+        const total = _sound.data.results.total;
+        console.log(`Total samples: ${total}`);
+        setTotalCount(total);
+      }
+    } catch (error) {
+      console.error('Error fetching samples:', error);
+      setCurrentSamples([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Function to paginate samples
-  const paginateSamples = (samplesArray: AudioTrackType[], page: number) => {
-    const start = page * samplesPerPage;
-    const end = start + samplesPerPage;
-    const paginatedSamples = samplesArray.slice(start, end); // Get the current page samples
-    setCurrentSamples(paginatedSamples);
-  };
-
-  const handlePageClick = (event: { selected: number }) => {
+  // Update the page change handler to prevent going to invalid pages
+  const handlePageClick = async (event: { selected: number }) => {
     const selectedPage = event.selected;
     setCurrentPage(selectedPage);
-    paginateSamples(allSamples, selectedPage);
+    await fetchUserSamples(selectedPage);
   };
 
-  // Fetch all samples on component mount
+  // Initial fetch
   useEffect(() => {
-    fetchAllUserSamples(); // Fetch all samples once when the component loads
+    fetchUserSamples(0);
   }, []);
 
   return (
     <WaveformProvider>
+      <div className="text-xs font-medium text-[#9C9C9C] py-4 px-3 border-t border-[#1F1F1F]">
+        {totalCount} results
+      </div>
       <SampleTable samples={currentSamples} />
-      {/* <Theme>
-        <div className="onboard-4 second-div w-[100%] flex flex-col z-0 pb-[130px]">
-          <SampleHeader loading={loading} total={allSamples ? Object.keys(allSamples).length : 0}/>
-          {loading ? (
-            <LoadingScreen/>
-          ): ( 
-            <SampleTable samples={currentSamples} />
-          )}
-          {Object.keys(currentSamples).length > 0 && (
-            <Pagination
-              pageCount={Math.ceil(allSamples.length / samplesPerPage)}
-              onPageChange={handlePageClick}
-              currentPage={currentPage}
-            />
-          )}
-          <TermsOfUse/>
-        </div>
-      </Theme> */}
+      {totalCount > 0 && (
+        <Pagination
+          pageCount={Math.ceil(totalCount / samplesPerPage)}
+          onPageChange={handlePageClick}
+          currentPage={currentPage}
+        />
+      )}
     </WaveformProvider>
   );
 };

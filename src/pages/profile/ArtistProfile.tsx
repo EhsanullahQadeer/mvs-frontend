@@ -25,7 +25,7 @@ import { CircularProgress } from "@mui/material";
 import SamplesContainer from "components/SampleContainer/player-container";
 import ProfileAboutSection from "./components/ProfileAboutSection";
 import searchIcon from "../../assets/icons/searchIcon.svg";
-import { musicTableData } from "./sampleData/sampleData";
+
 // import { getUserSamplesAPI } from "api/sounds";
 
 const ArtistProfile = () => {
@@ -81,7 +81,6 @@ const ArtistProfile = () => {
     getArtistData();
   }, [getArtistData]);
 
-  console.log("artist", artistData);
   return (
     <Theme>
       {!isLoading ? (
@@ -137,9 +136,6 @@ const ArtistProfile = () => {
                 {!isConnect && (
                   <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
                 )}
-                <div className="text-xs font-medium text-[#9C9C9C] py-4 px-3 border-t border-[#1F1F1F]">
-                  {musicTableData.length} results
-                </div>
 
                 {/* <MusicTable /> */}
                 <div className="relative">

@@ -384,11 +384,11 @@ const SampleTable = (samples) => {
                     </td>
                     {/* Sample Key */}
                     <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
-                      {sample?.keys}
+                      {sample?.keys || "--"}
                     </td>
                     {/* Sample BPM */}
                     <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
-                      {sample?.bpm}
+                      {sample?.bpm || "--"}
                     </td>
 
                     <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
