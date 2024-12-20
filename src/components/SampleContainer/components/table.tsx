@@ -268,12 +268,12 @@ const SampleTable = (samples) => {
             >
               BPM
             </th>
-            <th
+            {/* <th
               scope="col"
               className="meta-sample px-3 py-3.5 text-left text-sm font-normal text-softGray"
             >
               Status
-            </th>
+            </th> */}
             <th
               scope="col"
               className="considering-avatar px-3 py-3.5 text-center text-sm font-normal text-softGray"
@@ -391,7 +391,7 @@ const SampleTable = (samples) => {
                       {sample?.bpm || "--"}
                     </td>
 
-                    <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
+                    {/* <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
                       <span className="bg-blackMarbel border-[1px] border-[#222222] rounded-lg text-white px-2 py-1 flex gap-1.5 w-max items-center">
                         <div
                           className={`w-[7px] h-[7px] rounded-full bg-[#25BA00]`}
@@ -400,7 +400,7 @@ const SampleTable = (samples) => {
                           Available
                         </span>
                       </span>
-                    </td>
+                    </td> */}
 
                     {/* Considering List */}
                     <td className="considering-avatar whitespace-nowrap text-sm text-mediumGray text-center">
