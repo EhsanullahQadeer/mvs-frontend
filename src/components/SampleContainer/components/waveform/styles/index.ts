@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react'
 
 export const playerStyles = {
-  display: 'block',    // Show the player
+  display: 'none',    // Show the player
   position: 'relative',  // Adjust as necessary
   opacity: 0,           // Make it visible
   visibility: 'hidden',

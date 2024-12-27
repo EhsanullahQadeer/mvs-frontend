@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /* IMPORTS */
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
@@ -20,7 +20,11 @@ import { useHeaderHooks } from "../Header/Header.hooks";
 import { classNames, HeaderProps } from "../Header/Header.types";
 import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
 
-const ProfileButton: React.FC = () => {
+interface ProfileButtonProps {
+  direction?: 'left' | 'right';
+}
+
+const ProfileButton: React.FC<ProfileButtonProps> = ({ direction = 'right' }) => {
   /* States and Hooks */
   const {
     state,
@@ -50,10 +54,29 @@ const ProfileButton: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const [menuPosition, setMenuPosition] = useState<'bottom' | 'top'>('bottom');
+
+  useEffect(() => {
+    const updatePosition = () => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const spaceBelow = windowHeight - rect.bottom;
+        
+        setMenuPosition(spaceBelow < 300 ? 'top' : 'bottom');
+      }
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    return () => window.removeEventListener('resize', updatePosition);
+  }, []);
+
   return (
     <Fragment>
-      <div className="flex items-center justify-center">
-        <Menu as="div" className="user relative">
+      <div className="flex items-center justify-center relative" ref={buttonRef}>
+        <Menu as="div" className="user">
           <Menu.Button>
             {state?.auth?.user?.thumbnail ? (
               <Avatar
@@ -74,7 +97,19 @@ const ProfileButton: React.FC = () => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="zindex absolute bottom-[30px] left-[30px] w-[230px] bg-[#111] border border-[#545454] rounded-[8px] p-[10px]">
+            <Menu.Items 
+              className={`zindex fixed ${
+                menuPosition === 'bottom' 
+                  ? 'mt-2' 
+                  : 'mb-2'
+              } w-[230px] bg-[#111] border border-[#545454] rounded-[8px] p-[10px]`}
+              style={{
+                top: menuPosition === 'bottom' ? buttonRef.current?.getBoundingClientRect().bottom : 'auto',
+                bottom: menuPosition === 'top' ? (window.innerHeight - (buttonRef.current?.getBoundingClientRect().top || 0)) : 'auto',
+                left: direction === 'right' ? buttonRef.current?.getBoundingClientRect().left : 'auto',
+                right: direction === 'left' ? (window.innerWidth - (buttonRef.current?.getBoundingClientRect().right || 0)) : 'auto',
+              }}
+            >
               {/* Menu Items */}
               <Menu.Item>
                 {({ active }) => (

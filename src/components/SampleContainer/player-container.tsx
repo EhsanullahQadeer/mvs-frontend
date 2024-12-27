@@ -10,16 +10,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 /* IMPORTS */
-import React, { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 /* LOCAL IMPORTS */
-import { getUserSamplesAPI } from "../../api/sounds";
-import SampleHeader from "./components/header";
-import LoadingScreen from "./components/loading";
+import { getUserSamplesAPI, getUserSamplesByTypeAPI } from "../../api/sounds";
+// import SampleHeader from "./components/header";
+// import LoadingScreen from "./components/loading";
 import SampleTable from "./components/table";
 import { WaveformProvider } from "./components/waveform";
 import Pagination from "./components/pagination";
-import { AudioPlayer } from "./components/waveform/player";
+// import { AudioPlayer } from "./components/waveform/player";
 
 /* Define AudioTrackType interface */
 export interface AudioTrackType {
@@ -126,7 +126,7 @@ export const PlayerContext = createContext<PlayerContextType>({
 // };
 
 /* PlayerContainer */
-const SamplesContainer = ({ user_id = 0 }) => {
+const SamplesContainer = ({ user_id = 0, selectedTab }) => {
   // States Setup
   const [loading, setLoading] = useState(false);
   const [samples, setSamples] = useState<AudioTrackType[]>([]);
@@ -141,6 +141,12 @@ const SamplesContainer = ({ user_id = 0 }) => {
   // Fetch all user samples from the server once
   const fetchUserSamples = async (page: number) => {
     setLoading(true);
+    const _sound = await getUserSamplesByTypeAPI({
+      user_id,
+      skip: 0,
+      take: samplesPerPage,
+      type: selectedTab,
+    });
     const skip = page;
     
     try {

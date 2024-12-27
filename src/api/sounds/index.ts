@@ -8,6 +8,8 @@
 
 /* LOCAL IMPORTS */
 import axiosInstance from "../axios";
+import { config } from "config/ConfigManager";
+import { ISoundMetaData } from "pages/sample-page/SamplePage";
 
 export async function getSoundAPI(id: any) {
   return axiosInstance.get(`/sounds/${id}`);
@@ -31,6 +33,29 @@ export async function getSampleDownloadsAPI(id: any, params: any) {
 
 export async function getUserSamplesAPI(params: any) {
   return axiosInstance.get(`/sounds/get-user-samples`, { params });
+}
+
+export async function getUserSamplesByTypeAPI(params: any) {
+  return axiosInstance.get(`/sounds/get-user-samples-by-type`, { params });
+}
+
+
+
+export async function getSoundMetaData(id: string, params: { code: String }): Promise<{ metadata: ISoundMetaData }> {
+  const response = await axiosInstance.get<{ metadata: ISoundMetaData }>(`/sounds/metadata/${id}`, { params });
+  return response.data;
+}
+export async function checkIfSoundHasPass(params: { code: String }): Promise<boolean> {
+  const response = await axiosInstance.get<boolean>(`/sounds/sample/has-password`, { params });
+  return response.data;
+}
+
+export async function soundStream(publicId: any, params: any) {
+  const queryParams = new URLSearchParams(params).toString();
+
+  const url = `${config.get("API")}/sounds/stream/${publicId}?${queryParams}`;
+
+  return fetch(url);
 }
 
 export async function sampleLikeAPI(id: any) {
@@ -85,13 +110,30 @@ export async function uploadedFileMetadata(redisKey: string, payload: any) {
   );
 }
 
+export async function soundPublicUrl(id: number, payload: any) {
+  return axiosInstance.post(`/sounds/public-url/${id}`, payload);
+}
+
 export async function updateFileMetadata(id: any, payload: any) {
-  return axiosInstance.put(
-    `/sounds/sample/${id}`,
-    payload
-  );
+  return axiosInstance.put(`/sounds/sample/${id}`, payload);
 }
 
 export async function deleteSampleAPI(id: any) {
   return axiosInstance.delete(`/sounds/delete/${id}`);
+}
+
+export async function getSamplePublicUrl(uniqueId: string) {
+  return axiosInstance.get(`/sounds/sample/${uniqueId}/public-url`);
+}
+
+export async function updateSampleSettings(sampleId: string, settings: any) {
+  return axiosInstance.put(`/sounds/sample/${sampleId}/settings`, settings);
+}
+
+export async function setSamplePassword(sampleId: string, password: string) {
+  return axiosInstance.put(`/sounds/sample/${sampleId}/password`, { password });
+}
+
+export async function getSamplePassword(sampleId: string) {
+  return axiosInstance.get(`/sounds/sample/${sampleId}/password`);
 }

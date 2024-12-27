@@ -2,7 +2,7 @@
  * @file dropdown.tsx
  * @author Zohaib Ahmed
  * @desc Provides dropdown functionality for interacting with samples.
- * 
+ *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
@@ -12,29 +12,113 @@ import React, { useState } from "react";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 /* LOCAL IMPORTS */
 import RequestSplitSheetModal from "components/modals/request-split-sheet";
 import SampleInfoModal from "components/modals/sample-info";
-import { sampleLikeAPI, sampleUnlikeAPI } from "../../api/sounds";
+import { FiDownload, FiEdit3 } from "react-icons/fi";
+import { GoShareAndroid } from "react-icons/go";
+import { RiDeleteBinLine } from "react-icons/ri";
+import AlertDialog from "./AlertDialog";
+import UpdateSamplePopup from "pages/settings/content-management/components/UpdateSamplePopup";
+import { RootState } from "redux/reducers";
+import { useSelector } from "react-redux";
+import ShareSetting from "./ShareSetting";
+import { deleteSampleAPI } from "api/sounds";
 
 const DropDown = (props: any) => {
+  const { sample, play, fetchAllUserSamples } = props;
+
   const [request_split_sheet, setRequestSplitSheet] = useState(false);
   const [sample_info, setSampleInfo] = useState(false);
-  
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const shouldOpenDropdown = queryParams.get('view') === 'secondStep';
+  const shouldOpenDropdown = queryParams.get("view") === "secondStep";
+
+  const [isOpenShareDialog, setIsOpenShareDialog] = useState(false);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [sampleToEdit, setSampleToEdit] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditPopup, setOpenEditPopup] = useState(false);
+
+  const handleOpenDialog = (action, sample) => {
+    if (action === "delete") {
+      setOpenDeleteDialog(true);
+    } else {
+      setOpenEditPopup(true);
+    }
+    setSampleToEdit(sample);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDeleteDialog(false);
+    setOpenEditPopup(false);
+    setSampleToEdit(null);
+  };
+
+  const handleDeleteComposer = async () => {
+    if (sampleToEdit) {
+      try {
+        const response = await deleteSampleAPI(sampleToEdit.id);
+        if (response.status === 200) {
+          fetchAllUserSamples();
+        }
+      } catch (error) {
+        console.log("error while delete the sample file: ", error);
+      } finally {
+        handleCloseDialog();
+      }
+    }
+  };
+
+  const handleCloseShareDialog = () => {
+    setIsOpenShareDialog(false);
+  };
 
   return (
     <React.Fragment>
+      <AlertDialog
+        {...{
+          open: openDeleteDialog,
+          handleClose: handleCloseDialog,
+          title: "Are you sure you want to delete the sample file?",
+          desciption: "Please confirm if you want to proceed!",
+          button1: "Cancel",
+          button2: "Delete sample",
+          onConfirm: handleDeleteComposer,
+        }}
+      />
+
+      <UpdateSamplePopup
+        {...{
+          open: openEditPopup,
+          handleClose: handleCloseDialog,
+          sampleToEdit,
+          currentUserInfo: user,
+        }}
+      />
+
+      <ShareSetting
+        {...{
+          isOpen: isOpenShareDialog,
+          onClose: handleCloseShareDialog,
+          sample,
+        }}
+      />
+
       <div className="bg-transparent">
-        <Menu as="div" className="relative bg-transparent text-white">
+        <Menu
+          as="div"
+          className={`relative bg-transparent ${
+            play ? "text-white" : "text-slateGray-2"
+          }`}
+        >
           <div>
             <Menu.Button>
               <EllipsisVerticalIcon
-                className="onboard-9 -mr-5 h-5 w-5 mt-[4px] text-gray-400"
+                className="onboard-9 -mr-5 text-[14px] mt-[4px] "
                 aria-hidden="true"
               />
             </Menu.Button>
@@ -50,127 +134,63 @@ const DropDown = (props: any) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="onboard-9 zindex absolute border border-[#545454] rounded-[8px] top-[0px] right-[20px] w-[230px] bg-[#111] h-auto p-[10px]">
+            <Menu.Items className="onboard-9 zindex absolute border border-[#3a3a3a] rounded-[8px] top-[0px] right-[20px] w-[235px] bg-[#262626] h-auto p-[10px]">
               <div className="">
                 <Menu.Item>
                   <div
-                    onClick={async () => {
-                      if (parseInt(props.sample.is_liked) === 1) {
-                        await sampleUnlikeAPI(props.sample.id);
-                        props.getSamples(props.sound.id, props.page);
-                        toast.success(`${props.sample.filename} was removed from your likes`, { className:"bg-[#C4FF48] text-[#000]"});
-
-                      } else {
-                        await sampleLikeAPI(props.sample.id);
-                        props.getSamples(props.sound.id, props.page);
-                        toast.success(`${props.sample.filename} was added your likes`,{ className:"bg-[#C4FF48] text-[#000]"});
-
-                      }
-                    }}
-                    className="onboard-10 flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
+                    onClick={() => handleOpenDialog("edit", sample)}
+                    className="onboard-10 flex items-center hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={20}
-                      height={20}
-                      viewBox="0 0 20 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M15.8337 11.6667C17.0753 10.45 18.3337 8.99167 18.3337 7.08333C18.3337 5.86776 17.8508 4.70197 16.9912 3.84243C16.1317 2.98289 14.9659 2.5 13.7503 2.5C12.2837 2.5 11.2503 2.91667 10.0003 4.16667C8.75033 2.91667 7.71699 2.5 6.25033 2.5C5.03475 2.5 3.86896 2.98289 3.00942 3.84243C2.14988 4.70197 1.66699 5.86776 1.66699 7.08333C1.66699 9 2.91699 10.4583 4.16699 11.6667L10.0003 17.5L15.8337 11.6667Z"
-                        fill="#CECFDA"
-                      />
-                    </svg>
-                    <p className="text-[14px] ml-[8px] font-['Mona-Sans-M'] text-[#CECFDA]">
-                      {parseInt(props.sample.is_liked) === 1
-                        ? "Remove from likes"
-                        : "Add to likes"}
+                    <FiEdit3 className="text-[18px]" />
+                    <p className=" ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
+                      Edit
                     </p>
                   </div>
                 </Menu.Item>
                 <Menu.Item>
-                  <div
-                    onClick={() => setSampleInfo(true)}
-                    className="onboard-11 flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <path
-                        d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-                        stroke="#CECFDA"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <button className="text-[14px] ml-[8px] font-['Mona-Sans-M'] text-[#CECFDA]">
-                      Sample Info
-                    </button>
-                  </div>
+                  <a href={sample.s3_key} download={sample.filename}>
+                    <div className="onboard-11 flex items-center  hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]">
+                      <FiDownload className="text-[18px]" />
+                      <button className=" ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
+                        Download
+                      </button>
+                    </div>
+                  </a>
                 </Menu.Item>
               </div>
               <div className="">
                 <Menu.Item>
-                  <div className="onboard-12 flex items-center hover:bg-[#0014CD] cursor-pointer py-[8px] px-[12px]"
-                  
-                  onClick={() => {
-
-                    const FileSaver = require("file-saver");
-
-                    FileSaver.saveAs(
-                      props.sample?.midi_src,
-                      `'Sample-mid'-${props.sample.id}`
-                    );
-                  }}
-                  
+                  <div
+                    className="onboard-12 flex items-center  hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]"
+                    onClick={() => {
+                      setIsOpenShareDialog(true);
+                    }}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <path
-                        d="M14 2V6C14 6.53043 14.2107 7.03914 14.5858 7.41421C14.9609 7.78929 15.4696 8 16 8H20M8 13H10M14 13H16M8 17H10M14 17H16M15 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V7L15 2Z"
-                        stroke="#DDDDDD"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <p className="text-[14px] ml-[8px] font-['Mona-Sans-M'] text-[#CECFDA]">
-                      Download MIDI
+                    <GoShareAndroid className="text-[18px]" />
+                    <p className="ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
+                      Share Settings
                     </p>
                   </div>
                 </Menu.Item>
                 <Menu.Item>
                   <div
-                    onClick={() => setRequestSplitSheet(true)}
-                    className="onboard-13 flex items-center cursor-pointer hover:bg-[#0014CD] rounded-[4px] py-[8px] px-[12px]"
+                    // onClick={() => setRequestSplitSheet(true)}
+                    className="onboard-13 flex items-center cursor-pointer  hover:bg-eclipseGray rounded-[4px] py-[8px] px-[12px]"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <path
-                        d="M4 22H20C20.5304 22 21.0391 21.7893 21.4142 21.4142C21.7893 21.0391 22 20.5304 22 20V4C22 3.46957 21.7893 2.96086 21.4142 2.58579C21.0391 2.21071 20.5304 2 20 2H8C7.46957 2 6.96086 2.21071 6.58579 2.58579C6.21071 2.96086 6 3.46957 6 4V20C6 20.5304 5.78929 21.0391 5.41421 21.4142C5.03914 21.7893 4.53043 22 4 22ZM4 22C3.46957 22 2.96086 21.7893 2.58579 21.4142C2.21071 21.0391 2 20.5304 2 20V11C2 9.9 2.9 9 4 9H6M18 14H10M15 18H10M10 6H18V10H10V6Z"
-                        stroke="#DDDDDD"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <button className="text-[14px] ml-[8px] underline font-['Mona-Sans-M'] text-[#CECFDA]">
-                      Request Split Sheet
+                    <GoShareAndroid className="text-[18px]" />
+                    <button className=" ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
+                      Sample Analytics
+                    </button>
+                  </div>
+                </Menu.Item>
+                <Menu.Item>
+                  <div
+                    onClick={() => handleOpenDialog("delete", sample)}
+                    className="onboard-13 flex items-center cursor-pointer hover:bg-eclipseGray rounded-[4px] py-[8px] px-[12px]"
+                  >
+                    <RiDeleteBinLine className="text-[18px]" />
+                    <button className="ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
+                      Delete Track
                     </button>
                   </div>
                 </Menu.Item>
@@ -290,7 +310,7 @@ const DropDown = (props: any) => {
         pauseOnHover
         theme="dark"
         icon={false}
-        toastStyle={{ backgroundColor: "#3f3d3d", }}
+        toastStyle={{ backgroundColor: "#3f3d3d" }}
       />
     </React.Fragment>
   );

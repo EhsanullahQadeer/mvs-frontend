@@ -17,6 +17,7 @@ import cookie from 'js-cookie';
 import { updateUserAPI } from '../../api/user';
 import { fetchCurrentUser } from '../../redux/actions';
 import { UserData, RootState } from './Header.types';
+import { isRouteAccessible } from 'utils/authHandler';
 
 export const useHeaderHooks = () => {
   const navigate = useNavigate();
@@ -34,13 +35,13 @@ export const useHeaderHooks = () => {
   };
 
   const onboardGuide = async () => {
-    const payload = { 
-      ...user, 
-      first_visit: true 
+    const payload = {
+      ...user,
+      first_visit: true
     };
 
     try {
-      const update_user = await updateUserAPI( payload, user?.id );
+      const update_user = await updateUserAPI(payload, user?.id);
       if (update_user.data.error) {
         console.error('Error updating user:', update_user.data.error);
       } else {
@@ -54,10 +55,12 @@ export const useHeaderHooks = () => {
   };
 
   useEffect(() => {
-    if (!token) {
-      navigate('/login');
+    if (isRouteAccessible()) {
+      dispatch(fetchCurrentUser() as any);
+
     } else {
-      dispatch( fetchCurrentUser() as any );
+      navigate('/login');
+
     }
   }, [token, navigate, dispatch]);
 

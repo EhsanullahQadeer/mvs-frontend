@@ -7,8 +7,6 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
-import LoginPage from "./login";
-import SignupPage from "pages/Signup/signup";
 import RequestInfoPage from "pages/Signup/TalentProfiles/request-info";
 import ThankyouPage from "pages/thankyou";
 import Home from "./home/Home";
@@ -29,16 +27,14 @@ import BillingLayout from "./settings/billing/BillingSettings";
 import OnBoarding from "./onboarding/OnBoarding";
 import SecuritySettings from "./settings/security/SecuritySettings"
 import CreatorLogin from "./creator/CreatorLogin";
-import PartnerSubmission from "./creator/registeration/component/PartnerSubmission";
 import Registeration from "./creator/registeration";
 import ForgetPassword from "./creator/forgetPasword";
 import ChangePassword from "./creator/ChangePassword/ChangePassword";
 import Notifications from "./settings/notifications/Notifications";
 import Privacy from "./settings/privacy/Privacy";
 import Monetization from "./settings/monetization/Monetization";
-import Onboarding from "components/onBoarding/onboard";
-import ForgotPassword from "./creator/forgetPasword";
 import Registration from "./creator/registeration";
+import EngineerProfile from "./engineerProfile/EngineerProfile";
 
 interface IRoute {
   path: string;
@@ -276,6 +272,11 @@ const routes: IRoute[] = [
     path: "creator/new-password-success",
     name: "New Password",
     component: ChangePassword,
+  }, 
+  {
+    path: "engineer-profile",
+    name: "Engineer Profile",
+    component: EngineerProfile,
   },
 ]
 

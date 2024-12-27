@@ -7,5 +7,16 @@
       .img-container:hover {
         background: rgba(0, 0, 0, 0);
       }
-      
 }
+.user-card-wraps{
+  .img-containerx {
+      background: rgba(0, 0, 0, 0.3);
+      transition: background 0.3s ease;
+    }
+    
+    .img-containerx:hover {
+      background: rgba(0, 0, 0, 0);
+    }
+    
+}
+

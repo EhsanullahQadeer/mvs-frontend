@@ -3,24 +3,37 @@ import { MdVerified } from "react-icons/md";
 import { FiSend, FiUserPlus } from "react-icons/fi";
 import { LiaEllipsisHSolid } from "react-icons/lia";
 import { useRef, useState } from "react";
-import pauseIcon from '../../../assets/img/player/pause-circle.svg';
-import playIcon from '../../../assets/img/player/play-circle.svg';
+import pauseIcon from "../../../assets/img/player/pause-circle.svg";
+import playIcon from "../../../assets/img/player/play-circle.svg";
 import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
-import { getConversationsById, getConversationsList, getConversationWithUser } from "api/messenger";
+import {
+  getConversationsById,
+  getConversationsList,
+  getConversationWithUser,
+} from "api/messenger";
 import MessagesDetail from "pages/Inbox/components/MessagesDetail";
+import { requestConncetAPI } from "api/user";
 
 type Props = {
   artistData: IArtistProfileData | null;
-  creditsData: { thumbnail: string; track_name: string; artists: any, preview_url: any }[];
+  creditsData: {
+    thumbnail: string;
+    track_name: string;
+    artists: any;
+    preview_url: any;
+  }[];
+  connectionDetail: any;
+  setConnectionDetail: (value: any) => void;
 };
 
-const ProfileAboutSection = (
-  props: Props
-) => {
-  const { artistData, creditsData } = props;
+const ProfileAboutSection = (props: Props) => {
+  const { artistData, creditsData, connectionDetail, setConnectionDetail } =
+    props;
   const [hoveredRow, setHoveredRow] = useState<number | null>(null); // State to track hovered row
-  const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(null); // Track the currently playing index
+  const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
+    null
+  ); // Track the currently playing index
   const audioRef = useRef<HTMLAudioElement | null>(null); // Ref for the audio element
   const [showChat, setShowChat] = useState(false);
   const [chatData, setChatData] = useState(null);
@@ -28,8 +41,20 @@ const ProfileAboutSection = (
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: RootState) => state);
 
-  const { username, thumbnail, professional_name, bio, primary_label, sub_label } =
-    artistData?.available ?? artistData ?? {};
+  const isConnectionPending =
+    connectionDetail === false ||
+    connectionDetail === null ||
+    connectionDetail === "pending";
+
+  const {
+    id,
+    username,
+    thumbnail,
+    professional_name,
+    bio,
+    primary_label,
+    sub_label,
+  } = artistData?.available ?? artistData ?? {};
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
 
@@ -54,10 +79,10 @@ const ProfileAboutSection = (
 
     try {
       setLoading(true);
-      
+
       // Pass recipient_id as a query parameter
       const response = await getConversationWithUser(artistData.id);
-      console.log('conversation with user response:', response);
+      console.log("conversation with user response:", response);
 
       if (response.data) {
         const conversation = {
@@ -68,8 +93,8 @@ const ProfileAboutSection = (
           recipient_id: artistData.id,
           conversation_id: response.data.id,
         };
-        
-        console.log('existing conversation found:', conversation);
+
+        console.log("existing conversation found:", conversation);
         setChatData(conversation);
         await getConversationMessages(conversation);
       } else {
@@ -83,17 +108,19 @@ const ProfileAboutSection = (
           recipient_id: artistData.id,
           conversation_id: null,
           messages: [],
-          isNew: true // Flag to indicate this is a new conversation
+          isNew: true, // Flag to indicate this is a new conversation
         };
-        
-        console.log('creating new conversation:', conversation);
+
+        console.log("creating new conversation:", conversation);
         setChatData(conversation);
-        setMessages([{
-          date: new Date().toISOString().split('T')[0],
-          messages: []
-        }]);
+        setMessages([
+          {
+            date: new Date().toISOString().split("T")[0],
+            messages: [],
+          },
+        ]);
       }
-      
+
       setShowChat(true);
     } catch (error) {
       console.error("Error opening chat:", error);
@@ -102,17 +129,30 @@ const ProfileAboutSection = (
     }
   };
 
+  const handleConnectFunction = async () => {
+    try {
+      const payload = {
+        recipientUserIds: [id],
+      };
+
+      const response = await requestConncetAPI(payload);
+      setConnectionDetail("pending");
+    } catch (error) {
+      console.log("error while connecting with the user ", error);
+    }
+  };
+
   const getConversationMessages = async (conversation) => {
     try {
-      console.log('Getting messages for conversation:', conversation);
-      
+      console.log("Getting messages for conversation:", conversation);
+
       // If this is a new conversation that just got created
       if (!conversation.id && conversation.conversation_id) {
         // Update the chatData with the new conversation_id
-        setChatData(prev => ({
+        setChatData((prev) => ({
           ...prev,
           id: conversation.conversation_id,
-          conversation_id: conversation.conversation_id
+          conversation_id: conversation.conversation_id,
         }));
       }
 
@@ -122,21 +162,25 @@ const ProfileAboutSection = (
           { limit: 10 },
           conversationId
         );
-        
+
         // Format messages in the expected structure
-        const formattedMessages = [{
-          date: new Date().toISOString().split('T')[0],
-          messages: messagesResponse.data.messages || []
-        }];
-        
-        console.log('Setting formatted messages:', formattedMessages);
+        const formattedMessages = [
+          {
+            date: new Date().toISOString().split("T")[0],
+            messages: messagesResponse.data.messages || [],
+          },
+        ];
+
+        console.log("Setting formatted messages:", formattedMessages);
         setMessages(formattedMessages);
       } else {
         // For new conversations, set an empty messages array with the correct structure
-        setMessages([{
-          date: new Date().toISOString().split('T')[0],
-          messages: []
-        }]);
+        setMessages([
+          {
+            date: new Date().toISOString().split("T")[0],
+            messages: [],
+          },
+        ]);
       }
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -198,12 +242,27 @@ const ProfileAboutSection = (
 
           <div className="mt-[22px] mb-2 flex justify-between flex-wrap gap-2">
             <div className="gap-2 flex items-center flex-wrap">
-              <button className="flex items-center bg-transparent text-dimGray border border-dimGray text-sm rounded-full  transition py-2 px-4 cursor-pointer font-normal">
-                <div className="flex gap-2 items-center">
-                  <FiUserPlus className="w-4 h-4" />
-                  <span>Connect</span>
-                </div>
-              </button>
+              {connectionDetail === true ? (
+                <></>
+              ) : (
+                <button
+                  onClick={handleConnectFunction}
+                  className={`flex items-center bg-transparent text-dimGray border border-dimGray text-sm rounded-full transition py-2 px-4 font-normal ${
+                    isConnectionPending
+                      ? "cursor-default pointer-events-none"
+                      : "cursor-pointer pointer-events-auto"
+                  }`}
+                >
+                  {isConnectionPending ? (
+                    <span>Connection Pending</span>
+                  ) : (
+                    <div className="flex gap-2 items-center">
+                      <FiUserPlus className="w-4 h-4" />
+                      <span>Connect</span>
+                    </div>
+                  )}
+                </button>
+              )}
 
               <button
                 onClick={handleMessageClick}

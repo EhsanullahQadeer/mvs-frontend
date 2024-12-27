@@ -11,30 +11,32 @@
 
 /* LOCAL IMPORTS */
 import Theme from "theme";
-import ScrollableContainer from "components/util/scrollable-container";
-import MusicTable from "./components/MusicTable";
-
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { artistProfileAPI, getSpotifyArtistTopTracks } from "api/user";
+import {
+  artistProfileAPI,
+  checkPendingConnectAPI,
+  getSpotifyArtistTopTracks,
+  getUserByIdAPI,
+} from "api/user";
 import {
   IArtistProfileData,
   // MusicTableArr
 } from "./components/types";
 import { CircularProgress } from "@mui/material";
-import SamplesContainer from "components/SampleContainer/player-container";
 import ProfileAboutSection from "./components/ProfileAboutSection";
 import searchIcon from "../../assets/icons/searchIcon.svg";
+import SamplesContainer from "components/SampleContainer/player-container";
 
 // import { getUserSamplesAPI } from "api/sounds";
 
 const ArtistProfile = () => {
   const { username } = useParams();
-  const [selectedTab, setSelectedTab] = useState("Instrumentals");
+  const [selectedTab, setSelectedTab] = useState("instrumental");
   const [isConnect, setIsConnect] = useState(true);
   const [artistData, setArtistData] = useState<IArtistProfileData | null>(null);
   const [isLoading, setLoading] = useState(true);
-  const { bio } = artistData?.available || {};
+  const [connectionDetail, setConnectionDetail] = useState();
 
   // const [musicTableArr, setMusicTableArr] = useState<MusicTableArr | null>(
   //   null
@@ -42,7 +44,13 @@ const ArtistProfile = () => {
 
   const [creditsData, setCreditsData] = useState([]);
 
-  const tabs = ["Instrumentals", "Samples", "Full Songs"];
+  const tabs = [
+    { label: "Instrumentals", value: "instrumental" },
+    { label: "Samples", value: "sample" },
+    { label: "Full Songs", value: "full_song" },
+  ];
+
+
 
   const getArtistData = useCallback(async () => {
     try {
@@ -77,9 +85,34 @@ const ArtistProfile = () => {
       setLoading(false);
     }
   };
+
+  const checkConnection = async () => {
+    if (artistData) {
+      try {
+        const response = await checkPendingConnectAPI(artistData?.id);
+        if (response.data.results.connectionDetails) {
+          setConnectionDetail(
+            response.data.results.connectionDetails.request_accepted
+          );
+        }
+
+        console.log(
+          "response check connect",
+          response.data.results.connectionDetails
+        );
+      } catch (error) {
+        console.log("error while checking connection", error);
+      }
+    }
+  };
+
   useEffect(() => {
     getArtistData();
   }, [getArtistData]);
+
+  useEffect(() => {
+    checkConnection();
+  }, [artistData]);
 
   return (
     <Theme>
@@ -93,17 +126,17 @@ const ArtistProfile = () => {
                   <div className="flex">
                     {tabs.map((tab, index) => (
                       <button
-                        key={tab}
-                        onClick={() => setSelectedTab(tab)}
+                        key={tab.value}
+                        onClick={() => setSelectedTab(tab.value)}
                         className={`py-2 px-3 text-sm flex items-center justify-center border border-eclipseGray ${
-                          selectedTab === tab
+                          selectedTab === tab.value
                             ? "text-softGray bg-eerieBlack"
                             : "text-charcoalGray bg-darkGray"
                         } ${index === 0 && "rounded-l-md border-r-0"} ${
                           index === 2 && "rounded-r-md border-l-0"
                         } transition duration-300`}
                       >
-                        {tab}
+                        {tab.label}
                       </button>
                     ))}
                   </div>
@@ -139,20 +172,25 @@ const ArtistProfile = () => {
 
                 {/* <MusicTable /> */}
                 <div className="relative">
-                  <SamplesContainer user_id={artistData?.id} />
+                  <SamplesContainer
+                    user_id={artistData?.id}
+                    selectedTab={selectedTab}
+                  />
                 </div>
               </div>
             </section>
 
             <section className="border-l border-eclipseGray w-[480px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
-              <ProfileAboutSection {...{ artistData, creditsData }} />
+              <ProfileAboutSection
+                {...{ artistData, creditsData, connectionDetail, setConnectionDetail }}
+              />
             </section>
           </div>{" "}
         </>
       ) : (
         <>
-          <div className="absolute top-0 left-0 z-50 bg-black opacity-40 pointer-events-none w-full h-full"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
+          <div className="absolute top-0 left-0 z-[9999] bg-black opacity-40 w-full h-full"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999]">
             <CircularProgress
               sx={{
                 width: "80px !important",

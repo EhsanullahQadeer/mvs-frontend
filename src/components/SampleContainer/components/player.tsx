@@ -30,6 +30,7 @@ const AudioPlayer = ({
   onPrevClick,
   onNextClick,
 }) => {
+  const { collaborators, filename } = currTrack || {};
   const bottomAudioPlayerRef = useRef<HTMLDivElement>(null);
   const [trackId, setTrackId] = useState<number | null>(null);
   const [changingTrack, setChangingTrack] = useState<boolean>(false);
@@ -39,7 +40,7 @@ const AudioPlayer = ({
   const [progress, setProgress] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [prevVol, setPrevVol] = useState(0.5);
-  const { audioRef } = useContext(waveformCtx);
+  const { audioRef, current } = useContext(waveformCtx);
   const [sampleNameVisible, setSampleNameVisible] = useState(true);
   const [sampleTitleWidth, setSampleTitleWidth] = useState(0);
   const sampleTitleWidthRef = useRef(sampleTitleWidth); // Ref to hold the latest value
@@ -72,9 +73,12 @@ const AudioPlayer = ({
     let animationFrameId: number;
 
     const updateProgress = () => {
-      if (audioRef.current && audioRef.current.duration > 0) {
-        const currentTime = audioRef.current.currentTime;
-        setProgress((currentTime / audioRef.current.duration) * 100);
+      if (audioRef.current) {
+        if (audioRef.current.duration > 0) {
+          const currentTime = audioRef.current.currentTime;
+          setProgress((currentTime / audioRef.current.duration) * 100);
+        }
+
         animationFrameId = requestAnimationFrame(updateProgress);
       }
     };
@@ -90,7 +94,6 @@ const AudioPlayer = ({
         cancelAnimationFrame(animationFrameId);
       }
     };
-
     if (audioRef.current) {
       audioRef.current.addEventListener("play", startProgressUpdate);
       audioRef.current.addEventListener("pause", stopProgressUpdate);
@@ -105,7 +108,7 @@ const AudioPlayer = ({
       }
       stopProgressUpdate();
     };
-  }, [audioRef]);
+  }, [audioRef, current]);
 
   // Needed to reset the progress bar in the bottom audio player
   const changeTrack = useCallback(() => {
@@ -155,7 +158,6 @@ const AudioPlayer = ({
             currentTime = audioRef.current.duration;
           }
         }
-
         audioRef.current.currentTime = currentTime;
         setProgress((currentTime / audioRef.current.duration) * 100);
       }
@@ -196,7 +198,7 @@ const AudioPlayer = ({
     return () => {
       current = null;
     };
-  }, [audioRef, sampleTitleWidth]);
+  }, [audioRef, sampleTitleWidth, current]);
 
   // Horizontal window resize handler. Will only hide the sample name. Keeps control buttons and volume control.
   const handleResize = () => {
@@ -245,7 +247,7 @@ const AudioPlayer = ({
       {/* Control buttons */}
       <div className="control-container">
         <button className="control-button pr-2" onClick={onPrevClick}>
-          <img src={skipBack} alt="Previous" />
+          <img className="object-cover" src={skipBack} alt="Previous" />
         </button>
         <button className="control-button" onClick={onPlayToggle}>
           {isPlaying ? (
@@ -269,11 +271,13 @@ const AudioPlayer = ({
         id="trackInfo"
       >
         <div className="h-8 w-8">
-          <img
-            src={currTrack?.thumbnail}
-            alt="thumbnail"
-            className="w-full h-full"
-          />
+          {currTrack?.thumbnail && (
+            <img
+              src={currTrack.thumbnail}
+              alt="thumbnail"
+              className="w-full h-full"
+            />
+          )}
         </div>
 
         <div className="h-6 w-6">
@@ -281,11 +285,9 @@ const AudioPlayer = ({
         </div>
 
         <div>
-          <div className="text-white text-sm font-normal">
-            {currTrack?.filename}
-          </div>
+          <div className="text-white text-sm font-normal">{filename}</div>
           <div className="text-dimGray text-sm font-normal">
-            {currTrack?.collaborators[0]?.artist_name}
+            {/* {collaborators[0]?.artist_name} */}
           </div>
         </div>
       </div>

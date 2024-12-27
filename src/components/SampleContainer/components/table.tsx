@@ -3,19 +3,28 @@
 
 import DropDown from "components/util/dropdown";
 import AudioPlayer from "./player";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import playButton from "../../../assets/img/player/play-circle.svg";
-import pauseButton from "../../../assets/img/player/pause-circle.svg";
+import { useCallback, useEffect, useRef, useState } from "react";
 import musicBeam from "../../../assets/icons/musicBeam.svg";
 import playIcon from "../../../assets/icons/playIcon.svg";
 import musicIcon from "../../../assets/icons/musicIcon.svg";
 import { AudioTrackType } from "../player-container";
-import { AudioTrack, useWaveform, Waveform } from "./waveform";
-import Avatar from "react-avatar";
+import { AudioTrack, useWaveform } from "./waveform";
 import { AnimatedWaveGraphic } from "./wave-graphic";
+import { Avatar } from "@mui/material";
+import artistimg from "../../../assets/img/artistImg.png";
+import { IoMdHeartEmpty } from "react-icons/io";
+import { FiDownload } from "react-icons/fi";
 
+const sampleData = [
+  { image: artistimg },
+  { image: artistimg },
+  { image: artistimg },
+  { image: artistimg },
+  { image: artistimg },
+];
+const SampleTable = (props: any) => {
+  const { samples, fetchAllUserSamples } = props;
 
-const SampleTable = (samples) => {
   const rowRefs = useRef<Array<HTMLTableRowElement | null>>([]);
   const formatDuration = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -44,12 +53,13 @@ const SampleTable = (samples) => {
 
   const [currPlayingId, setCurrentPlaying] = useState(0);
   const [currPlayingIdx, setCurrentPlayingIndex] = useState(0);
-  const [isPlaying, setPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [currTrack, setTrack] = useState(null);
+  const [Play, setPlay] = useState(false);
 
   // Load all the tracks at once when the component mounts to show their waveforms
   useEffect(() => {
-    const trackSources = Object.values(samples.samples).map((sample: any) => ({
+    const trackSources = Object.values(samples).map((sample: any) => ({
       id: sample.id,
       src: sample.s3_key,
       duration: sample.duration,
@@ -72,7 +82,8 @@ const SampleTable = (samples) => {
       armTrack(sample.id); // Arm the track first
       setTrack(sample); // Set the track for the UI to update
       playTrack(audio_track); // Play the track after arming
-      setPlaying(true);
+      setIsPlaying(true);
+      setPlay(true);
     } else {
       // Toggle play/pause for the currently selected track
       if (isPlaying) {
@@ -80,16 +91,14 @@ const SampleTable = (samples) => {
       } else {
         playTrack(audio_track); // Play the track after arming
       }
-      setPlaying(!isPlaying); // Toggle the isPlaying state
+      setIsPlaying(!isPlaying); // Toggle the isPlaying state
     }
   };
 
   const handlePrevTrack = () => {
     if (currPlayingIdx > 0) {
       const prevIndex = currPlayingIdx - 1;
-      const prevSample = Object.values(samples.samples)[
-        prevIndex
-      ] as AudioTrackType;
+      const prevSample = Object.values(samples)[prevIndex] as AudioTrackType;
       const audio_track: AudioTrack = {
         id: prevSample.id,
         src: prevSample.s3_key,
@@ -100,16 +109,14 @@ const SampleTable = (samples) => {
       setTrack(prevSample); // Update the current track in state
       armTrack(prevSample.id); // Arm the track
       playTrack(audio_track); // Play the previous track
-      setPlaying(true);
+      setIsPlaying(true);
     }
   };
 
   const handleNextTrack = () => {
-    if (currPlayingIdx < Object.values(samples.samples).length - 1) {
+    if (currPlayingIdx < Object.values(samples).length - 1) {
       const nextIndex = currPlayingIdx + 1;
-      const nextSample = Object.values(samples.samples)[
-        nextIndex
-      ] as AudioTrackType;
+      const nextSample = Object.values(samples)[nextIndex] as AudioTrackType;
       const audio_track: AudioTrack = {
         id: nextSample.id,
         src: nextSample.s3_key,
@@ -120,7 +127,7 @@ const SampleTable = (samples) => {
       setTrack(nextSample); // Update the current track in state
       armTrack(nextSample.id); // Arm the track
       playTrack(audio_track); // Play the next track
-      setPlaying(true);
+      setIsPlaying(true);
     }
   };
 
@@ -136,7 +143,7 @@ const SampleTable = (samples) => {
         armTrack(sample.id); // Arm the track
         setTrack(sample); // Set the track for the UI to update
         playTrack(audio_track); // Play the track
-        setPlaying(true); // Update play state to true
+        setIsPlaying(true); // Update play state to true
         // Scroll the current row into view
         if (rowRefs.current[index]) {
           rowRefs.current[index]?.scrollIntoView({
@@ -151,28 +158,28 @@ const SampleTable = (samples) => {
         if (event.key === "ArrowUp") {
           if (currPlayingIdx > 0) {
             const prevIndex = currPlayingIdx - 1;
-            const prevSample = Object.values(samples.samples)[
+            const prevSample = Object.values(samples)[
               prevIndex
             ] as AudioTrackType;
 
             if (isPlaying) {
               pauseTrack(); // Pause the current track first
-              setPlaying(false); // Ensure UI reflects the paused state
+              setIsPlaying(false); // Ensure UI reflects the paused state
               setTimeout(() => handleTrackSwitch(prevSample, prevIndex), 0); // Switch after pausing
             } else {
               handleTrackSwitch(prevSample, prevIndex); // Directly switch if no track is playing
             }
           }
         } else if (event.key === "ArrowDown") {
-          if (currPlayingIdx < Object.values(samples.samples).length - 1) {
+          if (currPlayingIdx < Object.values(samples).length - 1) {
             const nextIndex = currPlayingIdx + 1;
-            const nextSample = Object.values(samples.samples)[
+            const nextSample = Object.values(samples)[
               nextIndex
             ] as AudioTrackType;
 
             if (isPlaying) {
               pauseTrack(); // Pause the current track first
-              setPlaying(false); // Ensure UI reflects the paused state
+              setIsPlaying(false); // Ensure UI reflects the paused state
               setTimeout(() => handleTrackSwitch(nextSample, nextIndex), 0); // Switch after pausing
             } else {
               handleTrackSwitch(nextSample, nextIndex); // Directly switch if no track is playing
@@ -182,18 +189,18 @@ const SampleTable = (samples) => {
       } else if (event.code === "Space" || event.key === " ") {
         // Check if the active element is an input, textarea, or contenteditable element
         const activeElement = document.activeElement;
-        const isInputFocused = activeElement instanceof HTMLElement && (
-          activeElement.tagName === 'INPUT' ||
-          activeElement.tagName === 'TEXTAREA' ||
-          activeElement.isContentEditable
-        );
+        const isInputFocused =
+          activeElement instanceof HTMLElement &&
+          (activeElement.tagName === "INPUT" ||
+            activeElement.tagName === "TEXTAREA" ||
+            activeElement.isContentEditable);
 
         // Only handle space if we're not focused on an input element
         if (!isInputFocused) {
           // Prevent the default scroll behavior of the spacebar
           event.preventDefault();
 
-          const currentSample = Object.values(samples.samples)[
+          const currentSample = Object.values(samples)[
             currPlayingIdx
           ] as AudioTrackType;
           const audio_track: AudioTrack = {
@@ -202,11 +209,11 @@ const SampleTable = (samples) => {
           };
           if (isPlaying) {
             pauseTrack();
-            setPlaying(false);
+            setIsPlaying(false);
           } else {
             armTrack(currentSample.id);
             playTrack(audio_track);
-            setPlaying(true);
+            setIsPlaying(true);
           }
         }
       }
@@ -228,6 +235,13 @@ const SampleTable = (samples) => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);
+
+  const handleMusicRowClick = (e, sample, idxValue) => {
+    e.stopPropagation();
+    setCurrentPlaying(sample.id);
+    setCurrentPlayingIndex(idxValue);
+    handlePlayToggle(sample, idxValue);
+  };
 
   return (
     <>
@@ -276,7 +290,7 @@ const SampleTable = (samples) => {
             </th> */}
             <th
               scope="col"
-              className="considering-avatar px-3 py-3.5 text-center text-sm font-normal text-softGray"
+              className="considering-avatar px-3 py-3.5 text-left text-sm font-normal text-softGray"
             >
               Considering
             </th>
@@ -290,7 +304,7 @@ const SampleTable = (samples) => {
         </thead>
         <tbody className="">
           {samples &&
-            Object.values(samples.samples).map((sample: any, map_index) => {
+            Object.values(samples).map((sample: any, map_index) => {
               const considering_list =
                 samples[map_index]?.considering?.split(",") || [];
               return (
@@ -301,16 +315,22 @@ const SampleTable = (samples) => {
                     className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${
                       currPlayingId === sample.id ? "active-sample" : ""
                     }`}
-                    ref={(el) => (rowRefs.current[map_index] = el)} // Attach ref to each row
+                    ref={(el) => (rowRefs.current[map_index] = el)}
                     onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentPlaying(sample.id);
-                      setCurrentPlayingIndex(map_index);
-                      handlePlayToggle(sample, map_index);
+                      const target =
+                        e.target instanceof Element ? e.target : null;
+                      const clickedTd = target?.closest("td");
+
+                      if (
+                        clickedTd &&
+                        clickedTd.classList.contains("playable-td")
+                      ) {
+                        handleMusicRowClick(e, sample, map_index);
+                      }
                     }}
                   >
                     {/* Thumbnail */}
-                    <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm">
+                    <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm playable-td">
                       <div className="flex items-center gap-5">
                         <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-gunMetal">
                           <img src={musicIcon} alt="musicIcon" />
@@ -326,7 +346,9 @@ const SampleTable = (samples) => {
                           <div className="absolute top-0 left-0 w-4 h-4 group-hover:opacity-0 transition-opacity duration-200">
                             {currPlayingId === sample.id ? (
                               <AnimatedWaveGraphic
-                                playing={isPlaying && currPlayingId === sample.id}
+                                playing={
+                                  isPlaying && currPlayingId === sample.id
+                                }
                               />
                             ) : (
                               <img
@@ -342,7 +364,11 @@ const SampleTable = (samples) => {
 
                     {/* Sample info */}
                     <td
-                      className="row-play px-3 py-4 text-xs text-mediumGray font-['Mona-Sans-M'] max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
+                      className={`playable-td row-play px-3 py-4 text-xs text-mediumGray font-['Mona-Sans-M'] max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap ${
+                        currPlayingId === sample.id
+                          ? "text-white"
+                          : "text-mediumGray "
+                      }`}
                       data-index={map_index}
                       onClick={() => {}}
                     >
@@ -379,7 +405,13 @@ const SampleTable = (samples) => {
                   </td> */}
 
                     {/* Sample Duration */}
-                    <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
+                    <td
+                      className={`playable-td meta-sample whitespace-nowrap px-3 py-4 text-sm text-center font-normal ${
+                        currPlayingId === sample.id
+                          ? "text-white"
+                          : "text-mediumGray "
+                      }`}
+                    >
                       {formatDuration(sample?.length)}
                     </td>
                     {/* Sample Key */}
@@ -403,36 +435,64 @@ const SampleTable = (samples) => {
                     </td> */}
 
                     {/* Considering List */}
-                    <td className="considering-avatar whitespace-nowrap text-sm text-mediumGray text-center">
-                      {considering_list.length > 0 &&
-                        considering_list.slice(0, 3).map((person, idx) => {
-                          return (
-                            <Avatar
-                              key={idx}
-                              name={person}
-                              round={true}
-                              title={person}
-                              size="30"
-                              className="flex ml-[5px] mb-[3px] cursor-pointer"
-                              onClick={() => {
-                                // setSample(x);
-                                // setConsidering(true);
-                              }}
-                            />
-                          );
-                        })}
-                      <span
-                        onClick={() => {
-                          // setSample(x);
-                          // setConsidering(true);
-                        }}
-                        className="cursor-pointer text-xs ml-[10px] mt-[10px] text-dimGray underline font-['Mona-Sans-M']"
-                      >
-                        View All
-                      </span>
+                    <td className="considering-avatar whitespace-nowrap text-sm text-mediumGray text-center px-3 py-4">
+                      <div className="flex flex-wrap items-center justify-center gap-2.5">
+                        <div className="flex items-center justify-center">
+                          {considering_list.length > 0
+                            ? considering_list
+                                .slice(0, 3)
+                                .map((person, index) => {
+                                  return (
+                                    <Avatar
+                                      key={index}
+                                      className={`flex cursor-pointer ${
+                                        index === 0 ? "ml-0" : "-ml-[8px]"
+                                      }`}
+                                      sx={{
+                                        width: "24px",
+                                        height: "24px",
+                                        border: "0.5px solid #292929",
+                                      }}
+                                      src={person.image}
+                                      onClick={() => {
+                                        // setSample(x);
+                                        // setConsidering(true);
+                                      }}
+                                    />
+                                  );
+                                })
+                            : sampleData.slice(0, 3).map((person, index) => (
+                                <Avatar
+                                  key={index}
+                                  className={`flex cursor-pointer ${
+                                    index === 0 ? "ml-0" : "-ml-[8px]"
+                                  }`}
+                                  sx={{
+                                    width: "24px",
+                                    height: "24px",
+                                    border: "0.5px solid #292929",
+                                  }}
+                                  src={person.image}
+                                />
+                              ))}
+                        </div>
+                        <span
+                          onClick={() => {
+                            // setSample(x);
+                            // setConsidering(true);
+                          }}
+                          className="cursor-pointer text-xs text-dimGray font-['Mona-Sans-M']"
+                        >
+                          View All
+                        </span>
+                      </div>
                     </td>
 
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    <td
+                      className={
+                        "whitespace-nowrap px-3 py-4 text-sm text-gray-300"
+                      }
+                    >
                       <div className="flex items-center gap-4">
                         {/* <div className="onboard-7 toggle-container">
                         {parseInt(sample.is_liked) === 1 ? (
@@ -468,14 +528,36 @@ const SampleTable = (samples) => {
                             strokeLinejoin="round"/>
                         </svg>
                       </a> */}
+                        <span>
+                          <IoMdHeartEmpty
+                            className={`text-[16px] cursor-pointer  ${
+                              currPlayingId === sample.id
+                                ? "text-white"
+                                : "text-mediumGray "
+                            }`}
+                          />
+                        </span>
+                        <a href={sample.s3_key} download={sample.filename}>
+                          <FiDownload
+                            className={`text-[16px] cursor-pointer  ${
+                              currPlayingId === sample.id
+                                ? "text-white"
+                                : "text-mediumGray "
+                            }`}
+                          />
+                        </a>
 
                         <div className="dropdown-container">
                           <DropDown
-                            sample={sample}
-                            index={map_index}
-                            getSamples={"getSamples"}
-                            // page={current_page}
-                            // sound={sound}
+                            {...{
+                              sample,
+                              play: true,
+                              index: map_index,
+                              getSamples: "getSamples",
+                              fetchAllUserSamples,
+                              // page={current_page}
+                              // sound={sound}
+                            }}
                           />
                         </div>
                       </div>
@@ -486,6 +568,7 @@ const SampleTable = (samples) => {
             })}
         </tbody>
       </table>
+
       <div className="pb-[42px]"></div>
       {/* `Show Considering` Button Clicked */}
       {/* {ConsideringModal && (

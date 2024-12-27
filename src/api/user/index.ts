@@ -82,6 +82,10 @@ export async function getUserBySpotifyId(spotifyId: string) {
   return axiosInstance.get(`/users/by-spotify-id/${spotifyId}`);
 }
 
+export async function getUserByIdAPI(id: string) {
+  return axiosInstance.get(`/users/${id}`);
+}
+
 export async function searchAllUsers(
   query: string, 
   limit: number, 
@@ -119,6 +123,14 @@ export async function getArtistInfo(params: IgetArtistInfoParams) {
 }
 export async function createWikiProfile(body: IcreateWikiProfileBody) {
   return axiosInstance.post(`/users/wiki-profile`, body);
+}
+
+export async function requestConncetAPI(params: any) {
+  return axiosInstance.post("/users/request-connections", params);
+}
+
+export async function checkPendingConnectAPI(recipientId: number) {
+  return axiosInstance.get(`/users/check-pending-connection/${recipientId}`);
 }
 
 // =======================================================================================

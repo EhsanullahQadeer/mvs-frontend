@@ -19,6 +19,9 @@ import { store, persistor } from "./redux/store";
 import "./assets/css/global.scss";
 import { WebSocketProvider } from "services/WebSocket/APIGatewayManager.context";
 import NotFoundPage from "pages/NotFoundPage";
+import publicRoutes from "routes/publicRoutes";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const renderRoutes = (routes: any[]) => {
   return routes.map((route, index) => (
@@ -37,6 +40,7 @@ const Application: React.FunctionComponent<{}> = (props) => {
     <BrowserRouter>
       <Routes>
         {renderRoutes(routes)}
+        {renderRoutes(publicRoutes)}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
@@ -52,6 +56,7 @@ root.render(
     <PersistGate loading={null} persistor={persistor}>
       <WebSocketProvider>
         <Application />
+        <ToastContainer />
       </WebSocketProvider>
     </PersistGate>
   </Provider>
