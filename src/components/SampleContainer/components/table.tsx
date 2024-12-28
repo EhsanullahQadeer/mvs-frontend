@@ -14,6 +14,10 @@ import { Avatar } from "@mui/material";
 import artistimg from "../../../assets/img/artistImg.png";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { FiDownload } from "react-icons/fi";
+import ConsideringModal from "components/modals/considering";
+import axios from "axios";
+import { getSampleConsidering, saveSampleDownloadAPI, sampleLikeAPI } from "api/sounds";
+import { IoMdHeart } from "react-icons/io";
 
 const sampleData = [
   { image: artistimg },
@@ -24,6 +28,48 @@ const sampleData = [
 ];
 const SampleTable = (props: any) => {
   const { samples, fetchAllUserSamples } = props;
+  const [consideringData, setConsideringData] = useState<Record<number, any[]>>({});
+  const [considering, setConsidering] = useState(false);
+  const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
+  const [likedSamples, setLikedSamples] = useState<Record<number, boolean>>({});
+
+  // Initialize likes from the API response data
+  useEffect(() => {
+    if (samples) {
+      const initialLikes: Record<number, boolean> = {};
+      Object.values(samples).forEach((sample: any) => {
+        // Use the userInfo.isLiked from the API response
+        initialLikes[sample.id] = sample.userInfo?.isLiked || false;
+      });
+      setLikedSamples(initialLikes);
+    }
+  }, [samples]);
+
+  // Fetch considering data when samples change
+  useEffect(() => {
+    if (samples) {
+      const fetchConsideringData = async (sampleId: number) => {
+        try {
+          const response = await getSampleConsidering(sampleId);
+          setConsideringData(prev => ({
+            ...prev,
+            [sampleId]: response.data
+          }));
+        } catch (error) {
+          console.error('Error fetching considering data:', error);
+          setConsideringData(prev => ({
+            ...prev, 
+            [sampleId]: []
+          }));
+        }
+      };
+      console.log('consideringData', consideringData);
+
+      Object.values(samples).forEach((sample: any) => {
+        fetchConsideringData(sample.id);
+      });
+    }
+  }, [samples]);
 
   const rowRefs = useRef<Array<HTMLTableRowElement | null>>([]);
   const formatDuration = (totalSeconds: number) => {
@@ -243,6 +289,36 @@ const SampleTable = (props: any) => {
     handlePlayToggle(sample, idxValue);
   };
 
+  const handleDownload = async (e: React.MouseEvent, sample: any) => {
+    e.preventDefault();
+    
+    try {
+      await saveSampleDownloadAPI(sample.id);
+      const link = document.createElement('a');
+      link.href = sample.s3_key;
+      link.download = sample.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
+
+  const handleLike = async (e: React.MouseEvent, sample: any) => {
+    e.preventDefault();
+    console.log('sample', sample);
+    try {
+      await sampleLikeAPI(sample.id);
+      setLikedSamples(prev => ({
+        ...prev,
+        [sample.id]: !prev[sample.id]
+      }));
+    } catch (error) {
+      console.error('Like action failed:', error);
+    }
+  };
+
   return (
     <>
       <table
@@ -290,7 +366,7 @@ const SampleTable = (props: any) => {
             </th> */}
             <th
               scope="col"
-              className="considering-avatar px-3 py-3.5 text-left text-sm font-normal text-softGray"
+              className="considering-avatar px-3 py-3.5 text-center text-sm font-normal text-softGray"
             >
               Considering
             </th>
@@ -305,8 +381,7 @@ const SampleTable = (props: any) => {
         <tbody className="">
           {samples &&
             Object.values(samples).map((sample: any, map_index) => {
-              const considering_list =
-                samples[map_index]?.considering?.split(",") || [];
+              console.log('howdyASJDKLFADJSLKF', sample);
               return (
                 <>
                   <tr
@@ -436,32 +511,12 @@ const SampleTable = (props: any) => {
 
                     {/* Considering List */}
                     <td className="considering-avatar whitespace-nowrap text-sm text-mediumGray text-center px-3 py-4">
-                      <div className="flex flex-wrap items-center justify-center gap-2.5">
-                        <div className="flex items-center justify-center">
-                          {considering_list.length > 0
-                            ? considering_list
-                                .slice(0, 3)
-                                .map((person, index) => {
-                                  return (
-                                    <Avatar
-                                      key={index}
-                                      className={`flex cursor-pointer ${
-                                        index === 0 ? "ml-0" : "-ml-[8px]"
-                                      }`}
-                                      sx={{
-                                        width: "24px",
-                                        height: "24px",
-                                        border: "0.5px solid #292929",
-                                      }}
-                                      src={person.image}
-                                      onClick={() => {
-                                        // setSample(x);
-                                        // setConsidering(true);
-                                      }}
-                                    />
-                                  );
-                                })
-                            : sampleData.slice(0, 3).map((person, index) => (
+                      {consideringData[sample.id]?.length > 0 ? (
+                        <div className="flex flex-wrap items-center justify-center gap-2.5 hover:opacity-100 opacity-40 transition-opacity duration-200">
+                          <div className="flex items-center justify-center">
+                            {consideringData[sample.id]
+                              .slice(0, 3)
+                              .map((person: any, index: number) => (
                                 <Avatar
                                   key={index}
                                   className={`flex cursor-pointer ${
@@ -472,20 +527,29 @@ const SampleTable = (props: any) => {
                                     height: "24px",
                                     border: "0.5px solid #292929",
                                   }}
-                                  src={person.image}
+                                  src={person.user.thumbnail || person.image}
+                                  onClick={() => {
+                                    // setSample(x);
+                                    // setConsidering(true);
+                                  }}
                                 />
                               ))}
+                          </div>
+                          {consideringData[sample.id].length > 3 && (
+                            <span
+                              onClick={() => {
+                                setSelectedSampleId(sample.id);
+                                setConsidering(true);
+                              }}
+                              className="cursor-pointer text-xs text-dimGray font-['Mona-Sans-M']"
+                            >
+                              View All
+                            </span>
+                          )}
                         </div>
-                        <span
-                          onClick={() => {
-                            // setSample(x);
-                            // setConsidering(true);
-                          }}
-                          className="cursor-pointer text-xs text-dimGray font-['Mona-Sans-M']"
-                        >
-                          View All
-                        </span>
-                      </div>
+                      ) : (
+                        "--"
+                      )}
                     </td>
 
                     <td
@@ -528,16 +592,26 @@ const SampleTable = (props: any) => {
                             strokeLinejoin="round"/>
                         </svg>
                       </a> */}
-                        <span>
-                          <IoMdHeartEmpty
-                            className={`text-[16px] cursor-pointer  ${
-                              currPlayingId === sample.id
-                                ? "text-white"
-                                : "text-mediumGray "
-                            }`}
-                          />
+                        <span onClick={(e) => handleLike(e, sample)}>
+                          {likedSamples[sample.id] ? (
+                            <IoMdHeart
+                              className={`text-[16px] cursor-pointer ${
+                                currPlayingId === sample.id
+                                  ? "text-white"
+                                  : "text-mediumGray"
+                              }`}
+                            />
+                          ) : (
+                            <IoMdHeartEmpty
+                              className={`text-[16px] cursor-pointer ${
+                                currPlayingId === sample.id
+                                  ? "text-white"
+                                  : "text-mediumGray"
+                              }`}
+                            />
+                          )}
                         </span>
-                        <a href={sample.s3_key} download={sample.filename}>
+                        <a href={sample.s3_key} onClick={(e) => handleDownload(e, sample)}>
                           <FiDownload
                             className={`text-[16px] cursor-pointer  ${
                               currPlayingId === sample.id
@@ -569,16 +643,13 @@ const SampleTable = (props: any) => {
         </tbody>
       </table>
 
+      <ConsideringModal
+        considering={considering}
+        setConsidering={setConsidering}
+        sampleId={selectedSampleId}
+      />
+
       <div className="pb-[42px]"></div>
-      {/* `Show Considering` Button Clicked */}
-      {/* {ConsideringModal && (
-        <ConsideringModal
-          openModal={considering}
-          setModal={setConsidering}
-          sample={sample}
-        />
-      )}
-      {/* Bottom audio player */}
       {currTrack && (
         <AudioPlayer
           currTrack={currTrack}

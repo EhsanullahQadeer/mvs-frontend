@@ -18,12 +18,22 @@ import {
 } from "@mui/material";
 import { FaLink } from "react-icons/fa6";
 import { FiDownload, FiLock } from "react-icons/fi";
-import { getSamplePublicUrl, soundPublicUrl, updateSampleSettings, setSamplePassword, getSamplePassword } from "api/sounds";
+import { getSamplePublicUrl, soundPublicUrl, updateSampleSettings, setSamplePassword, getSamplePassword, getSampleCollaborators } from "api/sounds";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import debounce from "lodash/debounce";
 
+interface Collaborator {
+  id: number;
+  role?: string;
+  user: {
+    professional_name: string;
+    thumbnail: string;
+    id: number;
+    is_owner: boolean;
+  }
+}
 const ShareSetting = ({ isOpen, onClose, sample }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"link" | "members">("link");
@@ -38,6 +48,8 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [code, setCode] = useState("");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     try {
@@ -90,6 +102,29 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
   useEffect(() => {
     getUrl();
   }, [code]);
+
+  useEffect(() => {
+    const fetchCollaborators = async () => {
+      if (!sample.id) return;
+      
+      setLoading(true);
+      try {
+        const response = await getSampleCollaborators(sample.id);
+        console.log('Raw collaborators response:', response);
+        console.log('Collaborators data:', response.data);
+        setCollaborators(response.data);
+      } catch (error) {
+        console.error('Error fetching collaborators:', error);
+        setCollaborators([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (activeTab === "members") {
+      fetchCollaborators();
+    }
+  }, [sample.id, activeTab]);
 
   const debouncedUpdate = useCallback(
     debounce(async (id, settings) => {
@@ -471,111 +506,55 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
               </Box>
             )}
           </div>
+          
           {activeTab === "members" && (
             <div className="bg-[#131313] p-4">
               <div className="bg-eclipseGray rounded-md">
-                <div className=" flex justify-between pr-4 py-2 items-center ">
-                  <div className="flex px-4 gap-2">
-                    <div className="w-8 h-8 rounded-full border-2 border-charcoalGray aspect-square">
-                      <img
-                        src={cover}
-                        alt=""
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-                    <div className="flex flex-col ">
-                      <div className="flex gap-2 items-center">
-                        <span className="text-white text-sm ">Recky Bill</span>
-                        <span className="text-coolGray px-1 py-0.5  rounded-sm  bg-black text-[10px]">
-                          you
-                        </span>
+                {loading ? (
+                  <div className="p-4 text-center text-coolGray">Loading...</div>
+                ) : collaborators.length > 0 ? (
+                  collaborators.map((collaborator, index) => (
+                    <div key={collaborator.id} className={`flex justify-between pr-4 py-2 items-center ${
+                      index !== collaborators.length - 1 ? "bg-eclipseGray" : ""
+                    }`}>
+                      <div className="flex px-4 gap-2">
+                        <div className="w-8 h-8 rounded-full border-2 border-charcoalGray aspect-square">
+                          <img
+                            src={collaborator.user.thumbnail || cover}
+                            alt={collaborator.user.professional_name}
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="flex gap-2 items-center">
+                            <span className="text-white text-sm">
+                              {collaborator.user.professional_name}
+                            </span>
+                            {collaborator.user.is_owner && (
+                              <span className="text-coolGray px-1 py-0.5 rounded-sm bg-black text-[10px]">
+                                you
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-coolGray text-[10px]">
+                            {collaborator.role || "Collaborator"}
+                          </span>
+                        </div>
                       </div>
-                      <span className="text-coolGray text-[10px]">
-                        Singer / Writer
-                      </span>
+                      {collaborator.user.is_owner && (
+                        <div className="text-coolGray text-xs">owner</div>
+                      )}
                     </div>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-coolGray">
+                    No collaborators found
                   </div>
-                  <div className="text-coolGray text-xs">owner</div>
-                </div>
-                <div className="bg-eclipseGray flex justify-between pr-4 py-2 items-center ">
-                  <div className="flex px-4 gap-2">
-                    <div className="w-8 h-8 rounded-full border-2 border-charcoalGray aspect-square">
-                      <img
-                        src={cover}
-                        alt=""
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-                    <div className="flex flex-col ">
-                      <div className="flex gap-2 items-center">
-                        <span className="text-white text-sm ">Recky Bill</span>
-                      </div>
-                      <span className="text-coolGray text-[10px]">
-                        Singer / Writer
-                      </span>
-                    </div>
-                  </div>{" "}
-                </div>
-                <div className="bg-eclipseGray flex justify-between pr-4 py-2 items-center ">
-                  <div className="flex px-4 gap-2">
-                    <div className="w-8 h-8 rounded-full border-2 border-charcoalGray aspect-square">
-                      <img
-                        src={cover}
-                        alt=""
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-                    <div className="flex flex-col ">
-                      <div className="flex gap-2 items-center">
-                        <span className="text-white text-sm ">Recky Bill</span>
-                      </div>
-                      <span className="text-coolGray text-[10px]">
-                        Singer / Writer
-                      </span>
-                    </div>
-                  </div>{" "}
-                </div>
-                <div className="bg-eclipseGray flex justify-between pr-4 py-2 items-center ">
-                  <div className="flex px-4 gap-2">
-                    <div className="w-8 h-8 rounded-full border-2 border-charcoalGray aspect-square">
-                      <img
-                        src={cover}
-                        alt=""
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-                    <div className="flex flex-col ">
-                      <div className="flex gap-2 items-center">
-                        <span className="text-white text-sm ">Recky Bill</span>
-                      </div>
-                      <span className="text-coolGray text-[10px]">
-                        Singer / Writer
-                      </span>
-                    </div>
-                  </div>{" "}
-                </div>
-                <div className=" flex justify-between pr-4 py-2 items-center ">
-                  <div className="flex px-4 gap-2">
-                    <div className="w-8 h-8 rounded-full border-2 border-charcoalGray aspect-square">
-                      <img
-                        src={cover}
-                        alt=""
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-                    <div className="flex flex-col ">
-                      <div className="flex gap-2 items-center">
-                        <span className="text-white text-sm ">Recky Bill</span>
-                      </div>
-                      <span className="text-coolGray text-[10px]">
-                        Singer / Writer
-                      </span>
-                    </div>
-                  </div>{" "}
-                </div>
+                )}
               </div>
             </div>
           )}
+
         </div>
       </Dialog>
 

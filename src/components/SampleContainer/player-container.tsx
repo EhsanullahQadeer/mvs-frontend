@@ -147,18 +147,11 @@ const SamplesContainer = ({ user_id = 0, selectedTab }) => {
       skip: 0,
       take: samplesPerPage,
       type: selectedTab,
+      includeUserInfo: true,
     });
-    console.log('sound', _sound);
     const skip = page;
     
     try {
-      console.log(`Fetching page ${page + 1} with skip: ${skip}, take: ${samplesPerPage}`);
-      // const _sound = await getUserSamplesAPI({
-      //   user_id,
-      //   skip,
-      //   take: samplesPerPage,
-      // });
-
       const samplesArray = Object.values(
         _sound?.data?.results?.samples || {}
       ) as AudioTrackType[];

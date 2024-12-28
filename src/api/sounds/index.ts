@@ -60,7 +60,7 @@ export async function soundStream(publicId: any, params: any) {
 }
 
 export async function sampleLikeAPI(id: any) {
-  return axiosInstance.post(`/sounds/sample/${id}/like`);
+  return axiosInstance.post(`/sounds/sample/${id}/toggle-like`);
 }
 
 export async function submitSplitSheetRequestAPI(params: any) {
@@ -137,4 +137,12 @@ export async function setSamplePassword(sampleId: string, password: string) {
 
 export async function getSamplePassword(sampleId: string) {
   return axiosInstance.get(`/sounds/sample/${sampleId}/password`);
+}
+
+export async function getSampleConsidering(sampleId: number) {
+  return axiosInstance.get(`/sounds/sample/${sampleId}/considering`);
+}
+
+export async function getSampleCollaborators(sampleId: number) {
+  return axiosInstance.get(`/sounds/sample/${sampleId}/collaborators`);
 }

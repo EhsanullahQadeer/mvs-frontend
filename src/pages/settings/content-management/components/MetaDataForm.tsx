@@ -120,6 +120,8 @@ const MetaDataForm = (props: Props) => {
         roles: composer.roles,
       }));
 
+
+
     const ownerObj = composerData.find(
       (data) => data.id === currentUserInfo.id
     );
@@ -142,6 +144,8 @@ const MetaDataForm = (props: Props) => {
           length,
         }),
       };
+
+      console.log('body metadata', body);
 
       if (fileRedisKey) {
         const response = await uploadedFileMetadata(fileRedisKey, body);
