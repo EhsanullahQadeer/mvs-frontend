@@ -36,6 +36,7 @@ export async function getUserSamplesAPI(params: any) {
 }
 
 export async function getUserSamplesByTypeAPI(params: any) {
+  console.log('params here!!!', params);
   return axiosInstance.get(`/sounds/get-user-samples-by-type`, { params });
 }
 

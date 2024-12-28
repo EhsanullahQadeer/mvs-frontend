@@ -140,6 +140,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab }) => {
 
   // Fetch all user samples from the server once
   const fetchUserSamples = async (page: number) => {
+    console.log('selectedTab', selectedTab);
     setLoading(true);
     const _sound = await getUserSamplesByTypeAPI({
       user_id,
@@ -147,15 +148,16 @@ const SamplesContainer = ({ user_id = 0, selectedTab }) => {
       take: samplesPerPage,
       type: selectedTab,
     });
+    console.log('sound', _sound);
     const skip = page;
     
     try {
       console.log(`Fetching page ${page + 1} with skip: ${skip}, take: ${samplesPerPage}`);
-      const _sound = await getUserSamplesAPI({
-        user_id,
-        skip,
-        take: samplesPerPage,
-      });
+      // const _sound = await getUserSamplesAPI({
+      //   user_id,
+      //   skip,
+      //   take: samplesPerPage,
+      // });
 
       const samplesArray = Object.values(
         _sound?.data?.results?.samples || {}
@@ -184,10 +186,15 @@ const SamplesContainer = ({ user_id = 0, selectedTab }) => {
     await fetchUserSamples(selectedPage);
   };
 
-  // Initial fetch
+  // Initial fetch - Add selectedTab to dependency array
   useEffect(() => {
     fetchUserSamples(0);
-  }, []);
+  }, [selectedTab]);
+
+  // Also reset currentPage when tab changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [selectedTab]);
 
   return (
     <WaveformProvider>
