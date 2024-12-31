@@ -1,12 +1,9 @@
 import sampleImg from "./download.png";
 
 export const songType = [
-  "Classic music",
-  "Ottoman music",
-  "Pop music",
-  "Lo-fi",
-  "Instrumental",
-  "Rap",
+  { label: "Instrumental", value: "instrumental" },
+  { label: "Sample", value: "sample" },
+  { label: "Full Song", value: "full_song" }
 ];
 
 export const rolesArr = [

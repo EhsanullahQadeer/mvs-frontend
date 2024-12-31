@@ -13,18 +13,26 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import getMuiStyles from "styles/getMuiStyles";
 import { useFormikContext } from "formik";
 
+type DropdownItem = {
+  label: string;
+  value: string;
+};
+
 type Props = {
   name: string;
   label?: string;
   placeholder: string;
-  dropdownItems: string[];
+  dropdownItems: DropdownItem[];
   inputBgColor?: string;
   labelColor?: string;
   dropdownBgColor?: string;
   disabled?: boolean;
+  value?: string;
 };
 
-function FormikSingleSelectDropdown(props: Props) {
+function FormikSingleSelectDropdown(
+  props: Props
+) {
   const {
     name,
     label,
@@ -34,10 +42,11 @@ function FormikSingleSelectDropdown(props: Props) {
     labelColor,
     dropdownBgColor,
     disabled,
+    value,
   } = props;
-  const { setFieldValue } = useFormikContext();
+  const { setFieldValue, values } = useFormikContext();
 
-  const [itemSelected, setItemSelected] = useState("");
+  const [itemSelected, setItemSelected] = useState(value || "");
 
   const handleItemChange = (event: SelectChangeEvent) => {
     setItemSelected(event.target.value as string);
@@ -69,36 +78,46 @@ function FormikSingleSelectDropdown(props: Props) {
             ...muiStyles.singleSelectDropdownStyles,
             ".MuiSelect-select": {
               backgroundColor: inputBgColor ? inputBgColor : "#131313",
+              color: "white",
             },
+            "& .MuiSelect-icon": {
+              color: "white"
+            }
           }}
           MenuProps={{
             PaperProps: {
               sx: {
                 backgroundColor: dropdownBgColor ? dropdownBgColor : "#131313",
                 borderRadius: "8px",
-
                 ul: {
                   padding: 0,
                 },
+                "& .MuiMenuItem-root": {
+                  color: "white"
+                }
               },
             },
           }}
         >
-          <MenuItem disabled value="" sx={muiStyles.selectDropdownMenuItem}>
+          <MenuItem disabled value="" sx={{
+            ...muiStyles.selectDropdownMenuItem,
+            color: "white",
+          }}>
             <em>{placeholder}</em>
           </MenuItem>
 
-          {dropdownItems.map((item, idx) => {
-            return (
-              <MenuItem
-                key={idx + item}
-                value={item}
-                sx={muiStyles.selectDropdownMenuItem}
-              >
-                {item}
-              </MenuItem>
-            );
-          })}
+          {dropdownItems.map((item, idx) => (
+            <MenuItem
+              key={idx + item.value}
+              value={item.value}
+              sx={{
+                ...muiStyles.selectDropdownMenuItem,
+                color: "white"
+              }}
+            >
+              {item.label}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
     </div>

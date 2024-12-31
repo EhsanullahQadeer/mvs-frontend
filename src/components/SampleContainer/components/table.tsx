@@ -33,12 +33,10 @@ const SampleTable = (props: any) => {
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
   const [likedSamples, setLikedSamples] = useState<Record<number, boolean>>({});
 
-  // Initialize likes from the API response data
   useEffect(() => {
     if (samples) {
       const initialLikes: Record<number, boolean> = {};
       Object.values(samples).forEach((sample: any) => {
-        // Use the userInfo.isLiked from the API response
         initialLikes[sample.id] = sample.userInfo?.isLiked || false;
       });
       setLikedSamples(initialLikes);
@@ -491,7 +489,7 @@ const SampleTable = (props: any) => {
                     </td>
                     {/* Sample Key */}
                     <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
-                      {sample?.keys || "--"}
+                      {sample?.key || "--"}
                     </td>
                     {/* Sample BPM */}
                     <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">

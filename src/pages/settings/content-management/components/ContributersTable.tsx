@@ -13,38 +13,39 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { IUserProfile } from "./types";
+import { ICollaborator, IUserProfile } from "./types";
 import getMuiStyles from "styles/getMuiStyles";
 import { rolesArr } from "../sample-data/sampleData";
 import { ChangeEvent, useEffect } from "react";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 
 interface Props {
-  composerData: IUserProfile[];
+  composerData: ICollaborator[];
   setComposerData: (value: any) => void;
   handleOpenDeleteDialog: (composer: IUserProfile) => void;
   percentError: boolean;
   setPercentError: (value: boolean) => void;
+  collaborators: any[];
 }
 
-function ContributersTable(props: Props) {
+function ContributersTable(
+  props: Props
+) {
+
   const {
     composerData,
     setComposerData,
     handleOpenDeleteDialog,
     percentError,
     setPercentError,
+    collaborators,
   } = props;
   const muiStyles = getMuiStyles();
-
-  useEffect(() => {
-    console.log("coposer datre", composerData);
-  }, [composerData]);
 
   const handleEditBtn = (id: number) => {
     setComposerData((prevState) =>
       prevState.map((composer) =>
-        composer.id === id
+        composer.user?.id === id
           ? { ...composer, isEditable: !composer.isEditable }
           : composer
       )
@@ -54,14 +55,13 @@ function ContributersTable(props: Props) {
   const handleRolesChange = (id: number, newRoles: string[]) => {
     setComposerData((prevcollaborators) =>
       prevcollaborators.map((composer) =>
-        composer.id === id ? { ...composer, roles: newRoles } : composer
+        composer.user?.id === id ? { ...composer, roles: newRoles } : composer
       )
     );
   };
 
   const handleInputChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    id: number
+    event: ChangeEvent<HTMLInputElement>, id: number
   ) => {
     let { value } = event.target;
     let parsedValue = parseFloat(value);
@@ -75,14 +75,18 @@ function ContributersTable(props: Props) {
     }
 
     parsedValue = Math.round(parsedValue * 100) / 100;
+    setComposerData((prevCollaborators) => {
+      const newData = prevCollaborators.map((composer) => {
+        if (composer.user?.id === id) {
+          console.log('Updating composer:', composer.user.professional_name);
+          return { ...composer, contribution: parsedValue };
+        }
+        return composer;
+      });
 
-    setComposerData((prevcollaborators) =>
-      prevcollaborators.map((composer) =>
-        composer.id === id
-          ? { ...composer, percentValue: parsedValue }
-          : composer
-      )
-    );
+      console.log('After update - newData:', newData);
+      return newData;
+    });
 
     setPercentError(false);
   };
@@ -96,6 +100,7 @@ function ContributersTable(props: Props) {
           borderTopRightRadius: "8px",
         }}
       >
+
         <TableHead
           sx={{
             ...muiStyles.tableHead,
@@ -115,37 +120,29 @@ function ContributersTable(props: Props) {
             <TableCell />
           </TableRow>
         </TableHead>
+
         <TableBody
           sx={{
             ...muiStyles.tableBody,
             "& .MuiTableRow-root": {
-              cursor: "auto",
               backgroundColor: "#0F0F0F",
-            },
+              cursor: "auto"
+            }
           }}
         >
-          {composerData.map((composer) => {
-            const {
-              id,
-              professional_name,
-              roles = [],
-              thumbnail,
-              percentValue,
-              isEditable,
-            } = composer;
-
+          {composerData?.map((composer) => {
             return (
-              <TableRow key={composer.id}>
+              <TableRow key={composer.user?.id}>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full">
                       <img
-                        src={thumbnail}
+                        src={composer?.user?.thumbnail}
                         alt="composer"
                         className="w-full h-full object-cover rounded-full"
                       />
                     </div>
-                    <span className="text-base">{professional_name}</span>
+                    <span className="text-base">{composer?.user?.professional_name}</span>
                   </div>
                 </TableCell>
 
@@ -153,36 +150,30 @@ function ContributersTable(props: Props) {
                   <div>
                     <div className="flex gap-2.5 items-stretch">
                       <div className="flex items-center">
-                        {isEditable ? (
+                        {composer.isEditable ? (
                           <input
                             type="number"
                             min="0"
                             max="100"
                             step="0.01"
-                            value={percentValue}
-                            onChange={(e) => handleInputChange(e, id)}
+                            value={composer?.contribution}
+                            onChange={(e) => handleInputChange(e, composer.user?.id)}
                             className="text-silver text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11"
                           />
                         ) : (
                           <span className="text-silver text-sm font-semibold">
-                            {percentValue}%
+                            {composer.contribution}%
                           </span>
                         )}
                       </div>
 
                       <div
-                        onClick={() => handleEditBtn(id)}
+                        onClick={() => handleEditBtn(composer.user?.id)}
                         className="py-1 px-2 border border-eclipseGray rounded text-mediumGray text-sm font-normal w-max flex items-center cursor-pointer"
                       >
-                        {isEditable ? "Save" : "Edit"}
+                        {composer.isEditable ? "Save" : "Edit"}
                       </div>
                     </div>
-
-                    {percentError && (
-                      <div className="mt-0.5 text-darkRed text-[10px]">
-                        Sum of % should equal to 100.
-                      </div>
-                    )}
                   </div>
                 </TableCell>
 
@@ -193,12 +184,10 @@ function ContributersTable(props: Props) {
                 <TableCell>
                   <div>
                     <MultiSelectDropdown
-                      name={`role${id}`}
+                      name={`role${composer.user?.id}`}
                       dropdownItems={rolesArr}
-                      value={roles}
-                      setValue={(newRoles: string[]) =>
-                        handleRolesChange(id, newRoles)
-                      }
+                      value={composer.roles || []}
+                      setValue={(newRoles: string[]) => handleRolesChange(composer.user?.id, newRoles)}
                     />
                   </div>
                 </TableCell>
@@ -223,3 +212,4 @@ function ContributersTable(props: Props) {
 }
 
 export default ContributersTable;
+

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import MetaDataForm from "./MetaDataForm";
-import { ICurrentUser, ISample } from "./types";
+import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
+import { getUserByIdAPI } from "api/user";
+import { getSampleCollaborators } from "api/sounds";
 
 interface Props {
   open: boolean;
@@ -11,10 +13,31 @@ interface Props {
   currentUserInfo: ICurrentUser;
 }
 
-export default function UpdateSamplePopup(props: Props) {
+export default function UpdateSamplePopup(
+  props: Props
+) {
+  const [collaborators, setCollaborators] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { open, handleClose, sampleToEdit, currentUserInfo } = props;
-
   const isEditSample = true;
+
+  useEffect(() => {
+    const fetchCollaborators = async () => {
+      if (!sampleToEdit?.id) return;
+      setIsLoading(true);
+      try {
+        const response = await getSampleCollaborators(sampleToEdit?.id);
+        setCollaborators(response.data);
+      } catch (error) {
+        console.error('Error fetching collaborators:', error);
+        setCollaborators([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchCollaborators();
+  }, [sampleToEdit?.id]);
+
   return (
     <React.Fragment>
       <Dialog
@@ -30,9 +53,21 @@ export default function UpdateSamplePopup(props: Props) {
         }}
       >
         <DialogContent sx={{ p: 0 }}>
-          <MetaDataForm
-            {...{ isEditSample, handleClose, sampleToEdit, currentUserInfo }}
-          />
+          {isLoading ? (
+            <div className="flex justify-center items-center p-8">
+              <div className="text-white">Loading collaborators...</div>
+            </div>
+          ) : (
+            <MetaDataForm
+              {...{
+                isEditSample,
+                handleClose,
+                sampleToEdit,
+                currentUserInfo,
+                collaborators,
+              }}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </React.Fragment>

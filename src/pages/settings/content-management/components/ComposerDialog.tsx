@@ -184,7 +184,7 @@ function ComposerDialog(props: Props) {
           </div>
           <div className={`flex flex-col bg-[#1C1C17] absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown`}>
               {searchResults.map((composer, idx) => {
-                const { thumbnail, professional_name, primary_label, sub_label } =
+                const { thumbnail, professional_name, primary_role, secondary_role } =
                   composer;
                 return (
                   <div
@@ -217,7 +217,7 @@ function ComposerDialog(props: Props) {
                         </div>
 
                         <div className="text-sm font-normal text-dimGray flex gap-1">
-                          {`${primary_label} / ${sub_label}`}
+                          {`${primary_role} / ${secondary_role}`}
                         </div>
                       </div>
                       {isOwner && (
@@ -240,8 +240,11 @@ function ComposerDialog(props: Props) {
           <div className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}>
             {contributors.length ? (
               contributors.map((composer, idx) => {
-                const { thumbnail, professional_name, primary_label, sub_label } =
+                const { user: { thumbnail, professional_name, primary_role, secondary_role } } =
                   composer;
+
+                console.log('composerzz', composer);
+
                 return (
                   <div
                     key={"contributor" + idx}
@@ -270,7 +273,7 @@ function ComposerDialog(props: Props) {
                         </div>
 
                         <div className="text-sm font-normal text-dimGray flex gap-1">
-                          {`${primary_label} / ${sub_label}`}
+                          {`${primary_role} / ${secondary_role}`}
                         </div>
                       </div>
                       {isOwner && (

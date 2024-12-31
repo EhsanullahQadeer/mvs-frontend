@@ -1,7 +1,15 @@
+/*************************************************************************
+ * @file MetaDataForm.tsx
+ * @author Ehsanullah Qadeer
+ * @desc  This is the component for the mui dropdown to select one element.
+ *
+ * @copyright (c) 2024 MVSSIVE. All rights reserved.
+ *************************************************************************/
+
 import { useEffect, useState } from "react";
-import { updateFileMetadata, uploadedFileMetadata } from "api/sounds";
+import { getSampleCollaborators, updateFileMetadata, uploadedFileMetadata } from "api/sounds";
 import { Form, Formik } from "formik";
-import { ICurrentUser, ISample, IUserProfile } from "./types";
+import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
 import AlertDialog from "components/util/AlertDialog";
 import ContributersTable from "./ContributersTable";
 import UploadingFileMetaData from "./UploadingFileMetaData";
@@ -11,11 +19,16 @@ type Props = {
   handleCancel?: () => void;
   isEditSample?: boolean;
   handleClose?: () => void;
+  sampleOwner?: IUserProfile;
   sampleToEdit?: ISample;
   currentUserInfo?: ICurrentUser;
+  collaborators?: ICollaborator[];
 };
 
-const MetaDataForm = (props: Props) => {
+const MetaDataForm = (
+  props: Props
+) => {
+
   const {
     fileRedisKey,
     handleCancel,
@@ -23,10 +36,13 @@ const MetaDataForm = (props: Props) => {
     handleClose,
     sampleToEdit,
     currentUserInfo,
+    collaborators,
   } = props;
 
+  console.log("MetaDataForm - received composer:", collaborators);
+
   const {
-    name,
+    filename,
     bpm,
     key,
     type,
@@ -36,38 +52,42 @@ const MetaDataForm = (props: Props) => {
     s3_key,
     mime_type,
     length,
-    collaborators,
   } = sampleToEdit || {};
 
-  const [selectedComposer, setSelectedComposer] = useState([
-    currentUserInfo,
-    ...(collaborators ? collaborators : []),
-  ]);
+
+  const [selectedComposer, setSelectedComposer] = useState(() => collaborators);
+  const [composerToDelete, setComposerToDelete] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+  const [composerData, setComposerData] = useState(
+    selectedComposer.map((composer) => ({
+      user: {
+        id: composer?.user?.id,
+        thumbnail: composer?.user?.thumbnail,
+        professional_name: composer?.user?.professional_name,
+        is_owner: composer?.user?.is_owner,
+        primary_role: composer?.user?.primary_role,
+        secondary_role: composer?.user?.secondary_role,
+      },
+      contribution: composer.contribution,
+      id: composer.id,
+      roles: composer.roles,
+      isEditable: false,
+    }))
+  );
 
   const [privacyValue, setPrivacyValue] = useState(
     is_private ? "private" : "public"
   );
   const [midiFile, setMidiFile] = useState(null);
   const [percentError, setPercentError] = useState(false);
-
-  console.log("sampleToEdit ", sampleToEdit);
-
   const initialValues = {
-    songName: name ? name : "",
+    songName: filename ? filename : "",
     songBpm: bpm ? bpm : "",
     songType: type ? type : "",
     songTags: tags ? tags : "",
     sampleKey: key ? key : "",
   };
-
-  const [composerData, setComposerData] = useState(
-    selectedComposer.map((composer) => ({
-      ...composer,
-      roles: [],
-      percentValue: parseFloat((100 / selectedComposer.length).toFixed(2)),
-      isEditable: false,
-    }))
-  );
 
   useEffect(() => {
     setComposerData((prevComposerData) => {
@@ -75,22 +95,28 @@ const MetaDataForm = (props: Props) => {
         const existingComposer = prevComposerData.find(
           (existing) => existing.id === composer.id
         );
+        
+        const initialCollaborator = collaborators?.find( 
+          collab => collab.id === composer.id
+        );
 
-        const percentValue = (100 / selectedComposer.length).toFixed(2);
+        const percentValue = initialCollaborator?.contribution 
+          ? initialCollaborator.contribution
+          : parseFloat((100 / selectedComposer.length).toFixed(2));
 
         if (existingComposer) {
           return {
             ...composer,
             roles: existingComposer.roles,
-            percentValue: parseFloat(percentValue),
+            percentValue,
             isEditable: existingComposer.isEditable || false,
           };
         }
-
+        
         return {
           ...composer,
           roles: composer.roles || [],
-          percentValue: parseFloat(percentValue),
+          percentValue,
           isEditable: false,
         };
       });
@@ -98,13 +124,28 @@ const MetaDataForm = (props: Props) => {
       return updatedComposerData;
     });
     setPercentError(false);
-  }, [selectedComposer]);
+  }, [selectedComposer, collaborators]);
 
-  const handleSubmit = async (values) => {
-    const { songName, songBpm, sampleKey, songType, songTags } = values;
+  const handleSubmit = async (
+    values
+  ) => {
+
+    const { 
+      songName, 
+      songBpm,
+      sampleKey,
+      songType, 
+      songTags 
+    } = values;
+
+    const formattedTags = songTags
+      .split(' ')
+      .filter(tag => tag.trim())
+      .map(tag => tag.startsWith('#') ? tag.slice(1) : tag)
+      .filter((tag, index, self) => self.indexOf(tag) === index);
 
     const percentSum = composerData.reduce((sum, composer) => {
-      return sum + composer.percentValue;
+      return sum + composer.contribution;
     }, 0);
 
     if (Math.ceil(percentSum) !== 100) {
@@ -116,11 +157,18 @@ const MetaDataForm = (props: Props) => {
       .filter((data) => data.id !== currentUserInfo.id)
       .map((composer) => ({
         id: composer.id,
-        contribution: composer.percentValue,
+        contribution: composer.contribution,
         roles: composer.roles,
+        sampleId: props.sampleToEdit?.id,
+        user: {
+          id: composer.user?.id,
+          professional_name: composer.user?.professional_name,
+          thumbnail: composer.user?.thumbnail,
+          is_owner: composer.user?.is_owner,
+          primary_role: composer.user?.primary_role,
+          secondary_role: composer.user?.secondary_role,
+        },
       }));
-
-
 
     const ownerObj = composerData.find(
       (data) => data.id === currentUserInfo.id
@@ -128,45 +176,43 @@ const MetaDataForm = (props: Props) => {
 
     try {
       const body = {
-        owner_roles: ownerObj ? ownerObj.roles : [],
-        owner_contribution: ownerObj ? ownerObj.percentValue : 0,
-        name: songName,
+        filename: songName,
         bpm: songBpm,
         key: sampleKey,
-        type: songType,
-        tags: songTags,
+        type: songType?.value || songType,
+        tags: formattedTags,
         is_private: privacyValue === "private",
         collaborators: JSON.stringify(collaborators),
         ...(isEditSample && {
-          sample_id: editFileId,
+          sample_id: props.sampleToEdit?.id,
           s3_key,
           mime_type,
           length,
         }),
       };
 
-      console.log('body metadata', body);
+      // console.log('body here', body);
+      // return;
 
+      if (sampleToEdit) {
+        sampleToEdit.tags = formattedTags;
+      }
+      
       if (fileRedisKey) {
         const response = await uploadedFileMetadata(fileRedisKey, body);
         if (response.status === 200) {
           handleCancel();
         }
-        console.log("saveMetadata ", response.data);
       } else if (editFileId) {
         const response = await updateFileMetadata(editFileId, body);
         if (response.status === 200) {
           handleClose();
         }
-        console.log("updateMetadata ", response.data);
       }
     } catch (error) {
       console.log("error ", error);
     }
   };
-
-  const [composerToDelete, setComposerToDelete] = useState(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const handleOpenDeleteDialog = (composer: IUserProfile) => {
     setOpenDeleteDialog(true);
@@ -203,9 +249,12 @@ const MetaDataForm = (props: Props) => {
         }}
       />
 
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        {() => (
-          <Form>
+      <Formik 
+        initialValues={initialValues} 
+        onSubmit={(values) => handleSubmit(values)}
+      >
+        {({ handleSubmit }) => (
+          <Form onSubmit={handleSubmit}>
             <>
               <div>
                 <UploadingFileMetaData
@@ -218,6 +267,7 @@ const MetaDataForm = (props: Props) => {
                     setSelectedComposer,
                     isEditSample,
                     handleClose,
+                    sample: sampleToEdit,
                   }}
                 />
               </div>
@@ -229,10 +279,9 @@ const MetaDataForm = (props: Props) => {
                       composerData,
                       setComposerData,
                       handleOpenDeleteDialog,
-                      isEditSample,
-                      currentUserInfo,
                       percentError,
                       setPercentError,
+                      collaborators,
                     }}
                   />
                 </div>

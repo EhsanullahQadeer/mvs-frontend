@@ -6,7 +6,7 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FormikLabeledField from "../../../../components/util/FormikLabeledField";
 import FormikSingleSelectDropdown from "../../../../components/util/FormikSingleSelectDropdown";
 import { songType } from "../sample-data/sampleData";
@@ -21,8 +21,11 @@ import {
 import getMuiStyles from "styles/getMuiStyles";
 import { IUploadingFileMetaDataProps } from "./types";
 import { useFormikContext } from "formik";
+import { Field } from 'formik';
 
-const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
+const UploadingFileMetaData = (
+  props: IUploadingFileMetaDataProps,
+) => {
   const {
     privacyValue,
     setPrivacyValue,
@@ -31,50 +34,108 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
     setSelectedComposer,
     isEditSample,
     handleClose,
+    sampleOwner,
   } = props;
+
   const muiStyles = getMuiStyles();
   const [openComposerDialog, setOpenComposerDialog] = useState(false);
+  const { setFieldValue } = useFormikContext();
+  const [tags, setTags] = useState("");
+
+  useEffect(() => {
+    if (props.sample?.type) {
+
+      const matchingType = songType.find(
+        option => option.value.toLowerCase().trim() === props.sample.type.toLowerCase().trim()
+      );
+      
+      console.log('Setting field value to:', matchingType || props.sample.type);
+      setFieldValue('songType', matchingType || props.sample.type);
+      setFieldValue('songBpm', props.sample.bpm);
+      setFieldValue('songName', props.sample.filename);
+      
+      // Format initial tags
+      const formattedTags = Array.isArray(props.sample.tags) 
+        ? props.sample.tags
+            .filter(tag => tag.trim())
+            .map(tag => tag.startsWith('#') ? tag : `#${tag}`)
+            .join(' ')
+        : '';
+      
+      setFieldValue('songTags', formattedTags);
+      setFieldValue('sampleKey', props.sample.key);
+    }
+  }, [props.sample]);
+
   const handleComposerFieldClick = () => {
     setOpenComposerDialog(true);
   };
 
+
   const handleAddComposer = (composerAdded) => {
     setSelectedComposer((prev) => {
       const isComposerAlreadySelected = prev.some(
-        (composer) => composer.id === composerAdded.id
+        (composer) => composer?.user?.id === composerAdded?.id
       );
-      if (!isComposerAlreadySelected) {
-        return [...prev, composerAdded];
+
+      if (isComposerAlreadySelected) {
+        console.log('Composer already exists');
+        return prev;
       }
-      return prev;
+
+      const newCollaborator = {
+        user: {
+          id: composerAdded.id,
+          thumbnail: composerAdded.thumbnail,
+          professional_name: composerAdded.professional_name,
+          is_owner: false
+        },
+        contribution: 0,
+        roles: [],
+      };
+
+      return [...prev, newCollaborator];
     });
   };
 
-  const handlePrivacyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePrivacyChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setPrivacyValue((event.target as HTMLInputElement).value);
   };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setMidiFile(e.target.files[0]);
   };
-
-  const { setFieldValue } = useFormikContext();
-  const [tags, setTags] = useState("");
-
   const handleTagsChange = (e) => {
-    let value = e.target.value;
+    const value = e.target.value;
+    
+    // Update the visible input value
+    setTags(value);
 
-    const formattedTags = value
+    // Format tags for storage - only when saving
+    const tagsArray = value
       .split(" ")
-      .map((word) => (word.startsWith("#") || word === "" ? word : `#${word}`))
-      .join(" ");
+      .filter(word => word.trim() !== "")
+      .map(tag => tag.startsWith("#") ? tag.slice(1) : tag);
 
-    setTags(formattedTags);
-
-    const tagsArray = formattedTags
-      .split(" ")
-      .filter((word) => word.trim() !== "");
-    setFieldValue("songTags", tagsArray);
+    // Update Formik value
+    setFieldValue("songTags", value); // Change this to pass the raw input value
+  };
+  const handleTagInput = (e) => {
+    if (e.key === ' ') {
+      const value = e.target.value;
+      // Split by spaces and add # to words that don't have it
+      const formattedTags = value
+        .split(' ')
+        .map(tag => tag.trim())
+        .filter(tag => tag)
+        .map(tag => tag.startsWith('#') ? tag : `#${tag}`)
+        .join(' ');
+      
+      setFieldValue('songTags', formattedTags);
+    }
   };
 
   return (
@@ -127,16 +188,21 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
             name="songType"
             label="Song / Sample Type"
             placeholder="Select Sample Type"
-            dropdownItems={songType}
+            dropdownItems={songType.map(item => ({ label: item.label, value: item.value }))}
+            value={props.sample?.type || ""}
           />
 
-          <FormikLabeledField
-            name="songTags"
-            label="Song / Sample Tags"
-            placeholder="Song Sample Tags"
-            value={tags}
-            handleInputChange={handleTagsChange}
-          />
+          <div className="flex-1 flex flex-col gap-1">
+            <span className="text-silver text-sm font-normal">
+              Song / Sample Tags
+            </span>
+            <Field
+              name="songTags"
+              className="w-full text-dimGray text-sm font-normal px-4 py-[9px] rounded-lg bg-darkGray border border-eclipseGray"
+              placeholder="Song Sample Tags"
+              onKeyDown={handleTagInput}
+            />
+          </div>
         </div>
 
         <div className="flex gap-5">
@@ -155,16 +221,16 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
               onClick={handleComposerFieldClick}
               className="w-full min-h-5 text-dimGray text-sm font-normal px-4 py-[9px] rounded-lg bg-darkGray border border-eclipseGray cursor-pointer flex flex-wrap gap-2"
             >
-              {selectedComposer.length ? (
-                selectedComposer.map((composer, idx) => {
-                  const { professional_name } = composer;
+              {selectedComposer?.length ? (
+                selectedComposer?.map((composer, idx) => {
+                  const { professional_name } = composer?.user;
                   return (
                     <div
                       key={professional_name + idx}
                       className="flex gap-2 py-1 px-3 rounded-[20px] bg-eerieBlack border border-eerieBlack items-center"
                     >
                       <span className="text-xs text-mediumGray font-normal">
-                        {professional_name}
+                        {composer?.user?.professional_name}
                       </span>
                       <div className="w-2.5 h-2.5 cursor-pointer text-mediumGray flex justify-center items-center">
                         <CancelIcon className="w-2 h-2" />

@@ -11,10 +11,12 @@ export interface IUploadingFileMetaDataProps {
   setPrivacyValue: (value: string) => void;
   midiFile: File;
   setMidiFile: (event: any) => void;
-  selectedComposer: IUserProfile[];
+  selectedComposer: ICollaborator[];
   setSelectedComposer: (value: any) => void;
   isEditSample?: boolean;
   handleClose?: () => void;
+  sample?: ISample;
+  sampleOwner?: IUserProfile;
 }
 
 export interface IEditComposerData {
@@ -89,14 +91,6 @@ export interface ISample {
   collaborators: ICollaborator[];
 }
 
-interface ICollaborator {
-  id: number;
-  contribution: number;
-  roles: string[];
-  percentValue?: number;
-  isEditable?: boolean;
-}
-
 export interface ICurrentUser {
   id: number;
   first_name: string | null;
@@ -155,4 +149,19 @@ export interface IGetUserSamplesResponse {
   total: number;
   pagination: IPagination;
 
+}
+
+export interface ICollaborator {
+  user: {
+    id: number;
+    professional_name: string;
+    thumbnail: string;
+    is_owner: boolean;
+    primary_role: string;
+    secondary_role: string;
+  };
+  contribution: number;
+  id: number;
+  roles: string[];
+  isEditable: boolean;
 }

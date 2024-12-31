@@ -132,7 +132,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab }) => {
   const [samples, setSamples] = useState<AudioTrackType[]>([]);
   const [currentPage, setCurrentPage] = useState(0); // To track the current page
   // @todo: this value is only present for MVP purposes, should remove later.
-  const samplesPerPage = 10; // The number of samples per page
+  const samplesPerPage = 20; // The number of samples per page
 
   const [allSamples, setAllSamples] = useState<AudioTrackType[]>([]); // To store all the samples
   const [currentSamples, setCurrentSamples] = useState<AudioTrackType[]>([]); // To store the samples for the current page
@@ -140,29 +140,25 @@ const SamplesContainer = ({ user_id = 0, selectedTab }) => {
 
   // Fetch all user samples from the server once
   const fetchUserSamples = async (page: number) => {
-    console.log('selectedTab', selectedTab);
     setLoading(true);
-    const _sound = await getUserSamplesByTypeAPI({
-      user_id,
-      skip: 0,
-      take: samplesPerPage,
-      type: selectedTab,
-      includeUserInfo: true,
-    });
-    const skip = page;
-    
     try {
+      const _sound = await getUserSamplesByTypeAPI({
+        user_id,
+        skip: page,
+        take: samplesPerPage,
+        type: selectedTab,
+        includeUserInfo: true,
+      });
+      
       const samplesArray = Object.values(
         _sound?.data?.results?.samples || {}
       ) as AudioTrackType[];
       
-      console.log(`Received ${samplesArray.length} samples`);
+      console.log('Pagination info:', _sound?.data?.results?.pagination);
       setCurrentSamples(samplesArray);
       
       if (_sound?.data?.results?.total !== undefined) {
-        const total = _sound.data.results.total;
-        console.log(`Total samples: ${total}`);
-        setTotalCount(total);
+        setTotalCount(_sound.data.results.total);
       }
     } catch (error) {
       console.error('Error fetching samples:', error);

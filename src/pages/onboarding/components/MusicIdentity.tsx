@@ -139,7 +139,7 @@ const MusicIdentity = (props: Props) => {
                         name="publisher"
                         label="Publisher (optional)"
                         placeholder="Publisher"
-                        dropdownItems={publishersArr}
+                        dropdownItems={publishersArr.map(item => ({ label: item, value: item }))}
                         inputBgColor="#0F0F0F"
                         labelColor="white"
                         dropdownBgColor="#1c1c1c"
@@ -153,7 +153,7 @@ const MusicIdentity = (props: Props) => {
                         name="main_genre"
                         label="Main genre"
                         placeholder="Select Genre"
-                        dropdownItems={musicGenres}
+                        dropdownItems={musicGenres.map(item => ({ label: item, value: item }))}
                         inputBgColor="#0F0F0F"
                         labelColor="white"
                         dropdownBgColor="#1c1c1c"
@@ -169,7 +169,7 @@ const MusicIdentity = (props: Props) => {
                         name="sub_genre"
                         label="Sub genre"
                         placeholder="Select Genre"
-                        dropdownItems={musicGenres}
+                        dropdownItems={musicGenres.map(item => ({ label: item, value: item }))}
                         inputBgColor="#0F0F0F"
                         labelColor="white"
                         dropdownBgColor="#1c1c1c"
