@@ -23,6 +23,9 @@ import { IUploadingFileMetaDataProps } from "./types";
 import { useFormikContext } from "formik";
 import { Field } from 'formik';
 
+import { RootState } from "redux/reducers";
+import { useSelector } from "react-redux";
+
 const UploadingFileMetaData = (
   props: IUploadingFileMetaDataProps,
 ) => {
@@ -41,6 +44,7 @@ const UploadingFileMetaData = (
   const [openComposerDialog, setOpenComposerDialog] = useState(false);
   const { setFieldValue } = useFormikContext();
   const [tags, setTags] = useState("");
+  const user = useSelector((state: RootState) => state.auth.user);
 
   useEffect(() => {
     if (props.sample?.type) {
@@ -66,6 +70,23 @@ const UploadingFileMetaData = (
       setFieldValue('sampleKey', props.sample.key);
     }
   }, [props.sample]);
+
+  useEffect(() => {
+    if (!selectedComposer?.length && user && !isEditSample) {
+      const ownerCollaborator = {
+        user: {
+          id: user?.id,
+          thumbnail: user?.thumbnail,
+          professional_name: user?.professional_name,
+          is_owner: true
+        },
+        contribution: 100,
+        roles: [],
+      };
+      
+      setSelectedComposer([ownerCollaborator]);
+    }
+  }, [user, selectedComposer, isEditSample]);
 
   const handleComposerFieldClick = () => {
     setOpenComposerDialog(true);
@@ -142,7 +163,7 @@ const UploadingFileMetaData = (
     <>
       <ComposerDialog
         {...{
-          contributors:selectedComposer,
+          contributors: selectedComposer,
           openComposerDialog,
           setOpenComposerDialog,
           handleAddComposer,

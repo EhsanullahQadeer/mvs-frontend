@@ -36,11 +36,12 @@ export async function getUserSamplesAPI(params: any) {
 }
 
 export async function getUserSamplesByTypeAPI(params: any) {
-  console.log('params here!!!', params);
   return axiosInstance.get(`/sounds/get-user-samples-by-type`, { params });
 }
 
-
+export async function cancelUploadAPI(redisKey: string) {
+  return axiosInstance.delete(`/sounds/sample/upload/cancel/${redisKey}`);
+}
 
 export async function getSoundMetaData(id: string, params: { code: String }): Promise<{ metadata: ISoundMetaData }> {
   const response = await axiosInstance.get<{ metadata: ISoundMetaData }>(`/sounds/metadata/${id}`, { params });

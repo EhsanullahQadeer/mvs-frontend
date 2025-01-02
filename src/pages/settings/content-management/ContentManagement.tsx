@@ -4,7 +4,7 @@ import DropFilesSection from "./components/DropFilesSection";
 import AttachedFilesSection from "./components/AttachedFilesSection";
 import UploadingFilesSection from "./components/UploadingFilesSection";
 import { useEffect, useState } from "react";
-import { uploadFile } from "api/sounds";
+import { cancelUploadAPI, uploadFile } from "api/sounds";
 import { CircularProgress } from "@mui/material";
 import { currentUserAPI } from "api/auth";
 import { useDispatch } from "react-redux";
@@ -18,13 +18,15 @@ const ContentManagement = (props: Props) => {
   const [uploadingFile, setUploadingFile] = useState<File>(null);
   const [fileRedisKey, setFileRedisKey] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
+
   const handleCancel = () => {
+    const response = cancelUploadAPI(fileRedisKey);
+    console.log("response ", response);
     setUploadProgress(0);
     setUploadingFile(null);
     setFileRedisKey("");
   };
-
-    // Set breadcrumbs (nav bar) for content management page
+  
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -123,7 +125,13 @@ const ContentManagement = (props: Props) => {
         </h2>
 
         <div className="px-3">
-          <DropFilesSection {...{ uploadingFile, setUploadingFile }} />
+          <DropFilesSection
+            {...{
+              uploadingFile, 
+              setUploadingFile,
+              currentUserInfo
+            }} 
+          />
           {uploadingFile && (
             <UploadingFilesSection
               {...{

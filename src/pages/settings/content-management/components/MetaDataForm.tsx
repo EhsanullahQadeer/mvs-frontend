@@ -60,7 +60,7 @@ const MetaDataForm = (
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const [composerData, setComposerData] = useState(
-    selectedComposer.map((composer) => ({
+    selectedComposer?.map((composer) => ({
       user: {
         id: composer?.user?.id,
         thumbnail: composer?.user?.thumbnail,
@@ -91,8 +91,8 @@ const MetaDataForm = (
 
   useEffect(() => {
     setComposerData((prevComposerData) => {
-      const updatedComposerData = selectedComposer.map((composer) => {
-        const existingComposer = prevComposerData.find(
+      const updatedComposerData = selectedComposer?.map((composer) => {
+        const existingComposer = prevComposerData?.find(
           (existing) => existing.id === composer.id
         );
         
@@ -102,7 +102,7 @@ const MetaDataForm = (
 
         const percentValue = initialCollaborator?.contribution 
           ? initialCollaborator.contribution
-          : parseFloat((100 / selectedComposer.length).toFixed(2));
+          : parseFloat((100 / selectedComposer?.length).toFixed(2));
 
         if (existingComposer) {
           return {
@@ -272,7 +272,7 @@ const MetaDataForm = (
                 />
               </div>
 
-              {selectedComposer.length > 0 && (
+              {selectedComposer?.length > 0 && (
                 <div className={`${isEditSample && "px-5"} my-2`}>
                   <ContributersTable
                     {...{
@@ -290,8 +290,15 @@ const MetaDataForm = (
               <div
                 className={`py-5 ${
                   isEditSample ? "px-5" : "px-2.5"
-                } flex justify-end`}
+                } flex justify-end gap-4`}
               >
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="bg-transparent border border-limeGreen w-[151px] flex justify-center items-center py-3 text-limeGreen text-sm font-semibold rounded-[60px]"
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
                   className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"

@@ -238,12 +238,10 @@ function ComposerDialog(props: Props) {
             Contributors to this sample
           </div>
           <div className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}>
-            {contributors.length ? (
-              contributors.map((composer, idx) => {
+            {contributors?.length ? (
+              contributors?.map((composer, idx) => {
                 const { user: { thumbnail, professional_name, primary_role, secondary_role } } =
                   composer;
-
-                console.log('composerzz', composer);
 
                 return (
                   <div

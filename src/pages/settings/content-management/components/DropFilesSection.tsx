@@ -23,7 +23,12 @@ const DropFilesSection = (props: Props) => {
         </p>
       </div>
 
-      <CustomFileDropper {...{ uploadingFile, setUploadingFile }} />
+      <CustomFileDropper
+        {...{
+          uploadingFile,
+          setUploadingFile,
+        }}
+      />
     </div>
   );
 };

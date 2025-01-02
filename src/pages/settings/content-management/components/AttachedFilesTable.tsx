@@ -22,10 +22,11 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import moment from "moment";
-
+import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
 import { Checkbox } from "@mui/material";
 import { ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "./types";
+import { RootState } from "redux/reducers";
 
 interface Column {
   id: "filename" | "created_at" | "artist" | "uploadedBy";
@@ -65,6 +66,8 @@ const AttachedFilesTable = (props: Props) => {
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<keyof Data>("filename");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
+  const currentUserInfo = useSelector((state: RootState) => state.auth.user);
+
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -208,8 +211,10 @@ const AttachedFilesTable = (props: Props) => {
             {sortedData.length > 0 ? (
               sortedData
                 .map((row, idx) => {
-                  const { filename, thumbnail, name, created_at } = row;
-
+                  const { filename, thumbnail, name, created_at, collaborators } = row as any;
+                  console.log("collaborators ", collaborators);
+                  const owner = collaborators?.find(collaborator => collaborator?.is_owner);
+                  const ownerName = owner?.collaborator?.professional_name;
                   const isItemSelected = selected.includes(row.id);
                   const labelId = `enhanced-table-checkbox-${idx}`;
 
@@ -259,7 +264,7 @@ const AttachedFilesTable = (props: Props) => {
                       <TableCell
                         onClick={(event) => handleClick(event, row.id)}
                       >
-                        {name}
+                        {ownerName}
                       </TableCell>
                       <TableCell
                         onClick={(event) => handleClick(event, row.id)}
@@ -267,33 +272,37 @@ const AttachedFilesTable = (props: Props) => {
                         <div className="flex gap-2.5 items-center">
                           <div className="rounded-full w-8 h-8">
                             <img
-                              src={thumbnail}
+                              src={owner?.collaborator?.thumbnail}
                               alt=""
                               className="rounded-full w-full h-full"
                             />
                           </div>
 
                           <div className="text-sm font-medium whitespace-nowrap">
-                            {name}
+                            {ownerName}
                           </div>
                         </div>
                       </TableCell>
+
                       <TableCell align="right" sx={{ verticalAlign: "middle" }}>
-                        <div className="flex gap-2 justify-end">
-                          <div
-                            onClick={() => handleOpenDialog("delete", row)}
-                            className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
-                          >
-                            Delete
+                        {owner?.collaborator?.id === currentUserInfo?.id && (
+                          <div className="flex gap-2 justify-end">
+                            <div
+                              onClick={() => handleOpenDialog("delete", row)}
+                              className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
+                            >
+                              Delete
+                            </div>
+                            <div
+                              onClick={() => handleOpenDialog("edit", row)}
+                              className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
+                            >
+                              Edit
+                            </div>
                           </div>
-                          <div
-                            onClick={() => handleOpenDialog("edit", row)}
-                            className="px-2 py-1 border border-eclipseGray rounded-[4px] text-mediumGray font-normal text-xs cursor-pointer"
-                          >
-                            Edit
-                          </div>
-                        </div>
+                        )}
                       </TableCell>
+                      
                     </TableRow>
                   );
                 })

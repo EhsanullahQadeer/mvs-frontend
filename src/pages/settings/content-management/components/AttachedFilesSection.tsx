@@ -57,6 +57,7 @@ const AttachedFilesSection = (props: Props) => {
         take: sampleSearchConstraints.take,
         filter: selectedTab,
       });
+      console.log("response here!!!", response);
       const samples:IGetUserSamplesResponse = response.data.results;
       setGetUserSamplesResponse(samples);
     } catch (error) {
