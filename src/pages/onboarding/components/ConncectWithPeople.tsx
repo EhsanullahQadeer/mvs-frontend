@@ -71,14 +71,9 @@ const ConncectWithPeople = (props: Props) => {
           const response = await searchAllUsers(
             debouncedSearchValue, 
             paginationDto.take,
-<<<<<<< Updated upstream
-            "true"
-          );          
-=======
             false,
             true,
           );
->>>>>>> Stashed changes
           setPeopleList(response?.data || []);
         } else {
           const response = await searchAllUsers(
