@@ -3,9 +3,11 @@ import { ReactComponent as MvsLogo } from "../../../assets/icons/mvsLogo.svg";
 import { ReactComponent as StripeLogo } from "../../../assets/icons/stripeLogo.svg";
 import { BsArrowLeftRight } from "react-icons/bs";
 import { handleConnectWithStripe } from "api/stripe";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   user: { results?: { user?: { id?: number } } };
+  handleSkip: () => void;
   markSectionAsCompleted: () => void;
 };
 
@@ -13,7 +15,7 @@ const PaidSection = (
   props: Props
 ) => {
 
-  const { markSectionAsCompleted, user } = props;
+  const { markSectionAsCompleted, user, handleSkip } = props; 
 
   const handleSubmit = async () => {
     const url = await handleConnectWithStripe(user.results?.user.id);
@@ -23,6 +25,8 @@ const PaidSection = (
       console.error("Failed to retrieve Stripe URL");
     }
   };
+
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -63,20 +67,21 @@ const PaidSection = (
               <hr />
             </div>
 
-            <div
-              onClick={handleSubmit}
-              className="mt-3 bg-limeGreen text-black w-full rounded-3xl py-2 cursor-pointer font-semibold text-base text-center"
-            >
-              Next
+            <div className="flex gap-3 mt-3">
+              <div
+                onClick={handleSkip}
+                className="flex-1 bg-transparent border border-limeGreen text-limeGreen rounded-3xl py-2 cursor-pointer font-semibold text-base text-center"
+              >
+                Skip
+              </div>
+              <div
+                onClick={handleSubmit}
+                className="flex-1 bg-limeGreen text-black rounded-3xl py-2 cursor-pointer font-semibold text-base text-center"
+              >
+                Next
+              </div>
+              
             </div>
-            <div className="flex justify-between mt-3">
-            <button
-              onClick={markSectionAsCompleted}
-              className="bg-gray-500 text-white py-2 px-4 rounded"
-            >
-              Skip
-            </button>
-          </div>
           </div>
         </div>
       </div>

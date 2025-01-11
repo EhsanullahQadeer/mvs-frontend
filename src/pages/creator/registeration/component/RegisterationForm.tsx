@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { requestInvitationCodeWithEmailAPI } from "api/user";
 import NavigateBackButton from "components/buttons/NavigateBack";
 import { AxiosResponse } from "axios";
+import avatarImg from "../../../../assets/img/avatar.svg";
 
 
 interface ResponseDTO<T = any> { // T defaults to 'any' if not specified
@@ -45,6 +46,10 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
   setIsOpen,
   setIsNotPartner
 }) => {
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [thumbnailError, setThumbnailError] = useState<boolean>(false);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+
   const validationSchema = Yup.object({
     email: Yup.string().email("Email is invalid").required("Email is required"),
     firstName: Yup.string().required("First Name is required"),
@@ -63,9 +68,9 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
   const handleSubmit = async (values: { email: string; firstName: string; lastName: string; phone: string; instagramUsername?: string }) => {
     const { email, firstName, lastName, phone, instagramUsername } = values;
     setLoader(true);
-  
+    setEmailError(null); // Reset email error
     localStorage.setItem("user", JSON.stringify({ email, firstName, lastName }));
-  
+
     try {
       const body = {
         email,
@@ -75,32 +80,30 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
         ...(registerAsPartner && { instagram_username: instagramUsername }),
         user_type: registerAsPartner ? "partner" : "creator",
       };
-  
+
       const response: AxiosResponse<ResponseDTO> = await requestInvitationCodeWithEmailAPI(body);
-      
-      // Check if the backend returned an error
+
       if (response.data.error) {
-        const errorCode = response.data.errorCode; // Access the errorCode directly
-        const existingUserType = response.data.results?.user_type; // Access user type from results
-  
-        console.log("existingUserType:", existingUserType); // Debugging
-  
+        const errorCode = response.data.errorCode;
+        const existingUserType = response.data.results?.user_type;
+
         if (errorCode === 'INVITATION_ALREADY_REQUESTED') {
           setAlreadyRegistered(true);
           setRegistered(true);
-  
+
           if (existingUserType === 'partner') {
-            setIsNotPartner(false); // It's a partner
+            setIsNotPartner(false);
           } else if (existingUserType === 'creator') {
-            setIsNotPartner(true); // It's a creator
+            setIsNotPartner(true);
           } else {
             console.log("Unknown user type");
           }
+        } else if (errorCode === 'EMAIL_EXISTS') {
+          setEmailError('Email already registered');
         } else {
           console.log("Unhandled errorCode:", errorCode);
         }
       } else {
-        // No error, proceed with registration
         setRegistered(true);
         console.log('response', response);
       }
@@ -173,11 +176,12 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                       name="email"
                       type="email"
                       placeholder="e.g abc@example.com"
-                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg w-full"
+                      className={`hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border ${emailError ? 'border-darkRed' : 'border-eclipseGray'} text-charcoalGray text-sm rounded-lg w-full`}
                     />
 
                     <div className="text-darkRed mt-1 text-xs font-medium">
                       <ErrorMessage name="email" />
+                      {emailError && <div>{emailError}</div>}
                     </div>
                   </div>
                 </div>
@@ -223,10 +227,32 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                 <span className="text-limeGreen">Privacy Policy</span>
               </p>
 
+              {/* <div className={`flex flex-col items-center ${thumbnailError ? 'border-2 border-darkRed' : ''}`}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailChange}
+                  className="hidden"
+                  id="thumbnail"
+                />
+                <label htmlFor="thumbnail" className="cursor-pointer">
+                  <img
+                    src={thumbnail || avatarImg}
+                    alt="thumbnail"
+                    className="w-32 h-32 object-cover rounded-full"
+                  />
+                </label>
+                {thumbnailError && (
+                  <div className="text-darkRed mt-1 text-xs font-medium">
+                    Please provide a thumbnail image.
+                  </div>
+                )}
+              </div> */}
+
               <div className='space-y-4'>
                 <button
                   type="submit"
-                  className="w-full py-2 px-4 bg-limeGreen text-jetBlack font-semibold text-sm rounded-full"
+                  className={`w-full py-2 px-4 bg-limeGreen text-jetBlack font-semibold text-sm rounded-full`}
                 >
                   Submit
                 </button>

@@ -31,6 +31,7 @@ const SocialMediaLinks = (props: Props) => {
               id="instagram_link"
               name="instagram_link"
               placeholder="@beckyhill"
+              maxLength={30}
               style={{
                 boxShadow: "none",
               }}
@@ -52,6 +53,7 @@ const SocialMediaLinks = (props: Props) => {
               id="x_link"
               name="x_link"
               placeholder="@beckyhill"
+              maxLength={15}
               style={{
                 boxShadow: "none",
               }}
@@ -73,6 +75,7 @@ const SocialMediaLinks = (props: Props) => {
               id="spotify_link"
               name="spotify_link"
               placeholder="https://open.spotify.com/artist/example"
+              maxLength={100}
               style={{
                 boxShadow: "none",
               }}
@@ -94,6 +97,7 @@ const SocialMediaLinks = (props: Props) => {
               id="soundcloud_link"
               name="soundcloud_link"
               placeholder="https://soundcloud.com/example"
+              maxLength={100}
               style={{
                 boxShadow: "none",
               }}
@@ -115,6 +119,7 @@ const SocialMediaLinks = (props: Props) => {
               id="facebook_link"
               name="facebook_link"
               placeholder="https://facebook.com/example"
+              maxLength={100}
               style={{
                 boxShadow: "none",
               }}

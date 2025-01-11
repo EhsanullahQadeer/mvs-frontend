@@ -16,8 +16,9 @@ export function useSearchHeader() {
     try {
       if (topRatedArtist.length > 0) return;
 
-      const response = await spotifySearchTopArtist({ skip: 0, take: 10 });
-      const validResults = response.data?.map(result => ({
+      const response = await searchAllUsers("", 10, true, true);
+      console.log("response here", response);
+      const validResults = response.data.results?.map(result => ({
         ...result,
         professionalName: result.professional_name,
         thumbnail: result.thumbnail || result.image,
@@ -37,9 +38,11 @@ export function useSearchHeader() {
           const spotifyResponse = await searchAllUsers(
             debouncedSearchValue, 
             10, 
-            "true"
+            true,
+            true
           );
-          const uniqueResults = spotifyResponse.data.filter((result, index, self) =>
+          console.log("spotifyResponse here", spotifyResponse);
+          const uniqueResults = spotifyResponse.data.results.filter((result, index, self) =>
             index === self.findIndex((t) => t.id === result.id)
           );
           setSpotifySearchResult(uniqueResults);
@@ -59,6 +62,7 @@ export function useSearchHeader() {
     searchInput,
     setSearchInput,
     loading,
-    loadTopArtists
+    loadTopArtists,
+    setLoading
   };
 } 

@@ -20,14 +20,67 @@ import CustomPopper from "./CutomPopperSearch";
 import CircularProgress from "@mui/material/CircularProgress";
 import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 import { useSearchHeader } from '../hooks/useSearchHeader';
+import { searchAllUsers, userArtistSearch } from "api/user";
+import useDebounce from "hooks/useDebounce";
+import { useState, useEffect } from "react";
+
+export interface IAppProps {}
 
 export function SearchHeader() {
-  const { topResults, searchInput, setSearchInput, loading, loadTopArtists } = useSearchHeader();
+  const { topResults, searchInput, setSearchInput, loading, loadTopArtists, setLoading } = useSearchHeader();
   const { handleArtistSelected } = useHandleArtistSelected();
+  const [searchResults, setSearchResults] = useState([]);
+    
+  // Debounce the search value
+  const debouncedSearchValue = useDebounce(searchInput, 300);
 
   const handleCancelBtn = () => {
     setSearchInput("");
   };
+
+  const getUniqueResults = (data) => {
+    // Log the incoming data to see what we're working with
+    console.log('Incoming data:', data);
+    
+    const uniqueResults = Array.from(new Map(
+      data
+        .filter(result => result && (result.artist_name || result.professional_name))
+        // Use both id and name as the key to ensure true uniqueness
+        .map(item => [`${item.id}-${item.artist_name || item.professional_name}`, item])
+    ).values());
+    
+    // Log the outgoing data to verify deduplication
+    console.log('Unique results:', uniqueResults);
+    return uniqueResults;
+  };
+
+  useEffect(() => {
+    (async () => {
+      const response = await searchAllUsers("", 10, true, true);
+      setSearchResults(getUniqueResults(response.data));
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (debouncedSearchValue) {
+      (async () => {
+        try {
+          setLoading(true);
+          const response = await searchAllUsers(debouncedSearchValue, 10, true, true);
+          setSearchResults(getUniqueResults(response.data));
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    } else {
+      (async () => {
+        const response = await searchAllUsers("", 10, true, true);
+        setSearchResults(getUniqueResults(response.data));
+      })();
+    }
+  }, [debouncedSearchValue]);
 
   const handleSearchInput = (e) => {
     setSearchInput(e.target.value);
@@ -70,15 +123,8 @@ export function SearchHeader() {
               <Autocomplete
                 inputValue={searchInput}
                 freeSolo
-                onFocus={() => {
-                  if (topResults.length === 0) {
-                    loadTopArtists();
-                  }
-                }}
-                getOptionLabel={(option) => option.professionalName || ""}
-                options={topResults.filter(option => 
-                  option && (option.professionalName)
-                )}
+                getOptionLabel={(option: any) => option.artist_name || option.professional_name || ""}
+                options={searchResults}
                 PopperComponent={CustomPopper}
                 groupBy={() => "Top Results"}
                 ListboxProps={{
@@ -102,8 +148,10 @@ export function SearchHeader() {
                     <div className="h-4 sticky bottom-0 bg-eerieBlack"></div>
                   </li>
                 )}
-                renderOption={(props, option) => {
-                  const uniqueKey = option.spotifyId || option.id;
+                renderOption={(props, option: any) => {
+                  // Create a truly unique key using spotify_artist_id and timestamp
+                  const uniqueKey = `${option.spotify_artist_id}-${Date.now()}`;
+                  
                   return (
                     <li
                       {...props}

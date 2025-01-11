@@ -34,6 +34,7 @@ import Notifications from "./settings/notifications/Notifications";
 import Privacy from "./settings/privacy/Privacy";
 import Monetization from "./settings/monetization/Monetization";
 import Registration from "./creator/registeration";
+import WelcomePage from "./onboarding/components/WelcomePage";
 import EngineerProfile from "./engineerProfile/EngineerProfile";
 
 interface IRoute {
@@ -96,6 +97,11 @@ const routes: IRoute[] = [
     path: "/onboarding/:id",
     name: "Onboarding",
     component: OnBoarding,
+  },
+  {
+    path: "/onboarding/",
+    name: "Onboarding",
+    component: WelcomePage,
   },
   // ===================================================================================== 
 

@@ -16,28 +16,41 @@ type Props = {
   label: string;
   fieldDesc: string;
   name: string;
+  minAmount?: number;
+  maxAmount?: number;
 };
 
 const PriceBox = (props: Props) => {
-  const { title, desc, label, fieldDesc, name } = props;
+  const { 
+    title, 
+    desc, 
+    label, 
+    fieldDesc, 
+    name,
+    minAmount = 0,
+    maxAmount = 999.99 
+  } = props;
 
   const { setFieldValue } = useFormikContext();
-
   const [value, setValue] = useState("");
 
   const handleValueChange = (event) => {
-    let inputValue = event.target.value;
+    let inputValue = event.target.value.replace(/[^0-9]/g, '');  // Only allow numbers
 
-    const validPricePattern = /^\$?\d*\.?\d{0,2}$/;
+    // Allow empty input
+    if (!inputValue) {
+      setValue('');
+      setFieldValue(name, '');
+      return;
+    }
 
-    let numericValue = inputValue.replace("$", "");
-    if (validPricePattern.test(numericValue)) {
-      if (numericValue && !inputValue.startsWith("$")) {
-        inputValue = "$" + numericValue;
-      }
-
-      setValue(inputValue);
-      setFieldValue(`${name}`, inputValue);
+    // Convert input to cents format (divide by 100)
+    const numberValue = parseFloat(inputValue) / 100;
+    
+    // Check max value and format
+    if (!isNaN(numberValue) && numberValue <= maxAmount) {
+      setValue(`$${numberValue.toFixed(2)}`);
+      setFieldValue(name, numberValue.toFixed(2));
     }
   };
 

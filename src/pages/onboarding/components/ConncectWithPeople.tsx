@@ -71,12 +71,23 @@ const ConncectWithPeople = (props: Props) => {
           const response = await searchAllUsers(
             debouncedSearchValue, 
             paginationDto.take,
+<<<<<<< Updated upstream
             "true"
           );          
+=======
+            false,
+            true,
+          );
+>>>>>>> Stashed changes
           setPeopleList(response?.data || []);
         } else {
-          const response = await getTopPopularUsers(paginationDto);
-          setPeopleList(response?.data || []); // Default to popular users if no search term
+          const response = await searchAllUsers(
+            '',
+            paginationDto.take,
+            false,
+            true,
+          );
+          setPeopleList(response?.data || []);
         }
       } catch (error) {
         console.error("Error fetching users", error);
@@ -154,7 +165,7 @@ const ConncectWithPeople = (props: Props) => {
                 professional_name, 
                 thumbnail, 
                 followers, 
-                main_genre, 
+                main_genre,
                 sub_genre 
               } = people as IUserFollowConnection;
               return (
@@ -177,7 +188,7 @@ const ConncectWithPeople = (props: Props) => {
                         <img
                           src={thumbnail}
                           alt="thumbnaiSrc"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover rounded-full"
                         />
                       </div>
                     </div>
@@ -204,11 +215,11 @@ const ConncectWithPeople = (props: Props) => {
                         </div>
                       </div>
                     </div>
-
+{/* 
                     <div className="text-coolGray text-sm font-normal">
                       <span className="text-white">{followers} </span>
                       Followers
-                    </div>
+                    </div> */}
 
                     <div className="flex gap-2">
                       <div

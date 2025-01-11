@@ -37,7 +37,7 @@ const RegistrationPartnerThankYou: React.FC = ({
               true ? "hidden" : "flex"
             }`}
           >
-            Back to Home
+            Back
           </button>
           <button
             className={`bg-[#9EFF00] rounded-full text-sm px-5 py-3  justify-center items-center font-semibold ${

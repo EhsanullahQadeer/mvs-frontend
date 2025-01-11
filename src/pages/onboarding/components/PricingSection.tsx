@@ -63,6 +63,8 @@ const PricingSection = (props: Props) => {
                         fieldDesc:
                           "This fee will be applied each time a message is received from your followers.",
                         name: "inbox_fee",
+                        minAmount: 0,
+                        maxAmount: 100
                       }}
                     />
 
@@ -74,6 +76,8 @@ const PricingSection = (props: Props) => {
                         fieldDesc:
                           "This fee will be applied each time you receive an audio demo.",
                         name: "demo_fee",
+                        minAmount: 5,
+                        maxAmount: 500
                       }}
                     />
 
@@ -85,6 +89,8 @@ const PricingSection = (props: Props) => {
                         fieldDesc:
                           "The default meeting duration is set to 15 minutes.",
                         name: "meeting_fee",
+                        minAmount: 10,
+                        maxAmount: 1000
                       }}
                     />
                   </div>

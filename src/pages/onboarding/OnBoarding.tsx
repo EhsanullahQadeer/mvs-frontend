@@ -20,6 +20,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { addNewUser, verifyAndRetrieveInviteCodeDetails } from "api/user";
 import { INewUserForm } from "./components/types";
 import InvalidCodeMessage from "./components/InvalidCodeExpired";
+import WelcomePage from "./components/WelcomePage";
 import { registerAPI } from "api/auth";
 import { useDispatch } from "react-redux";
 import { login } from "redux/actions";
@@ -40,6 +41,9 @@ const OnBoarding = () => {
   const [userLastName, setUserLastName]   = useState("");
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const errorParam = searchParams.get('error');
+  const firstNameParam = searchParams.get('userFirstName');
+  const lastNameParam = searchParams.get('userLastName');
   const numberOfTabs = isPartner ? 5 : 4;
   const [completedSections, setCompletedSections] = useState<string[]>([]);
   const [openTab, setOpenTab] = useState<string | null>(null);
@@ -244,6 +248,7 @@ const OnBoarding = () => {
         <PaidSection
           user={user}
           markSectionAsCompleted={() => markSectionAsCompleted("paidSection")}
+          handleSkip={() => navigate(`/onboarding/?error=false&userFirstName=${userFirstName}&userLastName=${userLastName}`)}
         />
       ),
     },
@@ -253,11 +258,17 @@ const OnBoarding = () => {
   if (isPartner) sections.splice(4, 0, ...partnerSections);
 
   if (!isValidCode) {
-    return <InvalidCodeMessage />;
+    if (id === "true" || id === "false" || 
+        (errorParam === "false" && firstNameParam && lastNameParam)) {
+      return <WelcomePage />;
+    } else {
+        return <InvalidCodeMessage />;
+    }
   }
 
   return (
     <div className="py-10 px-11 flex flex-col gap-4">
+      {loading && <LoadingScreen />}
       <div className="border border-eclipseGray bg-darkGray rounded-lg p-5">
         <div className="flex">
           <div className="flex-1">
@@ -343,9 +354,7 @@ const OnBoarding = () => {
               }`}
             >
               {section.component}
-
-              {/* Back Button */}
-              {index > 0 && (
+              {index > 0 && section.id !== "paidSection" && (
                 <button
                   className="mt-4 bg-gray-500 text-white py-2 px-4 rounded"
                   onClick={() => setOpenTab(sections[index - 1].id)} // Navigate to the previous section
@@ -353,8 +362,6 @@ const OnBoarding = () => {
                   Back
                 </button>
               )}
-
-
             </div>
           </div>
         );

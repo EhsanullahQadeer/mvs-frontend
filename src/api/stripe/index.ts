@@ -20,7 +20,6 @@ export const handleConnectWithStripe = async (
   try {
     const response = await axios.post(`/stripe/connect?userId=${userId}`);
     const url = response.data.url;
-
     if (url) {
       return url;
     } else {

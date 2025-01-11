@@ -18,6 +18,8 @@ type Props = {
   as?: string;
   inputBgColor?: string;
   labelColor?: string;
+  maxLength?: number;
+  showCharacterCount?: boolean;
 };
 
 const FormikLabeledField = (props: Props) => {
@@ -31,6 +33,8 @@ const FormikLabeledField = (props: Props) => {
     as,
     inputBgColor,
     labelColor,
+    maxLength,
+    showCharacterCount,
   } = props;
   return (
     <div className="flex flex-col gap-1 flex-1">
@@ -51,6 +55,7 @@ const FormikLabeledField = (props: Props) => {
         {...(as && { as: as })}
         {...(value !== undefined && { value })}
         {...(handleInputChange && { onChange: handleInputChange })}
+        {...(maxLength && { maxLength: maxLength })}
         style={{
           boxShadow: "none",
         }}
@@ -58,6 +63,18 @@ const FormikLabeledField = (props: Props) => {
           inputBgColor ? `bg-${inputBgColor}` : "bg-darkGray"
         } border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none`}
       />
+      
+      {showCharacterCount && maxLength && (
+        <Field name={name}>
+          {({ field, form }: { field: any; form: any }) => (
+            <div className={`text-xs mt-1 flex justify-end ${
+              form.errors[name] ? 'text-darkRed' : 'text-mediumGray'
+            }`}>
+              {field.value?.length || 0}/{maxLength} characters
+            </div>
+          )}
+        </Field>
+      )}
     </div>
   );
 };

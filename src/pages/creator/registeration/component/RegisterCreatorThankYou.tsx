@@ -74,7 +74,7 @@ const RegistrationCreatorThankYou: React.FC = () => {
             onClick={handleButton}
             className="bg-[#9EFF00] rounded-full text-sm px-5 py-3 flex justify-center items-center font-semibold"
           >
-            Back to Home
+            Back
           </button>
 
           <button

@@ -31,7 +31,7 @@ const WaitMessage: React.FC = () => {
             onClick={handleButton}
             className="bg-[#9EFF00] rounded-full text-sm px-5 py-3 flex justify-center items-center font-semibold"
           >
-            Back to Home
+            Back
           </button>
           <div className=" rotate-[300deg] absolute top-56 right-[-470px] overflow-hidden ">
         <img src={sharpline} alt="" />

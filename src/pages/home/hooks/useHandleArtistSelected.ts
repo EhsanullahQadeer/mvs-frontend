@@ -15,11 +15,11 @@ const useHandleArtistSelected = () => {
     const { spotifyId, professionalName, isClaimed, popularity, thumbnail, tag,
       followers, username
     } = option;
-    console.log('options', option);
-    if (isClaimed === true || username) {
-      navigate(`/profile/${username}`);
-    } else if (isClaimed === false) {
-      navigate(`/wiki/${spotifyId}`);
+
+
+    console.log("option here", option);
+    if (isClaimed === true) {
+      navigate(`/artist-profile/${username}`);
     } else {
       const wikiProfile = await createWikiProfile({ 
         spotifyId,

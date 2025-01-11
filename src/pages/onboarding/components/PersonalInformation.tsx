@@ -21,15 +21,26 @@ import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import getMuiStyles from "styles/getMuiStyles";
 import profileBannerBackImg from "../../../assets/img/profileBannerBackImg.png";
 import avatarImg from "../../../assets/img/avatar.svg";
-import { IoLocationOutline } from "react-icons/io5";
+import { IoLocationOutline, IoAdd } from "react-icons/io5";
 import FormikOnChange from "./FormikOnChange";
 import { checkUsernameIsAvailable } from "api/user";
+import * as Yup from "yup";
 
 type Props = {
   markSectionAsCompleted: () => void;
   formData: any;
   setFormData: (values: any) => void;
 };
+
+const validationSchema = Yup.object({
+  username: Yup.string().required("Username is required"),
+  professional_name: Yup.string().required("Professional name is required"),
+  country: Yup.string().required("Country is required"),
+  region: Yup.string().required("Region is required"),
+  bio: Yup.string()
+    .max(255, "Bio must not exceed 255 characters")
+    .required("Bio is required"),
+});
 
 const PersonalInformation = (props: Props) => {
   const { markSectionAsCompleted, formData, setFormData } = props;
@@ -45,6 +56,7 @@ const PersonalInformation = (props: Props) => {
   const [statesArr, setStatesArr] = useState([]);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [usernameError, setUsernameError] = useState("");
+  const [thumbnailError, setThumbnailError] = useState(false);
 
   useEffect(() => {
     const countries = Object.values(countriesStates).map(
@@ -92,6 +104,13 @@ const PersonalInformation = (props: Props) => {
   const handleSubmit = async (values) => {
     setPasswordError(false);
     setConfirmPasswordError(false);
+    setThumbnailError(false);
+
+    if (!thumbnail) {
+      setThumbnailError(true);
+      return;
+    }
+
     const passwordIsValid = isValidPassword(password);
     const passwordsMatch = password === confirmPassword;
 
@@ -130,7 +149,7 @@ const PersonalInformation = (props: Props) => {
       thumbnail_type: thumbnailType,
     });
     setButtonText("Saved");
-    setIsButtonDisabled(true); // Disable the button
+    setIsButtonDisabled(true);
     markSectionAsCompleted();
   };
 
@@ -156,6 +175,7 @@ const PersonalInformation = (props: Props) => {
         setThumbnail(base64Thumbnail);
         setThumbnailType(file.type);
         setButtonText("Save Changes");
+        setThumbnailError(false);
       } catch (error) {
         console.error("Error converting file to base64", error);
       }
@@ -330,7 +350,7 @@ const PersonalInformation = (props: Props) => {
                             <div
                               className={`mt-1.5 text-[10px] font-normal text-darkRed`}
                             >
-                              Passwords should be similar
+                              Passwords do not match
                             </div>
                           )}
                         </div>
@@ -344,6 +364,8 @@ const PersonalInformation = (props: Props) => {
                           as="textarea"
                           inputBgColor="jetBlack"
                           labelColor="white"
+                          maxLength={255}
+                          showCharacterCount
                         />
                       </div>
                     </div>
@@ -355,29 +377,32 @@ const PersonalInformation = (props: Props) => {
                         }}
                         className={`px-10 py-[50px] border border-eclipseGray border-b-0 flex flex-col gap-2 justify-center items-center bg-center bg-cover rounded-t-lg`}
                       >
-                        <input
-                          type="file"
-                          accept="image/*"
-                          name="thumbnail"
-                          id="thumbnail"
-                          className="hidden"
-                          onChange={handleThumbnailChange}
-                        />
-
-                        <label
-                          htmlFor="thumbnail"
-                          className="w-[138px] h-[138px] bg-eerieBlack rounded-full relative cursor-pointer"
-                        >
-                          <img
-                            src={thumbnail ? thumbnail : avatarImg}
-                            alt="avatarImg"
-                            className="rounded-full w-full h-full object-cover"
+                        <div className={`flex flex-col items-center`}>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleThumbnailChange}
+                            className="hidden"
+                            id="thumbnail"
                           />
-
-                          <div className="absolute bottom-2 right-1 w-7 h-7 flex justify-center items-center bg-limeGreen rounded-full text-dimGray font-semibold">
-                            +
-                          </div>
-                        </label>
+                          <label htmlFor="thumbnail" className="cursor-pointer relative">
+                            <img
+                              src={thumbnail || avatarImg}
+                              alt="thumbnail"
+                              className={`w-32 h-32 object-cover rounded-full ${thumbnailError ? 'border-4 border-darkRed' : ''}`}
+                            />
+                            {!thumbnail && (
+                              <div className="absolute bottom-0 right-0 bg-limeGreen rounded-full p-1">
+                                <IoAdd className="w-5 h-5 text-jetBlack" />
+                              </div>
+                            )}
+                          </label>
+                          {thumbnailError && (
+                            <div className="text-darkRed mt-1 text-xs font-medium">
+                              Please provide a profile picture before proceeding.
+                            </div>
+                          )}
+                        </div>
 
                         <div className="w-[231px]">
                           <div>
@@ -422,6 +447,7 @@ const PersonalInformation = (props: Props) => {
                           placeholder="Bio"
                           as="textarea"
                           rows="4"
+                          maxLength={255}
                           style={{
                             boxShadow: "none",
                           }}
@@ -434,7 +460,6 @@ const PersonalInformation = (props: Props) => {
                   <div className="mt-[60px] mr-2.5 w-full flex justify-end">
                     <button
                       type="submit"
-                      disabled={isButtonDisabled} 
                       className={`py-3 px-4 rounded-[60px] text-sm font-semibold border ${
                         buttonText === "Saved"
                           ? "cursor-auto bg-transparent border-eclipseGray text-mediumGray"

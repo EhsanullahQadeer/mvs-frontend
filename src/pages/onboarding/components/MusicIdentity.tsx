@@ -28,15 +28,19 @@ const validationSchema = Yup.object().shape({
   ip_number: Yup.string().when("isPartner", {
     is: true,
     then: Yup.string()
-    .required("Intellectual Property Number is required for partners.")
-    .test('len', 'Must be exactly 9 characters', val => val && val.length === 9),
+      .required("Intellectual Property Number is required for partners.")
+      .test('len', 'Must be exactly 9 characters', val => val && val.length === 9),
     otherwise: Yup.string().notRequired(),
   }),
   collab_terms: Yup.number()
-  .nullable()  // Since it's optional
-  .min(1, "Percentage must be at least 1%")
-  .max(100, "Percentage must be less than 100%")
-  .typeError("Enter a valid number between 0 and 100")
+    .nullable()
+    .min(1, "Percentage must be at least 1%")
+    .max(100, "Percentage must be less than 100%")
+    .typeError("Enter a valid number between 0 and 100"),
+  main_genre: Yup.string()
+    .required("Main genre is required"),
+  sub_genre: Yup.string()
+    .required("Sub genre is required"),
 });
 
 const MusicIdentity = (props: Props) => {
@@ -64,12 +68,17 @@ const MusicIdentity = (props: Props) => {
 
   // Handle form submission
   const handleSubmit = (values) => {
+    // Check if form is valid before proceeding
+    if (!values.main_genre || !values.sub_genre) {
+      return; // Stop here if required fields are missing
+    }
+
     setFormData({
       ...formData,
       ...values,
     });
     setButtonText("Saved");
-    setIsButtonDisabled(true); // Disable the button
+    setIsButtonDisabled(true);
     markSectionAsCompleted();
   };
 
@@ -83,9 +92,11 @@ const MusicIdentity = (props: Props) => {
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
-          validationSchema={validationSchema} // Using Yup validation schema
+          validationSchema={validationSchema}
+          validateOnSubmit={true}
+          validateOnBlur={true}
         >
-          {({ errors, touched }) => (
+          {({ errors, touched, setFieldValue, values }) => (
             <Form>
               <>
                 <FormikOnChange onChange={() => setButtonText("Save Changes")} />
@@ -99,6 +110,12 @@ const MusicIdentity = (props: Props) => {
                         placeholder="IP# 123456789"
                         inputBgColor="jetBlack"
                         labelColor="white"
+                        maxLength={9}
+                        handleInputChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          e.target.value = value;
+                          setFieldValue('ip_number', value);
+                        }}
                       />
 
                       {/* Error message displayed using Formik's errors object */}
@@ -113,16 +130,24 @@ const MusicIdentity = (props: Props) => {
                         receive the rights and royalties you deserve.
                       </p>
                     </div>
-
+                    
                     <div className="flex-1">
                       <FormikLabeledField
                         name="collab_terms"
-                        label="Preferred Collaboration Terms (optional)"
+                        label="Preferred Collaboration Terms (optional)" 
                         placeholder="%"
                         inputBgColor="jetBlack"
                         labelColor="white"
+                        type="text"
+                        maxLength={3}
+                        handleInputChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          e.target.value = value ? `${value}%` : '';
+                          setFieldValue('collab_terms', value);
+                        }}
+                        value={values.collab_terms ? `${values.collab_terms}%` : ''}
                       />
-                      {/* Error message displayed using Formik's errors object */}
+
                       {typeof errors.collab_terms === "string" && touched.collab_terms && (
                         <div className="mt-1.5 text-[10px] font-normal text-darkRed">
                           {errors.collab_terms}
@@ -151,13 +176,18 @@ const MusicIdentity = (props: Props) => {
                     <div className="w-[305px]">
                       <FormikSingleSelectDropdown
                         name="main_genre"
-                        label="Main genre"
+                        label="Main genre *"
                         placeholder="Select Genre"
                         dropdownItems={musicGenres.map(item => ({ label: item, value: item }))}
                         inputBgColor="#0F0F0F"
                         labelColor="white"
                         dropdownBgColor="#1c1c1c"
                       />
+                      {typeof errors.main_genre === "string" && touched.main_genre && (
+                        <div className="mt-1.5 text-[10px] font-normal text-darkRed">
+                          {errors.main_genre}
+                        </div>
+                      )}
                       <p className="px-2 mt-3 text-xs font-normal text-dimGray">
                         Let us know your preferred genre! This will help us match you with the right creators and make connecting with
                         like-minded producers, songwriters, and artists even easier.
@@ -167,13 +197,18 @@ const MusicIdentity = (props: Props) => {
                     <div className="w-[305px]">
                       <FormikSingleSelectDropdown
                         name="sub_genre"
-                        label="Sub genre"
+                        label="Sub genre *"
                         placeholder="Select Genre"
                         dropdownItems={musicGenres.map(item => ({ label: item, value: item }))}
                         inputBgColor="#0F0F0F"
                         labelColor="white"
                         dropdownBgColor="#1c1c1c"
                       />
+                      {typeof errors.sub_genre === "string" && touched.sub_genre && (
+                        <div className="mt-1.5 text-[10px] font-normal text-darkRed">
+                          {errors.sub_genre}
+                        </div>
+                      )}
                       <p className="px-2 mt-3 text-xs font-normal text-dimGray">
                         Tell us your sub-genre preference! This detail will help us fine-tune your connections with other creators.
                       </p>

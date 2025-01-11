@@ -75,6 +75,21 @@ export async function artistProfileAPI(username: string) {
 }
 
 export async function userArtistSearch(params: IUsersSearchParams) {
+  return axiosInstance.get("/users/search-users", { params });
+}
+
+export async function searchAllUsers(
+  query: string, 
+  limit: number,
+  searchSpotify: boolean,
+  getTopPopular: boolean
+) {
+  const params = { 
+    query,
+    limit,
+    searchSpotify,
+    getTopPopular
+  }; 
   return axiosInstance.get("/users/search", { params });
 }
 
@@ -84,16 +99,6 @@ export async function getUserBySpotifyId(spotifyId: string) {
 
 export async function getUserByIdAPI(id: string) {
   return axiosInstance.get(`/users/${id}`);
-}
-
-export async function searchAllUsers(
-  query: string, 
-  limit: number, 
-  searchSpotify: string = "false"
-) {
-  const params = { query, limit, searchSpotify }; 
-  console.log('Sending params:', params);
-  return axiosInstance.get("/users/search", { params });
 }
 
 export async function userProfessionalNameSearch(
