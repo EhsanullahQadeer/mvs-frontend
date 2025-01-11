@@ -39,27 +39,18 @@ export function SearchHeader() {
   };
 
   const getUniqueResults = (data) => {
-    // Log the incoming data to see what we're working with
     console.log('Incoming data:', data);
-    
-    const uniqueResults = Array.from(new Map(
-      data
-        .filter(result => result && (result.artist_name || result.professional_name))
-        // Use both id and name as the key to ensure true uniqueness
-        .map(item => [`${item.id}-${item.artist_name || item.professional_name}`, item])
-    ).values());
-    
-    // Log the outgoing data to verify deduplication
-    console.log('Unique results:', uniqueResults);
-    return uniqueResults;
+    return data;
   };
 
   useEffect(() => {
     (async () => {
       const response = await searchAllUsers("", 10, true, true);
-      setSearchResults(getUniqueResults(response.data));
+      setSearchResults(response.data);
+      console.log("searchResults", searchResults);
     })();
   }, []);
+
 
   useEffect(() => {
     if (debouncedSearchValue) {
@@ -123,7 +114,7 @@ export function SearchHeader() {
               <Autocomplete
                 inputValue={searchInput}
                 freeSolo
-                getOptionLabel={(option: any) => option.artist_name || option.professional_name || ""}
+                getOptionLabel={(option: any) => option.professionalName || ""}
                 options={searchResults}
                 PopperComponent={CustomPopper}
                 groupBy={() => "Top Results"}
@@ -150,8 +141,9 @@ export function SearchHeader() {
                 )}
                 renderOption={(props, option: any) => {
                   // Create a truly unique key using spotify_artist_id and timestamp
-                  const uniqueKey = `${option.spotify_artist_id}-${Date.now()}`;
+                  const uniqueKey = `${option.professionalName}-${option.spotify_artist_id || option.id}-${Date.now()}`;
                   
+
                   return (
                     <li
                       {...props}

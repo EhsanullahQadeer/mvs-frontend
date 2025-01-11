@@ -42,10 +42,16 @@ export function useSearchHeader() {
             true
           );
           console.log("spotifyResponse here", spotifyResponse);
-          const uniqueResults = spotifyResponse.data.results.filter((result, index, self) =>
-            index === self.findIndex((t) => t.id === result.id)
+          const results = spotifyResponse.data?.results || [];
+          const uniqueResults = results.filter((result, index, self) =>
+            index === self.findIndex((t) => 
+              (result.spotifyId && t.spotifyId === result.spotifyId) || 
+              (result.id && t.id === result.id)
+            )
           );
           setSpotifySearchResult(uniqueResults);
+          setTopRatedArtist(results);
+
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
