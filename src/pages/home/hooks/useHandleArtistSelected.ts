@@ -19,7 +19,7 @@ const useHandleArtistSelected = () => {
 
     console.log("option here", option);
     if (isClaimed === true) {
-      navigate(`/artist-profile/${username}`);
+      navigate(`/profile/${username}`);
     } else {
       const wikiProfile = await createWikiProfile({ 
         spotifyId,
