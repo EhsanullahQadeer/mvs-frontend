@@ -106,13 +106,13 @@ function FormikSingleSelectDropdown(
             <em>{placeholder}</em>
           </MenuItem>
 
-          {dropdownItems.map((item, idx) => (
+          {dropdownItems.map((item: DropdownItem, idx: number) => (
             <MenuItem
-              key={idx + item.value}
+              key={`${item.value}-${idx}`}
               value={item.value}
-              sx={{
-                ...muiStyles.selectDropdownMenuItem,
-                color: "white"
+              style={{
+                color: 'white',
+                backgroundColor: dropdownBgColor ? dropdownBgColor : "#131313",
               }}
             >
               {item.label}

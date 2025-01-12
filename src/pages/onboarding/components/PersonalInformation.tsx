@@ -52,23 +52,25 @@ const PersonalInformation = (props: Props) => {
   const [thumbnail, setThumbnail] = useState(null);
   const [thumbnailType, setThumbnailType] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
-  const [countriesArr, setCountriesArr] = useState([]);
-  const [statesArr, setStatesArr] = useState([]);
+  const [countriesArr, setCountriesArr] = useState<Array<{label: string, value: string}>>([]);
+  const [statesArr, setStatesArr] = useState<Array<{label: string, value: string}>>([]);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [usernameError, setUsernameError] = useState("");
   const [thumbnailError, setThumbnailError] = useState(false);
 
   useEffect(() => {
-    const countries = Object.values(countriesStates).map(
-      (country) => country.name
-    );
+    const countries = Object.values(countriesStates).map((country, index) => ({
+      label: country.name,
+      value: country.name
+    }));
+    console.log('Countries formatted:', countries);
     setCountriesArr(countries);
   }, []);
 
   useEffect(() => {
     if (selectedCountry) {
       const provinces = getStatesByCountryName();
-      setStatesArr(provinces);
+      setStatesArr(provinces as Array<{label: string, value: string}>);
     }
   }, [selectedCountry]);
 
@@ -78,7 +80,10 @@ const PersonalInformation = (props: Props) => {
     );
 
     if (countryCode && countriesStates[countryCode].divisions) {
-      return Object.values(countriesStates[countryCode].divisions);
+      return Object.values(countriesStates[countryCode].divisions).map((state, index) => ({
+        label: state,
+        value: state
+      }));
     }
     return [];
   };
