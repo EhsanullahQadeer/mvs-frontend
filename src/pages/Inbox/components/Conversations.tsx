@@ -1,40 +1,85 @@
 import featuredIcon from "../../../assets/icons/featured-icon.svg";
 import starIcon from "../../../assets/icons/star.svg";
-import { IMessage } from "./types";
+import { IConversation, ICurrentUser } from "./types";
 import { useNavigate } from "react-router-dom";
 import { lastMsgTimeStamp } from "../handlers/mediaUtils";
+import axios from 'axios';
+import { markConversationAsRead } from "api/messenger";
 
 interface Props {
-  conversation: IMessage;
-  activeConversation: IMessage;
-  getMessagesNotes: (selectedConvo: IMessage, selectedConvoId: string) => void;
+  conversation: IConversation;
+  activeConversation: IConversation;
+  getMessagesNotes: (selectedConvo: IConversation) => void;
+  handleCheckboxChange: (id: number, isChecked: boolean) => void;
+  selectedConversations: number[];
+  handleToggleFavoriteConvo: (id: number) => void;
+  favoriteConversationIds: number[];
+  currentUserInfo: ICurrentUser;
+  refreshConversations?: () => void;
+  updateConversationStats?: (conversationId: number, updates: Partial<IConversation>) => void;
 }
 
 export const Conversations = (props: Props) => {
   const {
     conversation: {
-      UnreadCount,
+      unread_count_b,
+      unread_count_a,
+      user_a,
       id,
       thumbnail,
       displayName,
       last_message_summary,
       last_updated_timestamp,
+      total_payments_a,
+      total_payments_b,
     },
     activeConversation,
     getMessagesNotes,
+    handleCheckboxChange,
+    selectedConversations,
+    favoriteConversationIds,
+    handleToggleFavoriteConvo,
+    currentUserInfo,
+    refreshConversations,
+    updateConversationStats,
   } = props;
   const navigate = useNavigate();
 
-  const handleConvoSelect = (conversation, id) => {
-    getMessagesNotes(conversation, id);
+  const handleConvoSelect = async (conversation, id) => {
+    if (unreadCount > 0) {
+      try {
+        await markConversationAsRead(id);
+        
+        if (updateConversationStats) {
+          updateConversationStats(id, {
+            unread_count_a: currentUserInfo.id === user_a.id ? 0 : unread_count_a,
+            unread_count_b: currentUserInfo.id === user_a.id ? unread_count_b : 0
+          });
+        }
+      } catch (error) {
+        console.error('Failed to mark conversation as read:', error);
+      }
+    }
+
+    getMessagesNotes(conversation);
     navigate(`/inbox/${id}`);
   };
+
+  const isChecked = selectedConversations.includes(id);
+  const isFavorite = favoriteConversationIds.includes(id);
+
+  const unreadCount =
+    currentUserInfo.id === user_a.id ? unread_count_a : unread_count_b;
+  const total_payments =
+    currentUserInfo.id === user_a.id ? total_payments_a : total_payments_b;
 
   return (
     <>
       <div
-        className={`cursor-pointer hover:bg-[#242424] flex justify-between items-center px-3 py-2 w-full border-b border-[#68717E] border-opacity-20 max-md:max-w-full ${
-          activeConversation?.id === id ? "bg-[#242424]" : "bg-transparent"
+        className={`hover:bg-eclipseGray flex justify-between items-center px-3 py-2 w-full border-b border-grayBlue border-opacity-20 max-md:max-w-full z-10 ${
+          activeConversation?.id === id || isChecked
+            ? "bg-eclipseGray"
+            : "bg-transparent"
         }`}
       >
         <div className="flex flex-wrap flex-1 shrink gap-3 items-center self-stretch my-auto w-full basis-0 min-w-[240px] max-md:max-w-full">
@@ -47,32 +92,43 @@ export const Conversations = (props: Props) => {
                       <input
                         type="checkbox"
                         className="rounded border-solid border-[1.5px] border-zinc-500 min-h-[16px] bg-transparent cursor-pointer"
+                        checked={isChecked}
+                        onChange={(e) =>
+                          handleCheckboxChange(id, e.target.checked)
+                        }
                       />
                     </div>
                   </div>
                 </div>
-                {UnreadCount > 0 && (
-                  <>
-                    <div className="flex overflow-hidden flex-col justify-center items-center py-2 w-4">
-                      <div className="flex w-2 h-2 bg-lime-300 rounded-full min-h-[8px]" />
-                    </div>
-                  </>
-                )}
+
+                <div className="flex overflow-hidden flex-col justify-center items-center py-2 w-4">
+                  <div
+                    className={`flex w-2 h-2 rounded-full ${
+                      unreadCount ? "bg-lightGreen" : "bg-transparent"
+                    }`}
+                  />
+                </div>
+
+                <div className="flex overflow-hidden flex-col justify-center items-center self-stretch p-2 my-auto">
+                  <div
+                    onClick={() => handleToggleFavoriteConvo(id)}
+                    className="cursor-pointer"
+                  >
+                    <img
+                      loading="lazy"
+                      src={isFavorite ? featuredIcon : starIcon}
+                      className="object-contain w-4 aspect-square"
+                      alt="icon"
+                    />
+                  </div>
+                </div>
               </div>
               <div
-                className="flex gap-1 items-center self-stretch my-auto"
+                className="flex gap-1 items-center self-stretch my-auto cursor-pointer"
                 onClick={() => {
                   handleConvoSelect(props.conversation, id);
                 }}
               >
-                <div className="flex overflow-hidden flex-col justify-center items-center self-stretch p-2 my-auto w-8">
-                  <img
-                    loading="lazy"
-                    src={UnreadCount ? featuredIcon : starIcon}
-                    className="object-contain w-4 aspect-square"
-                    alt="icon"
-                  />
-                </div>
                 <div className="flex gap-2 items-center self-stretch my-auto">
                   <div
                     style={{
@@ -81,23 +137,28 @@ export const Conversations = (props: Props) => {
                     }}
                     className="flex rounded-full p-0.5 w-[52px] aspect-square"
                   >
-                    <img
-                      loading="lazy"
-                      src={thumbnail}
-                      className="object-contain w-full h-full rounded-full border-[2px] border-[#151515]"
-                      alt="icon"
-                    />
+                    <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
+                      <div
+                        style={{ backgroundImage: `url("${thumbnail}")` }}
+                        className="w-full h-full rounded-full bg-cover bg-center"
+                      ></div>
+                    </div>
                   </div>
                   <div className="flex flex-col justify-center self-stretch my-auto font-semibold w-[100px]">
                     <div
                       className={`text-sm leading-none ${
-                        UnreadCount ? "text-white" : "text-mediumGray"
+                        unreadCount ? "text-white" : "text-mediumGray"
                       }`}
                     >
                       {displayName}
                     </div>
-                    <div className="self-start px-1 py-0.5 mt-1 text-xs tracking-wide leading-tight text-lime-400 whitespace-nowrap bg-lime-800 rounded border border-lime-400 border-solid min-h-[16px]">
-                      $434.99
+                    <div className={`self-start px-1 py-0.5 mt-1 text-xs tracking-wide leading-tight whitespace-nowrap rounded border border-solid min-h-[16px] ${
+                      Number(total_payments) === 0 
+                        ? "text-zinc-300 bg-zinc-800 border-zinc-500" 
+                        : "text-lime-400 bg-lime-800 border-lime-400"
+                    }`}>
+                      <span className={Number(total_payments) === 0 ? "text-zinc-300" : "text-lime-400"}>$</span>
+                      {Number(total_payments) > 0 ? total_payments : ''}
                     </div>
                   </div>
                 </div>
@@ -105,8 +166,8 @@ export const Conversations = (props: Props) => {
             </div>
           </div>
           <div
-            className={`flex flex-col flex-1 shrink justify-center items-start self-stretch my-auto ${
-              UnreadCount ? "text-white" : "text-mediumGray"
+            className={`cursor-pointer flex flex-col flex-1 shrink justify-center items-start self-stretch my-auto ${
+              unreadCount ? "text-white" : "text-mediumGray"
             } basis-6 min-w-[240px]`}
             onClick={() => {
               handleConvoSelect(props.conversation, id);
@@ -119,12 +180,14 @@ export const Conversations = (props: Props) => {
               {lastMsgTimeStamp(last_updated_timestamp)}
             </div>
           </div>
-          {UnreadCount > 0 && (
+          {unreadCount ? (
             <>
               <div className="self-stretch px-3 py-1 my-auto text-xs font-semibold leading-none text-white whitespace-nowrap bg-[#F56755] rounded-3xl">
-                {UnreadCount}
+                {unreadCount}
               </div>
             </>
+          ) : (
+            <></>
           )}
         </div>
       </div>

@@ -39,7 +39,8 @@ module.exports = {
         dimGray: "#666666",
         blackMarbel: "#161616",
         darkCharcoal: "#2B2B2B",
-        "slateGray-2": "#58606B"
+        "slateGray-2": "#58606B",
+        grayBlue: "#68717E"
       },
       boxShadow: {
         'custom-inset': 'inset 0px 0px 4.5px 0px rgba(0, 0, 0, 0.30)',

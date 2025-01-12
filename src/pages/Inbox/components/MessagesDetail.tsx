@@ -15,22 +15,31 @@ import React from "react";
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 import MessagesSection from "./MessagesSection";
 import Footer from "./Footer";
-import { ICurrentUser, IMessage, IMessagesData, INotes } from "./types";
+import { IConversation, ICurrentUser, IMessagesData, INotes } from "./types";
 import InfoSection from "./InfoSection";
 import NotesSection from "./NotesSection";
 import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toggleMessageToRead } from "api/messenger";
+import ActionMenu from "./ActionMenu";
+import { FiUser } from "react-icons/fi";
+import { IoVideocamOutline } from "react-icons/io5";
+import { HiOutlineEye } from "react-icons/hi";
+import { FiUnlock } from "react-icons/fi";
+import { GrShareOption } from "react-icons/gr";
+import { LuShieldAlert } from "react-icons/lu";
+import { LuBellOff } from "react-icons/lu";
+import { FiUserX } from "react-icons/fi";
 
 type Props = {
-  conversation: IMessage;
+  conversation: IConversation;
   loading: boolean;
   messages: IMessagesData;
-  getConversationMessages: (conversation: IMessage) => Promise<void>;
-  getNotes: (conversation_id: string) => void;
+  getConversationMessages: (conversation: IConversation) => Promise<void>;
+  getNotes: (id: number) => void;
   notes: INotes[];
   currentUserInfo: ICurrentUser;
-  onClose: () => void;  
+  onClose: () => void;
 };
 
 const MessagesDetail = (props: Props) => {
@@ -45,7 +54,11 @@ const MessagesDetail = (props: Props) => {
     onClose,
   } = props;
   const navigate = useNavigate();
-  const { id, thumbnail, displayName, conversation_id } = conversation;
+  const [menuSection, setMenuSection] = useState(false);
+  const { id, thumbnail, displayName } = conversation;
+
+  console.log("conversation...", conversation);
+
   const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
   const headerTabs = [
     {
@@ -89,11 +102,58 @@ const MessagesDetail = (props: Props) => {
     navigate(`/inbox/${id}/thread`);
   };
 
+  const menuItems = [
+    {
+      label: "Go to Profile",
+      icon: <FiUser />,
+      func: () => {},
+    },
+    {
+      label: "Schedule Meeting",
+      icon: <IoVideocamOutline />,
+      func: () => {},
+    },
+    {
+      label: "Request Demo Review",
+      icon: <HiOutlineEye />,
+      func: () => {},
+    },
+    {
+      label: "Unlock Inbox",
+      icon: <FiUnlock />,
+      func: () => {},
+    },
+    {
+      label: "Share Profile",
+      icon: <GrShareOption />,
+      func: () => {},
+    },
+    {
+      label: "Report User",
+      icon: <LuShieldAlert />,
+      func: () => {},
+    },
+    {
+      label: "Mute Notifications",
+      icon: <LuBellOff />,
+      func: () => {},
+    },
+    {
+      label: "Block User",
+      icon: <FiUserX />,
+      func: () => {},
+    },
+  ];
+
+  const handleMenuSection = () => {
+    setMenuSection(!menuSection);
+  };
+
   return (
     <React.Fragment>
       <div className="h-full w-full border-l border-eerieBlack bg-richBlack relative">
         <div className="flex flex-col pt-2 h-full">
-          <div className="flex flex-col w-full max-md:max-w-full sticky top-0 bg-richBlack">
+          <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
             <div className="flex flex-wrap gap-5 justify-between items-center p-4 pt-2 w-full">
               <div className="flex gap-2 items-center">
                 <div
@@ -103,12 +163,12 @@ const MessagesDetail = (props: Props) => {
                   }}
                   className="flex rounded-full p-0.5 w-12 h-12 aspect-square"
                 >
-                  <img
-                    alt=""
-                    loading="lazy"
-                    src={thumbnail}
-                    className="object-contain w-full h-full rounded-full border-[2px] border-[#151515]"
-                  />
+                  <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
+                    <div
+                      style={{ backgroundImage: `url("${thumbnail}")` }}
+                      className="w-full h-full rounded-full bg-cover bg-center"
+                    ></div>
+                  </div>
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <div className="text-sm font-semibold text-white">
@@ -120,10 +180,19 @@ const MessagesDetail = (props: Props) => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver">
+                <div
+                  onClick={handleMenuSection}
+                  className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver relative"
+                >
                   <MenuIcon className="w-5 h-5" />
+
+                  {menuSection ? (
+                    <ActionMenu {...{ menuItems, setMenuSection }} />
+                  ) : (
+                    <></>
+                  )}
                 </div>
-                <button 
+                <button
                   onClick={onClose}
                   className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver hover:bg-[#2f2f2f]"
                 >
@@ -178,7 +247,9 @@ const MessagesDetail = (props: Props) => {
                 <>
                   {tab === 0 && (
                     <>
-                      {Array.isArray(messages) && messages.length > 0 && messages[0]?.messages?.length > 0 ? (
+                      {Array.isArray(messages) &&
+                      messages.length > 0 &&
+                      messages[0]?.messages?.length > 0 ? (
                         <MessagesSection
                           {...{
                             messages,
@@ -194,7 +265,8 @@ const MessagesDetail = (props: Props) => {
                             Start your conversation!
                           </div>
                           <p className="text-coolGray text-sm max-w-md">
-                            Send a message to begin connecting with {displayName}.
+                            Send a message to begin connecting with{" "}
+                            {displayName}.
                           </p>
                         </div>
                       )}
@@ -203,7 +275,7 @@ const MessagesDetail = (props: Props) => {
 
                   {tab === 1 && (
                     <>
-                      <InfoSection />
+                      <InfoSection {...{ conversation }} />
                     </>
                   )}
 
@@ -212,7 +284,7 @@ const MessagesDetail = (props: Props) => {
                       <NotesSection
                         {...{
                           notes,
-                          conversation_id,
+                          id,
                           getNotes,
                           setOverlayLoading,
                         }}

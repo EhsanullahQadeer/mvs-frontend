@@ -26,8 +26,8 @@ export interface IToggleMessageToReadPayloads {
 }
 
 export interface IAddNoteApiPayloads {
-  conversation_id: string;
-  note_content: string;
+  conversationId: number;
+  noteContent: string;
 }
 
 export interface IDeleteNoteApiParams {
@@ -35,8 +35,8 @@ export interface IDeleteNoteApiParams {
 }
 
 export interface IUpdateNoteApiParams {
-  note_id: string;
-  new_content: string;
+  noteId: number;
+  content: string;
 }
 
 export interface IGetConversationByIdParams {
@@ -44,7 +44,7 @@ export interface IGetConversationByIdParams {
 }
 
 export interface IGetConversationNotesParams {
-  conversation_id: string;
+  conversationId: number;
   ascending: boolean;
 }
 
@@ -54,4 +54,36 @@ export interface IGetConversationsListParams {
   skip: number;
   take: number;
   limit: number;
+}
+
+export interface IDeleteConversationsPayload {
+  conversationIds: number[];
+}
+
+export interface IMarkConvoReadPayload {
+  conversationId: number;
+}
+
+export interface IToggleSpamConvoPayload {
+  conversationIds: number[];
+}
+
+export interface IToggleArchiveConvoPayload {
+  conversationIds: number[];
+}
+
+export interface IToggleConvoPriorityPayload {
+  conversationIds: number[];
+}
+
+export interface IToggleFavoriteCovoPayload {
+  conversationId: number;
+}
+
+export interface IAddReactionPayload {
+  emoji: string;
+}
+
+export interface IDeleteReactionPayload {
+  emoji: string;
 }

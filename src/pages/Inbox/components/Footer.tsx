@@ -4,13 +4,13 @@ import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFile
 import { AudioRecorder } from "react-audio-voice-recorder";
 import PurchaseOrderDialog from "./PurchaseOrderDialog";
 import { replyToMessage, sendInboxMessage } from "api/messenger";
-import { ICurrentUser, IMessage } from "./types";
+import { IConversation, ICurrentUser, IMessage } from "./types";
 // import { ReactComponent as MicIcon } from "../../../assets/icons/micIcon.svg";
 
 type Props = {
-  conversation: IMessage;
+  conversation: IConversation;
   setOverlayLoading?: (value: boolean) => void;
-  getConversationMessages?: (conversation: IMessage) => Promise<void>;
+  getConversationMessages?: (conversation: IConversation) => Promise<void>;
   isFeedbackSection?: boolean;
   currentUserInfo?: ICurrentUser;
   messageObj?: IMessage;
@@ -24,7 +24,7 @@ const Footer = ({
   currentUserInfo,
   messageObj,
 }: Props) => {
-  const { recipient_id, id } = conversation || {};
+  const { recipient_id } = conversation || {};
 
   const [openPurchaseOrder, setOpenPurchaseOrder] = useState(false);
   const [creditPaymentAmount, setCreditPaymentAmount] = useState(0);

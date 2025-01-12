@@ -14,123 +14,84 @@ import { useEffect, useState } from "react";
 import React from "react";
 import MessagesDetail from "./MessagesDetail";
 import searchIcon from "../../../assets/icons/searchIcon.svg";
-import { ReactComponent as ArrowDown } from "../../../assets/icons/arrowDown.svg";
-import { ReactComponent as ArchieveIcon } from "../../../assets/icons/archieveIcon.svg";
-import { ReactComponent as AlertOctagonIcon } from "../../../assets/icons/alertOctagon.svg";
-import { ReactComponent as DeleteIcon } from "../../../assets/icons/deleteIcon.svg";
-import { ReactComponent as MailOpenIcon } from "../../../assets/icons/mailOpenIcon.svg";
-import { ReactComponent as FolderInputIcon } from "../../../assets/icons/folderInputIcon.svg";
-import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 import { Conversations } from "./Conversations";
-import {
-  getConversationsById,
-  getConversationsList,
-  getConversationNotes,
-} from "api/messenger";
-import moment from "moment";
-import { IMessage, INotes } from "./types";
+import { toggleFavoriteCovoApi } from "api/messenger";
 import { CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
 import FeedbackThread from "./FeedbackThread";
-import { currentUserAPI } from "api/auth";
+import MsgListHeaderOptions from "./MsgListHeaderOptions";
+import useMessageList from "../hooks/useMessageList";
+import { RootState } from "redux/reducers";
+import { useSelector } from "react-redux";
+import useGetMessagesNotes from "../hooks/useGetMessagesNotes";
+import { IConversation } from "./types";
+
+const headerTabs = [
+  {
+    label: "Priority Inbox",
+    value: 0,
+  },
+  {
+    label: "General Inbox",
+    value: 1,
+  },
+];
 
 const MessagesList = () => {
-  const [conversations, setConversations] = useState([]);
   const { id, thread } = useParams();
+  const user = useSelector((state: RootState) => state);
+  const currentUserInfo = user.auth.user;
 
+  const [tab, setTab] = useState(0);
+  const [showArchivedConvos, setShowArchivedConvos] = useState(false);
+  const [showFavoriteConvos, setShowFavoriteConvos] = useState(false);
+  const [filteredConversations, setFilteredConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
-  const [currentUserInfo, setCurrentUserInfo] = useState(null);
-  const [messages, setMessages] = useState([]);
 
-  const [notes, setNotes] = useState<INotes[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const [total, setTotal] = useState(0);
-
-  const [loading_conversations, setLoadingConversations] = useState(false);
-
+  const [selectedConversations, setSelectedConversations] = useState<number[]>(
+    []
+  );
+  const [favoriteConversationIds, setFavoriteConversationIds] = useState<
+    number[]
+  >([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const {
+    loadingConversations,
+    conversations,
+    archivedConversations,
+    getConversationList,
+    favoriteConversations,
+    setConversations,
+  } = useMessageList();
+
   useEffect(() => {
-    getConversationList();
-  }, []);
-
-  const getConversationList = async (page = currentPage) => {
-    try {
-      setLoadingConversations(true);
-      const skip = (page - 1) * itemsPerPage;
-      
-      const response = await getConversationsList({
-        searchTerm: "",
-        order: true,
-        skip: skip,
-        take: itemsPerPage,
-        limit: itemsPerPage,
-      });
-      console.log("response", response);
-      setTotal(response.data.total);
-      setConversations(response.data.conversations);
-      setCurrentPage(page);
-    } catch (error) {
-      console.log("error", error);
-    } finally {
-      setLoadingConversations(false);
+    if (currentUserInfo && !conversations.length) {
+      getConversationList();
     }
-  };
+  }, [currentUserInfo]);
 
-  const getConversationMessages = async (conversation: IMessage) => {
-    setActiveConversation(conversation);
-    const _msgs = await getConversationsById(
-      {
-        limit: 10,
-      },
-      conversation.id
-    );
+  useEffect(() => {
+    if (favoriteConversations.length) {
+      console.log("favoriteConversations...", favoriteConversations);
 
-    const results = _msgs.data.messages;
+      const favoriteIds = favoriteConversations.map(
+        (conversation) => conversation.id
+      );
 
-    for (var i = 0; i < results.length; i++) {
-      results[i].date = moment(results[i].Timestamp).format("YYYY-MM-DD");
+      setFavoriteConversationIds(favoriteIds);
     }
+  }, [favoriteConversations]);
 
-    const groups = results.reduce((groups, message) => {
-      const date = message.date;
-      if (!groups[date]) {
-        groups[date] = [];
-      }
-      groups[date].push(message);
-      return groups;
-    }, {});
-
-    const groupArrays = Object.keys(groups).map((date) => {
-      return {
-        date,
-        messages: groups[date],
-      };
-    });
-
-    setMessages(groupArrays);
-  };
-
-  const getNotes = async (conversation_id: string) => {
-    const response = await getConversationNotes({
-      conversation_id,
-      ascending: true,
-    });
-
-    setNotes(response.data);
-  };
-
-  const getMessagesNotes = async (
-    selectedConvo: IMessage,
-    selectedConvoId: string
-  ) => {
-    setLoading(true);
-    await getConversationMessages(selectedConvo);
-    await getNotes(selectedConvoId);
-    setLoading(false);
-  };
+  const {
+    messages,
+    notes,
+    loading,
+    getConversationMessages,
+    getNotes,
+    getMessagesNotes,
+  } = useGetMessagesNotes(setActiveConversation);
 
   useEffect(() => {
     if (id && conversations.length > 0) {
@@ -139,55 +100,126 @@ const MessagesList = () => {
       );
 
       if (conversation) {
-        getMessagesNotes(conversation, id);
+        getMessagesNotes(conversation);
       }
     }
   }, [id, conversations]);
 
-  const headerTabs = [
-    {
-      label: "Priority Inbox",
-      value: 0,
-    },
-    { 
-      label: "General Inbox", 
-      value: 1 
-    },
-  ];
-
-  const [tab, setTab] = useState(0);
-
   useEffect(() => {
-    getCurrentUser();
-  }, []);
+    const filtered =
+      tab === 0
+        ? conversations.filter((convo) => convo.is_priority)
+        : conversations.filter((convo) => !convo.is_priority);
 
-  const getCurrentUser = async () => {
+    setFilteredConversations(filtered);
+    setCurrentPage(1);
+  }, [tab, conversations]);
+
+  const paginatedConversations = (
+    showArchivedConvos
+      ? archivedConversations
+      : showFavoriteConvos
+      ? favoriteConversations
+      : filteredConversations
+  ).slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleCheckboxChange = (id: number, isChecked: boolean) => {
+    setSelectedConversations((prev) =>
+      isChecked
+        ? [...prev, id]
+        : prev.filter((conversationId) => conversationId !== id)
+    );
+  };
+
+  const handleSelectAllCheckbox = (isChecked: boolean) => {
+    setSelectedConversations(() =>
+      isChecked ? paginatedConversations.map((convo) => convo.id) : []
+    );
+  };
+
+  const handleApiSuccessfull = () => {
+    setSelectedConversations([]);
+    getConversationList();
+  };
+
+  const handleToggleFavoriteConvo = async (id: number) => {
     try {
-      const response = await currentUserAPI();
-      setCurrentUserInfo(response.data);
-      console.log("user info ", response);
+      const body = {
+        conversationId: id,
+      };
+      const response = await toggleFavoriteCovoApi(body);
+      if (response.status === 201) {
+        getConversationList();
+      }
     } catch (error) {
-      console.error("Error in user info:", error);
+      console.log("error while marking the conversation as favorite: ", error);
     }
   };
 
-  const handleNextPage = () => {
-    const totalPages = Math.ceil(total / itemsPerPage);
-    if (currentPage < totalPages) {
-      getConversationList(currentPage + 1);
-    }
+  const updateConversationStats = (
+    conversationId: number,
+    updates: Partial<IConversation>
+  ) => {
+    setFilteredConversations((prevConversations) =>
+      prevConversations.map((convo) =>
+        convo.id === conversationId ? { ...convo, ...updates } : convo
+      )
+    );
+
+    setConversations(prevConversations => 
+      prevConversations.map((convo) =>
+        convo.id === conversationId ? { ...convo, ...updates } : convo
+      )
+    );
   };
 
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      getConversationList(currentPage - 1);
-    }
+  const renderConversations = () => {
+    return (
+      <div className="flex flex-col w-full flex-1 overflow-y-auto overflow-x-hidden custom-dropdown">
+        <div className="flex flex-col pb-1 w-full flex-1 relative">
+          {loadingConversations ? (
+            <>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999]">
+                <CircularProgress
+                  sx={{
+                    width: "50px !important",
+                    height: "50px !important",
+                    color: "#9EFF00",
+                  }}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              {paginatedConversations.length > 0
+                ? paginatedConversations.map((conversation) => (
+                    <Conversations
+                      key={conversation.id}
+                      {...{
+                        conversation,
+                        activeConversation,
+                        getMessagesNotes,
+                        handleCheckboxChange,
+                        selectedConversations,
+                        favoriteConversationIds,
+                        handleToggleFavoriteConvo,
+                        currentUserInfo,
+                        updateConversationStats,
+                      }}
+                    />
+                  ))
+                : null}
+            </>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
     <React.Fragment>
       <div className="flex flex-1 overflow-hidden flex-col pt-4 bg-[#08090a] relative">
-        <div className="flex flex-col justify-center px-3 w-full text-sm leading-none bg-[#08090a] sticky top-0">
+        <div className="flex flex-col justify-center px-3 w-full text-sm leading-none bg-[#08090a] border-b border-eerieBlack">
           <div className="flex flex-col justify-center items-start w-full">
             <div className="flex items-center pl-4 max-w-full rounded-full bg-[#1c1c1c] min-h-[40px] w-[271px]">
               <div className="flex flex-1 shrink gap-2 items-center self-stretch my-auto w-full basis-0">
@@ -209,125 +241,56 @@ const MessagesList = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-between items-center py-2 w-full">
-            <div className="flex flex-1 gap-2 items-center">
-              <div className="flex justify-center items-center gap-1 h-8 w-[52px] bg-eerieBlack rounded">
-                <div className="flex justify-center items-center w-8 h-8">
-                  <div className="w-4 h-4 rounded border-slateGray-2 border-[1.5px]" />
-                </div>
-                <div className="flex justify-center items-center h-full w-4 text-slateGray-2">
-                  <ArrowDown className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="flex gap-1 items-center">
-                <div className="flex justify-center items-center w-8 h-8 rounded bg-[#242424] text-white">
-                  <ArchieveIcon className="w-4 h-4" />
-                </div>
-                <div className="flex justify-center items-center w-8 h-8 rounded bg-eerieBlack text-slateGray-2">
-                  <AlertOctagonIcon className="w-4 h-4" />
-                </div>
-                <div className="flex justify-center items-center w-8 h-8 rounded bg-eerieBlack text-slateGray-2">
-                  <DeleteIcon className="w-4 h-4" />
-                </div>
-                <div className="flex justify-center items-center w-8 h-8 rounded bg-eerieBlack text-slateGray-2">
-                  <MailOpenIcon className="w-4 h-4" />
-                </div>
-                <div className="flex justify-center items-center w-8 h-8 rounded bg-eerieBlack text-slateGray-2">
-                  <FolderInputIcon className="w-4 h-4" />
-                </div>
-                <div className="flex justify-center items-center w-8 h-8 rounded bg-eerieBlack text-slateGray-2">
-                  <MenuIcon className="w-4 h-4" />
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-3 items-center self-stretch my-auto">
-              <div className="gap-2.5 self-stretch p-2.5 my-auto text-sm leading-none text-neutral-400">
-                {((currentPage - 1) * itemsPerPage) + 1}-
-                {Math.min(currentPage * itemsPerPage, total)} of {total}
-              </div>
-              <div className="flex gap-2 justify-center items-center self-stretch my-auto">
-                <img
-                  loading="lazy"
-                  src="https://assets.mvssive.net/cursor-left.svg"
-                  className={`object-contain shrink-0 self-stretch my-auto w-6 aspect-square 
-                    ${currentPage > 1 ? 'cursor-pointer opacity-100' : 'opacity-50'}`}
-                  alt="cursor-left"
-                  onClick={currentPage > 1 ? handlePrevPage : undefined}
-                />
-                <img
-                  loading="lazy"
-                  src="https://assets.mvssive.net/cursor-right.svg"
-                  className={`object-contain shrink-0 self-stretch my-auto w-6 aspect-square 
-                    ${currentPage < Math.ceil(total / itemsPerPage) ? 'cursor-pointer opacity-100' : 'opacity-50'}`}
-                  alt="cursor-right"
-                  onClick={currentPage < Math.ceil(total / itemsPerPage) ? handleNextPage : undefined}
-                />
-              </div>
-            </div>
-          </div>
+          <MsgListHeaderOptions
+            {...{
+              selectedConversations,
+              handleApiSuccessfull,
+              itemsPerPage,
+              currentPage,
+              setCurrentPage,
+              total: showArchivedConvos
+                ? archivedConversations.length
+                : showFavoriteConvos
+                ? favoriteConversations.length
+                : filteredConversations.length,
+              handleSelectAllCheckbox,
+              paginatedConversations,
+              tab,
+              setTab,
+              setShowArchivedConvos,
+              setShowFavoriteConvos,
+            }}
+          />
         </div>
 
-        <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-y border-eerieBlack">
-          {headerTabs.map((headerTab) => {
-            const { label, value } = headerTab;
-            return (
-              <div
-                key={value}
-                onClick={() => {
-                  setTab(value);
-                }}
-                className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
-                  tab === value
-                    ? "text-jetBlack bg-limeGreen text-xs"
-                    : "text-coolGray bg-eclipseGray text-[10px]"
-                }`}
-              >
-                {label}
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex flex-col w-full flex-1 overflow-y-auto overflow-x-hidden custom-dropdown">
-          <div className="flex flex-col pb-1 w-full flex-1 relative">
-            {/* List Item */}
-
-            {loading_conversations ? (
-              <>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
-                  <CircularProgress
-                    sx={{
-                      width: "50px !important",
-                      height: "50px !important",
-                      color: "#9EFF00",
+        {showArchivedConvos || showFavoriteConvos ? (
+          <>{renderConversations()}</>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-b border-eerieBlack">
+              {headerTabs.map((headerTab) => {
+                const { label, value } = headerTab;
+                return (
+                  <div
+                    key={value}
+                    onClick={() => {
+                      setTab(value);
+                      setCurrentPage(1);
                     }}
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                {conversations.length ? (
-                  <>
-                    {conversations.map((conversation) => {
-                      return (
-                        <>
-                          <Conversations
-                            {...{
-                              conversation,
-                              activeConversation,
-                              getMessagesNotes,
-                            }}
-                          />
-                        </>
-                      );
-                    })}
-                  </>
-                ) : null}
-              </>
-            )}
-
-            {/* End List Item */}
-          </div>
-        </div>
+                    className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
+                      tab === value
+                        ? "text-jetBlack bg-limeGreen text-xs"
+                        : "text-coolGray bg-eclipseGray text-[10px]"
+                    }`}
+                  >
+                    {label}
+                  </div>
+                );
+              })}
+            </div>
+            {renderConversations()}
+          </>
+        )}
       </div>
       <div className="flex-1">
         {id &&
@@ -351,7 +314,9 @@ const MessagesList = () => {
                   getNotes,
                   notes,
                   currentUserInfo,
-                  onClose: () => {setActiveConversation(null)}
+                  onClose: () => {
+                    setActiveConversation(null);
+                  },
                 }}
               />
             )

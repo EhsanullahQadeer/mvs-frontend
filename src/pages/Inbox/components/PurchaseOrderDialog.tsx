@@ -4,14 +4,14 @@ import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.s
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import CardInfoDialog from "./CardInfoDialog";
 import { IoIosArrowDown } from "react-icons/io";
-import { IMessage } from "./types";
+import { IConversation } from "./types";
 
 interface Props {
   openPurchaseOrder: boolean;
   setOpenPurchaseOrder: React.Dispatch<React.SetStateAction<boolean>>;
   setCreditPaymentAmount: (value: any) => void;
   handleSendMessage: () => void;
-  conversation: IMessage;
+  conversation: IConversation;
 }
 
 const basePrice = 149.99;

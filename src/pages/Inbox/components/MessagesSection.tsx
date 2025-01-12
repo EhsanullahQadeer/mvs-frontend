@@ -4,6 +4,7 @@ import { ICurrentUser, IMessagesData } from "./types";
 import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFile.svg";
 import MessageReactions from "./MessageReactions";
 import { formatMediaDetails, lastMsgTimeStamp } from "../handlers/mediaUtils";
+import { useMessageReactions } from "../hooks/useMessageReactions";
 
 type Props = {
   messages: IMessagesData;
@@ -24,48 +25,21 @@ const MessagesSection = (props: Props) => {
     currentUserInfo,
   } = props;
 
-  // State for reactions per message
-  const [messageReactions, setMessageReactions] = useState(() =>
-    (messages[0]?.messages || []).reduce((acc, msg) => {
-      acc[msg.id] = { reactionCounts: {} };
-      return acc;
-    }, {})
+  const { messageReactions, handleEmojiSelect } = useMessageReactions(
+    messages,
+    currentUserInfo.id
   );
 
   const [hoveredMessageId, setHoveredMessageId] = useState(null);
-
-  const handleEmojiSelect = (messageId, emoji) => {
-    setMessageReactions((prevReactions) => {
-      const messageReaction = { ...prevReactions[messageId] };
-      const newReactionCounts = { ...messageReaction.reactionCounts };
-
-      if (newReactionCounts[emoji]) {
-        newReactionCounts[emoji] -= 1;
-        if (newReactionCounts[emoji] <= 0) {
-          delete newReactionCounts[emoji];
-        }
-      } else {
-        newReactionCounts[emoji] = 1;
-      }
-
-      return {
-        ...prevReactions,
-        [messageId]: {
-          reactionCounts: newReactionCounts,
-        },
-      };
-    });
-  };
 
   const chatMessages = messages[0].messages.filter(
     (msg) => msg.message_reply === null
   );
 
-  const findThreadReplyObj = (msgId) => {
-    const threadReplyObjs =
-      messages[0].messages.filter((msg) => msg.message_reply?.id === msgId) ||
-      [];
-    return threadReplyObjs;
+  const findThreadReplyObj = (msgId: number) => {
+    return messages[0].messages.filter(
+      (msg) => msg.message_reply?.id === msgId
+    );
   };
 
   return (
@@ -111,8 +85,8 @@ const MessagesSection = (props: Props) => {
           ) !== moment(created_at).format("YYYY-MM-DD");
 
         const totalReactions = Object.values(
-          (messageReactions[id]?.reactionCounts as number) || {}
-        ).reduce((total, count) => total + count, 0);
+          messageReactions[id]?.reactionCounts || {}
+        ).reduce((total, { count }) => total + count, 0);
 
         return (
           <div key={id}>
@@ -140,7 +114,7 @@ const MessagesSection = (props: Props) => {
               <div className="absolute -top-8 left-28 mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 {hoveredMessageId === id && (
                   <MessageReactions
-                    {...{ handleEmojiSelect, id, isDemoSender }}
+                    {...{ handleEmojiSelect, id, isDemoSender, msg }}
                   />
                 )}
               </div>
@@ -152,18 +126,19 @@ const MessagesSection = (props: Props) => {
                 }}
                 className="flex rounded-full p-0.5 w-12 h-12"
               >
-                <img
-                  alt=""
-                  src={thumbnail}
-                  className="object-contain w-full h-full rounded-full border-[2px] border-[#151515]"
-                />
+                <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
+                  <div
+                    style={{ backgroundImage: `url("${thumbnail}")` }}
+                    className="w-full h-full rounded-full bg-cover bg-center"
+                  ></div>
+                </div>
               </div>
               <div className="flex flex-col flex-1">
                 <div className="flex gap-4 items-start">
                   <div className="font-semibold text-sm text-white">
                     {displayName}
                   </div>
-                  <div className="text-[#68717E] text-sm">{formattedTime}</div>
+                  <div className="text-grayBlue text-sm">{formattedTime}</div>
                 </div>
                 <div className="text-sm text-[#CACCCD]">{message_content}</div>
 
@@ -284,13 +259,18 @@ const MessagesSection = (props: Props) => {
 
                 {Object.entries(
                   messageReactions[id]?.reactionCounts || {}
-                ).some(([, count]) => (count as number) > 0) && (
+                ).some(([, { count }]) => count > 0) && (
                   <div className="mt-1 bg-eclipseGray border border-charcoalGray flex px-2 py-1 justify-center items-center w-fit rounded-full">
                     {Object.entries(messageReactions[id]?.reactionCounts || {})
-                      .filter(([, count]) => (count as number) > 0)
-                      .map(([emoji]) => (
+                      .filter(([, { count }]) => count > 0)
+                      .map(([emoji, { count }]) => (
                         <span key={emoji} className="text-xl">
                           {emoji}
+                          {count > 1 && (
+                            <span className="ml-2 text-sm text-white">
+                              {count}
+                            </span>
+                          )}
                         </span>
                       ))}
                     {totalReactions > 1 && (

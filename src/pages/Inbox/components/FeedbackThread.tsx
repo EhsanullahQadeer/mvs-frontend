@@ -2,7 +2,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { FiUser, FiUnlock } from "react-icons/fi";
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 import Footer from "./Footer";
-import { ICurrentUser, IMessage, IMessagesData } from "./types";
+import { IConversation, ICurrentUser, IMessage, IMessagesData } from "./types";
 import { useNavigate } from "react-router-dom";
 import CheckerIcon from "../../../assets/icons/checker.svg";
 import { formatMediaDetails } from "../handlers/mediaUtils";
@@ -10,10 +10,10 @@ import { useEffect, useState } from "react";
 import ThreadMessageItem from "./ThreadMessageItem";
 
 type Props = {
-  conversation: IMessage;
+  conversation: IConversation;
   messages: IMessagesData;
   currentUserInfo: ICurrentUser;
-  getConversationMessages?: (conversation: IMessage) => Promise<void>;
+  getConversationMessages?: (conversation: IConversation) => Promise<void>;
 };
 
 const FeedbackThread = (props: Props) => {

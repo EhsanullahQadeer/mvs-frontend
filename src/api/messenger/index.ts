@@ -13,13 +13,21 @@ import axiosInstance from "api/axios";
 import axios from "api/axios";
 import {
   IAddNoteApiPayloads,
+  IAddReactionPayload,
+  IDeleteConversationsPayload,
   IDeleteNoteApiParams,
+  IDeleteReactionPayload,
   IGetConversationByIdParams,
   IGetConversationNotesParams,
   IGetConversationsListParams,
+  IMarkConvoReadPayload,
   IReplyToMessagePayloads,
   ISendInboxMessagePayloads,
+  IToggleArchiveConvoPayload,
+  IToggleConvoPriorityPayload,
+  IToggleFavoriteCovoPayload,
   IToggleMessageToReadPayloads,
+  IToggleSpamConvoPayload,
   IUpdateNoteApiParams,
 } from "./types";
 
@@ -113,8 +121,8 @@ export const getConversationsList = async (
 export const getConversationWithUser = async (recipient_id: number) => {
   return axiosInstance.get(`/messenger/get-conversation-with-user`, {
     params: {
-      recipient_id
-    }
+      recipient_id,
+    },
   });
 };
 
@@ -158,7 +166,7 @@ export async function addNoteApi(params: IAddNoteApiPayloads) {
 }
 
 export async function updateNoteApi(params: IUpdateNoteApiParams) {
-  return axiosInstance.post("/messenger/update-note", params);
+  return axiosInstance.post("/messenger/update-note", {}, { params });
 }
 
 export async function deleteNoteApi(params: IDeleteNoteApiParams) {
@@ -170,3 +178,65 @@ export async function deleteNoteApi(params: IDeleteNoteApiParams) {
     }
   );
 }
+
+export async function markConvoReadApi(payload: IMarkConvoReadPayload) {
+  return axiosInstance.post("/messenger/mark-conversation-read", payload);
+}
+
+export async function toggleSpamConvoApi(payload: IToggleSpamConvoPayload) {
+  return axiosInstance.post("/messenger/toggle-spam-conversation", payload);
+}
+
+export async function toggleArchiveConvoApi(
+  payload: IToggleArchiveConvoPayload
+) {
+  return axiosInstance.post("/messenger/archive-conversation", payload);
+}
+
+export async function toggleConvoPriorityApi(
+  payload: IToggleConvoPriorityPayload
+) {
+  return axiosInstance.post("/messenger/toggle-conversation-priority", payload);
+}
+
+export async function toggleFavoriteCovoApi(
+  payload: IToggleFavoriteCovoPayload
+) {
+  return axiosInstance.post("/messenger/mark-conv-favorite", payload);
+}
+
+export async function deleteConversationsApi(
+  payload: IDeleteConversationsPayload
+) {
+  return axiosInstance.delete("/messenger/delete-conversations", {
+    data: payload,
+  });
+}
+
+export async function addReactionApi(
+  messageId: number,
+  payload: IAddReactionPayload
+) {
+  return axiosInstance.post(
+    `/messenger/message/${messageId}/reaction`,
+    payload
+  );
+}
+
+export async function deleteReactionApi(
+  messageId: number,
+  payload: IDeleteReactionPayload
+) {
+  return axiosInstance.delete(`/messenger/message/${messageId}/reaction`, {
+    data: payload,
+  });
+}
+
+export async function markConversationAsRead(conversationId: number) {
+  return axiosInstance.post('/messenger/mark-conversation-read', {
+    conversationId
+  });
+}
+
+export const getConversationFilesInfo = (conversationId: number, skip: number, take: number) => 
+  axios.get(`/messenger/conversation/${conversationId}/files`, { params: { skip, take } });
