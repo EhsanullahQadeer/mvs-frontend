@@ -80,7 +80,7 @@ const Sidebar = () => {
           </button>
 
           {/* Dashboard button */}
-          <button
+          {/* <button
             onClick={() => {
               // @TODO dashboard page
               navigate('/home');
@@ -103,7 +103,7 @@ const Sidebar = () => {
             <span className={`pt-[4px] text-[12px] font-["Mona-Sans-S"] text-[#FFFFFF]`}>
               Dashboard
             </span>
-          </button>
+          </button> */}
 
           {/* DMs / inbox button */}
           <button
@@ -132,33 +132,33 @@ const Sidebar = () => {
             </span>
           </button>
 
-          {/* License Request button */}
-          <button
-            onClick={() => {
-              navigate('/home');
-            }}
-            className="cursor-pointer w-[100%] h-[76px] flex flex-col items-center justify-center"
-          >
-            <div
-              className={`rounded-[8px] h-[40px] w-[40px] p-[8px] flex items-center justify-center 
-              ${pathname === '/license'
-                  ? 'bg-[#9EFF00] text-[#000]'
-                  : 'bg-[#1C1C1C] hover:bg-[#B4FF15] text-[#FFFFFF] hover:text-[#000]'
-                }`}
-            >
-              <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15.5 7.50024C15.7761 7.50024 16 7.27639 16 7.00024C16 6.7241 15.7761 6.50024 15.5 6.50024C15.2239 6.50024 15 6.7241 15 7.00024C15 7.27639 15.2239 7.50024 15.5 7.50024Z"
-                  fill="black" />
-                <path d="M1 17.5002V20.5002C1 21.1002 1.4 21.5002 2 21.5002H6V18.5002H9V15.5002H11L12.4 14.1002C13.7898 14.5843 15.3028 14.5825 16.6915 14.0949C18.0801 13.6074 19.2622 12.663 20.0444 11.4163C20.8265 10.1696 21.1624 8.69433 20.9971 7.2319C20.8318 5.76946 20.1751 4.40641 19.1344 3.36573C18.0938 2.32505 16.7307 1.66834 15.2683 1.50305C13.8058 1.33776 12.3306 1.67366 11.0839 2.4558C9.83716 3.23795 8.89279 4.42003 8.40525 5.80868C7.91771 7.19733 7.91586 8.71033 8.4 10.1002L1 17.5002Z"
-                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path d="M15.5 7.50024C15.7761 7.50024 16 7.27639 16 7.00024C16 6.7241 15.7761 6.50024 15.5 6.50024C15.2239 6.50024 15 6.7241 15 7.00024C15 7.27639 15.2239 7.50024 15.5 7.50024Z"
-                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </div>
-            <span className={`pt-[4px] text-[12px] font-["Mona-Sans-S"] text-[#FFFFFF]`}>
-              License
-            </span>
-          </button>
+          {/* License Request button
+          // <button
+          //   onClick={() => {
+          //     navigate('/home');
+          //   }}
+          //   className="cursor-pointer w-[100%] h-[76px] flex flex-col items-center justify-center"
+          // >
+          //   <div
+          //     className={`rounded-[8px] h-[40px] w-[40px] p-[8px] flex items-center justify-center 
+          //     ${pathname === '/license'
+          //         ? 'bg-[#9EFF00] text-[#000]'
+          //         : 'bg-[#1C1C1C] hover:bg-[#B4FF15] text-[#FFFFFF] hover:text-[#000]'
+          //       }`}
+          //   >
+          //     <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+          //       <path d="M15.5 7.50024C15.7761 7.50024 16 7.27639 16 7.00024C16 6.7241 15.7761 6.50024 15.5 6.50024C15.2239 6.50024 15 6.7241 15 7.00024C15 7.27639 15.2239 7.50024 15.5 7.50024Z"
+          //         fill="black" />
+          //       <path d="M1 17.5002V20.5002C1 21.1002 1.4 21.5002 2 21.5002H6V18.5002H9V15.5002H11L12.4 14.1002C13.7898 14.5843 15.3028 14.5825 16.6915 14.0949C18.0801 13.6074 19.2622 12.663 20.0444 11.4163C20.8265 10.1696 21.1624 8.69433 20.9971 7.2319C20.8318 5.76946 20.1751 4.40641 19.1344 3.36573C18.0938 2.32505 16.7307 1.66834 15.2683 1.50305C13.8058 1.33776 12.3306 1.67366 11.0839 2.4558C9.83716 3.23795 8.89279 4.42003 8.40525 5.80868C7.91771 7.19733 7.91586 8.71033 8.4 10.1002L1 17.5002Z"
+          //         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          //       <path d="M15.5 7.50024C15.7761 7.50024 16 7.27639 16 7.00024C16 6.7241 15.7761 6.50024 15.5 6.50024C15.2239 6.50024 15 6.7241 15 7.00024C15 7.27639 15.2239 7.50024 15.5 7.50024Z"
+          //         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          //     </svg>
+          //   </div>
+          //   <span className={`pt-[4px] text-[12px] font-["Mona-Sans-S"] text-[#FFFFFF]`}>
+          //     License
+          //   </span>
+          // </button> */}
 
           {/* Notifications Button */}
           <button
@@ -185,7 +185,6 @@ const Sidebar = () => {
               Notifications
             </span>
           </button>
-
           <div className="onboard-2">
             {/* Library button */}
             <button
@@ -201,20 +200,50 @@ const Sidebar = () => {
                     : 'bg-[#1C1C1C] hover:bg-[#B4FF15] text-[#FFFFFF] hover:text-[#000]'
                   }`}
               >
-                <svg width="22" height="21" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 8.5V11.5M5 4.5V15.5M9 1.5V19.5M13 6.5V13.5M17 3.5V16.5M21 8.5V11.5"
-                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                  />
                 </svg>
               </div>
               <span className={`pt-[4px] text-[12px] font-["Mona-Sans-S"] text-[#FFFFFF]`}>
-                Library
+                Likes
               </span>
             </button>
           </div>
 
+            {/* Library button */}
+            <button
+              onClick={() => {
+                navigate('/home');
+              }}
+              className="cursor-pointer w-[100%] h-[76px] flex flex-col items-center justify-center"
+            >
+              <div
+                className={`rounded-[8px] h-[40px] w-[40px] p-[8px] flex items-center justify-center 
+              ${pathname === '/unknown'
+                    ? 'bg-[#9EFF00] text-[#000]'
+                    : 'bg-[#1C1C1C] hover:bg-[#B4FF15] text-[#FFFFFF] hover:text-[#000]'
+                  }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" 
+                  />
+                </svg>
+              </div>
+              <span className={`pt-[4px] text-[12px] font-["Mona-Sans-S"] text-[#FFFFFF]`}>
+                Downloads
+              </span>
+            </button>
+
 
           {/* Collections */}
-          <button
+          {/* <button
             onClick={() => {
               navigate('/home');
             }}
@@ -237,7 +266,7 @@ const Sidebar = () => {
             <span className={`pt-[4px] text-[12px] font-["Mona-Sans-S"] text-[#FFFFFF]`}>
               Collections
             </span>
-          </button>
+          </button> */}
         </div >
       </div>
 
