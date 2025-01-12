@@ -17,8 +17,7 @@ const useHandleArtistSelected = () => {
     } = option;
 
 
-    console.log("option here", option);
-    if (isClaimed === true) {
+    if (isClaimed === true || username !== undefined) {
       navigate(`/profile/${username}`);
     } else if (isClaimed === undefined) {
       const wikiProfile = await createWikiProfile({ 
@@ -30,7 +29,7 @@ const useHandleArtistSelected = () => {
         followers
       });
       navigate(`/wiki/${wikiProfile.data?.results?.spotify_id}`);
-    }else{
+    } else{
       navigate(`/wiki/${spotifyId}`);
     }
   };

@@ -59,8 +59,6 @@ const Home = () => {
     setUsersByTag(usersData);
   };
 
-  console.log("usersByTag ", usersByTag);
-
   useEffect(() => {
     fetchUsersByTags();
   }, []);

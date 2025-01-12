@@ -23,6 +23,7 @@ import { useSearchHeader } from '../hooks/useSearchHeader';
 import { searchAllUsers, userArtistSearch } from "api/user";
 import useDebounce from "hooks/useDebounce";
 import { useState, useEffect } from "react";
+import avatarImg from "../../../assets/img/avatar.svg";
 
 export interface IAppProps {}
 
@@ -158,7 +159,7 @@ export function SearchHeader() {
                       }}
                     >
                       <img
-                        src={option.thumbnail}
+                        src={option?.thumbnail || avatarImg}
                         alt={option.professionalName}
                         className="w-10 h-10 rounded-md"
                       />
@@ -168,7 +169,7 @@ export function SearchHeader() {
                         </span>
                         <span className="text-charcoalGray text-xs ml-auto">
                           From{" "}
-                          <span className="text-coolGray">{option.type}</span>
+                          <span className="text-coolGray">{option?.type || "Wiki"}</span>
                         </span>
                       </div>
                     </li>

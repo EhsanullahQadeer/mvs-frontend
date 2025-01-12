@@ -29,7 +29,6 @@ export function useSearchHeader() {
     }
   };
 
-  // Handle search
   useEffect(() => {
     if (debouncedSearchValue) {
       (async () => {
@@ -41,7 +40,7 @@ export function useSearchHeader() {
             true,
             true
           );
-          console.log("spotifyResponse here", spotifyResponse);
+          
           const results = spotifyResponse.data?.results || [];
           const uniqueResults = results.filter((result, index, self) =>
             index === self.findIndex((t) => 

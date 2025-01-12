@@ -14,6 +14,7 @@ import {
 } from "api/messenger";
 import MessagesDetail from "pages/Inbox/components/MessagesDetail";
 import { requestConncetAPI } from "api/user";
+import avatarImg from "../../../assets/img/avatar.svg";
 
 type Props = {
   artistData: IArtistProfileData | null;
@@ -212,7 +213,7 @@ const ProfileAboutSection = (props: Props) => {
       <div className="px-4">
         <div className="rounded-full p-1 bg-jetBlack w-[108px] h-[108px] relative -translate-y-1/2">
           <img
-            src={thumbnail}
+            src={thumbnail || avatarImg}
             alt="Profile"
             className="h-full w-full rounded-full object-cover"
           />
