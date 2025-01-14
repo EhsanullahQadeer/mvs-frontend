@@ -47,10 +47,9 @@ const ArtistProfile = () => {
   const tabs = [
     { label: "Instrumentals", value: "instrumental" },
     { label: "Samples", value: "sample" },
+    { label: "Contributions", value: "contributions" },
     { label: "Full Songs", value: "full_song" },
   ];
-
-
 
   const getArtistData = useCallback(async () => {
     try {

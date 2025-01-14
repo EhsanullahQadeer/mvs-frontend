@@ -19,31 +19,34 @@ import axios from "axios";
 import { getSampleConsidering, saveSampleDownloadAPI, sampleLikeAPI } from "api/sounds";
 import { IoMdHeart } from "react-icons/io";
 
-const sampleData = [
-  { image: artistimg },
-  { image: artistimg },
-  { image: artistimg },
-  { image: artistimg },
-  { image: artistimg },
-];
-const SampleTable = (props: any) => {
-  const { samples, fetchAllUserSamples } = props;
+const SampleTable = (props: {
+  samples: any[];
+  setSamples?: (samples: any[]) => void;
+  fetchAllUserSamples?: () => void;
+  likedSamples?: Record<number, boolean>;
+  setLikedSamples?: (likes: Record<number, boolean>) => void;
+}) => {
+  const { samples, setSamples, fetchAllUserSamples, likedSamples = {}, setLikedSamples } = props;
   const [consideringData, setConsideringData] = useState<Record<number, any[]>>({});
   const [considering, setConsidering] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
-  const [likedSamples, setLikedSamples] = useState<Record<number, boolean>>({});
+  const [currPlayingId, setCurrentPlaying] = useState(0);
+  const [currPlayingIdx, setCurrentPlayingIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currTrack, setTrack] = useState(null);
+  const [Play, setPlay] = useState(false);
+  const [localLikedStatus, setLocalLikedStatus] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
-    if (samples) {
+    if (samples && setLikedSamples) {
       const initialLikes: Record<number, boolean> = {};
-      Object.values(samples).forEach((sample: any) => {
+      samples.forEach(sample => {
         initialLikes[sample.id] = sample.userInfo?.isLiked || false;
       });
       setLikedSamples(initialLikes);
     }
-  }, [samples]);
+  }, [samples, setLikedSamples]);
 
-  // Fetch considering data when samples change
   useEffect(() => {
     if (samples) {
       const fetchConsideringData = async (sampleId: number) => {
@@ -71,6 +74,7 @@ const SampleTable = (props: any) => {
 
   const rowRefs = useRef<Array<HTMLTableRowElement | null>>([]);
   const formatDuration = (totalSeconds: number) => {
+    console.log('totalSeconds', totalSeconds);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
@@ -94,12 +98,6 @@ const SampleTable = (props: any) => {
     pauseTrack,
   } = useWaveform();
   // const { currentTrack, playTrack, isPaused, pauseTrack } = useContext(PlayerContext);
-
-  const [currPlayingId, setCurrentPlaying] = useState(0);
-  const [currPlayingIdx, setCurrentPlayingIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currTrack, setTrack] = useState(null);
-  const [Play, setPlay] = useState(false);
 
   // Load all the tracks at once when the component mounts to show their waveforms
   useEffect(() => {
@@ -305,17 +303,27 @@ const SampleTable = (props: any) => {
 
   const handleLike = async (e: React.MouseEvent, sample: any) => {
     e.preventDefault();
-    console.log('sample', sample);
     try {
       await sampleLikeAPI(sample.id);
-      setLikedSamples(prev => ({
+      
+      // Update local state immediately
+      setLocalLikedStatus(prev => ({
         ...prev,
         [sample.id]: !prev[sample.id]
       }));
+
     } catch (error) {
       console.error('Like action failed:', error);
     }
   };
+
+  useEffect(() => {
+    const initialStatus: Record<number, boolean> = {};
+    samples.forEach(sample => {
+      initialStatus[sample.id] = sample.userInfo?.isLiked || false;
+    });
+    setLocalLikedStatus(initialStatus);
+  }, [samples]);
 
   return (
     <>
@@ -379,7 +387,6 @@ const SampleTable = (props: any) => {
         <tbody className="">
           {samples &&
             Object.values(samples).map((sample: any, map_index) => {
-              console.log('howdyASJDKLFADJSLKF', sample);
               return (
                 <>
                   <tr
@@ -448,7 +455,7 @@ const SampleTable = (props: any) => {
                       {sample.filename}
                       <br />
                       <span className="text-[10px] font-semibold text-coolGray">
-                        {sample.collaborators.find(
+                        {sample?.collaborators?.find(
                           (composer) => composer.id === sample.owner_id
                         )?.professional_name || ""}
                       </span>
@@ -591,7 +598,7 @@ const SampleTable = (props: any) => {
                         </svg>
                       </a> */}
                         <span onClick={(e) => handleLike(e, sample)}>
-                          {likedSamples[sample.id] ? (
+                          {localLikedStatus[sample.id] ? (
                             <IoMdHeart
                               className={`text-[16px] cursor-pointer ${
                                 currPlayingId === sample.id
@@ -627,6 +634,7 @@ const SampleTable = (props: any) => {
                               index: map_index,
                               getSamples: "getSamples",
                               fetchAllUserSamples,
+                              is_owner: sample?.userInfo?.isOwner,
                               // page={current_page}
                               // sound={sound}
                             }}

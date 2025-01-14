@@ -189,7 +189,7 @@ const Sidebar = () => {
             {/* Library button */}
             <button
               onClick={() => {
-                navigate('/home');
+                navigate('/library');
               }}
               className="cursor-pointer w-[100%] h-[76px] flex flex-col items-center justify-center"
             >
@@ -200,22 +200,19 @@ const Sidebar = () => {
                     : 'bg-[#1C1C1C] hover:bg-[#B4FF15] text-[#FFFFFF] hover:text-[#000]'
                   }`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                  />
+                <svg width="22" height="21" viewBox="0 0 22 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 8.5V11.5M5 4.5V15.5M9 1.5V19.5M13 6.5V13.5M17 3.5V16.5M21 8.5V11.5"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
               </div>
               <span className={`pt-[4px] text-[12px] font-["Mona-Sans-S"] text-[#FFFFFF]`}>
-                Likes
+                Library
               </span>
             </button>
           </div>
 
             {/* Library button */}
-            <button
+            {/* <button
               onClick={() => {
                 navigate('/home');
               }}
@@ -239,7 +236,7 @@ const Sidebar = () => {
               <span className={`pt-[4px] text-[12px] font-["Mona-Sans-S"] text-[#FFFFFF]`}>
                 Downloads
               </span>
-            </button>
+            </button> */}
 
 
           {/* Collections */}

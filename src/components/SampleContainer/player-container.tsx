@@ -27,12 +27,16 @@ export interface AudioTrackType {
   audio_url: string;
   title: string;
   artists: string[];
-  duration: number;
+  length: number;
   thumbnail?: string;
   bpm?: number;
   key?: string;
   s3_key?: string;
   filename?: string;
+  userInfo?: {
+    isLiked?: boolean;
+    isDownloaded?: boolean;
+  };
 }
 
 // Define PlayerContextType
@@ -127,18 +131,14 @@ export const PlayerContext = createContext<PlayerContextType>({
 
 /* PlayerContainer */
 const SamplesContainer = ({ user_id = 0, selectedTab }) => {
-  // States Setup
+  // Add these states
+  const [likedSamples, setLikedSamples] = useState<Record<number, boolean>>({});
   const [loading, setLoading] = useState(false);
   const [samples, setSamples] = useState<AudioTrackType[]>([]);
-  const [currentPage, setCurrentPage] = useState(0); // To track the current page
-  // @todo: this value is only present for MVP purposes, should remove later.
-  const samplesPerPage = 20; // The number of samples per page
+  const [currentPage, setCurrentPage] = useState(0);
+  const samplesPerPage = 20;
+  const [totalCount, setTotalCount] = useState(0);
 
-  const [allSamples, setAllSamples] = useState<AudioTrackType[]>([]); // To store all the samples
-  const [currentSamples, setCurrentSamples] = useState<AudioTrackType[]>([]); // To store the samples for the current page
-  const [totalCount, setTotalCount] = useState(0); // Add this state
-
-  // Fetch all user samples from the server once
   const fetchUserSamples = async (page: number) => {
     setLoading(true);
     try {
@@ -149,20 +149,24 @@ const SamplesContainer = ({ user_id = 0, selectedTab }) => {
         type: selectedTab,
         includeUserInfo: true,
       });
+      console.log('response here', _sound?.data?.results);
+      const samplesArray = Object.values(_sound?.data?.results?.samples || {}) as AudioTrackType[];
       
-      const samplesArray = Object.values(
-        _sound?.data?.results?.samples || {}
-      ) as AudioTrackType[];
+      setSamples(samplesArray);
       
-      console.log('Pagination info:', _sound?.data?.results?.pagination);
-      setCurrentSamples(samplesArray);
+      // Initialize likedSamples state
+      const initialLikes: Record<number, boolean> = {};
+      samplesArray.forEach(sample => {
+        initialLikes[sample.id] = sample?.userInfo?.isLiked || false;
+      });
+      setLikedSamples(initialLikes);
       
       if (_sound?.data?.results?.total !== undefined) {
         setTotalCount(_sound.data.results.total);
       }
     } catch (error) {
       console.error('Error fetching samples:', error);
-      setCurrentSamples([]);
+      setSamples([]);
     } finally {
       setLoading(false);
     }
@@ -190,7 +194,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab }) => {
       <div className="text-xs font-medium text-[#9C9C9C] py-4 px-3 border-t border-[#1F1F1F]">
         {totalCount} results
       </div>
-      <SampleTable samples={currentSamples} />
+      <SampleTable samples={samples} />
       {totalCount > 0 && (
         <Pagination
           pageCount={Math.ceil(totalCount / samplesPerPage)}

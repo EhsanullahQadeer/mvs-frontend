@@ -28,7 +28,7 @@ import ShareSetting from "./ShareSetting";
 import { deleteSampleAPI } from "api/sounds";
 
 const DropDown = (props: any) => {
-  const { sample, play, fetchAllUserSamples } = props;
+  const { sample, play, fetchAllUserSamples, is_owner } = props;
 
   const [request_split_sheet, setRequestSplitSheet] = useState(false);
   const [sample_info, setSampleInfo] = useState(false);
@@ -79,34 +79,40 @@ const DropDown = (props: any) => {
 
   return (
     <React.Fragment>
-      <AlertDialog
-        {...{
-          open: openDeleteDialog,
-          handleClose: handleCloseDialog,
-          title: "Are you sure you want to delete the sample file?",
-          desciption: "Please confirm if you want to proceed!",
-          button1: "Cancel",
-          button2: "Delete sample",
-          onConfirm: handleDeleteComposer,
-        }}
-      />
+      {is_owner && (
+        <AlertDialog
+          {...{
+            open: openDeleteDialog,
+            handleClose: handleCloseDialog,
+            title: "Are you sure you want to delete the sample file?",
+            desciption: "Please confirm if you want to proceed!",
+            button1: "Cancel",
+            button2: "Delete sample",
+            onConfirm: handleDeleteComposer,
+          }}
+        />
+      )}
 
-      <UpdateSamplePopup
-        {...{
-          open: openEditPopup,
-          handleClose: handleCloseDialog,
-          sampleToEdit,
-          currentUserInfo: user,
-        }}
-      />
+      {is_owner && (
+        <UpdateSamplePopup
+          {...{
+            open: openEditPopup,
+            handleClose: handleCloseDialog,
+            sampleToEdit,
+            currentUserInfo: user,
+          }}
+        />
+      )}
 
-      <ShareSetting
-        {...{
-          isOpen: isOpenShareDialog,
-          onClose: handleCloseShareDialog,
-          sample,
-        }}
-      />
+      {is_owner && (
+        <ShareSetting
+          {...{
+            isOpen: isOpenShareDialog,
+            onClose: handleCloseShareDialog,
+            sample,
+          }}
+        />
+      )}
 
       <div className="bg-transparent">
         <Menu
@@ -136,17 +142,19 @@ const DropDown = (props: any) => {
           >
             <Menu.Items className="onboard-9 zindex absolute border border-[#3a3a3a] rounded-[8px] top-[0px] right-[20px] w-[235px] bg-[#262626] h-auto p-[10px]">
               <div className="">
-                <Menu.Item>
-                  <div
-                    onClick={() => handleOpenDialog("edit", sample)}
-                    className="onboard-10 flex items-center hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]"
+                {is_owner && (
+                  <Menu.Item>
+                    <div
+                      onClick={() => handleOpenDialog("edit", sample)}
+                      className="onboard-10 flex items-center hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]"
                   >
                     <FiEdit3 className="text-[18px]" />
                     <p className=" ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
                       Edit
                     </p>
-                  </div>
-                </Menu.Item>
+                    </div>
+                  </Menu.Item>
+                )}
                 <Menu.Item>
                   <a href={sample.s3_key} download={sample.filename}>
                     <div className="onboard-11 flex items-center  hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]">
@@ -159,41 +167,50 @@ const DropDown = (props: any) => {
                 </Menu.Item>
               </div>
               <div className="">
-                <Menu.Item>
-                  <div
-                    className="onboard-12 flex items-center  hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]"
-                    onClick={() => {
-                      setIsOpenShareDialog(true);
-                    }}
-                  >
-                    <GoShareAndroid className="text-[18px]" />
-                    <p className="ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
-                      Share Settings
-                    </p>
-                  </div>
-                </Menu.Item>
-                <Menu.Item>
-                  <div
-                    // onClick={() => setRequestSplitSheet(true)}
+
+                {is_owner && (
+                  <Menu.Item>
+                    <div
+                      className="onboard-12 flex items-center  hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]"
+                      onClick={() => {
+                        setIsOpenShareDialog(true);
+                      }}
+                    >
+                      <GoShareAndroid className="text-[18px]" />
+                      <p className="ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
+                        Share Settings
+                      </p>
+                    </div>
+                  </Menu.Item>
+                )}
+                
+                {is_owner && (
+                  <Menu.Item>
+                    <div
+                      // onClick={() => setRequestSplitSheet(true)}
                     className="onboard-13 flex items-center cursor-pointer  hover:bg-eclipseGray rounded-[4px] py-[8px] px-[12px]"
                   >
                     <GoShareAndroid className="text-[18px]" />
                     <button className=" ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
                       Sample Analytics
                     </button>
-                  </div>
-                </Menu.Item>
-                <Menu.Item>
-                  <div
-                    onClick={() => handleOpenDialog("delete", sample)}
-                    className="onboard-13 flex items-center cursor-pointer hover:bg-eclipseGray rounded-[4px] py-[8px] px-[12px]"
+                    </div>
+                  </Menu.Item>
+                )}
+                
+                {is_owner && (
+                  <Menu.Item>
+                    <div
+                      onClick={() => handleOpenDialog("delete", sample)}
+                      className="onboard-13 flex items-center cursor-pointer hover:bg-eclipseGray rounded-[4px] py-[8px] px-[12px]"
                   >
                     <RiDeleteBinLine className="text-[18px]" />
                     <button className="ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
                       Delete Track
                     </button>
-                  </div>
-                </Menu.Item>
+                    </div>
+                  </Menu.Item>
+                )}
               </div>
               <div className="">
                 {/* <Menu.Item>

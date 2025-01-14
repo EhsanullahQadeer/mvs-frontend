@@ -11,6 +11,11 @@ import axiosInstance from "../axios";
 import { config } from "config/ConfigManager";
 import { ISoundMetaData } from "pages/sample-page/SamplePage";
 
+interface PaginationParams {
+  skip: number;
+  take: number;
+}
+
 export async function getSoundAPI(id: any) {
   return axiosInstance.get(`/sounds/${id}`);
 }
@@ -19,7 +24,7 @@ export async function getLikedSamplesAPI(params: any) {
   return axiosInstance.get("/sounds/likes", { params });
 }
 
-export async function getDownloadedSamplesAPI(params: any) {
+export async function getDownloadedSamplesAPI(params: PaginationParams) {
   return axiosInstance.get("/sounds/downloads", { params });
 }
 
@@ -29,6 +34,10 @@ export async function getSoundSamplesAPI(id: any, params: any) {
 
 export async function getSampleDownloadsAPI(id: any, params: any) {
   return axiosInstance.get(`/sounds/sample/${id}/downloads`, { params });
+}
+
+export async function getUserDownloadsAPI(params: any) {
+  return axiosInstance.get(`/sounds/get-downloaded-sample`, { params });
 }
 
 export async function getUserSamplesAPI(params: any) {

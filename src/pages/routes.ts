@@ -12,8 +12,9 @@ import ThankyouPage from "pages/thankyou";
 import Home from "./home/Home";
 import TermsAndConditions from "pages/terms";
 import SamplesPage from "pages/samples";
-import MyLikesPage from "pages/my-likes";
-import MyDownloadsPage from "pages/downloaded-samples";
+import Library from "pages/library/library"
+import MyLikesPage from "pages/library/components/my-likes";
+import MyDownloadsPage from "pages/library/components/my-downloads";
 import InboxPage from "pages/Inbox";
 import StripeCallback from "pages/StripeCallback";
 import CheckScrolling from "./CheckScrolling";
@@ -177,15 +178,22 @@ const routes: IRoute[] = [
     component: StripeCallback,
   },
   {
-    path: "/my/likes",
-    name: "Likes",
-    component: MyLikesPage,
-  },
-
-  {
-    path: "/my/downloads",
-    name: "Downloads",
-    component: MyDownloadsPage,
+    path: "/library",
+    name: "Library",
+    component: Library,
+    children: [
+      {
+        path: "my/likes",
+        name: "Likes",
+        component: MyLikesPage,
+      },
+    
+      {
+        path: "my/downloads",
+        name: "Downloads",
+        component: MyDownloadsPage,
+      },
+    ]
   },
   {
     path: "/sound/vocals/:id",

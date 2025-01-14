@@ -50,6 +50,7 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const handleSave = async () => {
     try {
@@ -138,6 +139,11 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
   );
 
   useEffect(() => {
+    if (initialLoad) {
+      setInitialLoad(false);
+      return;
+    }
+    
     debouncedUpdate(sample.id, {
       enable_public_access: linkEnabled,
       require_logged_in: requirePassword,
