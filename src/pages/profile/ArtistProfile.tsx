@@ -179,7 +179,7 @@ const ArtistProfile = () => {
               </div>
             </section>
 
-            <section className="border-l border-eclipseGray w-[480px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
+            <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
               <ProfileAboutSection
                 {...{ artistData, creditsData, connectionDetail, setConnectionDetail }}
               />

@@ -390,17 +390,16 @@ const SampleTable = (props: {
               return (
                 <>
                   <tr
-                    key={sample.id}
-                    id={`sample-item-${sample.id}`}
-                    className={`whitespace-nowrap px-3 py-4 text-sm text-gray-300 row-hover ${
-                      currPlayingId === sample.id ? "active-sample" : ""
-                    }`}
                     ref={(el) => (rowRefs.current[map_index] = el)}
+                    key={map_index}
+                    style={{ height: '52px' }}
+                    className={`border-b border-[#1F1F1F] hover:bg-[#1F1F1F] ${
+                      currPlayingId === sample.id ? "bg-[#1F1F1F]" : ""
+                    }`}
                     onClick={(e) => {
                       const target =
                         e.target instanceof Element ? e.target : null;
                       const clickedTd = target?.closest("td");
-
                       if (
                         clickedTd &&
                         clickedTd.classList.contains("playable-td")

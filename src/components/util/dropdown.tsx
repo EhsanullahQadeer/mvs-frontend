@@ -26,6 +26,7 @@ import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
 import ShareSetting from "./ShareSetting";
 import { deleteSampleAPI } from "api/sounds";
+import { saveSampleDownloadAPI } from "api/sounds";
 
 const DropDown = (props: any) => {
   const { sample, play, fetchAllUserSamples, is_owner } = props;
@@ -75,6 +76,16 @@ const DropDown = (props: any) => {
 
   const handleCloseShareDialog = () => {
     setIsOpenShareDialog(false);
+  };
+
+  const handleDownload = async (e: React.MouseEvent, sample: any) => {
+    e.preventDefault();
+    try {
+      await saveSampleDownloadAPI(sample.id);
+      window.location.href = sample.s3_key;
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
   };
 
   return (
@@ -156,14 +167,15 @@ const DropDown = (props: any) => {
                   </Menu.Item>
                 )}
                 <Menu.Item>
-                  <a href={sample.s3_key} download={sample.filename}>
-                    <div className="onboard-11 flex items-center  hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]">
-                      <FiDownload className="text-[18px]" />
-                      <button className=" ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
-                        Download
-                      </button>
-                    </div>
-                  </a>
+                  <div 
+                    onClick={(e) => handleDownload(e, sample)} 
+                    className="onboard-11 flex items-center hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]"
+                  >
+                    <FiDownload className="text-[18px]" />
+                    <button className="ml-[8px] font-['Mona-Sans-M'] text-[#a3a3a4]">
+                      Download
+                    </button>
+                  </div>
                 </Menu.Item>
               </div>
               <div className="">
