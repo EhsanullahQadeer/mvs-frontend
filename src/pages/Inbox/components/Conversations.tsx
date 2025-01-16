@@ -30,6 +30,8 @@ export const Conversations = (props: Props) => {
       displayName,
       last_message_summary,
       last_updated_timestamp,
+      current_balance_a,
+      current_balance_b,
       total_payments_a,
       total_payments_b,
     },
@@ -72,6 +74,8 @@ export const Conversations = (props: Props) => {
     currentUserInfo.id === user_a.id ? unread_count_a : unread_count_b;
   const total_payments =
     currentUserInfo.id === user_a.id ? total_payments_a : total_payments_b;
+  const current_balance =
+    currentUserInfo.id === user_a.id ? current_balance_b : current_balance_a;
 
   return (
     <>
@@ -153,12 +157,12 @@ export const Conversations = (props: Props) => {
                       {displayName}
                     </div>
                     <div className={`self-start px-1 py-0.5 mt-1 text-xs tracking-wide leading-tight whitespace-nowrap rounded border border-solid min-h-[16px] ${
-                      Number(total_payments) === 0 
+                      Number(current_balance) === 0 
                         ? "text-zinc-300 bg-zinc-800 border-zinc-500" 
                         : "text-lime-400 bg-lime-800 border-lime-400"
                     }`}>
-                      <span className={Number(total_payments) === 0 ? "text-zinc-300" : "text-lime-400"}>$</span>
-                      {Number(total_payments) > 0 ? total_payments : ''}
+                      <span className={Number(current_balance) === 0 ? "text-zinc-300" : "text-lime-400"}>$</span>
+                      <span className={"text-lime-400"}>{Number(current_balance) > 0 ? current_balance : ''}</span>
                     </div>
                   </div>
                 </div>

@@ -239,6 +239,8 @@ export type IConversation = {
   is_priority: boolean;
   created_at: string;
   updated_at: string;
+  current_balance_a: string;
+  current_balance_b: string;
   total_payments_a: string;
   total_payments_b: string;
   user_a: User;
