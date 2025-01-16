@@ -201,7 +201,7 @@ const MessagesSection = (props: Props) => {
                           onClick={() => handleDemoBtn(id)}
                           className="bg-limeGreen py-3 px-4 w-full text-[#203300] text-sm font-semibold rounded-full"
                         >
-                          Reply for ${credit_payment}
+                          Earn ${credit_payment} {credit_payment.length > 6 ? "" : "- Tap to Unlock"}
                         </button>
                       )}
 
