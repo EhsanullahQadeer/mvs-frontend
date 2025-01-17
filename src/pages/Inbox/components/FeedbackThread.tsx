@@ -97,23 +97,30 @@ const FeedbackThread = (props: Props) => {
             {demoMessageObj?.claimed ? (
               <>
                 {threadReplyObjs?.map((reply, index) => {
-                  return <ThreadMessageItem {...{ message: reply, index }} />;
+                  return (
+                    <>
+                      {index === 1 && (
+                        <div className="my-4 w-full text-charcoalGray flex items-center justify-center">
+                        <div className="h-px w-full m-2 bg-charcoalGray"></div>
+                        <div className="flex gap-2 text-sm font-medium items-center text-[#CACACA]">
+                          <div className="w-5 h-5">
+                            <img
+                              className="w-full h-full object-cover"
+                              src={CheckerIcon}
+                              alt=""
+                            />
+                          </div>
+                          <h4>Completed!</h4>
+                        </div>
+                        <div className="h-px w-full m-2 bg-charcoalGray"></div>
+                      </div>
+                      )}
+                      <ThreadMessageItem {...{ message: reply, index }} />
+                    </>
+                  );
                 })}
 
-                <div className="my-4 w-full text-charcoalGray flex items-center justify-center">
-                  <div className="h-px w-full m-2 bg-charcoalGray"></div>
-                  <div className="flex gap-2 text-sm font-medium items-center text-[#CACACA]">
-                    <div className="w-5 h-5">
-                      <img
-                        className="w-full h-full object-cover"
-                        src={CheckerIcon}
-                        alt=""
-                      />
-                    </div>
-                    <h4>Completed!</h4>
-                  </div>
-                  <div className="h-px w-full m-2 bg-charcoalGray"></div>
-                </div>
+                
               </>
             ) : (
               <div className="bg-[#002C5580] border border-[#57AEFF] rounded-xl p-4 text-center flex flex-col items-center gap-1 w-80 mt-12">

@@ -34,7 +34,7 @@ const Footer = ({
 
   const canSendMessage =
     messageInputValue.trim() &&
-    ((isFeedbackSection && recordedAudio) || !isFeedbackSection);
+    ((!isFeedbackSection) || (isFeedbackSection && (recordedAudio || messageInputValue)));
 
   const validateFile = (file: File): File | null =>
     file.type.startsWith("audio/") ? file : null;
@@ -52,34 +52,50 @@ const Footer = ({
     const formData = new FormData();
     const isDemo = Boolean(selectedAudioFile);
 
+    formData.append("recipientId", recipient_id.toString());
+    formData.append("senderId", currentUserInfo?.id?.toString() || "");
+    formData.append("message", messageInputValue || "");
+    if (isFeedbackSection) {
+      formData.append("messageId", messageObj?.id?.toString() || "");
+      formData.append("replyContent", messageInputValue || "");
+      formData.append(
+        "isDemoReply",
+        messageObj?.audio_media.is_demo ? "true" : "false"
+      );
+      formData.append("audioFile", recordedAudio || "");
+    } else {
+      formData.append("conversationId", conversation.id?.toString() || "");
+      formData.append(
+        "creditPaymentAmount",
+        isDemo ? creditPaymentAmount.toString() : "0"
+      );
+      formData.append("isDemo", isDemo ? "true" : "false");
+      formData.append("audioFile", selectedAudioFile || "");
+    }
+
+    // Log FormData contents
+    Array.from(formData.entries()).forEach(([key, value]) => {
+        console.log(key + ': ' + value);
+    });
+
+    if (isFeedbackSection && messageObj) {
+      console.log('Sending reply to message ID:', messageObj.id);
+    }
+
     try {
       setOverlayLoading?.(true);
 
-      formData.append("recipientId", recipient_id.toString());
-      formData.append("senderId", currentUserInfo?.id?.toString() || "");
-      formData.append("message", messageInputValue || "");
       if (isFeedbackSection) {
-        formData.append("messageId", messageObj?.id?.toString() || "");
-        formData.append("replyContent", messageInputValue || "");
-        formData.append(
-          "isDemoReply",
-          messageObj?.audio_media.is_demo ? "true" : "false"
-        );
-        formData.append("audioFile", recordedAudio || "");
         await replyToMessage(formData);
       } else {
-        formData.append("conversationId", conversation.id?.toString() || "");
-        formData.append(
-          "creditPaymentAmount",
-          isDemo ? creditPaymentAmount.toString() : "0"
-        );
-        formData.append("isDemo", isDemo ? "true" : "false");
-        formData.append("audioFile", selectedAudioFile || "");
         await sendInboxMessage(formData);
       }
       await getConversationMessages?.(conversation);
       setMessageInputValue("");
       setRecordedAudio(null);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // You might want to show an error toast/notification here
     } finally {
       setOverlayLoading?.(false);
       setSelectedAudioFile(null);
@@ -97,6 +113,12 @@ const Footer = ({
   useEffect(() => {
     console.log('recordedAudio state:', recordedAudio);
   }, [recordedAudio]);
+
+  useEffect(() => {
+    if (messageObj) {
+      console.log('Message ID:', messageObj.id);
+    }
+  }, [messageObj]);
 
   return (
     <>
