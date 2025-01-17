@@ -18,6 +18,8 @@ import ConsideringModal from "components/modals/considering";
 import axios from "axios";
 import { getSampleConsidering, saveSampleDownloadAPI, sampleLikeAPI } from "api/sounds";
 import { IoMdHeart } from "react-icons/io";
+import { RootState } from "redux/reducers";
+import { useSelector } from "react-redux";
 
 const SampleTable = (props: {
   samples: any[];
@@ -287,9 +289,12 @@ const SampleTable = (props: {
 
   const handleDownload = async (e: React.MouseEvent, sample: any) => {
     e.preventDefault();
+    e.stopPropagation();
     
     try {
-      await saveSampleDownloadAPI(sample.id);
+      if (!sample.userInfo.isOwner) {
+        await saveSampleDownloadAPI(sample.id);
+      }
       const link = document.createElement('a');
       link.href = sample.s3_key;
       link.download = sample.filename;
