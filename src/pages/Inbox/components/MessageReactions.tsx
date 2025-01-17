@@ -181,7 +181,7 @@ const MessageReactions = (props: Props) => {
       )}
 
       {menuSection && (
-        <div ref={menuRef} className="absolute top-12 right-0 w-[189px]">
+        <div ref={menuRef} className="absolute top-12 right-0 w-[189px] z-[100]">
           <div className="bg-eerieBlack border border-charcoalGray rounded-lg py-2.5">
             {(isDemoSender ? senderMenu : receiverMenu).map((item, idx) => {
               const { label, icon, func } = item;
