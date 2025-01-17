@@ -98,7 +98,7 @@ export async function getUserBySpotifyId(spotifyId: string) {
 }
 
 export async function getUserByIdAPI(id: string) {
-  return axiosInstance.get(`/users/${id}`);
+  return axiosInstance.get(`/users/search/${id}`);
 }
 
 export async function userProfessionalNameSearch(

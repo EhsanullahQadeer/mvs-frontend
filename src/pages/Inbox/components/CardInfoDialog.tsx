@@ -49,6 +49,7 @@ const CardInfoDialog = (props: Props) => {
         open={openCardInfo}
         onClose={handleClose}
         sx={{
+          zIndex: 99999,
           "& .MuiPaper-root": {
             backgroundColor: "#131313",
             padding: "0 24px",
@@ -62,14 +63,14 @@ const CardInfoDialog = (props: Props) => {
       >
         <Formik
           initialValues={{
-            cardNumber: "",
-            cardHolder: "",
-            addressLine1: "",
-            addressLine2: "",
-            country: "",
-            city: "",
-            state: "",
-            zip: "",
+            cardNumber: "4242424242424242",
+            cardHolder: "John Doe",
+            addressLine1: "123 Test Street",
+            addressLine2: "Apt 4B",
+            country: "United States",
+            city: "Los Angeles",
+            state: "CA",
+            zip: "90001",
           }}
           validationSchema={PaymentSchema}
           onSubmit={handleContinue}

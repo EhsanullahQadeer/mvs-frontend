@@ -5,6 +5,7 @@ import { FaRegCircleQuestion } from "react-icons/fa6";
 import CardInfoDialog from "./CardInfoDialog";
 import { IoIosArrowDown } from "react-icons/io";
 import { IConversation } from "./types";
+import { getUserByIdAPI } from "../../../api/user";
 
 interface Props {
   openPurchaseOrder: boolean;
@@ -14,9 +15,7 @@ interface Props {
   conversation: IConversation;
 }
 
-const basePrice = 149.99;
 const serviceFeePercentage = 2.9;
-const serviceFee = (basePrice * serviceFeePercentage) / 100;
 
 const PurchaseOrderDialog = (props: Props) => {
   const {
@@ -27,6 +26,17 @@ const PurchaseOrderDialog = (props: Props) => {
     handleSendMessage,
   } = props;
   const { thumbnail, displayName } = conversation || {};
+
+  const recipientId = conversation?.recipient_id;
+  const [basePrice, setBasePrice] = useState(0);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const response = await getUserByIdAPI(recipientId?.toString());
+      setBasePrice(response.data?.demo_fee || 0);
+    };
+    fetchUserInfo();
+  }, [recipientId]);
 
   const [inputTipAmount, setInputTipAmount] = useState("");
   const [tipAmount, setTipAmount] = useState(0);
@@ -74,17 +84,23 @@ const PurchaseOrderDialog = (props: Props) => {
   };
 
   useEffect(() => {
-    const total = basePrice + serviceFee + tipAmount;
+    const subtotal = basePrice + tipAmount;
+    const serviceFee = (subtotal * serviceFeePercentage) / 100;
+    const total = subtotal + serviceFee;
     setTotalAmount(total.toFixed(2));
     setCreditPaymentAmount(Number(total.toFixed(2)));
-  }, [tipAmount]);
+  }, [tipAmount, basePrice]);
+
+  const subtotal = basePrice + tipAmount;
+  const serviceFee = (subtotal * serviceFeePercentage) / 100;
 
   return (
-    <>
+    <div style={{ zIndex: 99999 }}>
       <Dialog
         open={openPurchaseOrder}
         onClose={handleClose}
         sx={{
+          zIndex: 9999,
           "& .MuiPaper-root": {
             backgroundColor: "#131313",
             padding: "0 24px",
@@ -96,7 +112,7 @@ const PurchaseOrderDialog = (props: Props) => {
           },
         }}
       >
-        <div className="relative flex flex-col gap-2.5 overflow-hidden">
+        <div className="relative flex flex-col gap-2.5 overflow-hidden z-[100]">
           <div className="flex flex-col gap-2.5 sticky pt-[24px] z-40 pb-1 top-0 bg-darkGray">
             <div className="flex justify-between text-[20px] text-softGray items-center font-semibold">
               <h2>Purchase Order</h2>
@@ -197,11 +213,12 @@ const PurchaseOrderDialog = (props: Props) => {
             </div>
 
             <div className="flex items-center py-1 flex-1 gap-4">
-              <div className="flex gap-[5px] flex-col w-full">
+
+              {/* <div className="flex gap-[5px] flex-col w-full">
                 <span className="text-silver text-[12px]">Tip Amount</span>
                 <div className="relative">
                   <div className="absolute inset-y-0 right-3 flex items-center text-dimGray">
-                    USA
+                    USD
                   </div>
                   <input
                     name="inputTipAmount"
@@ -211,19 +228,9 @@ const PurchaseOrderDialog = (props: Props) => {
                     className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
                   />
                 </div>
-              </div>
-              <div className="flex gap-[5px] flex-col w-full">
-                <span className="text-dimGray text-[10px]">
-                  (Highest Bid $55)
-                </span>
-                <button
-                  type="submit"
-                  onClick={handleMatchBid}
-                  className="w-full bg-limeGreen text-sm text-jetBlack font-semibold py-[12px] px-[8px] rounded-full"
-                >
-                  Match bid
-                </button>
-              </div>
+              </div> */}
+
+              <div className="flex gap-[5px] flex-col w-full"></div>
             </div>
 
             <div className="flex flex-col flex-1 text-[12px] gap-1 py-2 border-y border-eclipseGray">
@@ -241,8 +248,19 @@ const PurchaseOrderDialog = (props: Props) => {
               </div>
               <div className="flex flex-col  text-grayishSilver">
                 <div className="flex justify-between items-center">
-                  <span>Tip Amount</span>
-                  <span>${tipAmount}</span>
+                  <span className="text-silver text-[12px]">Tip Amount</span>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 right-3 flex items-center text-dimGray">
+                      USD
+                    </div>
+                    <input
+                      name="inputTipAmount"
+                      placeholder="$00.00"
+                      value={inputTipAmount}
+                      onChange={handleTipAmountChange}
+                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-[160px] h-[40px] text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg text-right pr-14"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -265,7 +283,7 @@ const PurchaseOrderDialog = (props: Props) => {
                 <input
                   name="none"
                   type="name"
-                  placeholder="None"
+                  placeholder="MVSSIVE Beta - Testing Card"
                   className=" focus:border-transparent flex-1 focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
                 />
               </div>
@@ -308,7 +326,7 @@ const PurchaseOrderDialog = (props: Props) => {
         formData={setFormData}
         setFormData={setFormData}
       />
-    </>
+    </div>
   );
 };
 
