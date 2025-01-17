@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { GrFormLocation } from "react-icons/gr";
 import ScrollableContainer from "components/util/scrollable-container";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { artistData } from "./data";
 import { userTagsObj } from "utils/usersTags";
 import { getKeyByValue } from "utils/jsHandlers";
@@ -10,16 +10,19 @@ import "../styles/user-card.scss";
 import { UserFiltersDTO } from "api/user/types";
 import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 
-type Props = {
+interface Props {
   primaryUserRole: string;
-  setUsersByTag: (value: any) => void;
   dataArr: any;
   title: string;
-};
+  setUsersByTag: Dispatch<SetStateAction<Record<string, any>>>;
+  setIsFilterApplied: Dispatch<SetStateAction<string>>;
+}
 const { filtersArr } = artistData;
 
 const ScrollableComponent = (props: Props) => {
-  const { primaryUserRole, dataArr, title, setUsersByTag } = props;
+
+  const { primaryUserRole, dataArr, title, setUsersByTag, setIsFilterApplied } = props;
+  console.log("props", props);
   const { handleArtistSelected } = useHandleArtistSelected();
 
   const [filterValue, setFilterValue] = useState<string>("");
@@ -75,7 +78,7 @@ const ScrollableComponent = (props: Props) => {
   }, [filterValue, initialData]);
 
   const handleViewAll = () => {
-    console.log("View All");
+    setIsFilterApplied(primaryUserRole);
   };
 
   const FiltersHeader = () => (

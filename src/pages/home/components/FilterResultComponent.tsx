@@ -1,16 +1,90 @@
+import { useEffect, useState } from "react";
 import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
+import { artistData } from "./data";
+import { UserFiltersDTO } from "api/user/types";
+import { getUsersByTag } from "api/user";
+
+const { filtersArr } = artistData;
 
 type Props = {
   filtersData: any[];
+  setFilteredData: (data: any[]) => void;
+  initialData: any[];
+  primaryUserRole?: string;
 };
 
 const FilterResultComponent = (props: Props) => {
-  const { filtersData } = props;
+  const { filtersData, setFilteredData, initialData, primaryUserRole } = props;
   const { handleArtistSelected } = useHandleArtistSelected();
+  const [filterValue, setFilterValue] = useState<string>("");
+  const [hasRoleChanged, setHasRoleChanged] = useState(false);
+
+  // Track role changes
+  useEffect(() => {
+    setHasRoleChanged(true);
+  }, [primaryUserRole]);
+
+  // Reset filters when role changes
+  useEffect(() => {
+    if (hasRoleChanged) {
+      setFilterValue("");
+      setFilteredData(initialData);
+      setHasRoleChanged(false);
+    }
+  }, [hasRoleChanged, initialData, setFilteredData]);
+
+  const handleFilters = async (filterName: string) => {
+    const value = filterValue === filterName ? "" : filterName;
+    setFilterValue(value);
+
+    const params: UserFiltersDTO = {
+      primaryUserRole: primaryUserRole,
+    };
+    if (value === "mostPopular") {
+      params["topPopular"] = true;
+    }
+    if (value === "recentlyAdded") {
+      params["recentlyAdded"] = true;
+    }
+    if (value === "male" || value === "female") {
+      params["gender"] = value;
+    }
+
+    // Fetch users based on the applied filters
+    const users = await getUsersByTag(params, 50);
+    
+    // If filter is cleared, reset to initial data
+    if (value === "") {
+      setFilteredData(initialData);
+    } else {
+      // Otherwise, set the filtered data
+      console.log("users", users);
+      setFilteredData(users.data);
+    }
+  };
 
   return (
     <div className="user-card-wrap p-3 pr-2 border-b border-borderColor">
       <h2 className="text-white text-xl font-semibold mb-3">Results</h2>
+
+      <div className="flex gap-1 flex-wrap mb-4">
+        {filtersArr.map((elem, idx) => {
+          const { label, value } = elem;
+          return (
+            <div
+              key={label + idx}
+              onClick={() => handleFilters(value)}
+              className={`border-[1px] cursor-pointer px-3 py-2 rounded-[35px] text-[12px] font-normal ${
+                filterValue === value
+                  ? "bg-limeGreen border-limeGreen text-black"
+                  : "border-eclipseGray bg-darkGray text-charcoalGray"
+              }`}
+            >
+              {label}
+            </div>
+          );
+        })}
+      </div>
 
       <div className="flex gap-4 flex-wrap items-center self-stretch">
         {filtersData.map((result, idx) => {

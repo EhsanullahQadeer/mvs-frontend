@@ -43,6 +43,7 @@ const Filters = (props: Props) => {
         </div>
       </div>
     </div>
+    
   );
 };
 

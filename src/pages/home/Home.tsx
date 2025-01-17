@@ -26,6 +26,7 @@ const Home = () => {
   const [filterValue, setFilterValue] = useState<string>("");
   const [filtersData, setFiltersData] = useState([]);
   const [usersByTag, setUsersByTag] = useState<Record<string, any>>({});
+  const [isFilterApplied, setIsFilterApplied] = useState("");
 
   // Set breadcrumbs (nav bar) for home page
   const dispatch = useDispatch();
@@ -81,13 +82,26 @@ const Home = () => {
 
     fetchFilteredUsers();
   }, [filterValue]);
+  // Reset filters when filterValue changes
+  useEffect(() => {
+    if (isFilterApplied != "") {
+      setFilterValue(isFilterApplied);
+      setIsFilterApplied("");
+    }
+  }, [isFilterApplied]);
+
 
   return (
     <Theme headerTitle="Home \">
       <SearchHeader />
       <Filters {...{ filterValue, setFilterValue }} />
-      {filterValue !== "" ? (
-        <FilterResultComponent {...{ filtersData }} />
+      {filterValue !== "" || isFilterApplied != "" ? (
+        <FilterResultComponent 
+          filtersData={filtersData} 
+          setFilteredData={setFiltersData}
+          initialData={filtersData}
+          primaryUserRole={filterValue}
+        />
       ) : (
         Object.entries(usersByTag).map(([key, value]) => (
           <ScrollableComponent
@@ -96,6 +110,7 @@ const Home = () => {
             dataArr={value}
             title={userTagsObj[key]}
             setUsersByTag={setUsersByTag}
+            setIsFilterApplied={setIsFilterApplied}
           />
         ))
       )}
