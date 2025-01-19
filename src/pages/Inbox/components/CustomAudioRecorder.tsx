@@ -3,7 +3,7 @@ import { ReactComponent as MicIcon } from "../../../assets/icons/micIcon.svg";
 import { ReactComponent as CheckIcon } from "../../../assets/icons/checkIcon.svg";
 
 interface CustomAudioRecorderProps {
-  onRecordingComplete: (blob: Blob) => void;
+  onRecordingComplete: (blob: Blob, duration: string) => void;
   onDurationChange: (duration: string) => void;
   onRecordingStateChange: (isRecording: boolean) => void;
   onStopRef: React.MutableRefObject<(() => void) | null>;
@@ -32,14 +32,29 @@ const CustomAudioRecorder = memo(({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   }, []);
 
+  const getMimeType = () => {
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    
+    if (isSafari) {
+      return 'audio/mp4';  // M4A for Safari
+    }
+    
+    return 'audio/webm;codecs=opus';  // WebM for other browsers
+  };
+
   const startRecording = useCallback(async () => {
     try {
       if (onDelete) {
         onDelete();
       }
+
+      console.log("mimeType", getMimeType());
       
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      const mimeType = getMimeType();
+      const recorder = new MediaRecorder(stream, {
+        mimeType: mimeType
+      });
       mediaRecorder.current = recorder;
       chunks.current = [];
 
@@ -47,9 +62,12 @@ const CustomAudioRecorder = memo(({
         chunks.current.push(e.data);
       };
 
-      recorder.onstop = () => {
-        const blob = new Blob(chunks.current, { type: 'audio/webm' });
-        onRecordingComplete(blob);
+      recorder.onstop = async () => {
+        const finalDuration = formatDuration(Math.floor((Date.now() - startTime.current!) / 1000));
+        const blob = new Blob(chunks.current, { 
+          type: mediaRecorder.current?.mimeType || mimeType 
+        });
+        onRecordingComplete(blob, finalDuration);
         chunks.current = [];
       };
 
