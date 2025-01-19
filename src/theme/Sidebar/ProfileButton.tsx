@@ -42,16 +42,6 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ direction = 'right' }) =>
   // State for highlighting notification button
   const [isHighlighted, setIsHighlighted] = useState(false);
 
-  // Handle NEW_MESSAGE event
-  useLambdaEvent("NEW_MESSAGE", () => {
-    setIsHighlighted(true);
-    console.log("NOTIFICATION RECEIVED!!");
-    setTimeout(() => {
-      setIsHighlighted(false);
-    }, 10000); // 10 seconds
-  });
-  /* END TEMPORARY CODE */
-
   const navigate = useNavigate();
 
   const buttonRef = useRef<HTMLDivElement>(null);

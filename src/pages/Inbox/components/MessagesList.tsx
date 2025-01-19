@@ -221,12 +221,14 @@ const MessagesList = () => {
     try {
       const messageData = JSON.parse(event.body);
       const { conversationId } = messageData;
-
-      // Emit an event to update specific conversation
-      const updateEvent = new CustomEvent('newMessage', {
-        detail: { conversationId: Number(conversationId) }
-      });
-      window.dispatchEvent(updateEvent);
+      
+      // If this conversation is currently active, refresh its messages
+      if (id === String(conversationId)) {
+        getMessages(activeConversation);
+      }
+      
+      // Refresh the conversations list
+      getConversationList();
       
     } catch (error) {
       console.error('Error processing new message event:', error);
