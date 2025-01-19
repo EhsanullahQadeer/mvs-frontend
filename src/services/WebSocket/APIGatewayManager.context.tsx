@@ -35,7 +35,7 @@ interface WebSocketProviderProps {
 const WebSocketContext = createContext<WebSocketContextType | undefined>(undefined);
 
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
-  const userId = useSelector((state: RootState) => state.auth.user?.UserId);
+  const userId = useSelector((state: RootState) => state.auth.user?.id);
   const [webSocketManager, setWebSocketManager] = useState<APIGatewayManager | null>(null);
   const websocketUrl = config.get('GATEWAY.API_URL');
 
