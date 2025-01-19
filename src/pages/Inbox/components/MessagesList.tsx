@@ -219,22 +219,33 @@ const MessagesList = () => {
 
   useLambdaEvent("NEW_MESSAGE", (event) => {
     try {
-      const { conversationId } = event.data;
+      const { conversationId, sender } = event.data;
       
-      // Debounce the updates to prevent multiple rapid requests
       const timeoutId = setTimeout(async () => {
         try {
-          // If this conversation is currently active, refresh its messages
           if (id === String(conversationId)) {
             await getMessages(activeConversation);
           }
           
-          // Refresh the conversations list
-          await getConversationList();
+          const conversation = conversations.find(c => c.id === Number(conversationId));
+          if (conversation) {
+            // If current user is the recipient, increment their unread count
+            const isUserA = currentUserInfo.id === conversation.user_a.id;
+            const unreadCountUpdate = sender !== currentUserInfo.id ? {
+              [isUserA ? 'unread_count_a' : 'unread_count_b']: 
+                (isUserA ? conversation.unread_count_a : conversation.unread_count_b) + 1
+            } : {};
+
+            updateConversationStats(Number(conversationId), {
+              last_message_summary: event.data.message,
+              ...unreadCountUpdate
+            });
+          }
+          
         } catch (error) {
           console.error('Error refreshing data:', error);
         }
-      }, 300); // 300ms debounce
+      }, 300);
       
       return () => clearTimeout(timeoutId);
       
