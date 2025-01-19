@@ -257,6 +257,8 @@ const MessagesDetail = (props: Props) => {
                             handleReviewBtn,
                             handleThreadReply,
                             currentUserInfo,
+                            refreshMessages: () => getConversationMessages(conversation),
+                            setOverlayLoading
                           }}
                         />
                       ) : (

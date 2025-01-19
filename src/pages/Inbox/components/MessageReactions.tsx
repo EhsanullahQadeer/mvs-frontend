@@ -8,15 +8,19 @@ import { FiEdit3 } from "react-icons/fi";
 import { FiCopy } from "react-icons/fi";
 import { LuDelete } from "react-icons/lu";
 import { LuShieldAlert } from "react-icons/lu";
+import { deleteMessageApi } from "api/messenger";
 
 type Props = {
   handleEmojiSelect: (id: number, emoji: any) => void;
   id: number;
   isDemoSender: boolean;
+  isOwner: boolean;
+  onMessageDeleted?: () => void;
+  setOverlayLoading?: (loading: boolean) => void;
 };
 
 const MessageReactions = (props: Props) => {
-  const { handleEmojiSelect, id, isDemoSender } = props;
+  const { handleEmojiSelect, id, isDemoSender, isOwner, onMessageDeleted, setOverlayLoading } = props;
 
   const emojiRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -70,6 +74,13 @@ const MessageReactions = (props: Props) => {
     setMenuSection(false);
   };
 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const handleDeleteMessage = () => {
+    setShowDeleteConfirm(true);
+    handleCloseMenu();
+  };
+
   const senderMenu = [
     {
       label: "Reply in thread",
@@ -78,23 +89,25 @@ const MessageReactions = (props: Props) => {
         handleCloseMenu();
       },
     },
-    {
-      label: "Edit message",
-      icon: <FiEdit3 />,
-      func: () => {
-        handleCloseMenu();
+    ...(isOwner ? [
+      {
+        label: "Edit message",
+        icon: <FiEdit3 />,
+        func: () => {
+          handleCloseMenu();
+        },
       },
-    },
+      {
+        label: "Delete message...",
+        icon: <LuDelete />,
+        func: () => {
+          handleDeleteMessage();
+        },
+      },
+    ] : []),
     {
       label: "Copy message",
       icon: <FiCopy />,
-      func: () => {
-        handleCloseMenu();
-      },
-    },
-    {
-      label: "Delete message...",
-      icon: <LuDelete />,
       func: () => {
         handleCloseMenu();
       },
@@ -218,6 +231,40 @@ const MessageReactions = (props: Props) => {
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200]">
+          <div className="bg-eerieBlack border border-charcoalGray rounded-lg p-6 max-w-md">
+            <h3 className="text-platinum text-lg mb-4">Delete Message?</h3>
+            <p className="text-silver mb-6">This action cannot be undone.</p>
+            <div className="flex justify-end gap-4">
+              <button 
+                className="px-4 py-2 text-silver hover:text-platinum"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="px-4 py-2 bg-[#BD0039] text-[#FEF2F2] rounded hover:bg-opacity-90"
+                onClick={async () => {
+                  try {
+                    setOverlayLoading?.(true);
+                    await deleteMessageApi(id);
+                    setShowDeleteConfirm(false);
+                    onMessageDeleted?.();
+                  } catch (error) {
+                    console.error('Failed to delete message:', error);
+                  } finally {
+                    setOverlayLoading?.(false);
+                  }
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -12,6 +12,7 @@ type Props = {
   handleReviewBtn: (id: number) => void;
   handleThreadReply: (id: number) => void;
   currentUserInfo?: ICurrentUser;
+  refreshMessages: () => void;
 };
 
 const isNewMessage = false;
@@ -23,6 +24,7 @@ const MessagesSection = (props: Props) => {
     handleReviewBtn,
     handleThreadReply,
     currentUserInfo,
+    refreshMessages,
   } = props;
 
   const { messageReactions, handleEmojiSelect } = useMessageReactions(
@@ -114,7 +116,13 @@ const MessagesSection = (props: Props) => {
               <div className="absolute -top-8 left-28 mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 {hoveredMessageId === id && (
                   <MessageReactions
-                    {...{ handleEmojiSelect, id, isDemoSender, msg }}
+                    {...{ 
+                      handleEmojiSelect, 
+                      id, 
+                      isDemoSender, 
+                      isOwner: currentUserInfo.id === sender.id,
+                      onMessageDeleted: refreshMessages 
+                    }}
                   />
                 )}
               </div>

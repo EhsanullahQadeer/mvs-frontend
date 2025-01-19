@@ -240,3 +240,7 @@ export async function markConversationAsRead(conversationId: number) {
 
 export const getConversationFilesInfo = (conversationId: number, skip: number, take: number) => 
   axios.get(`/messenger/conversation/${conversationId}/files`, { params: { skip, take } });
+
+export const deleteMessageApi = async (messageId: number) => {
+  return axiosInstance.delete(`/messenger/message/${messageId}`, { data: { messageId } });
+}
