@@ -25,6 +25,25 @@ import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
 import useGetMessagesNotes from "../hooks/useGetMessagesNotes";
 import { IConversation } from "./types";
+import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
+
+// Handle NEW_MESSAGE event
+useLambdaEvent("NEW_MESSAGE", (event) => {
+  try {
+    const messageData = JSON.parse(event.body);
+    const { conversationId } = messageData;
+
+    // Emit an event to update specific conversation
+    const updateEvent = new CustomEvent('newMessage', {
+      detail: { conversationId: Number(conversationId) }
+    });
+    window.dispatchEvent(updateEvent);
+    
+  } catch (error) {
+    console.error('Error processing new message event:', error);
+  }
+});
+
 
 const headerTabs = [
   {
@@ -215,6 +234,26 @@ const MessagesList = () => {
       </div>
     );
   };
+
+  useEffect(() => {
+    const handleNewMessage = (event: CustomEvent) => {
+      const { conversationId } = event.detail;
+      
+      // If this conversation is currently active, refresh its messages
+      if (id === String(conversationId)) {
+        getMessagesNotes(activeConversation);
+      }
+      
+      // Refresh the conversations list
+      getConversationList();
+    };
+
+    window.addEventListener('newMessage', handleNewMessage as EventListener);
+    
+    return () => {
+      window.removeEventListener('newMessage', handleNewMessage as EventListener);
+    };
+  }, [id, activeConversation, getMessagesNotes, getConversationList]);
 
   return (
     <React.Fragment>
