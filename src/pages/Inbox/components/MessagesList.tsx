@@ -218,8 +218,10 @@ const MessagesList = () => {
   };
 
   useLambdaEvent("NEW_MESSAGE", (event) => {
+    console.log('Lambda event received:', event);
     try {
       const messageData = JSON.parse(event.body);
+      console.log('Parsed message data:', messageData);
       const { conversationId } = messageData;
       
       // If this conversation is currently active, refresh its messages

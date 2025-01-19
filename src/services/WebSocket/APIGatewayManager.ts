@@ -29,12 +29,16 @@ class APIGatewayManager {
     this.socket.onopen = () => {};
 
     this.socket.onmessage = (event: MessageEvent) => {
+      console.log('Raw WebSocket message:', event.data);
       const data = JSON.parse(event.data);
+      console.log('Parsed message:', data);
+      
       const handler = this.dynamicHandlers[data.type];
       if (handler) {
         handler(data);
       } else {
         console.warn(`No handler found for message type: ${data.type}`);
+        console.log('Available handlers:', Object.keys(this.dynamicHandlers));
       }
     };
 
