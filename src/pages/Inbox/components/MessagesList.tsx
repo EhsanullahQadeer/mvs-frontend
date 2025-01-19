@@ -219,16 +219,24 @@ const MessagesList = () => {
 
   useLambdaEvent("NEW_MESSAGE", (event) => {
     try {
-      // Event already contains the data object
       const { conversationId } = event.data;
       
-      // If this conversation is currently active, refresh its messages
-      if (id === String(conversationId)) {
-        getMessages(activeConversation);
-      }
+      // Debounce the updates to prevent multiple rapid requests
+      const timeoutId = setTimeout(async () => {
+        try {
+          // If this conversation is currently active, refresh its messages
+          if (id === String(conversationId)) {
+            await getMessages(activeConversation);
+          }
+          
+          // Refresh the conversations list
+          await getConversationList();
+        } catch (error) {
+          console.error('Error refreshing data:', error);
+        }
+      }, 300); // 300ms debounce
       
-      // Refresh the conversations list
-      getConversationList();
+      return () => clearTimeout(timeoutId);
       
     } catch (error) {
       console.error('Error processing new message event:', error);
