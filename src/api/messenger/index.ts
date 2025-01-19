@@ -30,6 +30,7 @@ import {
   IToggleSpamConvoPayload,
   IUpdateNoteApiParams,
 } from "./types";
+import { AxiosRequestConfig } from "axios";
 
 export const sendMessage = async ({
   // General info
@@ -141,7 +142,7 @@ export async function getConversationNotes(
   });
 }
 
-export async function sendInboxMessage(payload: ISendInboxMessagePayloads) {
+export async function sendInboxMessage(payload: any) {
   return axiosInstance.post("/messenger/send-message", payload);
 }
 

@@ -28,11 +28,11 @@ import { IConversation } from "./types";
 
 const headerTabs = [
   {
-    label: "Priority Inbox",
+    label: "General Inbox",
     value: 0,
   },
   {
-    label: "General Inbox",
+    label: "Priority Inbox",
     value: 1,
   },
 ];
@@ -305,20 +305,22 @@ const MessagesList = () => {
             />
           ) : (
             activeConversation && (
-              <MessagesDetail
-                {...{
-                  messages,
-                  conversation: activeConversation,
-                  loading,
-                  getConversationMessages,
+              <div className="h-full animate-slide-in">
+                <MessagesDetail
+                  {...{
+                    messages,
+                    conversation: activeConversation,
+                    loading,
+                    getConversationMessages,
                   getNotes,
                   notes,
                   currentUserInfo,
                   onClose: () => {
                     setActiveConversation(null);
                   },
-                }}
-              />
+                  }}
+                />
+              </div>
             )
           ))}
       </div>

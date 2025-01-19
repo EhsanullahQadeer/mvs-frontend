@@ -59,11 +59,11 @@ const ThreadMessageItem = (props: Props) => {
                 src={audio_media?.url}
                 color="#1C1C1C"
                 sliderColor="#4B4B4B"
-                style={{
-                  background: "#242424",
-                  borderRadius: isDemo ? "15px" : "40px",
-                }}
-                className={`"border border-[#3D3D3D]" ${
+              style={{
+                background: "#242424",
+                borderRadius: isDemo ? "15px" : "40px",
+              }}
+              className={`"border border-[#3D3D3D]" ${
                   !isDemo && "rounded-full"
                 }`}
               />
@@ -75,13 +75,13 @@ const ThreadMessageItem = (props: Props) => {
                   <p className="font-normal text-sm text-silver flex">
                     <span>"</span>
                     <span className="line-clamp-1">
-                      {audio_media?.file_name}
+                      {audio_media?.file_name || "Demo"}
                     </span>
                     <span>"</span>
                   </p>
 
                   <div className="px-1.5 text-dimGray font-normal text-[10px]">
-                    {details?.duration || ""} ({details?.size || "" })
+                    {details?.duration || "00:00"} ({details?.size || "00MB"})
                   </div>
                 </div>
               </div>

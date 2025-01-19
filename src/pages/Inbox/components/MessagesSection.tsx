@@ -5,6 +5,8 @@ import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFile
 import MessageReactions from "./MessageReactions";
 import { formatMediaDetails, lastMsgTimeStamp } from "../handlers/mediaUtils";
 import { useMessageReactions } from "../hooks/useMessageReactions";
+import { AudioPlayer } from "react-audio-play";
+
 
 type Props = {
   messages: IMessagesData;
@@ -261,9 +263,23 @@ const MessagesSection = (props: Props) => {
                       </div>
                     )}
                   </>
-                ) : (
-                  <></>
-                )}
+                ) : audio_media ? (
+                  <div
+                    id="2"
+                    className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-2"
+                  >
+                    <AudioPlayer
+                      src={audio_media?.url}
+                      color="#1C1C1C"
+                      sliderColor="#4B4B4B"
+                      style={{
+                        background: "#242424",
+                        borderRadius: "40px",
+                      }}
+                      className="border border-[#3D3D3D] rounded-full"
+                    />
+                  </div>
+                ) : null}
 
                 {Object.entries(
                   messageReactions[id]?.reactionCounts || {}

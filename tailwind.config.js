@@ -45,6 +45,15 @@ module.exports = {
       boxShadow: {
         'custom-inset': 'inset 0px 0px 4.5px 0px rgba(0, 0, 0, 0.30)',
       },
+      keyframes: {
+        'slide-in': {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' }
+        }
+      },
+      animation: {
+        'slide-in': 'slide-in 0.2s ease-out'
+      }
     },
   },
   variants: {

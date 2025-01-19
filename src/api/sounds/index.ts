@@ -156,3 +156,11 @@ export async function getSampleConsidering(sampleId: number) {
 export async function getSampleCollaborators(sampleId: number) {
   return axiosInstance.get(`/sounds/sample/${sampleId}/collaborators`);
 }
+
+export async function uploadMedia(payload: any) {
+  return axiosInstance.post("/sounds/upload/media", payload ,{
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}

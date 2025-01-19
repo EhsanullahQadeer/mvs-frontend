@@ -6,7 +6,7 @@ export type ISendInboxMessagePayloads =
       message: string;
       creditPaymentAmount: number;
       isDemo: boolean;
-      audioFile: any;
+      audioMediaId: number;
     }
   | FormData;
 

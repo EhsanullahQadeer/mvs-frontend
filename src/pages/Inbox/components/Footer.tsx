@@ -1,11 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ReactComponent as SendArrowIcon } from "../../../assets/icons/sendArrowIcon.svg";
 import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFile.svg";
 import { AudioRecorder } from "react-audio-voice-recorder";
 import PurchaseOrderDialog from "./PurchaseOrderDialog";
 import { replyToMessage, sendInboxMessage } from "api/messenger";
 import { IConversation, ICurrentUser, IMessage } from "./types";
-// import { ReactComponent as MicIcon } from "../../../assets/icons/micIcon.svg";
+import { AudioPlayer } from "react-audio-play";
+import { uploadMedia } from "api/sounds";
+import { ReactComponent as MicIcon } from "../../../assets/icons/micIcon.svg";
+import { ReactComponent as CheckIcon } from "../../../assets/icons/checkIcon.svg";
+import AudioWaveform from "components/util/AudioWaveform";
+import CustomAudioRecorder from "./CustomAudioRecorder";
+import RecordedAudioPlayer from './RecordedAudioPlayer';
 
 type Props = {
   conversation: IConversation;
@@ -31,6 +37,13 @@ const Footer = ({
   const [selectedAudioFile, setSelectedAudioFile] = useState<File | null>(null);
   const [recordedAudio, setRecordedAudio] = useState<File | null>(null);
   const [messageInputValue, setMessageInputValue] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [audioMediaId, setAudioMediaId] = useState<number | null>(null);
+  const [recordingDuration, setRecordingDuration] = useState("0:00");
+  const [isRecording, setIsRecording] = useState(false);
+  const stopRecordingRef = useRef(null);
+  const [isCancelled, setIsCancelled] = useState(false);
+  const isCancelledRef = useRef(false);
 
   const canSendMessage =
     messageInputValue.trim() &&
@@ -43,55 +56,69 @@ const Footer = ({
     const file = validateFile(e.target.files?.[0]);
     if (file) {
       setSelectedAudioFile(file);
-      setOpenPurchaseOrder(true);
     }
     e.target.value = "";
   };
 
   const handleSendMessage = async () => {
-    const formData = new FormData();
-    const isDemo = Boolean(selectedAudioFile);
-
-    formData.append("recipientId", recipient_id.toString());
-    formData.append("senderId", currentUserInfo?.id?.toString() || "");
-    formData.append("message", messageInputValue || "");
-    if (isFeedbackSection) {
-      formData.append("messageId", messageObj?.id?.toString() || "");
-      formData.append("replyContent", messageInputValue || "");
-      formData.append(
-        "isDemoReply",
-        messageObj?.audio_media.is_demo ? "true" : "false"
-      );
-      formData.append("audioFile", recordedAudio || "");
-    } else {
-      formData.append("conversationId", conversation.id?.toString() || "");
-      formData.append(
-        "creditPaymentAmount",
-        isDemo ? creditPaymentAmount.toString() : "0"
-      );
-      formData.append("isDemo", isDemo ? "true" : "false");
-      formData.append("audioFile", selectedAudioFile || "");
-    }
-
-    // Log FormData contents
-    Array.from(formData.entries()).forEach(([key, value]) => {
-        console.log(key + ': ' + value);
-    });
-
-    if (isFeedbackSection && messageObj) {
-      console.log('Sending reply to message ID:', messageObj.id);
-    }
-
     try {
-      setOverlayLoading?.(true);
-
-      if (isFeedbackSection) {
-        await replyToMessage(formData);
-      } else {
-        await sendInboxMessage(formData);
+      if (selectedAudioFile) {
+        const uploadSuccess = await handleUploadMedia(selectedAudioFile, 'demo');
+        if (!uploadSuccess) {
+          console.error("Demo upload failed");
+          return;
+        }
+        return;
+      }else if (recordedAudio) {
+        const uploadSuccess = await handleUploadMedia(recordedAudio, 'recording');
+        if (!uploadSuccess) {
+         console.error("Audio upload failed");
+         return;
+        }
+        return;
       }
+      // Only send immediately if there's no file to upload
+      await sendMessageToBackend();
+    } catch (error) {
+      console.error("Error in handleSendMessage:", error);
+    }
+  };
+
+  const handlePurchaseOrder = async () => {
+    if (selectedAudioFile) {
+      setOpenPurchaseOrder(true);
+    }
+    else {
+      await handleSendMessage();
+    }
+  }
+
+  const sendMessageToBackend = async () => {
+    try {
+      // Don't send if there's no message AND no media
+      if (messageInputValue.length === 0 && !audioMediaId && !selectedAudioFile && !recordedAudio) return;
+      
+      setOverlayLoading?.(true);
+      const isDemo = Boolean(selectedAudioFile || recordedAudio);
+
+      const payload = { 
+        senderId: String(currentUserInfo?.id || ''),
+        recipientId: String(recipient_id || ''),
+        message: String(messageInputValue || ''),
+        conversationId: String(conversation.id || ''),
+        creditPaymentAmount: String(creditPaymentAmount || '0'),
+        isDemo: String(isDemo),
+        audioMediaId: String(audioMediaId || ''),
+      }
+      console.log('payload', payload);
+      
+      if (!isFeedbackSection) {
+        await sendInboxMessage(payload);
+      }
+
       await getConversationMessages?.(conversation);
       setMessageInputValue("");
+      setAudioMediaId(null);
       setRecordedAudio(null);
     } catch (error) {
       console.error('Error sending message:', error);
@@ -103,22 +130,84 @@ const Footer = ({
     }
   };
 
+  useEffect(() => {
+    sendMessageToBackend();
+  }, [audioMediaId]);
+
+
+
   const handleRecordingComplete = (blob: Blob) => {
-    console.log('Recording complete, blob:', blob);
+    if (isCancelledRef.current) {
+      setIsCancelled(false);
+      isCancelledRef.current = false;
+      setRecordingDuration("");
+      setRecordedAudio(null);
+      return;
+    }
+    
     const file = new File([blob], "recording.webm", { type: blob.type });
-    console.log('Created file:', file);
     setRecordedAudio(file);
   };
 
-  useEffect(() => {
-    console.log('recordedAudio state:', recordedAudio);
-  }, [recordedAudio]);
+  const trackUploadProgress = async (redisKey: string) => {
+    const eventSource = new EventSource(
+      `${process.env.REACT_APP_API_URL}/sounds/upload/sample/progress/${redisKey}`
+    );
+    
+    eventSource.onmessage = async (event) => {
+      const data = JSON.parse(event.data);
+      setUploadProgress(data.progress);
+      if (data.progress === 100) {
+        eventSource.close();
+        setAudioMediaId(data.metadata.id);
+        await sendMessageToBackend();
+      } else if (data.progress === -1) {
+        eventSource.close();
+        console.error("Upload failed");
+      }
+    };
 
-  useEffect(() => {
-    if (messageObj) {
-      console.log('Message ID:', messageObj.id);
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+  };
+
+  const handleUploadMedia = async (
+    file: File,
+    type: 'demo' | 'recording'
+  ) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+
+    setUploadProgress(0);
+
+    try {
+      const response = await uploadMedia(formData);
+      await trackUploadProgress(response.data.redis_key);
+      return true;
+    } catch (error) {
+      console.error("Upload error:", error);
+      return false;
     }
-  }, [messageObj]);
+  };
+
+  const handleDurationChange = (duration: string) => {
+    setRecordingDuration(duration);
+  };
+
+  const handleRecordingStateChange = (recordingState: boolean) => {
+    setIsRecording(recordingState);
+  };
+
+  const handleCancel = () => {
+    setIsCancelled(true);
+    isCancelledRef.current = true;
+    stopRecordingRef.current?.();
+    setRecordedAudio(null);
+    setRecordingDuration("");
+    setIsRecording(false);
+  };
 
   return (
     <>
@@ -133,82 +222,142 @@ const Footer = ({
           </div>
 
           <div className="flex flex-col justify-center px-3 py-2 w-full bg-[#131313] border border-[#ACD7FFCC] rounded-xl shadow-sm pt-12">
-            <textarea
-              value={messageInputValue}
-              onChange={(e) => setMessageInputValue(e.target.value)}
-              className="resize-none bg-transparent border-none p-2.5 w-full text-base text-[#ACD7FF] focus:ring-0"
-              placeholder="Type your message..."
-            />
-
-            <div className="flex flex-wrap justify-between items-center gap-10 mt-3">
-              <div className="flex items-center gap-5">
-                <div className="flex gap-4 items-center p-2 rounded-lg border border-[#3D3D3D]">
-                  <div className="flex flex-col gap-1">
-                    <div className="text-sm font-semibold leading-none text-white whitespace-nowrap">
-                      Tip
-                    </div>
-                    <div className="w-full text-xs font-normal leading-none text-[#EF4444]">
-                      Min $3.00
-                    </div>
-                  </div>
-                  <div className="w-3.5 -rotate-90 border border-[#3D3D3D]"></div>
-                  <div className="text-sm leading-none text-right whitespace-nowrap text-[#848484] font-normal w-[60px]">
-                    <input
-                      type="number"
-                      placeholder="0.00"
-                      className="bg-transparent max-w-[60px] border-none border-transparent focus:border-transparent focus:ring-0"
-                    />
-                  </div>
-                </div>
-
-                <div
-                  className={`${
-                    isFeedbackSection ? "cursor-not-allowed" : "cursor-pointer"
-                  }`}
-                >
-                  <label
-                    htmlFor="audioFileSelect"
-                    className={`text-dimGray cursor-pointer ${
-                      isFeedbackSection
-                        ? "pointer-events-none"
-                        : "pointer-events-auto"
-                    }`}
-                  >
-                    <input
-                      type="file"
-                      accept="audio/*"
-                      id="audioFileSelect"
-                      className="hidden"
-                      onChange={handleAudioSelector}
-                    />
-                    <AudioFileIcon />
-                  </label>
-                </div>
-
-                <AudioRecorder
-                  onRecordingComplete={handleRecordingComplete}
-                  audioTrackConstraints={{
-                    noiseSuppression: true,
-                    echoCancellation: true,
-                  }}
-                  showVisualizer={true}
+            <div className="flex flex-col w-full">
+              <div className="relative p-2.5">
+                <textarea
+                  value={messageInputValue}
+                  onChange={(e) => setMessageInputValue(e.target.value)}
+                  className="resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16"
+                  placeholder="Type your message..."
                 />
+                
+                
+                {recordedAudio && !selectedAudioFile && (
+                  <div className="absolute bottom-0 left-2.5 w-full max-w-[calc(100%-6rem)]">
+                    <RecordedAudioPlayer 
+                      audioUrl={URL.createObjectURL(recordedAudio)} 
+                      onDelete={() => setRecordedAudio(null)}
+                    />
+                  </div>
+                )}
+                {(selectedAudioFile) && (
+                  <div className="absolute bottom-0 left-2.5 w-[234px]">
+                    <AudioPlayer
+                      src={URL.createObjectURL(selectedAudioFile)}
+                      color="#B2B2B2"
+                      sliderColor="#B7B7B7"
+                      style={{
+                        background: "#242424",
+                        borderRadius: "40px",
+                      }}
+                      className="border border-[#3D3D3D] rounded-full [&_.rap-pp-icon_path]:!fill-[#1C1C1C] [&_.rap-volume]:hidden [&_.rap-controls]:!mx-2 [&_.rap-slider]:!mx-2  [&_.rap-slider]:!bg-[#4B4B4B] [&_.rap-slider]:!h-[2px]"
+                    />
+                    {uploadProgress > 0 && uploadProgress <= 100 && (
+                      <div className="absolute -top-3 right-0 flex items-center">
+                        <svg className="w-[32px] h-[32px] -rotate-90" viewBox="0 0 70 70">
+                          <circle
+                            cx="35"
+                            cy="35"
+                            r="25"
+                            fill="#3D3D3D"
+                            className="stroke-[#3D3D3D]"
+                            strokeWidth="5"
+                          />
+                          <circle
+                            cx="35"
+                            cy="35"
+                            r="25"
+                            fill="none"
+                            className="stroke-[#A4FF3D]"
+                            strokeWidth="5"
+                            strokeDasharray={2 * Math.PI * 25}
+                            strokeDashoffset={(2 * Math.PI * 25) * (1 - uploadProgress / 100)}
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
+            </div>
+            <div className="flex flex-col w-full">
+              {isRecording && (
+                <div className="min-w-0 mb-3">
+                  <AudioWaveform 
+                    isRecording={isRecording} 
+                    duration={recordingDuration} 
+                    onStop={() => stopRecordingRef.current?.()} 
+                    onCancel={handleCancel}
+                  />
+                </div>
+              )}
+              
+              <div className="flex items-center justify-between mt-3">
+                <div className="flex gap-4 items-center">
+                  <div className="flex gap-4 items-center p-2 rounded-lg border border-[#3D3D3D]">
+                    <div className="flex flex-col gap-1">
+                      <div className="text-sm font-semibold leading-none text-white whitespace-nowrap">
+                        Tip
+                      </div>
+                      <div className="w-full text-xs font-normal leading-none text-[#EF4444]">
+                        Min $3.00
+                      </div>
+                    </div>
+                    <div className="w-3.5 -rotate-90 border border-[#3D3D3D]"></div>
+                    <div className="text-sm leading-none text-right whitespace-nowrap text-[#848484] font-normal w-[60px]">
+                      <input
+                        type="number"
+                        placeholder="0.00"
+                        className="bg-transparent max-w-[60px] border-none border-transparent focus:border-transparent focus:ring-0"
+                      />
+                    </div>
+                  </div>
 
-              <div
-                className={`${
-                  canSendMessage ? "cursor-pointer" : "cursor-not-allowed"
-                }`}
-              >
-                <div
-                  onClick={canSendMessage ? handleSendMessage : undefined}
-                  className={`flex items-center justify-center w-11 h-11 rounded ${
-                    canSendMessage
-                      ? "text-[#9EFF00] pointer-events-auto"
-                      : "text-[#242424] pointer-events-none"
-                  }`}
-                >
-                  <SendArrowIcon className="w-6 h-6" />
+                  <div className={`${isFeedbackSection ? "cursor-not-allowed" : "cursor-pointer"}`}>
+                    <label
+                      htmlFor="audioFileSelect"
+                      className={`text-dimGray cursor-pointer ${
+                        isFeedbackSection
+                          ? "pointer-events-none"
+                          : "pointer-events-auto"
+                      }`}
+                    >
+                      <input
+                        type="file"
+                        accept="audio/*"
+                        id="audioFileSelect"
+                        className="hidden"
+                        onChange={handleAudioSelector}
+                      />
+                      <AudioFileIcon />
+                    </label>
+                  </div>
+
+                  <CustomAudioRecorder
+                    onRecordingComplete={handleRecordingComplete}
+                    onDurationChange={handleDurationChange}
+                    onRecordingStateChange={handleRecordingStateChange}
+                    onStopRef={stopRecordingRef}
+                    onDelete={() => setRecordedAudio(null)}
+                  />
+                </div>
+
+                <div className="shrink-0">
+                  <div
+                    className={`${canSendMessage ? "cursor-pointer" : "cursor-not-allowed"}`}
+                  >
+                    <div
+                      onClick={canSendMessage ? handlePurchaseOrder : undefined}
+                      className={`flex items-center justify-center w-11 h-11 rounded ${
+                        canSendMessage
+                          ? "text-[#9EFF00] pointer-events-auto"
+                          : "text-[#242424] pointer-events-none"
+                      }`}
+                    >
+                      <SendArrowIcon className="w-6 h-6" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

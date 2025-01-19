@@ -21,7 +21,6 @@ const ContentManagement = (props: Props) => {
 
   const handleCancel = () => {
     const response = cancelUploadAPI(fileRedisKey);
-    console.log("response ", response);
     setUploadProgress(0);
     setUploadingFile(null);
     setFileRedisKey("");
@@ -81,10 +80,9 @@ const ContentManagement = (props: Props) => {
     const eventSource = new EventSource(
       `${process.env.REACT_APP_API_URL}/sounds/upload/sample/progress/${sessionId}`
     );
-
+    
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("Event data received:", data);
       if (data.progress === 100) {
         console.log("Upload complete!");
         eventSource.close();

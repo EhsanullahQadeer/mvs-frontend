@@ -57,14 +57,9 @@ const MessagesDetail = (props: Props) => {
   const [menuSection, setMenuSection] = useState(false);
   const { id, thumbnail, displayName } = conversation;
 
-  console.log("conversation...", conversation);
-
   const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
   const headerTabs = [
-    {
-      label: "Messages",
-      value: 0,
-    },
+    { label: "Messages", value: 0 },
     { label: "Info", value: 1 },
     { label: "Notes", value: 2 },
   ];
@@ -175,7 +170,7 @@ const MessagesDetail = (props: Props) => {
                     {displayName}
                   </div>
                   <div className="text-xs text-silver font-normal">
-                    Los Angeles, CA
+                    PUT YOUR LOCATION HERE
                   </div>
                 </div>
               </div>

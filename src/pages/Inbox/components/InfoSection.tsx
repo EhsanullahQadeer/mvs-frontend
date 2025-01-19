@@ -12,7 +12,7 @@ const InfoSection = (props: Props) => {
 
   const { 
     displayName, 
-    recipient_id, 
+    recipient_id,
     user_a, 
     user_b,
     total_payments_a,
@@ -169,28 +169,28 @@ const InfoSection = (props: Props) => {
         className="mt-5 history w-[100%] max-h-[400px] overflow-y-auto"
         onScroll={handleScroll}
       >
-        {filesInfo.map((file, index) => (
+        {filesInfo?.map((file, index) => (
           <div key={index} className="flex items-center px-4 py-3 border-b border-stone-900">
             <div className="flex flex-1 shrink gap-3 justify-between items-center self-stretch my-auto w-full basis-0 min-w-[240px]">
               <div className="flex items-center self-stretch my-auto font-semibold whitespace-nowrap w-[145px]">
                 <div className="flex flex-col justify-center self-stretch my-auto w-[129px]">
                   <div className="text-sm leading-none text-white">
-                    {file.file_name.length > 20 
-                      ? `${file.file_name.slice(0, 20)}...` 
-                      : file.file_name}
+                    {file?.file_name?.length > 20 
+                      ? `${file?.file_name?.slice(0, 20)}...` 
+                      : file?.file_name}
                   </div>
                   <div className="self-start text-xs text-neutral-400">
-                    {new Date(file.created_at).toLocaleDateString()}
+                    {new Date(file?.created_at).toLocaleDateString()}
                   </div>
                   <div className="text-xs text-neutral-400">
-                    {(file.file_size_bytes / 1024 / 1024).toFixed(2)} MB
+                    {(file?.file_size_bytes / 1024 / 1024).toFixed(2)} MB
                   </div>
                 </div>
               </div>
               <div className="flex overflow-hidden gap-1 items-center self-stretch px-3 py-2.5 my-auto w-40 rounded-2xl border border-solid bg-neutral-800 border-neutral-700 min-h-[44px]">
                 <div className="flex gap-2.5 justify-center items-center self-stretch my-auto w-6">
                   <button 
-                    onClick={() => handlePlayPause(index, file.url)}
+                    onClick={() => handlePlayPause(index, file?.url)}
                     className="w-6 h-6 bg-lime-400 rounded-full flex items-center justify-center"
                   >
                     {playingAudio === index ? (
@@ -225,11 +225,11 @@ const InfoSection = (props: Props) => {
                   />
                 </div>
                 <div className="gap-2.5 self-stretch my-auto text-xs leading-none whitespace-nowrap text-zinc-400">
-                  {file.duration}s
+                  {file?.duration}s
                 </div>
               </div>
               <div className="flex gap-2.5 justify-center items-center self-stretch my-auto w-9 h-9 bg-zinc-900 min-h-[36px]">
-                <a href={file.url} target="_blank" rel="noopener noreferrer" className="flex self-stretch my-auto min-h-[16px]">
+                <a href={file?.url} target="_blank" rel="noopener noreferrer" className="flex self-stretch my-auto min-h-[16px]">
                   <FiDownload className="w-4 h-4 text-lime-400" />
                 </a>
               </div>

@@ -115,7 +115,15 @@ const FeedbackThread = (props: Props) => {
                         <div className="h-px w-full m-2 bg-charcoalGray"></div>
                       </div>
                       )}
-                      <ThreadMessageItem {...{ message: reply, index }} />
+                      <ThreadMessageItem {...{ 
+                        message: reply, 
+                        index, 
+                        isDemo: false, 
+                        details: formatMediaDetails(
+                          reply?.audio_media?.duration,
+                          reply?.audio_media?.file_size_bytes
+                        )
+                      }} />
                     </>
                   );
                 })}

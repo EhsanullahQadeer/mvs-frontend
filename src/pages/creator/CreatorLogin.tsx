@@ -75,7 +75,7 @@ const CreatorLogin: React.FC = () => {
       })
     );
 
-    console.log(values);
+
   };
 
   const handleSignUpClick = () => {
