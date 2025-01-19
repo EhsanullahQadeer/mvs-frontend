@@ -46,9 +46,12 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
         normalize: true,
         minPxPerSec: 50,
         fillParent: true,
+        backend: 'MediaElement',
+        mediaControls: false,
         fetchParams: {
           cache: 'default',
           mode: 'cors',
+          credentials: 'same-origin'
         }
       });
 
