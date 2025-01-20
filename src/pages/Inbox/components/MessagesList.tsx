@@ -167,11 +167,13 @@ const MessagesList = () => {
       )
     );
 
-    setConversations(prevConversations => 
-      prevConversations.map((convo) =>
-        convo.id === conversationId ? { ...convo, ...updates } : convo
-      )
-    );
+    if (conversationId === Number(id)) {
+      setConversations(prevConversations => 
+        prevConversations.map((convo) =>
+          convo.id === conversationId ? { ...convo, ...updates } : convo
+        )
+      );
+    }
   };
 
   const renderConversations = () => {
