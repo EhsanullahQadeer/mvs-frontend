@@ -23,8 +23,10 @@ const useMessageList = () => {
         take: 20,
         limit: 20,
       });
-      const allConversations = response.data.conversations;
-
+      const allConversations = response.data.conversations.filter((convo) => {
+        const isUserA = currentUserInfo?.id === convo.user_a.id;
+        return isUserA ? convo.has_deleted_a === null : convo.has_deleted_b === null;
+      });
       const archived = allConversations.filter((convo) => convo.is_archived);
       const active = allConversations.filter((convo) => !convo.is_archived);
       const favorite = allConversations.filter((convo) => {

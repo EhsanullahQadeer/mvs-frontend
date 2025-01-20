@@ -37,6 +37,7 @@ interface Props {
   setTab: (value: number) => void;
   setShowArchivedConvos: (value: boolean) => void;
   setShowFavoriteConvos: (value: boolean) => void;
+  setActiveConversation: (conversation: any | null) => void;
 }
 const MsgListHeaderOptions = (props: Props) => {
   const {
@@ -52,6 +53,7 @@ const MsgListHeaderOptions = (props: Props) => {
     setTab,
     setShowArchivedConvos,
     setShowFavoriteConvos,
+    setActiveConversation,
   } = props;
   const [menuSection, setMenuSection] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -81,6 +83,7 @@ const MsgListHeaderOptions = (props: Props) => {
         };
         const response = await deleteConversationsApi(body);
         if (response.status === 200) {
+          setActiveConversation(null);
           handleCloseDialog();
           handleApiSuccessfull();
         }

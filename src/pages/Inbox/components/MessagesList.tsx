@@ -317,6 +317,7 @@ const MessagesList = () => {
               setTab,
               setShowArchivedConvos,
               setShowFavoriteConvos,
+              setActiveConversation,
             }}
           />
         </div>
