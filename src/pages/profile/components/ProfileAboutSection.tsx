@@ -22,14 +22,16 @@ type Props = {
     thumbnail: string;
     track_name: string;
     artists: any;
-    preview_url: any;
+    preview_url: any;    
   }[];
   connectionDetail: any;
   setConnectionDetail: (value: any) => void;
+  chatOpen: boolean;
+  setChatOpen: (chatOpen: boolean) => void;
 };
 
 const ProfileAboutSection = (props: Props) => {
-  const { artistData, creditsData, connectionDetail, setConnectionDetail } =
+  const { artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen } =
     props;
   const [hoveredRow, setHoveredRow] = useState<number | null>(null); // State to track hovered row
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
@@ -98,6 +100,7 @@ const ProfileAboutSection = (props: Props) => {
         console.log("existing conversation found:", conversation);
         setChatData(conversation);
         await getConversationMessages(conversation);
+        setChatOpen(true);
       } else {
         // For new conversations, use a temporary ID that will be replaced
         const tempId = `temp_${Date.now()}`;
@@ -120,6 +123,7 @@ const ProfileAboutSection = (props: Props) => {
             messages: [],
           },
         ]);
+        setChatOpen(true);
       }
 
       setShowChat(true);
@@ -199,7 +203,7 @@ const ProfileAboutSection = (props: Props) => {
           getNotes={() => {}}
           notes={[]}
           currentUserInfo={user.auth.user}
-          onClose={() => setShowChat(false)}
+          onClose={() => {setShowChat(false); setChatOpen(false)}}
           userInfo={artistData}
         />
       </div>
@@ -295,57 +299,59 @@ const ProfileAboutSection = (props: Props) => {
         <div className="text-dimGray font-normal text-sm">{truncatedBio}</div>
       </div>
 
-      <div className={`px-3 py-3`}>
-        <h2 className={`text-white mb-3.5 text-base font-normal`}>Credits</h2>
+      {creditsData && creditsData.length > 0 && (
+        <div className={`px-3 py-3`}>
+          <h2 className={`text-white mb-3.5 text-base font-normal`}>Credits</h2>
 
-        <div className="flex flex-col overflow-y-auto">
-          {creditsData?.map((value, index) => {
-            const { thumbnail, track_name, artists, preview_url } = value;
-            const { professional_name } = artists[0];
-            return (
-              <div
-                key={index}
-                className={`p-2 flex gap-3 items-center relative`} // Added relative for positioning
-                onMouseEnter={() => setHoveredRow(index)} // Set hovered row on hover
-                onMouseLeave={() => setHoveredRow(null)} // Reset on mouse leave
-              >
-                <div className="w-12 h-12">
-                  <img
-                    src={thumbnail}
-                    alt="credits"
-                    className="w-full h-full object-contain rounded-[4px]"
-                  />
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <h2 className="text-white font-semibold text-xs text-wrap">
-                    {track_name}
-                  </h2>
-                  <p className="text-platinum text-[10px] font-medium">
-                    {professional_name}
-                  </p>
-                </div>
-
-                {/* Show play/pause button for hovered row or currently playing row */}
-                {(hoveredRow === index || currentPlayingIndex === index) && (
-                  <div
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 w-6 h-6 cursor-pointer"
-                    onClick={() => handlePlayClick(preview_url, index)} // Play the track on click
-                  >
+          <div className="flex flex-col overflow-y-auto">
+            {creditsData.map((value, index) => {
+              const { thumbnail, track_name, artists, preview_url } = value;
+              const { professional_name } = artists[0];
+              return (
+                <div
+                  key={index}
+                  className={`p-2 flex gap-3 items-center relative`} // Added relative for positioning
+                  onMouseEnter={() => setHoveredRow(index)} // Set hovered row on hover
+                  onMouseLeave={() => setHoveredRow(null)} // Reset on mouse leave
+                >
+                  <div className="w-12 h-12">
                     <img
-                      src={currentPlayingIndex === index ? pauseIcon : playIcon} // Toggle play/pause icon based on state
-                      alt="Play/Pause"
-                      className="w-full h-full"
+                      src={thumbnail}
+                      alt="credits"
+                      className="w-full h-full object-contain rounded-[4px]"
                     />
                   </div>
-                )}
-              </div>
-            );
-          })}
+                  <div className="flex flex-col gap-0.5">
+                    <h2 className="text-white font-semibold text-xs text-wrap">
+                      {track_name}
+                    </h2>
+                    <p className="text-platinum text-[10px] font-medium">
+                      {professional_name}
+                    </p>
+                  </div>
 
-          {/* Audio element for playing preview_url */}
-          <audio ref={audioRef} />
+                  {/* Show play/pause button for hovered row or currently playing row */}
+                  {(hoveredRow === index || currentPlayingIndex === index) && (
+                    <div
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 w-6 h-6 cursor-pointer"
+                      onClick={() => handlePlayClick(preview_url, index)} // Play the track on click
+                    >
+                      <img
+                        src={currentPlayingIndex === index ? pauseIcon : playIcon} // Toggle play/pause icon based on state
+                        alt="Play/Pause"
+                        className="w-full h-full"
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Audio element for playing preview_url */}
+            <audio ref={audioRef} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

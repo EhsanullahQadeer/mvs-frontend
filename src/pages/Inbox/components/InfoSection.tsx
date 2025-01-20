@@ -32,7 +32,7 @@ const InfoSection = (props: Props) => {
 
   const recipientUser = user_b?.id === recipient_id ? user_b : user_a;
 
-  const totalPayment = recipientUser?.id === user_a.id ? total_payments_a : total_payments_b;
+  const totalPayment = recipientUser?.id === user_a?.id ? total_payments_a : total_payments_b;
 
   const [filesInfo, setFilesInfo] = useState<any[]>([]);
   const [skip, setSkip] = useState(0);

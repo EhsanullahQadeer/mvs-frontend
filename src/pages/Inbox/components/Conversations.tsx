@@ -54,8 +54,8 @@ export const Conversations = (props: Props) => {
         
         if (updateConversationStats) {
           updateConversationStats(id, {
-            unread_count_a: currentUserInfo.id === user_a.id ? 0 : unread_count_a,
-            unread_count_b: currentUserInfo.id === user_a.id ? unread_count_b : 0
+            unread_count_a: currentUserInfo.id === user_a?.id ? 0 : unread_count_a,
+            unread_count_b: currentUserInfo.id === user_a?.id ? unread_count_b : 0
           });
         }
       } catch (error) {
@@ -71,11 +71,11 @@ export const Conversations = (props: Props) => {
   const isFavorite = favoriteConversationIds.includes(id);
 
   const unreadCount =
-    currentUserInfo.id === user_a.id ? unread_count_a : unread_count_b;
+    currentUserInfo.id === user_a?.id ? unread_count_a : unread_count_b;
   const total_payments =
-    currentUserInfo.id === user_a.id ? total_payments_a : total_payments_b;
+    currentUserInfo.id === user_a?.id ? total_payments_a : total_payments_b;
   const current_balance =
-    currentUserInfo.id === user_a.id ? current_balance_b : current_balance_a;
+    currentUserInfo.id === user_a?.id ? current_balance_b : current_balance_a;
 
   return (
     <>

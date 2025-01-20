@@ -130,7 +130,7 @@ export const PlayerContext = createContext<PlayerContextType>({
 // };
 
 /* PlayerContainer */
-const SamplesContainer = ({ user_id = 0, selectedTab }) => {
+const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen }) => {
   // Add these states
   const [likedSamples, setLikedSamples] = useState<Record<number, boolean>>({});
   const [loading, setLoading] = useState(false);
@@ -194,7 +194,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab }) => {
       <div className="text-xs font-medium text-[#9C9C9C] py-4 px-3 border-t border-[#1F1F1F]">
         {totalCount} results
       </div>
-      <SampleTable samples={samples} />
+      <SampleTable samples={samples} chatOpen={chatOpen} />
       {totalCount > 0 && (
         <Pagination
           pageCount={Math.ceil(totalCount / samplesPerPage)}

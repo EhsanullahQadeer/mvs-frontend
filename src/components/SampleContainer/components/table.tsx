@@ -27,8 +27,9 @@ const SampleTable = (props: {
   fetchAllUserSamples?: () => void;
   likedSamples?: Record<number, boolean>;
   setLikedSamples?: (likes: Record<number, boolean>) => void;
+  chatOpen?: boolean;
 }) => {
-  const { samples, setSamples, fetchAllUserSamples, likedSamples = {}, setLikedSamples } = props;
+  const { samples, setSamples, fetchAllUserSamples, likedSamples = {}, setLikedSamples, chatOpen } = props;
   const [consideringData, setConsideringData] = useState<Record<number, any[]>>({});
   const [considering, setConsidering] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
@@ -230,7 +231,7 @@ const SampleTable = (props: {
             }
           }
         }
-      } else if (event.code === "Space" || event.key === " ") {
+      } else if ((event.code === "Space" || event.key === " ") && !chatOpen) {
         // Check if the active element is an input, textarea, or contenteditable element
         const activeElement = document.activeElement;
         const isInputFocused =

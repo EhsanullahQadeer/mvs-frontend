@@ -37,6 +37,7 @@ const ArtistProfile = () => {
   const [artistData, setArtistData] = useState<IArtistProfileData | null>(null);
   const [isLoading, setLoading] = useState(true);
   const [connectionDetail, setConnectionDetail] = useState();
+  const [chatOpen, setChatOpen] = useState(false);
 
   // const [musicTableArr, setMusicTableArr] = useState<MusicTableArr | null>(
   //   null
@@ -174,6 +175,7 @@ const ArtistProfile = () => {
                   <SamplesContainer
                     user_id={artistData?.id}
                     selectedTab={selectedTab}
+                    chatOpen={chatOpen}
                   />
                 </div>
               </div>
@@ -181,7 +183,7 @@ const ArtistProfile = () => {
 
             <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
               <ProfileAboutSection
-                {...{ artistData, creditsData, connectionDetail, setConnectionDetail }}
+                {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
               />
             </section>
           </div>{" "}
