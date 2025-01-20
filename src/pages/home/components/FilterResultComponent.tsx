@@ -117,6 +117,7 @@ const FilterResultComponent = (props: Props) => {
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
               }}
+              onClick={() => handleArtistSelected(result)}
             >
               <div className="img-container h-[239px] w-[152px] rounded-lg">
                 <div className="absolute bottom-4 px-3 w-full">

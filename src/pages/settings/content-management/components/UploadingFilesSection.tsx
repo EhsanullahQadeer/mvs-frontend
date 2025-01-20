@@ -62,9 +62,14 @@ const UploadingFilesSection = (props: Props) => {
 
             <div className="flex flex-col gap-1 flex-1">
               <div className="flex items-center justify-between">
-                <h4 className="text-platinum text-sm font-semibold">
-                  {uploadingFile.name}
-                </h4>
+                <div className="flex gap-2">
+                  <h4 className="text-platinum text-sm font-semibold">
+                    {uploadingFile.name}
+                  </h4>
+                  <div className="text-limeGreen w-5 h-5">
+                    <FaCircleCheck className="w-full h-full" />
+                  </div>
+                </div>
 
                 <div
                   onClick={() => handleCancel()}
@@ -102,9 +107,6 @@ const UploadingFilesSection = (props: Props) => {
           {uploadProgress === 100 && (
             <div className="mt-3 border border-slateGray rounded-lg p-2 bg-eerieBlack w-full flex items-center justify-between">
               <div className="flex gap-2 items-center">
-                <div className="text-limeGreen w-5 h-5">
-                  <FaCircleCheck className="w-full h-full" />
-                </div>
                 <span className="text-silver text-xs font-semibold">
                   File uploaded successfully
                 </span>

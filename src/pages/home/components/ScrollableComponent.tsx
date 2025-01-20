@@ -143,6 +143,7 @@ const ScrollableComponent = (props: Props) => {
               <div
                 key={professional_name + idx}
                 className="user-card-wrap cursor-grab carousel-inner px-1 flex transition-transform duration-1000 ease-linear"
+                onClick={() => handleArtistSelected(user)}
               >
                 <div
                   style={{

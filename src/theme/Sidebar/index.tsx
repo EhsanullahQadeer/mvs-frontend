@@ -195,7 +195,7 @@ const Sidebar = () => {
             >
               <div
                 className={`rounded-[8px] h-[40px] w-[40px] p-[8px] flex items-center justify-center 
-              ${pathname === '/unknown'
+              ${pathname.startsWith('/library')
                     ? 'bg-[#9EFF00] text-[#000]'
                     : 'bg-[#1C1C1C] hover:bg-[#B4FF15] text-[#FFFFFF] hover:text-[#000]'
                   }`}
@@ -269,13 +269,13 @@ const Sidebar = () => {
 
       {/* Avatar Button (Fixed at Bottom) */}
       <div className="fixed bottom-0 left-0 w-[90px] flex justify-center pb-4 pt-1 bg-[#08090A] border-r-2 border-[#1F1F1F] z-10">
-        <button className="relative w-[40px] h-[40px] rounded-full flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full p-[2px]">
+        <div className="relative w-[40px] h-[40px] rounded-full flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-lime-500 rounded-full p-[2px]">
             <div className="bg-[#1C1C1C] w-full h-full rounded-full flex items-center justify-center">
               <ProfileButton />
             </div>
           </div>
-        </button>
+        </div>
       </div>
 
     </React.Fragment >

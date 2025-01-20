@@ -133,7 +133,7 @@ const ArtistProfile = () => {
                             ? "text-softGray bg-eerieBlack"
                             : "text-charcoalGray bg-darkGray"
                         } ${index === 0 && "rounded-l-md border-r-0"} ${
-                          index === 2 && "rounded-r-md border-l-0"
+                          index === tabs.length-1 && "rounded-r-md border-l-0"
                         } transition duration-300`}
                       >
                         {tab.label}
