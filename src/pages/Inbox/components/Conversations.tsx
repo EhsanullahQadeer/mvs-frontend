@@ -78,9 +78,8 @@ export const Conversations = (props: Props) => {
     currentUserInfo.id === user_a?.id ? current_balance_b : current_balance_a;
 
   return (
-    <>
       <div
-        className={`hover:bg-eclipseGray flex justify-between items-center px-3 py-2 w-full border-b border-grayBlue border-opacity-20 max-md:max-w-full z-10 ${
+        className={`hover:bg-eclipseGray flex justify-between items-center px-3 py-2 w-full border-b border-grayBlue border-opacity-20 max-md:max-w-full z-9 ${
           activeConversation?.id === id || isChecked
             ? "bg-eclipseGray"
             : "bg-transparent"
@@ -195,6 +194,5 @@ export const Conversations = (props: Props) => {
           )}
         </div>
       </div>
-    </>
   );
 };
