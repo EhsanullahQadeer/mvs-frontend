@@ -78,7 +78,6 @@ export const getUserConvo = async (userId: string) => {
 
 export const getMessages = async (conversationId: string) => {
   try {
-    // Get messages
     const response = await axios.get(
       `/messenger/conversation/${conversationId}`
     );
@@ -244,4 +243,8 @@ export const getConversationFilesInfo = (conversationId: number, skip: number, t
 
 export const deleteMessageApi = async (messageId: number) => {
   return axiosInstance.delete(`/messenger/message/${messageId}`, { data: { messageId } });
+}
+
+export const getThreadMessages = async (messageId: number) => {
+  return axiosInstance.get(`/messenger/thread/${messageId}/`);
 }

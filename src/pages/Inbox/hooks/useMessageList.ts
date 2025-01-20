@@ -20,8 +20,8 @@ const useMessageList = () => {
         searchTerm: "",
         order: true,
         skip: 0,
-        take: 1000,
-        limit: 1000,
+        take: 20,
+        limit: 20,
       });
       const allConversations = response.data.conversations;
 

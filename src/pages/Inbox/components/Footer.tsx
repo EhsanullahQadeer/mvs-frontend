@@ -68,16 +68,14 @@ const Footer = ({
         const uploadSuccess = await handleUploadMedia(selectedAudioFile, 'demo');
         if (!uploadSuccess) {
           console.error("Demo upload failed");
-          return;
         }
-        return;
-      }else if (recordedAudio) {
+        return; // Don't call sendMessageToBackend here - useEffect will handle it
+      } else if (recordedAudio) {
         const uploadSuccess = await handleUploadMedia(recordedAudio, 'recording');
         if (!uploadSuccess) {
-         console.error("Audio upload failed");
-         return;
+          console.error("Audio upload failed");
         }
-        return;
+        return; // Don't call sendMessageToBackend here - useEffect will handle it
       }
       // Only send immediately if there's no file to upload
       await sendMessageToBackend();
@@ -159,7 +157,8 @@ const Footer = ({
       return;
     }
     
-    const file = new File([blob], "recording.webm", { type: blob.type });
+    // Always save as MP3 regardless of input format
+    const file = new File([blob], "recording.mp3", { type: 'audio/mpeg' });
     setRecordedAudio(file);
   };
 

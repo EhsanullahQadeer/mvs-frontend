@@ -127,11 +127,6 @@ const routes: IRoute[] = [
     name: "Thank you",
     component: ThankyouPage,
   },
-
-
-
-
-
   // Inbox 
   {
     path: "/inbox",

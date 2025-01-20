@@ -1,6 +1,7 @@
 import moment from "moment";
 import { AudioPlayer } from "react-audio-play";
 import { IMessage } from "./types";
+import { useState, useEffect } from "react";
 
 type Props = {
   message: IMessage;
@@ -13,10 +14,51 @@ type Props = {
 };
 
 const ThreadMessageItem = (props: Props) => {
+  const [needsConversion, setNeedsConversion] = useState(false);
+  const [convertedUrl, setConvertedUrl] = useState<string | null>(null);
   const { message, index, isDemo, details } = props;
-
   const { audio_media, thumbnail, displayName, created_at, message_content } =
     message;
+
+  useEffect(() => {
+    if (!audio_media?.url) return;
+
+    // Test if the audio is playable
+    const audio = new Audio(audio_media.url);
+    audio.addEventListener('error', () => {
+      console.log('Audio format not supported, needs conversion');
+      setNeedsConversion(true);
+    });
+    
+    audio.addEventListener('canplaythrough', () => {
+      console.log('Audio format is supported');
+      setNeedsConversion(false);
+    });
+  }, [audio_media?.url]);
+
+  useEffect(() => {
+    const convertAudioFormat = async (url: string) => {
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      if (!isSafari) return url;
+
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        
+        // Create a new blob with explicit MPEG MIME type
+        const mpegBlob = new Blob([blob], { type: 'audio/mpeg' });
+        return URL.createObjectURL(mpegBlob);
+
+      } catch (error) {
+        console.error('Audio conversion failed:', error);
+        return url;
+      }
+    };
+
+    if (audio_media?.url && !convertedUrl) {
+      convertAudioFormat(audio_media.url).then(setConvertedUrl);
+    }
+  }, [audio_media?.url, convertedUrl]);
 
   return (
     <div key={index} className="flex flex-wrap gap-2 w-full">
@@ -56,14 +98,14 @@ const ThreadMessageItem = (props: Props) => {
           >
             {audio_media && (
               <AudioPlayer
-                src={audio_media?.url}
+                src={needsConversion ? convertedUrl || audio_media.url : audio_media.url}
                 color="#1C1C1C"
                 sliderColor="#4B4B4B"
-              style={{
-                background: "#242424",
-                borderRadius: isDemo ? "15px" : "40px",
-              }}
-              className={`"border border-[#3D3D3D]" ${
+                style={{
+                  background: "#242424",
+                  borderRadius: isDemo ? "15px" : "40px",
+                }}
+                className={`"border border-[#3D3D3D]" ${
                   !isDemo && "rounded-full"
                 }`}
               />

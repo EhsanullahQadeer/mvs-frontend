@@ -47,7 +47,7 @@ export const useInboxHooks = () => {
     conversation
   ) => {
     setSelectedConversation(conversation);
-    const conversationMessages = await getMessages(conversation.conversationId);
+    const conversationMessages = await getMessages(conversation.id);
     setMessages(conversationMessages);
   };
 
@@ -55,13 +55,6 @@ export const useInboxHooks = () => {
   useEffect(() => {
     console.log('conversation list', conversationsList);
   }, [conversationsList])
-  
-
-  const getRecipientProfileInfo = (
-    conversationsList
-  ) => {
-    
-  }
 
   return({
     state,

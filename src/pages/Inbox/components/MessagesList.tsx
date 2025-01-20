@@ -224,7 +224,7 @@ const MessagesList = () => {
       const timeoutId = setTimeout(async () => {
         try {
           if (id === String(conversationId)) {
-            await getMessages(activeConversation);
+            await getMessages(conversationId);
           }
           
           const conversation = conversations.find(c => c.id === Number(conversationId));

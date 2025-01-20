@@ -8,6 +8,7 @@ import CheckerIcon from "../../../assets/icons/checker.svg";
 import { formatMediaDetails } from "../handlers/mediaUtils";
 import { useEffect, useState } from "react";
 import ThreadMessageItem from "./ThreadMessageItem";
+import { getThreadMessages } from "api/messenger";
 
 type Props = {
   conversation: IConversation;
@@ -24,6 +25,7 @@ const FeedbackThread = (props: Props) => {
   const { id, displayName } = conversation || {};
 
   const [msgId, setMsgId] = useState<number | null>(null);
+  const [threadReplyObjs, setThreadReplyObjs] = useState<IMessage[]>([]);
 
   useEffect(() => {
     const storedMsgId = localStorage.getItem("msgId");
@@ -32,6 +34,22 @@ const FeedbackThread = (props: Props) => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchThreadMessages = async () => {
+      if (msgId) {
+        try {
+          const response = await getThreadMessages(msgId);
+          const replies = response.data.filter(msg => msg.id !== msgId);
+          setThreadReplyObjs(replies);
+        } catch (error) {
+          console.error("Error fetching thread messages:", error);
+        }
+      }
+    };
+
+    fetchThreadMessages();
+  }, [msgId]);
+
   const safeAccess = <T,>(value: T | null | undefined): T | null =>
     value || null;
 
@@ -39,16 +57,10 @@ const FeedbackThread = (props: Props) => {
     messages[0]?.messages?.find((msg) => msg.id === msgId)
   );
 
-  let threadReplyObjs: IMessage[];
-
-  if (demoMessageObj?.claimed) {
-    threadReplyObjs = safeAccess(
-      messages[0]?.messages?.filter((msg) => msg.message_reply?.id === msgId) ||
-        []
-    );
-  }
-
   const demoAudioData = demoMessageObj?.audio_media;
+
+  console.log("demoMessageObj", demoMessageObj);
+
   const details = formatMediaDetails(
     demoAudioData?.duration,
     demoAudioData?.file_size_bytes
@@ -97,6 +109,7 @@ const FeedbackThread = (props: Props) => {
             {demoMessageObj?.claimed ? (
               <>
                 {threadReplyObjs?.map((reply, index) => {
+                  console.log("reply", reply);
                   return (
                     <>
                       {index === 1 && (

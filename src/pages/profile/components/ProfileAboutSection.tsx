@@ -190,20 +190,18 @@ const ProfileAboutSection = (props: Props) => {
 
   if (showChat && chatData) {
     return (
-      <div className="fixed top-0 right-0 z-[9999] w-[480px] h-[calc(100vh-80px)]">
-        <div className="relative w-full h-full bg-richBlack overflow-hidden">
-          <MessagesDetail
-            conversation={chatData}
-            loading={loading}
-            messages={messages}
-            getConversationMessages={getConversationMessages}
-            getNotes={() => {}}
-            notes={[]}
-            currentUserInfo={user.auth.user}
-            onClose={() => setShowChat(false)}
-            userInfo={artistData}
-          />
-        </div>
+      <div className="relative w-full h-[calc(100vh-70px)] bg-richBlack overflow-hidden">
+        <MessagesDetail
+          conversation={chatData}
+          loading={loading}
+          messages={messages}
+          getConversationMessages={getConversationMessages}
+          getNotes={() => {}}
+          notes={[]}
+          currentUserInfo={user.auth.user}
+          onClose={() => setShowChat(false)}
+          userInfo={artistData}
+        />
       </div>
     );
   }

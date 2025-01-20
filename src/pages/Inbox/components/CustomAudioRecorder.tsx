@@ -33,13 +33,23 @@ const CustomAudioRecorder = memo(({
   }, []);
 
   const getMimeType = () => {
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const formats = [
+      'audio/mp4',
+      'audio/mp4;codecs=mp4a.40.5', // AAC-HE
+      'audio/mp4;codecs=mp4a.40.2', // AAC-LC
+      'audio/mpeg',                 // MP3
+      'audio/aac'                   // Raw AAC
+    ];
     
-    if (isSafari) {
-      return 'audio/mp4';  // M4A for Safari
+    for (const format of formats) {
+      if (MediaRecorder.isTypeSupported(format)) {
+        console.log('Using format:', format);
+        return format;
+      }
     }
     
-    return 'audio/webm;codecs=opus';  // WebM for other browsers
+    console.error('No cross-compatible format found');
+    return '';
   };
 
   const startRecording = useCallback(async () => {
@@ -47,13 +57,20 @@ const CustomAudioRecorder = memo(({
       if (onDelete) {
         onDelete();
       }
-
-      console.log("mimeType", getMimeType());
       
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          channelCount: 1,
+          sampleRate: 44100,
+          echoCancellation: true,
+          noiseSuppression: true
+        } 
+      });
+      
       const mimeType = getMimeType();
       const recorder = new MediaRecorder(stream, {
-        mimeType: mimeType
+        mimeType,
+        audioBitsPerSecond: 128000
       });
       mediaRecorder.current = recorder;
       chunks.current = [];
@@ -64,7 +81,7 @@ const CustomAudioRecorder = memo(({
 
       recorder.onstop = async () => {
         const finalDuration = formatDuration(Math.floor((Date.now() - startTime.current!) / 1000));
-        const blob = new Blob(chunks.current, { 
+        const blob = new Blob(chunks.current, {
           type: mediaRecorder.current?.mimeType || mimeType 
         });
         onRecordingComplete(blob, finalDuration);
@@ -103,7 +120,6 @@ const CustomAudioRecorder = memo(({
     onDurationChange("0:00");
   }, [onRecordingStateChange, onDurationChange]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (timerInterval.current) {

@@ -13,7 +13,6 @@ interface RecordedAudioPlayerProps {
 }
 
 const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onDelete }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -29,6 +28,7 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
     const initializeWaveSurfer = async () => {
       if (!waveformRef.current || !audioUrl) return;
       
+      // Destroy existing instance if it exists
       if (wavesurfer.current) {
         wavesurfer.current.destroy();
       }
@@ -46,12 +46,9 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
         normalize: true,
         minPxPerSec: 50,
         fillParent: true,
-        backend: 'MediaElement',
-        mediaControls: false,
         fetchParams: {
           cache: 'default',
           mode: 'cors',
-          credentials: 'same-origin'
         }
       });
 
@@ -94,41 +91,14 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
 
     initializeWaveSurfer();
 
-    const resizeObserver = new ResizeObserver(() => {
-      const timeoutId = setTimeout(() => {
-        if (containerRef.current) {
-          const width = containerRef.current.offsetWidth;
-          const waveformContainer = waveformRef.current;
-          
-          if (width < 200) {
-            if (waveformContainer) {
-              waveformContainer.style.display = 'none';
-            }
-          } else {
-            if (waveformContainer) {
-              waveformContainer.style.display = 'block';
-              initializeWaveSurfer();
-            }
-          }
-        }
-      }, 100);
-      
-      return () => clearTimeout(timeoutId);
-    });
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-
     return () => {
       isDestroyed = true;
-      resizeObserver.disconnect();
       if (wavesurfer.current) {
         wavesurfer.current.destroy();
         wavesurfer.current = null;
       }
     };
-  }, [audioUrl]);
+  }, [audioUrl]); // Only depend on audioUrl
 
   const handlePlayPause = () => {
     if (wavesurfer.current) {
@@ -156,7 +126,6 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
 
   return (
     <div 
-      ref={containerRef}
       className="flex items-center w-full bg-[#1C1C1C] rounded-full px-3 py-3 relative group border border-[#3D3D3D]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -178,7 +147,9 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
         )}
       </button>
 
-      <div className="flex-1 mx-4 min-w-0">
+      
+
+      <div className="flex-1 mx-4">
         <div ref={waveformRef} className="waveform w-full" />
       </div>
       
@@ -215,4 +186,4 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
   );
 };
 
-export default React.memo(RecordedAudioPlayer);
+export default RecordedAudioPlayer;
