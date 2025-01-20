@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import PauseDefault from '../../../assets/img/PauseD.svg';
 import PlayDefault from '../../../assets/img/PlayD.svg';
@@ -12,7 +12,7 @@ interface RecordedAudioPlayerProps {
   onDelete?: () => void;
 }
 
-const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onDelete }) => {
+const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = React.memo(({ audioUrl, onDelete }) => {
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -21,86 +21,67 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
   const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isMuted, setIsMuted] = useState(false);
+  const animationFrameId = useRef<number | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastUpdateTime = useRef<number>(0);
 
   useEffect(() => {
-    let isDestroyed = false;
+    if (!waveformRef.current || !audioUrl) return;
 
-    const initializeWaveSurfer = async () => {
-      if (!waveformRef.current || !audioUrl) return;
-      
-      // Destroy existing instance if it exists
-      if (wavesurfer.current) {
-        wavesurfer.current.destroy();
+    const ws = WaveSurfer.create({
+      container: waveformRef.current,
+      waveColor: '#4E4E4E',
+      progressColor: '#B2B2B2',
+      cursorColor: '#848484',
+      barWidth: 1,
+      barRadius: 1,
+      cursorWidth: 1,
+      height: 28,
+      barGap: 1,
+      normalize: true,
+      fillParent: true,
+      fetchParams: {
+        cache: 'default',
+        mode: 'cors',
       }
+    });
 
-      const ws = WaveSurfer.create({
-        container: waveformRef.current,
-        waveColor: '#4E4E4E',
-        progressColor: '#B2B2B2',
-        cursorColor: '#848484',
-        barWidth: 2,
-        barRadius: 2,
-        cursorWidth: 1,
-        height: 32,
-        barGap: 1,
-        normalize: true,
-        minPxPerSec: 50,
-        fillParent: true,
-        fetchParams: {
-          cache: 'default',
-          mode: 'cors',
-        }
-      });
+    wavesurfer.current = ws;
 
-      wavesurfer.current = ws;
+    ws.on('ready', () => {
+      setDuration(ws.getDuration() || 0);
+    });
 
-      ws.on('ready', () => {
-        if (isDestroyed) return;
-        setDuration(ws.getDuration() || 0);
-      });
+    ws.on('audioprocess', (time: number) => {
+      setCurrentTime(time);
+    });
 
-      ws.on('audioprocess', (time: number) => {
-        if (isDestroyed) return;
-        setCurrentTime(time);
-      });
+    ws.on('pause', () => {
+      setIsPlaying(false);
+    });
 
-      ws.on('pause', () => {
-        if (isDestroyed) return;
-        setIsPlaying(false);
-      });
+    ws.on('finish', () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    });
 
-      ws.on('finish', () => {
-        if (isDestroyed) return;
-        setIsPlaying(false);
-        setCurrentTime(0);
-      });
+    ws.on('error', (err) => {
+      console.error('WaveSurfer error:', err);
+    });
 
-      ws.on('error', (err) => {
-        if (isDestroyed) return;
-        console.error('WaveSurfer error:', err);
-        setError('Failed to load audio');
-      });
-
-      try {
-        await ws.load(audioUrl);
-      } catch (err) {
-        console.error('Error loading audio:', err);
-        setError('Failed to load audio');
-      }
-    };
-
-    initializeWaveSurfer();
+    ws.load(audioUrl);
 
     return () => {
-      isDestroyed = true;
       if (wavesurfer.current) {
         wavesurfer.current.destroy();
         wavesurfer.current = null;
       }
     };
-  }, [audioUrl]); // Only depend on audioUrl
+  }, [audioUrl]);
 
-  const handlePlayPause = () => {
+  const handlePlayPause = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
     if (wavesurfer.current) {
       if (isPlaying) {
         wavesurfer.current.pause();
@@ -109,19 +90,20 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
       }
       setIsPlaying(!isPlaying);
     }
-  };
+  }, [isPlaying]);
+
+  const handleMuteToggle = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (wavesurfer.current) {
+      wavesurfer.current.setMuted(!isMuted);
+      setIsMuted(!isMuted);
+    }
+  }, [isMuted]);
 
   const formatTime = (time: number): string => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const handleMuteToggle = () => {
-    if (wavesurfer.current) {
-      wavesurfer.current.setMuted(!isMuted);
-      setIsMuted(!isMuted);
-    }
   };
 
   return (
@@ -147,10 +129,12 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
         )}
       </button>
 
-      
-
       <div className="flex-1 mx-4">
-        <div ref={waveformRef} className="waveform w-full" />
+        <div 
+          ref={waveformRef} 
+          className="waveform w-full max-w-full overflow-hidden"
+          style={{ maxWidth: '100%' }}
+        />
       </div>
       
       <span className="text-sm text-[#848484] min-w-[40px] flex-shrink-0">
@@ -171,10 +155,11 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
       {onDelete && (
         <div className="absolute -top-3 -right-3">
           <button 
-            onClick={onDelete}
-            className={`w-[32px] h-[32px] flex items-center justify-center rounded-full bg-[#3D3D3D] hover:bg-[#2A2A2A] transition-opacity duration-200 ${
-              isHovered ? 'opacity-100' : 'opacity-0'
-            }`}
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete();
+            }}
+            className={`w-[32px] h-[32px] flex items-center justify-center rounded-full bg-[#3D3D3D] hover:bg-[#2A2A2A] transition-opacity duration-200`}
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M1 1L13 13M1 13L13 1" stroke="#848484" strokeWidth="2" strokeLinecap="round"/>
@@ -184,6 +169,6 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = ({ audioUrl, onD
       )}
     </div>
   );
-};
+});
 
 export default RecordedAudioPlayer;

@@ -13,6 +13,7 @@ const AudioWaveform = ({ isRecording, duration, onStop, onCancel }: AudioWavefor
   const analyserRef = React.useRef<AnalyserNode | null>(null);
   const streamRef = React.useRef<MediaStream | null>(null);
   const animationFrameRef = React.useRef<number>();
+  const [elapsedTime, setElapsedTime] = React.useState(0);
 
   const startAudioAnalysis = async () => {
     try {
@@ -72,6 +73,24 @@ const AudioWaveform = ({ isRecording, duration, onStop, onCancel }: AudioWavefor
     return stopAudioAnalysis;
   }, [isRecording, stopAudioAnalysis]);
 
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isRecording) {
+      timer = setInterval(() => {
+        setElapsedTime(prevTime => prevTime + 1);
+      }, 1000);
+    } else {
+      setElapsedTime(0);
+    }
+    return () => clearInterval(timer);
+  }, [isRecording]);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
   return (
     <div className="flex items-center w-full bg-[#1C1C1C] rounded-full px-3 py-3">
       <button 
@@ -97,7 +116,7 @@ const AudioWaveform = ({ isRecording, duration, onStop, onCancel }: AudioWavefor
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-[#848484] text-sm">{duration}</span>
+        <span className="text-[#848484] text-sm">{formatTime(elapsedTime)}</span>
         <button 
           className="w-8 h-8 flex items-center justify-center rounded-full bg-[#9EFF00] hover:bg-[#8BE000]"
           onClick={onStop}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { ReactComponent as SendArrowIcon } from "../../../assets/icons/sendArrowIcon.svg";
 import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFile.svg";
 import { AudioRecorder } from "react-audio-voice-recorder";
@@ -60,6 +60,11 @@ const Footer = ({
       setSelectedAudioFile(file);
     }
     e.target.value = "";
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessageInputValue(e.target.value);
+    // Ensure this does not affect recordedAudio or selectedAudioFile
   };
 
   const handleSendMessage = async () => {
@@ -205,6 +210,7 @@ const Footer = ({
   };
 
   const handleDurationChange = (duration: string) => {
+    console.log(duration);
     setRecordingDuration(duration);
   };
 
@@ -220,6 +226,16 @@ const Footer = ({
     setRecordingDuration("");
     setIsRecording(false);
   };
+
+  // Add memoization for the audio URL
+  const recordedAudioUrl = useMemo(() => {
+    return recordedAudio ? URL.createObjectURL(recordedAudio) : null;
+  }, [recordedAudio]);
+
+  // Add memoization for the selected audio URL
+  const selectedAudioUrl = useMemo(() => {
+    return selectedAudioFile ? URL.createObjectURL(selectedAudioFile) : null;
+  }, [selectedAudioFile]);
 
   return (
     <>
@@ -238,24 +254,26 @@ const Footer = ({
               <div className="relative p-2.5">
                 <textarea
                   value={messageInputValue}
-                  onChange={(e) => setMessageInputValue(e.target.value)}
+                  onChange={handleInputChange}
                   className="resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16"
                   placeholder="Type your message..."
                 />
                 
-                
-                {recordedAudio && !selectedAudioFile && (
+                {recordedAudio && !selectedAudioFile && recordedAudioUrl && (
                   <div className="absolute bottom-0 left-2.5 w-full max-w-[calc(100%-6rem)]">
                     <RecordedAudioPlayer 
-                      audioUrl={URL.createObjectURL(recordedAudio)} 
+                      key={recordedAudioUrl}
+                      audioUrl={recordedAudioUrl}
                       onDelete={() => setRecordedAudio(null)}
                     />
                   </div>
                 )}
-                {(selectedAudioFile) && (
+                
+                {selectedAudioFile && selectedAudioUrl && (
                   <div className="absolute bottom-0 left-2.5 w-[234px]">
                     <AudioPlayer
-                      src={URL.createObjectURL(selectedAudioFile)}
+                      key={selectedAudioUrl}
+                      src={selectedAudioUrl}
                       color="#B2B2B2"
                       sliderColor="#B7B7B7"
                       style={{
@@ -294,6 +312,7 @@ const Footer = ({
               </div>
             </div>
             <div className="flex flex-col w-full">
+              
               {isRecording && (
                 <div className="min-w-0 mb-3">
                   <AudioWaveform 
