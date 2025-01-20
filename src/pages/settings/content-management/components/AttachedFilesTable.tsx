@@ -10,6 +10,7 @@
 
 import getMuiStyles from "styles/getMuiStyles";
 import musicBeam from "../../../../assets/icons/musicBeam.svg";
+import { tableStyles } from "./tableStyles";
 
 // THIRD PARTY IMPORTS
 import Paper from "@mui/material/Paper";
@@ -164,15 +165,7 @@ const AttachedFilesTable = (props: Props) => {
           }}
         >
           <TableHead
-            sx={{
-              ...muiStyles.tableHead,
-              backgroundColor: "#131313",
-              "& .MuiTableCell-head": {
-                color: "#B2B2B2",
-                borderTop: "none",
-                fontWeight: 500,
-              },
-            }}
+            sx={tableStyles.tableHead}
           >
             <TableRow>
               <TableCell padding="checkbox">
@@ -199,6 +192,7 @@ const AttachedFilesTable = (props: Props) => {
                     active={orderBy === column.id}
                     direction={orderBy === column.id ? order : "asc"}
                     onClick={(e) => handleRequestSort(e, column.id)}
+                    // className="text-sm font-medium text-mediumGray hover:text-white transition-colors"
                   >
                     {column.label}
                   </TableSortLabel>
