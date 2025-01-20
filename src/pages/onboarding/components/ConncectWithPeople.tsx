@@ -18,6 +18,7 @@ import { IUserFollowConnection } from "api/user/types";
 const MIN_ITEMS = 21;
 const ITEM_WIDTH = 230;
 const ITEM_GAP = 20;
+const FOLLOW_TO_SHOW = 100;
 
 type Props = {
   markSectionAsCompleted: () => void;
@@ -191,30 +192,34 @@ const ConncectWithPeople = (props: Props) => {
 
                   <div className="flex flex-col gap-3.5 px-4 mt-[60px] mb-4">
                     <div>
-                      <h3 className="text-white text-base font-semibold">
+                      <h3 className="text-white text-base font-semibold" style={{ height: professional_name? "auto" : "24px" }}>
                         {professional_name}
                       </h3>
-                      <h1 className="text-coolGray text-base">
+                      <h1 className="text-coolGray text-base" style={{ height: primary_role? "auto" : "24px" }}>
                         {primary_role?.replace(/_/g, ' ')}
                       </h1>
                       <span className="text-coolGray text-sm font-normal">
                         
                       </span>
 
-                      <div className="flex flex-wrap gap-1 mt-2.5">
-                        <div className="bg-eclipseGray rounded-md px-2 py-1 text-coolGray text-sm font-normal">
+                      <div className="flex flex-wrap gap-1 mt-2.5" style={{ height: "28px" }}>
+                        <div className="bg-eclipseGray rounded-md px-2 py-1 text-coolGray text-sm font-normal" style={{ height: main_genre ? "auto" : "10px" }}>
                           {main_genre}
                         </div>
-                        <div className="bg-eclipseGray rounded-md px-2 py-1 text-coolGray text-sm font-normal">
+                        <div className="bg-eclipseGray rounded-md px-2 py-1 text-coolGray text-sm font-normal"  style={{ height: sub_genre ? "auto" : "10px" }}>
                           {sub_genre}
                         </div>
                       </div>
                     </div>
-{/* 
-                    <div className="text-coolGray text-sm font-normal">
-                      <span className="text-white">{followers} </span>
-                      Followers
-                    </div> */}
+                    
+                    <div className="text-coolGray text-sm font-normal" style={{ height: "21px" }}>
+                      {followers >= FOLLOW_TO_SHOW && (
+                        <>
+                          <span className="text-white">{followers} </span>
+                          Followers
+                        </>
+                      )}
+                    </div>
 
                     <div className="flex gap-2">
                       <div
