@@ -44,7 +44,7 @@ const BlockedAccounts = (props: Props) => {
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`relative rounded-full p-[1px] bg-gradient-to-r from-blue-500 to-lime-500 w-8 h-8`}
+                  className={`relative rounded-full p-[1px] w-8 h-8`}
                 >
                   <img
                     src={thumbnail}

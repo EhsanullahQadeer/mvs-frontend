@@ -32,6 +32,7 @@ const PurchaseOrderDialog = (props: Props) => {
 
   useEffect(() => {
     const fetchUserInfo = async () => {
+      if (!recipientId) return;
       const response = await getUserByIdAPI(recipientId?.toString());
       setBasePrice(response.data?.demo_fee || 0);
     };

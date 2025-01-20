@@ -17,7 +17,6 @@ export function useSearchHeader() {
       if (topRatedArtist.length > 0) return;
 
       const response = await searchAllUsers("", 10, true, true);
-      console.log("response here", response);
       const validResults = response.data.results?.map(result => ({
         ...result,
         professionalName: result.professional_name,

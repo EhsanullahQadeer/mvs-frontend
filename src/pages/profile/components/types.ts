@@ -3,7 +3,7 @@ export interface IUserData {
   address: string | null;
   professional_name: string;
   banner_image: string | null;
-  city: string;
+  region: string;
   cognito_id: string;
   country: string;
   created_at: string; // ISO date string

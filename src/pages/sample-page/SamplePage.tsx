@@ -61,8 +61,10 @@ const SamplePageChilds = () => {
   const [user, setUser] = useState<any | null>(null);
 
   const getUserById = async (id: string) => {
-    const response = await getUserByIdAPI(id);
-    setUser(response.data);
+    if (id) {
+      const response = await getUserByIdAPI(id);
+      setUser(response.data);
+    }
   };
 
   useEffect(() => {

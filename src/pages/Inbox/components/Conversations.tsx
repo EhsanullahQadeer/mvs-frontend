@@ -136,8 +136,8 @@ export const Conversations = (props: Props) => {
                 <div className="flex gap-2 items-center self-stretch my-auto">
                   <div
                     style={{
-                      background:
-                        "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
+                      // background:
+                      //   "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
                     }}
                     className="flex rounded-full p-0.5 w-[52px] aspect-square"
                   >

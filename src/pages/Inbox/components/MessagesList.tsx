@@ -372,6 +372,7 @@ const MessagesList = () => {
                     getConversationMessages,
                   getNotes,
                   notes,
+                  userInfo: currentUserInfo.id === activeConversation.user_a.id ? activeConversation.user_b : activeConversation.user_a,
                   currentUserInfo,
                   onClose: () => {
                     setActiveConversation(null);

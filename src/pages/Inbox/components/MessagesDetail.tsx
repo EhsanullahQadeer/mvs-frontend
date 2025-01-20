@@ -30,6 +30,7 @@ import { GrShareOption } from "react-icons/gr";
 import { LuShieldAlert } from "react-icons/lu";
 import { LuBellOff } from "react-icons/lu";
 import { FiUserX } from "react-icons/fi";
+import { IArtistProfileData } from "pages/profile/components/types";
 
 type Props = {
   conversation: IConversation;
@@ -40,6 +41,7 @@ type Props = {
   notes: INotes[];
   currentUserInfo: ICurrentUser;
   onClose: () => void;
+  userInfo: IArtistProfileData;
 };
 
 const MessagesDetail = (props: Props) => {
@@ -52,6 +54,7 @@ const MessagesDetail = (props: Props) => {
     conversation,
     currentUserInfo,
     onClose,
+    userInfo
   } = props;
   const navigate = useNavigate();
   const [menuSection, setMenuSection] = useState(false);
@@ -153,8 +156,8 @@ const MessagesDetail = (props: Props) => {
               <div className="flex gap-2 items-center">
                 <div
                   style={{
-                    background:
-                      "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
+                    // background:
+                    //   "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
                   }}
                   className="flex rounded-full p-0.5 w-12 h-12 aspect-square"
                 >
@@ -170,7 +173,7 @@ const MessagesDetail = (props: Props) => {
                     {displayName}
                   </div>
                   <div className="text-xs text-silver font-normal">
-                    PUT YOUR LOCATION HERE
+                    {userInfo.country}, {userInfo?.region}
                   </div>
                 </div>
               </div>
@@ -253,7 +256,7 @@ const MessagesDetail = (props: Props) => {
                             handleThreadReply,
                             currentUserInfo,
                             refreshMessages: () => getConversationMessages(conversation),
-                            setOverlayLoading
+                            setOverlayLoading,
                           }}
                         />
                       ) : (

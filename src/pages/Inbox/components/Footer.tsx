@@ -20,6 +20,7 @@ type Props = {
   isFeedbackSection?: boolean;
   currentUserInfo?: ICurrentUser;
   messageObj?: IMessage;
+  messageId?: string;
 };
 
 const Footer = ({
@@ -29,6 +30,7 @@ const Footer = ({
   isFeedbackSection,
   currentUserInfo,
   messageObj,
+  messageId,
 }: Props) => {
   const { recipient_id } = conversation || {};
 
@@ -95,25 +97,38 @@ const Footer = ({
 
   const sendMessageToBackend = async () => {
     try {
-      // Don't send if there's no message AND no media
       if (messageInputValue.length === 0 && !audioMediaId && !selectedAudioFile && !recordedAudio) return;
       
       setOverlayLoading?.(true);
       const isDemo = Boolean(selectedAudioFile || recordedAudio);
 
-      const payload = { 
-        senderId: String(currentUserInfo?.id || ''),
-        recipientId: String(recipient_id || ''),
-        message: String(messageInputValue || ''),
-        conversationId: String(conversation.id || ''),
-        creditPaymentAmount: String(creditPaymentAmount || '0'),
-        isDemo: String(isDemo),
-        audioMediaId: String(audioMediaId || ''),
-      }
-      console.log('payload', payload);
-      
       if (!isFeedbackSection) {
+        const payload = { 
+          senderId: String(currentUserInfo?.id || ''),
+          recipientId: String(recipient_id || ''),
+          message: String(messageInputValue || ''),
+          conversationId: String(conversation.id || ''),
+          creditPaymentAmount: String(creditPaymentAmount || '0'),
+          isDemo: String(isDemo),
+          audioMediaId: String(audioMediaId || ''),
+        };
         await sendInboxMessage(payload);
+      } else {
+        // Create FormData for reply
+        const formData = new FormData();
+        formData.append('messageId', String(messageId));
+        formData.append('replyContent', messageInputValue || '');
+        formData.append('senderId', String(currentUserInfo?.id || ''));
+        formData.append('recipientId', String(recipient_id || ''));
+        formData.append('isDemoReply', String(isDemo));
+        
+        if (selectedAudioFile) {
+          formData.append('audioFile', selectedAudioFile);
+        } else if (recordedAudio) {
+          formData.append('audioFile', recordedAudio);
+        }
+
+        await replyToMessage(formData);
       }
 
       await getConversationMessages?.(conversation);
@@ -122,7 +137,6 @@ const Footer = ({
       setRecordedAudio(null);
     } catch (error) {
       console.error('Error sending message:', error);
-      // You might want to show an error toast/notification here
     } finally {
       setOverlayLoading?.(false);
       setSelectedAudioFile(null);
@@ -131,10 +145,10 @@ const Footer = ({
   };
 
   useEffect(() => {
-    sendMessageToBackend();
+    if (audioMediaId) {
+      sendMessageToBackend();
+    }
   }, [audioMediaId]);
-
-
 
   const handleRecordingComplete = (blob: Blob) => {
     if (isCancelledRef.current) {
@@ -160,7 +174,6 @@ const Footer = ({
       if (data.progress === 100) {
         eventSource.close();
         setAudioMediaId(data.metadata.id);
-        await sendMessageToBackend();
       } else if (data.progress === -1) {
         eventSource.close();
         console.error("Upload failed");

@@ -201,6 +201,7 @@ const ProfileAboutSection = (props: Props) => {
             notes={[]}
             currentUserInfo={user.auth.user}
             onClose={() => setShowChat(false)}
+            userInfo={artistData}
           />
         </div>
       </div>

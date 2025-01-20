@@ -71,7 +71,7 @@ const BioInformation: React.FC = () => {
             >
               <div className="flex gap-3 items-center">
                 <div
-                  className={`relative rounded-full p-0.5 bg-gradient-to-r from-blue-500 to-lime-500 w-48 h-48`}
+                  className={`relative rounded-full p-0.5  w-48 h-48`}
                 >
                   <img
                     src={profileImage}

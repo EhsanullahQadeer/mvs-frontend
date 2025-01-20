@@ -51,7 +51,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
           }`}
         >
           <div
-            className={`rounded-full  p-0.5 bg-gradient-to-r from-blue-500 to-lime-500 ${
+            className={`rounded-full  p-0.5 ${
               isWikiProfile ? "w-32 h-32" : "w-48 h-48"
             } `}
           >

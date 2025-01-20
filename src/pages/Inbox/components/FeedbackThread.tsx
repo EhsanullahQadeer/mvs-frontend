@@ -155,6 +155,7 @@ const FeedbackThread = (props: Props) => {
               messageObj: demoMessageObj,
               getConversationMessages,
               isFeedbackSection: true,
+              messageId: String(msgId),
             }}
           />
         </div>

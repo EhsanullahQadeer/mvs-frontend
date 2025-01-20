@@ -38,7 +38,7 @@ const UserSettingsModal = (props: any) => {
     const [newErrorMessage, setNewErrorMessage] = useState("")
 
     const [name, setName] = useState(user?.name || '');
-    const [city, setCity] = useState(user?.city || ''); 
+    const [city, setCity] = useState(user?.region || ''); 
     const [stateLoc, setState] = useState(user?.state || '');
     const [phone, setPhone] = useState(user?.phone || '');
 
@@ -222,7 +222,7 @@ const UserSettingsModal = (props: any) => {
     useEffect(() => {
         console.log('user: ', user);
         setName(  user?.name );
-        setCity(  user?.city );
+        setCity(  user?.region );
         setState( user?.state );
         setPhone( user?.phone );
         setImagePreview( user?.thumbnail );
@@ -277,7 +277,7 @@ const UserSettingsModal = (props: any) => {
                 <div className="account-detail-row">
                     <div className="row-content">
                         <span className="detail-title">City</span> {/* Title for the detail */}
-                        <span>{user?.city}</span>
+                        <span>{user?.region}</span>
                     </div>
                     <button className="edit-button" onClick={openEditCityModal}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
