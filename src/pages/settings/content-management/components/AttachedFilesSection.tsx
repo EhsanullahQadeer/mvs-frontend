@@ -18,6 +18,7 @@ type Props = {
   setLoading: (value: boolean) => void;
   currentUserInfo: ICurrentUser;
   isNewUser?: boolean;
+  updateData?: number;
 };
 
 const tableTabs = [
@@ -32,7 +33,7 @@ const defaultSampleSearchConstraints: ISampleSearchConstraints = {
 };
 
 const AttachedFilesSection = (props: Props) => {
-  const { setLoading, currentUserInfo, isNewUser } = props;
+  const { setLoading, currentUserInfo, isNewUser, updateData } = props;
   const [selectedTab, setSelectedTab] = useState("all");
   const [sampleSearchConstraints, setSampleSearchConstraints] = useState(defaultSampleSearchConstraints);
   const [getUserSamplesResponse, setGetUserSamplesResponse] = useState<IGetUserSamplesResponse>();
@@ -47,6 +48,10 @@ const AttachedFilesSection = (props: Props) => {
       getSamplesData();
     }
   }, [selectedTab,sampleSearchConstraints]);
+  useEffect(()=>{
+    getSamplesData();
+
+  },[updateData])
 
   const getSamplesData = async () => {
     setLoading(true);

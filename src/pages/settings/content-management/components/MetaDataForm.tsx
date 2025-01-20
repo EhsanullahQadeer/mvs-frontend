@@ -23,6 +23,7 @@ type Props = {
   sampleToEdit?: ISample;
   currentUserInfo?: ICurrentUser;
   collaborators?: ICollaborator[];
+  setUpdateData?: (event: any) => void;
 };
 
 const MetaDataForm = (
@@ -37,6 +38,7 @@ const MetaDataForm = (
     sampleToEdit,
     currentUserInfo,
     collaborators,
+    setUpdateData,
   } = props;
 
   console.log("MetaDataForm - received composer:", collaborators);
@@ -209,6 +211,7 @@ const MetaDataForm = (
           handleClose();
         }
       }
+      setUpdateData && setUpdateData(Date.now());
     } catch (error) {
       console.log("error ", error);
     }

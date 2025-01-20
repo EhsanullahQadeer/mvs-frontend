@@ -18,6 +18,7 @@ const ContentManagement = (props: Props) => {
   const [uploadingFile, setUploadingFile] = useState<File>(null);
   const [fileRedisKey, setFileRedisKey] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [updateData,setUpdateData] = useState(0);
 
   const handleCancel = () => {
     const response = cancelUploadAPI(fileRedisKey);
@@ -137,11 +138,12 @@ const ContentManagement = (props: Props) => {
                 fileRedisKey,
                 uploadProgress,
                 handleCancel,
-                currentUserInfo
+                currentUserInfo,
+                setUpdateData,
               }}
             />
           )}
-          <AttachedFilesSection {...{ setLoading, currentUserInfo }} />
+          <AttachedFilesSection {...{ setLoading, currentUserInfo, updateData }} />
         </div>
       </div>)
       }
