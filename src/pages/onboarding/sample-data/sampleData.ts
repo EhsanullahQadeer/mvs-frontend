@@ -10,7 +10,7 @@ import sampleImg from "./Ellipse 730.png";
 export const userTypes = [
   {
     label: "Music Producer",
-    value: "Music Producer",
+    value: "Music_Producer",
     iconSrc: musicProducerIcon,
   },
   {
@@ -25,12 +25,12 @@ export const userTypes = [
   },
   {
     label: "Mastering Engineer",
-    value: "Mastering Engineer",
+    value: "Mastering_Engineer",
     iconSrc: masteringEngineerIcon,
   },
   {
     label: "Mixing Engineer",
-    value: "Mixing Engineer",
+    value: "Mixing_Engineer",
     iconSrc: mixingEngineerIcon,
   },
   {

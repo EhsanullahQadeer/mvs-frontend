@@ -107,6 +107,7 @@ const CustomFileDropper = (props: Props) => {
           <p className="text-sm text-dimGray font-normal">
             Maximum file size 50MB.
           </p>
+          <p className="text-red-300 text-base">Only ".WAV" and ".MP3"</p>
         </div>
 
         {(errorMessage || uploadingFile) && (

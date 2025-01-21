@@ -1,6 +1,6 @@
 export const userTagsObj: { [key: string]: string } = {
     artist: "Artists",
-    producer: "Producers",
+    music_producer: "Music Producers",
     songwriter: "Songwriters",
     mastering_engineer: "Mastering Engineers",
     mixing_engineer: "Mixing Engineers",

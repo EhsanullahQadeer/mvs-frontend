@@ -83,6 +83,7 @@ const PurchaseOrderDialog = (props: Props) => {
 
   const handleSendDemo = () => {
     handleSendMessage();
+    setOpenPurchaseOrder(false);
   };
 
   useEffect(() => {

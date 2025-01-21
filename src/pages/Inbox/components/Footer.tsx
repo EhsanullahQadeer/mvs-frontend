@@ -58,7 +58,7 @@ const Footer = ({
     }
   }, [reloadComponent]);
 
-  const canSendMessage =
+  const canSendMessage = 
     messageInputValue.trim() &&
     (!isFeedbackSection ||
       (isFeedbackSection && (recordedAudio || messageInputValue)));
@@ -116,13 +116,15 @@ const Footer = ({
 
   const sendMessageToBackend = async () => {
     try {
-      if (
-        messageInputValue.length === 0 &&
-        !audioMediaId &&
-        !selectedAudioFile &&
-        !recordedAudio
-      )
-        return;
+      // COMMENTED OUT FOR BETA TESTING
+      // if (
+      //   messageInputValue.length === 0 &&
+      //   !audioMediaId &&
+      //   !selectedAudioFile &&
+      //   !recordedAudio
+      // )
+      //   return;
+      if (messageInputValue.length === 0) return;
 
       setOverlayLoading?.(true);
       const isDemo = Boolean(selectedAudioFile || recordedAudio);
@@ -167,7 +169,6 @@ const Footer = ({
       setSelectedAudioFile(null);
       setCreditPaymentAmount(0);
       reloadData && await reloadData();
-      setOpenPurchaseOrder(false);
       setReloadComponent(true);
       setIsSubmitting(false);
     }
@@ -406,13 +407,13 @@ const Footer = ({
                 <div className="shrink-0">
                   <div
                     className={`${
-                      canSendMessage ? "cursor-pointer" : "cursor-not-allowed"
+                      canSendMessage && !isSubmitting ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
                   >
                     <div
-                      onClick={canSendMessage ? handlePurchaseOrder : undefined}
+                      onClick={canSendMessage && !isSubmitting ? handlePurchaseOrder : undefined}
                       className={`flex items-center justify-center w-11 h-11 rounded ${
-                        canSendMessage
+                        canSendMessage && !isSubmitting
                           ? "text-[#9EFF00] pointer-events-auto"
                           : "text-[#242424] pointer-events-none"
                       }`}
