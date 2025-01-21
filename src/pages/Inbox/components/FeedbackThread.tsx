@@ -9,6 +9,7 @@ import { formatMediaDetails } from "../handlers/mediaUtils";
 import { useEffect, useState } from "react";
 import ThreadMessageItem from "./ThreadMessageItem";
 import { getThreadMessages } from "api/messenger";
+import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
 
 type Props = {
   conversation: IConversation;
@@ -47,9 +48,23 @@ const FeedbackThread = (props: Props) => {
   }, []);
 
   useEffect(() => {
-
     fetchThreadMessages();
   }, [msgId]);
+  useLambdaEvent("NEW_MESSAGE", (event) => {
+    try {
+      const { conversationId, parentMessageId } = event.data;
+      
+      const timeoutId = setTimeout(() => {
+        if (parentMessageId && Number(parentMessageId) === msgId) {
+          fetchThreadMessages();
+        }
+        return () => clearTimeout(timeoutId);
+      }, 300);
+      
+    } catch (error) {
+      console.error('Error in Lambda event handler:', error);
+    }
+  });
 
   const safeAccess = <T,>(value: T | null | undefined): T | null =>
     value || null;
