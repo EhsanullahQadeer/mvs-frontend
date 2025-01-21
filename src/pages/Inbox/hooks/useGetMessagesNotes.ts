@@ -4,7 +4,7 @@ import moment from "moment";
 import { useState } from "react";
 
 const useGetMessagesNotes = (setActiveConversation) => {
-  const [messages, setMessages] = useState([]);
+  const [localMessages, setLocalMessages] = useState([]);
   const [notes, setNotes] = useState<INotes[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -39,7 +39,7 @@ const useGetMessagesNotes = (setActiveConversation) => {
       };
     });
 
-    setMessages(groupArrays);
+    setLocalMessages(groupArrays);
   };
 
   const getNotes = async (id: number) => {
@@ -59,12 +59,13 @@ const useGetMessagesNotes = (setActiveConversation) => {
   };
   
   return {
-    messages,
+    localMessages,
     notes,
     loading,
     getConversationMessages,
     getNotes,
     getMessagesNotes,
+    setLocalMessages,
   };
 };
 

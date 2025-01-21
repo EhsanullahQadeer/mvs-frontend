@@ -78,15 +78,13 @@ const MessagesSection = (props: Props) => {
 
         const lastThreadReply = threadReplyObjs[threadReplyObjs.length - 1];
 
-        // Get the formatted date and time
-        const formattedDate = moment(created_at).format("dddd, MMMM D, YYYY");
-        const formattedTime = moment(created_at).format("h:mm A");
-
-        const shouldShowDate =
-          index === 0 ||
-          moment(messages[0].messages[index - 1].created_at).format(
-            "YYYY-MM-DD"
-          ) !== moment(created_at).format("YYYY-MM-DD");
+        // Get the formatted date
+        const currentMessageDate = moment(created_at).format("dddd, MMMM D, YYYY");
+        
+        // Only show date if it's the first message or if date is different from previous message
+        const shouldShowDate = index === 0 || 
+          moment(chatMessages[index - 1].created_at).format("YYYY-MM-DD") !== 
+          moment(created_at).format("YYYY-MM-DD");
 
         const totalReactions = Object.values(
           messageReactions[id]?.reactionCounts || {}
@@ -100,7 +98,7 @@ const MessagesSection = (props: Props) => {
                   <hr />
                 </div>
                 <div className="p-2.5 text-sm font-normal text-silver">
-                  {formattedDate}
+                  {currentMessageDate}
                 </div>
                 <div className="flex-1 p-2.5 text-coolGray">
                   <hr />
@@ -148,7 +146,7 @@ const MessagesSection = (props: Props) => {
                   <div className="font-semibold text-sm text-white">
                     {displayName}
                   </div>
-                  <div className="text-grayBlue text-sm">{formattedTime}</div>
+                  <div className="text-grayBlue text-sm">{moment(created_at).format("h:mm A")}</div>
                 </div>
                 <div className="text-sm text-[#CACCCD]">{message_content}</div>
 

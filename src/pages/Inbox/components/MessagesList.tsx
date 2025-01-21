@@ -48,7 +48,6 @@ const MessagesList = () => {
   const [showFavoriteConvos, setShowFavoriteConvos] = useState(false);
   const [filteredConversations, setFilteredConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
-
   const [selectedConversations, setSelectedConversations] = useState<number[]>(
     []
   );
@@ -86,12 +85,13 @@ const MessagesList = () => {
   }, [favoriteConversations]);
 
   const {
-    messages,
+    localMessages,
     notes,
     loading,
     getConversationMessages,
     getNotes,
     getMessagesNotes,
+    setLocalMessages,
   } = useGetMessagesNotes(setActiveConversation);
 
   useEffect(() => {
@@ -221,12 +221,19 @@ const MessagesList = () => {
 
   useLambdaEvent("NEW_MESSAGE", (event) => {
     try {
-      const { conversationId, sender } = event.data;
+      const { conversationId, sender, message, timestamp } = event.data;
       
       const timeoutId = setTimeout(async () => {
         try {
           if (id === String(conversationId)) {
-            await getMessages(conversationId);
+            const newMessage = {
+              conversation_id: conversationId,
+              Timestamp: timestamp || new Date().toISOString(),
+              message_content: message,
+              sender_id: sender
+            };
+            setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
+            // await getMessages(conversationId);
           }
           
           const conversation = conversations.find(c => c.id === Number(conversationId));
@@ -255,26 +262,6 @@ const MessagesList = () => {
       console.error('Error processing new message event:', error);
     }
   });
-
-  useEffect(() => {
-    const handleNewMessage = (event: CustomEvent) => {
-      const { conversationId } = event.detail;
-      
-      // If this conversation is currently active, refresh its messages
-      if (id === String(conversationId)) {
-        getMessages(activeConversation);
-      }
-      
-      // Refresh the conversations list
-      getConversationList();
-    };
-
-    window.addEventListener('newMessage', handleNewMessage as EventListener);
-    
-    return () => {
-      window.removeEventListener('newMessage', handleNewMessage as EventListener);
-    };
-  }, [id, activeConversation, getMessages, getConversationList]);
 
   return (
     <React.Fragment>
@@ -359,7 +346,7 @@ const MessagesList = () => {
             <FeedbackThread
               {...{
                 conversation: activeConversation,
-                messages,
+                messages: localMessages,
                 currentUserInfo,
                 getConversationMessages,
               }}
@@ -369,9 +356,9 @@ const MessagesList = () => {
               <div className="h-full animate-slide-in">
                 <MessagesDetail
                   {...{
-                    messages,
+                    messages: localMessages,
                     conversation: activeConversation,
-                    loading,
+                    loading: false,
                     getConversationMessages,
                   getNotes,
                   notes,
