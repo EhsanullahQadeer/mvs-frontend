@@ -92,7 +92,7 @@ const ThreadMessageItem = (props: Props) => {
 
           <div
             id="2"
-            className={`flex relative gap-1 items-center self-start rounded-2xl h-full w-auto ${
+            className={`flex relative overflow-hidden gap-1 items-center self-start rounded-2xl h-full w-auto ${
               isDemo ? "audio-1 p-3 mt-1 bg-gunMetal" : "audio-2 mt-2"
             }`}
           >
@@ -116,7 +116,7 @@ const ThreadMessageItem = (props: Props) => {
                 <div className="w-11/12">
                   <p className="font-normal text-sm text-silver flex">
                     <span>"</span>
-                    <span className="line-clamp-1">
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap max-w-[150px]">
                       {audio_media?.file_name || "Demo"}
                     </span>
                     <span>"</span>

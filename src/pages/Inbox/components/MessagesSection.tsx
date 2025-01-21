@@ -163,7 +163,7 @@ const MessagesSection = (props: Props) => {
                         }`}
                       >
                         <div
-                          className={`border rounded-lg p-2.5 flex gap-3 items-center ${
+                          className={`border overflow-hidden rounded-lg p-2.5 flex gap-3 items-center ${
                             firstFeedbackOnDemo
                               ? "border-[#57AEFF] bg-[#002C55]"
                               : "bg-[#202327] border-charcoalGray"
