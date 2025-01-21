@@ -9,6 +9,7 @@ import { AudioPlayer } from "react-audio-play";
 import { uploadMedia } from "api/sounds";
 import { ReactComponent as MicIcon } from "../../../assets/icons/micIcon.svg";
 import { ReactComponent as CheckIcon } from "../../../assets/icons/checkIcon.svg";
+import { CircularProgress } from "@mui/material";
 import AudioWaveform from "components/util/AudioWaveform";
 import CustomAudioRecorder from "./CustomAudioRecorder";
 import RecordedAudioPlayer from './RecordedAudioPlayer';
@@ -21,6 +22,7 @@ type Props = {
   currentUserInfo?: ICurrentUser;
   messageObj?: IMessage;
   messageId?: string;
+  reloadData?: () => Promise<void>;
 };
 
 const Footer = ({
@@ -31,6 +33,7 @@ const Footer = ({
   currentUserInfo,
   messageObj,
   messageId,
+  reloadData,
 }: Props) => {
   const { recipient_id } = conversation || {};
 
@@ -46,6 +49,14 @@ const Footer = ({
   const stopRecordingRef = useRef(null);
   const [isCancelled, setIsCancelled] = useState(false);
   const isCancelledRef = useRef(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reloadComponent, setReloadComponent] = useState(false);
+
+  useEffect(() => {
+    if (reloadComponent) {
+      setReloadComponent(false);
+    }
+  }, [reloadComponent]);
 
   const canSendMessage =
     messageInputValue.trim() &&
@@ -79,12 +90,16 @@ const Footer = ({
       }
       // Only send immediately if there's no file to upload
       await sendMessageToBackend();
+      setIsSubmitting(false);
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
+    }finally{
+      reloadData && await reloadData();
     }
   };
 
   const handlePurchaseOrder = async () => {
+    setIsSubmitting(true);
     if (selectedAudioFile) {
       setOpenPurchaseOrder(true);
     }
@@ -106,7 +121,7 @@ const Footer = ({
           recipientId: String(recipient_id || ''),
           message: String(messageInputValue || ''),
           conversationId: String(conversation.id || ''),
-          creditPaymentAmount: String(creditPaymentAmount || '0'),
+          creditPaymentAmount: Number(creditPaymentAmount || 0),
           isDemo: String(isDemo),
           audioMediaId: String(audioMediaId || ''),
         };
@@ -139,6 +154,9 @@ const Footer = ({
       setOverlayLoading?.(false);
       setSelectedAudioFile(null);
       setCreditPaymentAmount(0);
+      reloadData && await reloadData();
+      setReloadComponent(true);
+      setIsSubmitting(false);
     }
   };
 
@@ -377,7 +395,13 @@ const Footer = ({
                           : "text-[#242424] pointer-events-none"
                       }`}
                     >
-                      <SendArrowIcon className="w-6 h-6" />
+                      {isSubmitting? (<CircularProgress
+                                      sx={{
+                                        width: "80px",
+                                        height: "80px",
+                                        color: "#9EFF00",
+                                      }}
+                                    />) :(<SendArrowIcon className="w-6 h-6" />)}
                     </div>
                   </div>
                 </div>
@@ -387,15 +411,16 @@ const Footer = ({
         </div>
       </div>
 
-      <PurchaseOrderDialog
+      {!reloadComponent&&(<PurchaseOrderDialog
         {...{
           openPurchaseOrder,
           setOpenPurchaseOrder,
           conversation,
           setCreditPaymentAmount,
           handleSendMessage,
+          setIsSubmitting,
         }}
-      />
+      />)}
     </>
   );
 };

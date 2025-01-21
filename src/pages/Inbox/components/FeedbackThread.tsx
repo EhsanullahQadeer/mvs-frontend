@@ -27,6 +27,18 @@ const FeedbackThread = (props: Props) => {
   const [msgId, setMsgId] = useState<number | null>(null);
   const [threadReplyObjs, setThreadReplyObjs] = useState<IMessage[]>([]);
 
+  async function fetchThreadMessages () {
+    if (msgId) {
+      try {
+        const response = await getThreadMessages(msgId);
+        const replies = response.data.filter(msg => msg.id !== msgId);
+        setThreadReplyObjs(replies);
+      } catch (error) {
+        console.error("Error fetching thread messages:", error);
+      }
+    }
+  }
+
   useEffect(() => {
     const storedMsgId = localStorage.getItem("msgId");
     if (storedMsgId) {
@@ -35,17 +47,6 @@ const FeedbackThread = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    const fetchThreadMessages = async () => {
-      if (msgId) {
-        try {
-          const response = await getThreadMessages(msgId);
-          const replies = response.data.filter(msg => msg.id !== msgId);
-          setThreadReplyObjs(replies);
-        } catch (error) {
-          console.error("Error fetching thread messages:", error);
-        }
-      }
-    };
 
     fetchThreadMessages();
   }, [msgId]);
@@ -105,11 +106,9 @@ const FeedbackThread = (props: Props) => {
                 {...{ message: demoMessageObj, isDemo: true, details }}
               />
             )}
-
             {demoMessageObj?.claimed ? (
               <>
                 {threadReplyObjs?.map((reply, index) => {
-                  console.log("reply", reply);
                   return (
                     <>
                       {index === 1 && (
@@ -169,6 +168,7 @@ const FeedbackThread = (props: Props) => {
               getConversationMessages,
               isFeedbackSection: true,
               messageId: String(msgId),
+              reloadData: fetchThreadMessages,
             }}
           />
         </div>

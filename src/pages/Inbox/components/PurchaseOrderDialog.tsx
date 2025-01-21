@@ -13,6 +13,7 @@ interface Props {
   setCreditPaymentAmount: (value: any) => void;
   handleSendMessage: () => void;
   conversation: IConversation;
+  setIsSubmitting?: (value:boolean)=> void;
 }
 
 const serviceFeePercentage = 2.9;
@@ -24,6 +25,7 @@ const PurchaseOrderDialog = (props: Props) => {
     conversation,
     setCreditPaymentAmount,
     handleSendMessage,
+    setIsSubmitting,
   } = props;
   const { thumbnail, displayName } = conversation || {};
 
@@ -70,8 +72,9 @@ const PurchaseOrderDialog = (props: Props) => {
 
   const handleClose = () => {
     setOpenPurchaseOrder(false);
-    setCreditPaymentAmount(0);
-    setTipAmount(0)
+    setTipAmount(0);
+    setInputTipAmount("");
+    setIsSubmitting(false);
   };
 
   const handleOpenCardInfo = () => {
@@ -79,9 +82,7 @@ const PurchaseOrderDialog = (props: Props) => {
   };
 
   const handleSendDemo = () => {
-    console.log("formData", formData);
     handleSendMessage();
-    handleClose();
   };
 
   useEffect(() => {
