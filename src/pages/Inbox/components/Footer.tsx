@@ -155,6 +155,7 @@ const Footer = ({
       setSelectedAudioFile(null);
       setCreditPaymentAmount(0);
       reloadData && await reloadData();
+      setOpenPurchaseOrder(false);
       setReloadComponent(true);
       setIsSubmitting(false);
     }

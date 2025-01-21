@@ -161,7 +161,22 @@ const ProfileAboutSection = (props: Props) => {
         }));
       }
 
-      const conversationId = conversation.id || conversation.conversation_id;
+      let conversationId = conversation.id || conversation.conversation_id;
+      if (String(conversationId).startsWith("temp")){
+        const response = await getConversationWithUser(artistData.id);
+
+        if (response.data) {
+          conversationId = response.data.id
+          setChatData({
+            id: response.data.id,
+            thumbnail: artistData.thumbnail,
+            displayName: artistData.professional_name,
+            sender: user.auth.user.id,
+            recipient_id: artistData.id,
+            conversation_id: response.data.id,
+          });
+        }
+      }
       if (conversationId) {
         const messagesResponse = await getConversationsById(
           { limit: 10 },
