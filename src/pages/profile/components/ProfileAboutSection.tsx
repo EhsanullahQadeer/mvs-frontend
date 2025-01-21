@@ -259,50 +259,53 @@ const ProfileAboutSection = (props: Props) => {
             </div>
           </div>
 
-          <div className="mt-[22px] mb-2 flex justify-between flex-wrap gap-2">
-            <div className="gap-2 flex items-center flex-wrap">
-              {connectionDetail === true ? (
-                <></>
-              ) : (
+          {/* Only show buttons row if not viewing own profile */}
+          {user.auth.user.id !== artistData?.id && (
+            <div className="mt-[22px] mb-2 flex justify-between flex-wrap gap-2">
+              <div className="gap-2 flex items-center flex-wrap">
+                {connectionDetail === true ? (
+                  <></>
+                ) : (
+                  <button
+                    onClick={handleConnectFunction}
+                    className={`flex items-center bg-transparent text-dimGray border border-dimGray text-sm rounded-full transition py-2 px-4 font-normal ${
+                      isConnectionPending
+                        ? "cursor-default pointer-events-none"
+                        : "cursor-pointer pointer-events-auto"
+                    }`}
+                  >
+                    {isConnectionPending ? (
+                      <span>Connection Pending</span>
+                    ) : (
+                      <div className="flex gap-2 items-center">
+                        <FiUserPlus className="w-4 h-4" />
+                        <span>Connect</span>
+                      </div>
+                    )}
+                  </button>
+                )}
+
                 <button
-                  onClick={handleConnectFunction}
-                  className={`flex items-center bg-transparent text-dimGray border border-dimGray text-sm rounded-full transition py-2 px-4 font-normal ${
-                    isConnectionPending
-                      ? "cursor-default pointer-events-none"
-                      : "cursor-pointer pointer-events-auto"
-                  }`}
+                  onClick={handleMessageClick}
+                  style={{
+                    width: "unset",
+                  }}
+                  className="flex font-normal items-center text-jetBlack text-sm rounded-full transition py-2 px-4 bg-limeGreen cursor-pointer"
                 >
-                  {isConnectionPending ? (
-                    <span>Connection Pending</span>
-                  ) : (
-                    <div className="flex gap-2 items-center">
-                      <FiUserPlus className="w-4 h-4" />
-                      <span>Connect</span>
-                    </div>
-                  )}
+                  <div className="flex gap-2 items-center">
+                    <FiSend className="w-4 h-4" />
+                    <span>Message</span>
+                  </div>
                 </button>
-              )}
+              </div>
 
-              <button
-                onClick={handleMessageClick}
-                style={{
-                  width: "unset",
-                }}
-                className="flex font-normal items-center text-jetBlack text-sm rounded-full  transition py-2 px-4 bg-limeGreen cursor-pointer"
-              >
-                <div className="flex gap-2 items-center">
-                  <FiSend className="w-4 h-4" />
-                  <span>Message</span>
-                </div>
-              </button>
+              <div>
+                <button className="bg-eerieBlack text-coolGray p-2 rounded-lg hover:bg-gray-700 transition border border-eerieBlack">
+                  <LiaEllipsisHSolid className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-
-            <div>
-              <button className="bg-eerieBlack text-coolGray p-2 rounded-lg hover:bg-gray-700 transition border border-eerieBlack">
-                <LiaEllipsisHSolid className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
