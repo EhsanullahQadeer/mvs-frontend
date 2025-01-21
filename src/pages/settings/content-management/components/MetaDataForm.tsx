@@ -13,6 +13,7 @@ import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
 import AlertDialog from "components/util/AlertDialog";
 import ContributersTable from "./ContributersTable";
 import UploadingFileMetaData from "./UploadingFileMetaData";
+import { CircularProgress } from "@mui/material";
 
 type Props = {
   fileRedisKey?: string;
@@ -83,10 +84,12 @@ const MetaDataForm = (
   );
   const [midiFile, setMidiFile] = useState(null);
   const [percentError, setPercentError] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
   const initialValues = {
     songName: filename ? filename : "",
     songBpm: bpm ? bpm : "",
-    songType: type ? type : "",
+    songType: type ? type : "sample",
     songTags: tags ? tags : "",
     sampleKey: key ? key : "",
   };
@@ -128,55 +131,49 @@ const MetaDataForm = (
     setPercentError(false);
   }, [selectedComposer, collaborators]);
 
-  const handleSubmit = async (
-    values
-  ) => {
-
-    const { 
-      songName, 
-      songBpm,
-      sampleKey,
-      songType, 
-      songTags 
-    } = values;
-
-    const formattedTags = songTags
-      .split(' ')
-      .filter(tag => tag.trim())
-      .map(tag => tag.startsWith('#') ? tag.slice(1) : tag)
-      .filter((tag, index, self) => self.indexOf(tag) === index);
-
-    const percentSum = composerData.reduce((sum, composer) => {
-      return sum + composer.contribution;
-    }, 0);
-
-    if (Math.ceil(percentSum) !== 100) {
-      setPercentError(true);
-      return;
-    }
-
-    const collaborators = composerData
-      .filter((data) => data.id !== currentUserInfo.id)
-      .map((composer) => ({
-        id: composer.id,
-        contribution: composer.contribution,
-        roles: composer.roles,
-        sampleId: props.sampleToEdit?.id,
-        user: {
-          id: composer.user?.id,
-          professional_name: composer.user?.professional_name,
-          thumbnail: composer.user?.thumbnail,
-          is_owner: composer.user?.is_owner,
-          primary_role: composer.user?.primary_role,
-          secondary_role: composer.user?.secondary_role,
-        },
-      }));
-
-    const ownerObj = composerData.find(
-      (data) => data.id === currentUserInfo.id
-    );
-
+  const handleSubmit = async (values) => {
+    setIsSaving(true);
     try {
+      const { 
+        songName, 
+        songBpm,
+        sampleKey,
+        songType, 
+        songTags 
+      } = values;
+
+      const formattedTags = songTags
+        .split(' ')
+        .filter(tag => tag.trim())
+        .map(tag => tag.startsWith('#') ? tag.slice(1) : tag)
+        .filter((tag, index, self) => self.indexOf(tag) === index);
+
+      const percentSum = composerData.reduce((sum, composer) => {
+        return sum + composer.contribution;
+      }, 0);
+
+      if (Math.ceil(percentSum) !== 100) {
+        setPercentError(true);
+        return;
+      }
+
+      const collaborators = composerData
+        .filter((data) => data.id !== currentUserInfo.id)
+        .map((composer) => ({
+          id: composer.id,
+          contribution: composer.contribution,
+          roles: composer.roles,
+          sampleId: props.sampleToEdit?.id,
+          user: {
+            id: composer.user?.id,
+            professional_name: composer.user?.professional_name,
+            thumbnail: composer.user?.thumbnail,
+            is_owner: composer.user?.is_owner,
+            primary_role: composer.user?.primary_role,
+            secondary_role: composer.user?.secondary_role,
+          },
+        }));
+
       const body = {
         filename: songName,
         bpm: songBpm,
@@ -186,34 +183,41 @@ const MetaDataForm = (
         is_private: privacyValue === "private",
         collaborators: JSON.stringify(collaborators),
         ...(isEditSample && {
-          sample_id: props.sampleToEdit?.id,
+          sample_id: sampleToEdit?.id,
           s3_key,
           mime_type,
           length,
         }),
       };
 
-      // console.log('body here', body);
-      // return;
-
-      if (sampleToEdit) {
-        sampleToEdit.tags = formattedTags;
-      }
+      console.log('Attempting save with:', { 
+        isEditSample, 
+        editFileId: sampleToEdit?.id, 
+        fileRedisKey, 
+        body 
+      });
       
       if (fileRedisKey) {
         const response = await uploadedFileMetadata(fileRedisKey, body);
-        if (response.status === 200) {
-          handleCancel();
-        }
-      } else if (editFileId) {
-        const response = await updateFileMetadata(editFileId, body);
-        if (response.status === 200) {
-          handleClose();
-        }
+        console.log('Upload response:', response);
+        setUpdateData && setUpdateData(Date.now());
+        handleCancel?.();
+        return;
+      } 
+      
+      if (isEditSample && sampleToEdit?.id) {
+        const response = await updateFileMetadata(sampleToEdit.id, body);
+        console.log('Update response:', response);
+        setUpdateData && setUpdateData(Date.now());
+        handleClose?.();
+        return;
       }
-      setUpdateData && setUpdateData(Date.now());
+
+      console.error('No valid file key or sample ID for update');
     } catch (error) {
-      console.log("error ", error);
+      console.error('Save error:', error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -253,10 +257,10 @@ const MetaDataForm = (
       />
 
       <Formik 
-        initialValues={initialValues} 
+        initialValues={initialValues}
         onSubmit={(values) => handleSubmit(values)}
       >
-        {({ handleSubmit }) => (
+        {({ handleSubmit, errors, touched }) => (
           <Form onSubmit={handleSubmit}>
             <>
               <div>
@@ -304,15 +308,35 @@ const MetaDataForm = (
                 </button>
                 <button
                   type="submit"
+                  disabled={isSaving}
                   className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"
                 >
-                  Save Changes
+                  {isSaving ? "Saving..." : "Save Changes"}
                 </button>
               </div>
+
+              {errors.songType && touched.songType && (
+                <div className="text-red-500 text-xs mt-1">{errors.songType}</div>
+              )}
             </>
           </Form>
         )}
       </Formik>
+
+      {isSaving && (
+        <>
+          <div className="absolute top-0 left-0 z-50 bg-black opacity-40 pointer-events-none w-full h-full"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999px]">
+            <CircularProgress
+              sx={{
+                width: "80px !important",
+                height: "80px !important",
+                color: "#9EFF00",
+              }}
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };

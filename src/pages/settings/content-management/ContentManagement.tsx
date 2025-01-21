@@ -21,7 +21,7 @@ const ContentManagement = (props: Props) => {
   const [updateData,setUpdateData] = useState(0);
 
   const handleCancel = () => {
-    const response = cancelUploadAPI(fileRedisKey);
+    // const response = cancelUploadAPI(fileRedisKey);
     setUploadProgress(0);
     setUploadingFile(null);
     setFileRedisKey("");
