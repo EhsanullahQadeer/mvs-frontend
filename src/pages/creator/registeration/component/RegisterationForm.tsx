@@ -140,7 +140,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                       name="firstName"
                       type="text"
                       placeholder="e.g john"
-                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg w-full"
+                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border border-eclipseGray text-white text-sm rounded-lg w-full"
                     />
 
                     <div className="text-darkRed mt-1 text-xs font-medium">
@@ -157,7 +157,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                       name="lastName"
                       type="text"
                       placeholder="e.g sibley"
-                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg w-full"
+                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border border-eclipseGray text-white text-sm rounded-lg w-full"
                     />
 
                     <div className="text-darkRed mt-1 text-xs font-medium">
@@ -176,7 +176,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                       name="email"
                       type="email"
                       placeholder="e.g abc@example.com"
-                      className={`hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border ${emailError ? 'border-darkRed' : 'border-eclipseGray'} text-charcoalGray text-sm rounded-lg w-full`}
+                      className={`hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none py-3 px-4 bg-jetBlack border ${emailError ? 'border-darkRed' : 'border-eclipseGray'} text-white text-sm rounded-lg w-full`}
                     />
 
                     <div className="text-darkRed mt-1 text-xs font-medium">
@@ -200,7 +200,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                         );
                         setFieldValue("phone", formattedPhoneNumber);
                       }}
-                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg"
+                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-jetBlack border border-eclipseGray text-white text-sm rounded-lg"
                     />
 
                     <div className="text-darkRed mt-1 text-xs font-medium">
@@ -217,7 +217,7 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                     name="instagramUsername"
                     type="text"
                     placeholder="@username"
-                    className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-jetBlack border border-eclipseGray text-charcoalGray text-sm rounded-lg"
+                    className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full py-3 px-4 bg-jetBlack border border-eclipseGray text-white text-sm rounded-lg"
                   />
                 </div>
               )}
