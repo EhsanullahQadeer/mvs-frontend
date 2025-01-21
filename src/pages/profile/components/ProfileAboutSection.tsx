@@ -15,6 +15,8 @@ import {
 import MessagesDetail from "pages/Inbox/components/MessagesDetail";
 import { requestConncetAPI } from "api/user";
 import avatarImg from "../../../assets/img/avatar.svg";
+import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
+import { useMessages } from "../../../pages/profile/messageContextProvider";
 
 type Props = {
   artistData: IArtistProfileData | null;
@@ -60,6 +62,40 @@ const ProfileAboutSection = (props: Props) => {
   } = artistData?.available ?? artistData ?? {};
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
+
+    useLambdaEvent("NEW_MESSAGE", (event) => {
+      try {
+        const { conversationId, sender, message, timestamp } = event.data;
+    
+        const timeoutId = setTimeout(async () => {
+          try {
+            if (chatData.id === Number(conversationId)) {
+              // const newMessage = {
+              //   conversation_id: conversationId,
+              //   Timestamp: timestamp || new Date().toISOString(),
+              //   message_content: message,
+              //   sender_id: sender
+              // };
+              // const formatMessages = [
+              //   {
+              //     date: new Date().toISOString().split("T")[0],
+              //     messages: [...messages[0]?.messages || [], newMessage]
+              //   }
+              // ]
+              //setMessages(formatMessages);
+              getConversationMessages(chatData);
+            }
+          } catch (error) {
+            console.error('Error refreshing data:', error);
+          }
+        }, 300);
+    
+        return () => clearTimeout(timeoutId);
+    
+      } catch (error) {
+        console.error('Error processing new message event:', error);
+      }
+    });
 
   const handlePlayClick = (previewUrl: string, index: number) => {
     if (!previewUrl) return;

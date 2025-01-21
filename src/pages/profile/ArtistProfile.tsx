@@ -27,6 +27,7 @@ import { CircularProgress } from "@mui/material";
 import ProfileAboutSection from "./components/ProfileAboutSection";
 import searchIcon from "../../assets/icons/searchIcon.svg";
 import SamplesContainer from "components/SampleContainer/player-container";
+import { MessageContextProvider } from "./messageContextProvider";
 
 // import { getUserSamplesAPI } from "api/sounds";
 

@@ -10,8 +10,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
-import { useEffect, useRef, useState } from "react";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 import MessagesSection from "./MessagesSection";
 import Footer from "./Footer";
@@ -22,15 +21,13 @@ import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toggleMessageToRead } from "api/messenger";
 import ActionMenu from "./ActionMenu";
-import { FiUser } from "react-icons/fi";
+import { FiUser, FiUnlock, FiUserX } from "react-icons/fi";
 import { IoVideocamOutline } from "react-icons/io5";
 import { HiOutlineEye } from "react-icons/hi";
-import { FiUnlock } from "react-icons/fi";
 import { GrShareOption } from "react-icons/gr";
-import { LuShieldAlert } from "react-icons/lu";
-import { LuBellOff } from "react-icons/lu";
-import { FiUserX } from "react-icons/fi";
+import { LuShieldAlert, LuBellOff } from "react-icons/lu";
 import { IArtistProfileData } from "pages/profile/components/types";
+import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
 
 type Props = {
   conversation: IConversation;
@@ -54,11 +51,18 @@ const MessagesDetail = (props: Props) => {
     conversation,
     currentUserInfo,
     onClose,
-    userInfo
+    userInfo,
   } = props;
   const navigate = useNavigate();
   const [menuSection, setMenuSection] = useState(false);
   const { id, thumbnail, displayName } = conversation;
+  //const { message, sendMessage } = useMessages();
+
+  // Update the chat feed or any other behavior when messages change
+  useEffect(() => {
+    // This effect will run whenever messages change
+    console.log("Messages updated:", messages);
+  }, [messages]);
 
   const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
   const headerTabs = [
@@ -148,165 +152,164 @@ const MessagesDetail = (props: Props) => {
   };
 
   return (
-    <React.Fragment>
-      <div className="h-full w-full border-l border-eerieBlack bg-richBlack relative">
-        <div className="flex flex-col pt-2 h-full">
-          <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
-            <div className="flex flex-wrap gap-5 justify-between items-center p-4 pt-2 w-full">
-              <div className="flex gap-2 items-center">
-                <div
-                  style={{
+    <div className="h-full w-full border-l border-eerieBlack bg-richBlack relative">
+      <div className="flex flex-col pt-2 h-full">
+        <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
+          <div className="flex flex-wrap gap-5 justify-between items-center p-4 pt-2 w-full">
+            <div className="flex gap-2 items-center">
+              <div
+                style={
+                  {
                     // background:
                     //   "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
-                  }}
-                  className="flex rounded-full p-0.5 w-12 h-12 aspect-square"
-                >
-                  <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
-                    <div
-                      style={{ backgroundImage: `url("${thumbnail}")` }}
-                      className="w-full h-full rounded-full bg-cover bg-center"
-                    ></div>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <div className="text-sm font-semibold text-white">
-                    {displayName}
-                  </div>
-                  <div className="text-xs text-silver font-normal">
-                    {userInfo.country}, {userInfo?.region}
-                  </div>
+                  }
+                }
+                className="flex rounded-full p-0.5 w-12 h-12 aspect-square"
+              >
+                <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
+                  <div
+                    style={{ backgroundImage: `url("${thumbnail}")` }}
+                    className="w-full h-full rounded-full bg-cover bg-center"
+                  ></div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div
-                  onClick={handleMenuSection}
-                  className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver relative"
-                >
-                  <MenuIcon className="w-5 h-5" />
-
-                  {menuSection ? (
-                    <ActionMenu {...{ menuItems, setMenuSection }} />
-                  ) : (
-                    <></>
-                  )}
+              <div className="flex flex-col gap-0.5">
+                <div className="text-sm font-semibold text-white">
+                  {displayName}
                 </div>
-                <button
-                  onClick={onClose}
-                  className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver hover:bg-[#2f2f2f]"
-                >
-                  ✕
-                </button>
+                <div className="text-xs text-silver font-normal">
+                  {userInfo.country}, {userInfo?.region}
+                </div>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-y border-eerieBlack">
-              {headerTabs.map((headerTab) => {
-                const { label, value } = headerTab;
-                return (
-                  <div
-                    key={value}
-                    onClick={() => {
-                      setTab(value);
-                    }}
-                    className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
-                      tab === value
-                        ? "text-jetBlack bg-limeGreen text-xs"
-                        : "text-coolGray bg-eclipseGray text-[10px]"
-                    }`}
-                  >
-                    {label}
-                  </div>
-                );
-              })}
+            <div className="flex items-center gap-2">
+              <div
+                onClick={handleMenuSection}
+                className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver relative"
+              >
+                <MenuIcon className="w-5 h-5" />
+
+                {menuSection ? (
+                  <ActionMenu {...{ menuItems, setMenuSection }} />
+                ) : (
+                  <></>
+                )}
+              </div>
+              <button
+                onClick={onClose}
+                className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver hover:bg-[#2f2f2f]"
+              >
+                ✕
+              </button>
             </div>
           </div>
-          <div className="flex flex-col flex-1 relative overflow-hidden">
-            {(loading || overlayLoading) && (
-              <div
-                className={`absolute top-0 left-0 bottom-0 right-0  w-full h-full flex justify-center items-center ${
-                  overlayLoading ? "bg-black opacity-40" : ""
-                }`}
-              >
-                <CircularProgress
-                  sx={{
-                    width: "40px !important",
-                    height: "40px !important",
-                    color: "#9EFF00",
+          <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-y border-eerieBlack">
+            {headerTabs.map((headerTab) => {
+              const { label, value } = headerTab;
+              return (
+                <div
+                  key={value}
+                  onClick={() => {
+                    setTab(value);
                   }}
-                />
-              </div>
-            )}
+                  className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
+                    tab === value
+                      ? "text-jetBlack bg-limeGreen text-xs"
+                      : "text-coolGray bg-eclipseGray text-[10px]"
+                  }`}
+                >
+                  {label}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="flex flex-col flex-1 relative overflow-hidden">
+          {(loading || overlayLoading) && (
             <div
-              ref={messagesRef}
-              className={
-                "flex flex-col flex-1 py-3 overflow custom-dropdown overflow-y-auto"
-              }
+              className={`absolute top-0 left-0 bottom-0 right-0  w-full h-full flex justify-center items-center ${
+                overlayLoading ? "bg-black opacity-40" : ""
+              }`}
             >
-              {!loading && (
-                <>
-                  {tab === 0 && (
-                    <>
-                      {Array.isArray(messages) &&
-                      messages.length > 0 &&
-                      messages[0]?.messages?.length > 0 ? (
-                        <MessagesSection
-                          {...{
-                            messages,
-                            handleDemoBtn,
-                            handleReviewBtn,
-                            handleThreadReply,
-                            currentUserInfo,
-                            refreshMessages: () => getConversationMessages(conversation),
-                            setOverlayLoading,
-                          }}
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                          <div className="text-limeGreen text-xl mb-2">
-                            Start your conversation!
-                          </div>
-                          <p className="text-coolGray text-sm max-w-md">
-                            Send a message to begin connecting with{" "}
-                            {displayName}.
-                          </p>
+              <CircularProgress
+                sx={{
+                  width: "40px !important",
+                  height: "40px !important",
+                  color: "#9EFF00",
+                }}
+              />
+            </div>
+          )}
+          <div
+            ref={messagesRef}
+            className={
+              "flex flex-col flex-1 py-3 overflow custom-dropdown overflow-y-auto"
+            }
+          >
+            {!loading && (
+              <>
+                {tab === 0 && (
+                  <>
+                    {Array.isArray(messages) &&
+                    messages[0]?.messages?.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-full text-center px-4">
+                        <div className="text-limeGreen text-xl mb-2">
+                          Start your conversation!
                         </div>
-                      )}
-                    </>
-                  )}
-
-                  {tab === 1 && (
-                    <>
-                      <InfoSection {...{ conversation }} />
-                    </>
-                  )}
-
-                  {tab === 2 && (
-                    <>
-                      <NotesSection
+                        <p className="text-coolGray text-sm max-w-md">
+                          Send a message to begin connecting with {displayName}.
+                        </p>
+                      </div>
+                    ) : (
+                      <MessagesSection
                         {...{
-                          notes,
-                          id,
-                          getNotes,
+                          messages,
+                          handleDemoBtn,
+                          handleReviewBtn,
+                          handleThreadReply,
+                          currentUserInfo,
+                          refreshMessages: () =>
+                            getConversationMessages(conversation),
                           setOverlayLoading,
                         }}
                       />
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
+                    )}
+                  </>
+                )}
 
-          <Footer
-            {...{
-              conversation,
-              setOverlayLoading,
-              getConversationMessages,
-              currentUserInfo,
-            }}
-          />
+                {tab === 1 && (
+                  <>
+                    <InfoSection {...{ conversation }} />
+                  </>
+                )}
+
+                {tab === 2 && (
+                  <>
+                    <NotesSection
+                      {...{
+                        notes,
+                        id,
+                        getNotes,
+                        setOverlayLoading,
+                      }}
+                    />
+                  </>
+                )}
+              </>
+            )}
+          </div>
         </div>
+
+        <Footer
+          {...{
+            conversation,
+            setOverlayLoading,
+            getConversationMessages,
+            currentUserInfo,
+          }}
+        />
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 

@@ -7,7 +7,6 @@ import { formatMediaDetails, lastMsgTimeStamp } from "../handlers/mediaUtils";
 import { useMessageReactions } from "../hooks/useMessageReactions";
 import { AudioPlayer } from "react-audio-play";
 
-
 type Props = {
   messages: IMessagesData;
   handleDemoBtn: (id: number) => void;
@@ -36,19 +35,19 @@ const MessagesSection = (props: Props) => {
 
   const [hoveredMessageId, setHoveredMessageId] = useState(null);
 
-  const chatMessages = messages[0].messages.filter(
+  const chatMessages = messages[0]?.messages?.filter(
     (msg) => msg.message_reply === null
   );
 
   const findThreadReplyObj = (msgId: number) => {
-    return messages[0].messages.filter(
+    return messages[0]?.messages?.filter(
       (msg) => msg.message_reply?.id === msgId
     );
   };
 
   return (
     <div className="flex flex-col flex-1">
-      {chatMessages.map((msg, index) => {
+      {chatMessages?.map((msg, index) => {
         const {
           id,
           thumbnail,
@@ -61,6 +60,8 @@ const MessagesSection = (props: Props) => {
           is_read,
           audio_media,
         } = msg;
+
+        console.log("MSG ", msg);
 
         const isDemoSender = currentUserInfo.id === sender.id;
         const details = formatMediaDetails(
@@ -116,22 +117,24 @@ const MessagesSection = (props: Props) => {
               <div className="absolute -top-8 left-28 mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 {hoveredMessageId === id && (
                   <MessageReactions
-                    {...{ 
-                      handleEmojiSelect, 
-                      id, 
-                      isDemoSender, 
+                    {...{
+                      handleEmojiSelect,
+                      id,
+                      isDemoSender,
                       isOwner: currentUserInfo.id === sender.id,
-                      onMessageDeleted: refreshMessages 
+                      onMessageDeleted: refreshMessages,
                     }}
                   />
                 )}
               </div>
 
               <div
-                style={{
-                  // background:
-                  //   "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
-                }}
+                style={
+                  {
+                    // background:
+                    //   "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
+                  }
+                }
                 className="flex rounded-full p-0.5 w-12 h-12"
               >
                 <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
@@ -209,7 +212,8 @@ const MessagesSection = (props: Props) => {
                           onClick={() => handleDemoBtn(id)}
                           className="bg-limeGreen py-3 px-4 w-full text-[#203300] text-sm font-semibold rounded-full"
                         >
-                          Earn ${credit_payment} {credit_payment.length > 6 ? "" : "- Tap to Unlock"}
+                          Earn ${credit_payment}{" "}
+                          {credit_payment.length > 6 ? "" : "- Tap to Unlock"}
                         </button>
                       )}
 

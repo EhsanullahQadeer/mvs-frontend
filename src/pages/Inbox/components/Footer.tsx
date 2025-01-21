@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ReactComponent as SendArrowIcon } from "../../../assets/icons/sendArrowIcon.svg";
 import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFile.svg";
 import { AudioRecorder } from "react-audio-voice-recorder";
@@ -12,7 +12,7 @@ import { ReactComponent as CheckIcon } from "../../../assets/icons/checkIcon.svg
 import { CircularProgress } from "@mui/material";
 import AudioWaveform from "components/util/AudioWaveform";
 import CustomAudioRecorder from "./CustomAudioRecorder";
-import RecordedAudioPlayer from './RecordedAudioPlayer';
+import RecordedAudioPlayer from "./RecordedAudioPlayer";
 
 type Props = {
   conversation: IConversation;
@@ -60,7 +60,8 @@ const Footer = ({
 
   const canSendMessage =
     messageInputValue.trim() &&
-    ((!isFeedbackSection) || (isFeedbackSection && (recordedAudio || messageInputValue)));
+    (!isFeedbackSection ||
+      (isFeedbackSection && (recordedAudio || messageInputValue)));
 
   const validateFile = (file: File): File | null =>
     file.type.startsWith("audio/") ? file : null;
@@ -76,13 +77,19 @@ const Footer = ({
   const handleSendMessage = async () => {
     try {
       if (selectedAudioFile) {
-        const uploadSuccess = await handleUploadMedia(selectedAudioFile, 'demo');
+        const uploadSuccess = await handleUploadMedia(
+          selectedAudioFile,
+          "demo"
+        );
         if (!uploadSuccess) {
           console.error("Demo upload failed");
         }
         return; // Don't call sendMessageToBackend here - useEffect will handle it
       } else if (recordedAudio) {
-        const uploadSuccess = await handleUploadMedia(recordedAudio, 'recording');
+        const uploadSuccess = await handleUploadMedia(
+          recordedAudio,
+          "recording"
+        );
         if (!uploadSuccess) {
           console.error("Audio upload failed");
         }
@@ -102,16 +109,21 @@ const Footer = ({
     setIsSubmitting(true);
     if (selectedAudioFile) {
       setOpenPurchaseOrder(true);
-    }
-    else {
+    } else {
       await handleSendMessage();
     }
-  }
+  };
 
   const sendMessageToBackend = async () => {
     try {
-      if (messageInputValue.length === 0 && !audioMediaId && !selectedAudioFile && !recordedAudio) return;
-      
+      if (
+        messageInputValue.length === 0 &&
+        !audioMediaId &&
+        !selectedAudioFile &&
+        !recordedAudio
+      )
+        return;
+
       setOverlayLoading?.(true);
       const isDemo = Boolean(selectedAudioFile || recordedAudio);
 
@@ -123,22 +135,22 @@ const Footer = ({
           conversationId: String(conversation.id || ''),
           creditPaymentAmount: Number(creditPaymentAmount || 0),
           isDemo: String(isDemo),
-          audioMediaId: String(audioMediaId || ''),
+          audioMediaId: String(audioMediaId || ""),
         };
         await sendInboxMessage(payload);
       } else {
         // Create FormData for reply
         const formData = new FormData();
-        formData.append('messageId', String(messageId));
-        formData.append('replyContent', messageInputValue || '');
-        formData.append('senderId', String(currentUserInfo?.id || ''));
-        formData.append('recipientId', String(recipient_id || ''));
-        formData.append('isDemoReply', String(isDemo));
-        
+        formData.append("messageId", String(messageId));
+        formData.append("replyContent", messageInputValue || "");
+        formData.append("senderId", String(currentUserInfo?.id || ""));
+        formData.append("recipientId", String(recipient_id || ""));
+        formData.append("isDemoReply", String(isDemo));
+
         if (selectedAudioFile) {
-          formData.append('audioFile', selectedAudioFile);
+          formData.append("audioFile", selectedAudioFile);
         } else if (recordedAudio) {
-          formData.append('audioFile', recordedAudio);
+          formData.append("audioFile", recordedAudio);
         }
 
         await replyToMessage(formData);
@@ -149,7 +161,7 @@ const Footer = ({
       setAudioMediaId(null);
       setRecordedAudio(null);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     } finally {
       setOverlayLoading?.(false);
       setSelectedAudioFile(null);
@@ -175,9 +187,9 @@ const Footer = ({
       setRecordedAudio(null);
       return;
     }
-    
+
     // Always save as MP3 regardless of input format
-    const file = new File([blob], "recording.mp3", { type: 'audio/mpeg' });
+    const file = new File([blob], "recording.mp3", { type: "audio/mpeg" });
     setRecordedAudio(file);
   };
 
@@ -185,7 +197,7 @@ const Footer = ({
     const eventSource = new EventSource(
       `${process.env.REACT_APP_API_URL}/sounds/upload/sample/progress/${redisKey}`
     );
-    
+
     eventSource.onmessage = async (event) => {
       const data = JSON.parse(event.data);
       setUploadProgress(data.progress);
@@ -203,13 +215,10 @@ const Footer = ({
     };
   };
 
-  const handleUploadMedia = async (
-    file: File,
-    type: 'demo' | 'recording'
-  ) => {
+  const handleUploadMedia = async (file: File, type: "demo" | "recording") => {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', type);
+    formData.append("file", file);
+    formData.append("type", type);
 
     setUploadProgress(0);
 
@@ -261,12 +270,11 @@ const Footer = ({
                   className="resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16"
                   placeholder="Type your message..."
                 />
-                
-                
+
                 {recordedAudio && !selectedAudioFile && (
                   <div className="absolute bottom-0 left-2.5 w-full max-w-[calc(100%-6rem)]">
-                    <RecordedAudioPlayer 
-                      audioUrl={URL.createObjectURL(recordedAudio)} 
+                    <RecordedAudioPlayer
+                      audioUrl={URL.createObjectURL(recordedAudio)}
                       onDelete={() => setRecordedAudio(null)}
                     />
                   </div>
@@ -295,7 +303,10 @@ const Footer = ({
                     />
                     {uploadProgress > 0 && uploadProgress <= 100 && (
                       <div className="absolute -top-3 right-0 flex items-center">
-                        <svg className="w-[32px] h-[32px] -rotate-90" viewBox="0 0 70 70">
+                        <svg
+                          className="w-[32px] h-[32px] -rotate-90"
+                          viewBox="0 0 70 70"
+                        >
                           <circle
                             cx="35"
                             cy="35"
@@ -312,7 +323,9 @@ const Footer = ({
                             className="stroke-[#A4FF3D]"
                             strokeWidth="5"
                             strokeDasharray={2 * Math.PI * 25}
-                            strokeDashoffset={(2 * Math.PI * 25) * (1 - uploadProgress / 100)}
+                            strokeDashoffset={
+                              2 * Math.PI * 25 * (1 - uploadProgress / 100)
+                            }
                             strokeLinecap="round"
                           />
                         </svg>
@@ -325,15 +338,15 @@ const Footer = ({
             <div className="flex flex-col w-full">
               {isRecording && (
                 <div className="min-w-0 mb-3">
-                  <AudioWaveform 
-                    isRecording={isRecording} 
-                    duration={recordingDuration} 
-                    onStop={() => stopRecordingRef.current?.()} 
+                  <AudioWaveform
+                    isRecording={isRecording}
+                    duration={recordingDuration}
+                    onStop={() => stopRecordingRef.current?.()}
                     onCancel={handleCancel}
                   />
                 </div>
               )}
-              
+
               <div className="flex items-center justify-between mt-3">
                 <div className="flex gap-4 items-center">
                   <div className="flex gap-4 items-center p-2 rounded-lg border border-[#3D3D3D]">
@@ -355,7 +368,13 @@ const Footer = ({
                     </div>
                   </div>
 
-                  <div className={`${isFeedbackSection ? "cursor-not-allowed" : "cursor-pointer"}`}>
+                  <div
+                    className={`${
+                      isFeedbackSection
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer"
+                    }`}
+                  >
                     <label
                       htmlFor="audioFileSelect"
                       className={`text-dimGray cursor-pointer ${
@@ -386,7 +405,9 @@ const Footer = ({
 
                 <div className="shrink-0">
                   <div
-                    className={`${canSendMessage ? "cursor-pointer" : "cursor-not-allowed"}`}
+                    className={`${
+                      canSendMessage ? "cursor-pointer" : "cursor-not-allowed"
+                    }`}
                   >
                     <div
                       onClick={canSendMessage ? handlePurchaseOrder : undefined}

@@ -220,46 +220,64 @@ const MessagesList = () => {
   };
 
   useLambdaEvent("NEW_MESSAGE", (event) => {
+    console.log('[debug] Received NEW_MESSAGE event:', event);
     try {
       const { conversationId, sender, message, timestamp } = event.data;
+      console.log('[debug] Extracted event data:', { conversationId, sender, message, timestamp });
       
       const timeoutId = setTimeout(async () => {
+        console.log('[debug] Starting timeout handler');
         try {
           if (id === String(conversationId)) {
+            console.log('[debug] Conversation ID matches current ID');
             const newMessage = {
               conversation_id: conversationId,
               Timestamp: timestamp || new Date().toISOString(),
               message_content: message,
               sender_id: sender
             };
-            setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
+            console.log('[debug] Created new message object:', newMessage);
+            setLocalMessages((prevMessages) => {
+              console.log('[debug] Previous messages:', prevMessages);
+              return [...prevMessages, newMessage];
+            });
             // await getMessages(conversationId);
           }
           
           const conversation = conversations.find(c => c.id === Number(conversationId));
+          console.log('[debug] Found conversation:', conversation);
+          
           if (conversation) {
+            console.log('[debug] Processing conversation update');
             // If current user is the recipient, increment their unread count
             const isUserA = currentUserInfo.id === conversation.user_a.id;
+            console.log('[debug] Is user A:', isUserA);
+            
             const unreadCountUpdate = sender !== currentUserInfo.id ? {
               [isUserA ? 'unread_count_a' : 'unread_count_b']: 
                 (isUserA ? conversation.unread_count_a : conversation.unread_count_b) + 1
             } : {};
+            console.log('[debug] Unread count update:', unreadCountUpdate);
 
             updateConversationStats(Number(conversationId), {
               last_message_summary: event.data.message,
               ...unreadCountUpdate
             });
+            console.log('[debug] Updated conversation stats');
           }
           
         } catch (error) {
-          console.error('Error refreshing data:', error);
+          console.error('[debug] Error refreshing data:', error);
         }
       }, 300);
       
-      return () => clearTimeout(timeoutId);
+      return () => {
+        console.log('[debug] Clearing timeout');
+        clearTimeout(timeoutId);
+      }
       
     } catch (error) {
-      console.error('Error processing new message event:', error);
+      console.error('[debug] Error processing new message event:', error);
     }
   });
 
