@@ -67,7 +67,7 @@ const BecomePartner: React.FC<BecomePartnerProps> = ({
               </label>
             </div>
 
-            <div
+            {/* <div
               className={`border w-full flex justify-center items-center relative rounded-lg ${
                 registerAsPartner === false
                   ? "border-[#57AEFF] bg-[#282B30] text-white"
@@ -85,7 +85,7 @@ const BecomePartner: React.FC<BecomePartnerProps> = ({
                 />
                 <span className="font-semibold">Creator</span>
               </label>
-            </div>
+            </div> */}
           </div>
           <div className="space-y-4">  {/* Flexbox with gap to add space between buttons */}
             <button
