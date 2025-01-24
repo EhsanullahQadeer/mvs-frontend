@@ -26,6 +26,14 @@ export async function sendVerificationEmailAPI(data: any) {
   return axiosInstance.post('/auth/send-email-address-verification-email', data);
 }
 
+export async function changeUserPasswordAPI(params: any) {
+  return axiosInstance.post('/auth/change-password', params);
+}
+
+
+
+
+
 export async function updateUserPassword(userData: {
   email: string;
   newPassword: string;
