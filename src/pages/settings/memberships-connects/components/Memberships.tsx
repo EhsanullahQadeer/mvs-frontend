@@ -1,12 +1,25 @@
+// src/components/Memberships.tsx
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as MLogo } from "../../../../assets/img/MLogo.svg";
+import BuyCredits from "./BuyCredits";
 
 const Memberships = () => {
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handlePlan = () => {
     navigate("/settings/plans/1");
   };
+
+  const handleBuyCreditsClick = () => {
+    setOpenDialog(true); // Open the Buy Credits dialog
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false); // Close the dialog
+  };
+
   return (
     <>
       <div className="flex items-center gap-5 py-5">
@@ -27,7 +40,7 @@ const Memberships = () => {
               </div>
             </div>
 
-            <div className="">
+            <div>
               <div
                 onClick={handlePlan}
                 className="bg-limeGreen rounded-[30px] py-2 px-3 text-xs font-normal text-jetBlack cursor-pointer whitespace-nowrap"
@@ -45,9 +58,7 @@ const Memberships = () => {
         <div className="flex-1 border border-eerieBlack rounded-xl p-5">
           <div className="flex justify-between gap-1">
             <div className="flex flex-col gap-2">
-              <h3 className="text-white text-base font-semibold">
-                Credits balance
-              </h3>
+              <h3 className="text-white text-base font-semibold">Credits balance</h3>
               <p className="text-mediumGray text-xs font-normal">215</p>
               <p className="text-mediumGray text-xs font-semibold">
                 Learn more about how to use{" "}
@@ -56,13 +67,18 @@ const Memberships = () => {
             </div>
 
             <div>
-              <div className="bg-limeGreen rounded-[30px] py-2 px-3 text-xs font-normal text-jetBlack cursor-pointer whitespace-nowrap">
+              <div
+                onClick={handleBuyCreditsClick}
+                className="bg-limeGreen rounded-[30px] py-2 px-3 text-xs font-normal text-jetBlack cursor-pointer whitespace-nowrap"
+              >
                 Buy Credits
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <BuyCredits open={openDialog} onClose={handleCloseDialog} />
     </>
   );
 };
