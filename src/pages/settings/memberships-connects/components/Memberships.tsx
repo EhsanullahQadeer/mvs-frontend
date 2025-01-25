@@ -1,4 +1,3 @@
-// src/components/Memberships.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as MLogo } from "../../../../assets/img/MLogo.svg";
@@ -13,11 +12,11 @@ const Memberships = () => {
   };
 
   const handleBuyCreditsClick = () => {
-    setOpenDialog(true); // Open the Buy Credits dialog
+    setOpenDialog(true); 
   };
 
   const handleCloseDialog = () => {
-    setOpenDialog(false); // Close the dialog
+    setOpenDialog(!openDialog);
   };
 
   return (

@@ -17,10 +17,11 @@ import FAQS from "./component/FAQS";
 
 const Plans = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selected, setSelected] = useState<"annual" | "monthly">("annual");
 
   const handleChangePlan = (planName: string) => {
     console.log(`${planName} Plan selected!`);
-    setSelectedPlan(planName); // Update the selected plan
+    setSelectedPlan(planName);
   };
   const navigate = useNavigate();
 
@@ -99,6 +100,29 @@ const Plans = () => {
               Your journey starts with the perfect plan. Select yours and set
               the rhythm.
             </p>
+          </div>
+          <div className="border my-5 rounded-lg border-[#242424] flex w-fit">
+      <span
+        className={`px-4 py-3 border-r border-[#242424]  font-semibold cursor-pointer ${
+          selected === "annual"
+            ? "bg-[#1C1C1C] text-[#B2B2B2]"
+            : "bg-transparent text-[#3D3D3D]"
+        }`}
+        onClick={() => setSelected("annual")}
+      >
+        Annual Pricing
+      </span>
+
+      <span
+        className={`px-4 py-3 font-semibold cursor-pointer ${
+          selected === "monthly"
+            ? "bg-[#1C1C1C] text-[#B2B2B2]"
+            : "bg-transparent text-[#3D3D3D]"
+        }`}
+        onClick={() => setSelected("monthly")}
+      >
+        Monthly Pricing
+      </span>
           </div>
 
           <div className="flex mb-5  gap-2">

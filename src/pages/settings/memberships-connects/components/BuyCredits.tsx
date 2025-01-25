@@ -42,8 +42,10 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
     setSecondOpen(true);
     onClose();
   };
-  const handleback = () => {
+  
+  const handleBack = () => {
     setSecondOpen(false);
+    onClose();           
   };
   const closeConfirmationDialog = () => {
     setSecondOpen(false);
@@ -223,7 +225,7 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
           <div
             className="text-platinum cursor-pointer "
           >
-            <FaArrowLeft onClick={handleback} className="text-[16px]" />
+            <FaArrowLeft onClick={handleBack} className="text-[16px]" />
           </div>{" "}
           <div className="bg-w rounded-full">
             <MdCancel
@@ -235,7 +237,7 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
           <span className="font-medium mb-6 ">Buy Credits</span>
 
         </DialogTitle>
-        <DialogContent>
+        <DialogContent className="custom-dropdown overflow-y-auto">
 
           <div className="flex flex-col gap-0.5">
             <span className="text-[#fff] font-medium text-[12px]">
@@ -284,7 +286,7 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
           <span className="text-blue-500 font-medium text-[10px]">
             + Add new Billing metood
           </span>
-          <div className="w-full  h-1  border-b-[2px] border-dashed my-2 border-dimGray"></div>
+          <div className="w-full  h-1  border-b-[2px] border-dashed my-2 mb-3 border-dimGray"></div>
           <div className=" w-full px-2 py-1 my-1 mb-2 text-[14px] bg-black border border-[#1C1C1C] rounded-md appearance-none">
             10 credits for $9.50
           </div>

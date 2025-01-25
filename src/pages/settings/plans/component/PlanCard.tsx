@@ -8,7 +8,7 @@ interface PlanCardProps {
   features: string[];
   buttonText: string;
   onButtonClick: () => void;
-  isSelected: boolean; // New prop for selection
+  isSelected: boolean; 
 }
 
 const PlanCard: React.FC<PlanCardProps> = ({
