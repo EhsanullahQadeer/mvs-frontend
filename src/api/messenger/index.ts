@@ -232,6 +232,10 @@ export async function deleteReactionApi(
   });
 }
 
+export async function getMessageReactionsApi(messageId: number) {
+  return axiosInstance.get(`/messenger/message/${messageId}/reactions`);
+}
+
 export async function markConversationAsRead(conversationId: number) {
   return axiosInstance.post('/messenger/mark-conversation-read', {
     conversationId

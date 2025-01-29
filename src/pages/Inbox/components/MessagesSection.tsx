@@ -299,11 +299,6 @@ const MessagesSection = (props: Props) => {
                           )}
                         </span>
                       ))}
-                    {totalReactions > 1 && (
-                      <span className="ml-2 text-sm text-white">
-                        {totalReactions}
-                      </span>
-                    )}
                   </div>
                 )}
               </div>
