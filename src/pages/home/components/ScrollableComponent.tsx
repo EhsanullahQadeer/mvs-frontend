@@ -164,10 +164,8 @@ const ScrollableComponent = (props: Props) => {
                 >
                   <div className="img-container w-[152px] h-[260px] rounded-lg">
                     <div className="absolute bottom-[18px] left-0 right-0 px-3 w-full text-center">
-                      <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1 block whitespace-normal">
-                        {professional_name?.length > 15
-                          ? professional_name.slice(0, 15) + "..."
-                          : professional_name}
+                      <span className="text-xl text-white font-bold italic tracking-[-0.1px] uppercase mb-1 block whitespace-normal overflow-hidden text-ellipsis" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', wordBreak: 'break-word' }}>
+                        {professional_name}
                       </span>
 
                       <div className="max-h-0 overflow-hidden transition-all ease-in-out duration-500 group-hover:max-h-[85px] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100">
