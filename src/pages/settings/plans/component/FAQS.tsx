@@ -67,7 +67,7 @@ const FAQS: React.FC = () => {
               activeIndex === index ? "max-h-screen" : "max-h-0"
             }`}
           >
-            <p className="text-[14px] w-1/2 text-mediumGray font-normal mt-2">
+            <p className="text-[14px] w-1/2 text-mediumGray font-normal ">
               {faq.answer}
             </p>
           </div>

@@ -40,6 +40,7 @@ import EngineerProfile from "./engineerProfile/EngineerProfile";
 import MembershipsConnects from "./settings/memberships-connects/MembershipsConnects";
 import Plans from "./settings/plans/Plans";
 import CreditsHistory from "./settings/credits-history/CreditsHistory";
+import NotifyAudio from "components/notifications/NotifyAudio";
 
 interface IRoute {
   path: string;
@@ -304,6 +305,13 @@ const routes: IRoute[] = [
     name: "Engineer Profile",
     component: EngineerProfile,
   },
+  {
+    path: "/notification/:type",
+    name: "Audio Message Notification",
+    component: NotifyAudio,
+  },
+
+ 
 ];
 
 export default routes;
