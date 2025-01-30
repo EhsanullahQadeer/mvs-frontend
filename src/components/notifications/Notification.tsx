@@ -43,7 +43,6 @@ const Notification = () => {
       newState[notificationTypes[key]] = type === key;
     });
     setState(newState);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
   if (!Object.keys(notificationTypes).includes(type)) {
