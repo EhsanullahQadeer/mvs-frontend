@@ -6,49 +6,48 @@ import { CiCircleCheck } from "react-icons/ci";
 import { FiMusic } from "react-icons/fi";
 
 const Notification = () => {
-  const { type } = useParams(); // Get notification type dynamically
-  const [read, setRead] = useState(false);
-  const [viewed, setViewed] = useState(false);
-  const [download, setDownload] = useState(false);
-  const [liked, setLiked] = useState(false);
-  const [isFollowRequest, setIsFollowRequest] = useState(false);
-  const [audio, setAudio] = useState(false);
-  const [tagged, setTagged] = useState(false);
-  const [requestAccepted, setRequestAccepted] = useState(false);
-  const [isFollow, setIsFollow] = useState(false);
-  const [connectAccepted, setConnectAccepted] = useState(false);
-  const [audioUpdated, setAudioUpdated] = useState(false);
-  const [feedback ,setFeedback] = useState(false)
-  const [collabAdded , setCollabAdded] = useState(false)
+  const { type } = useParams();
+  const [state, setState] = useState({
+    read: false,
+    viewed: false,
+    download: false,
+    liked: false,
+    isFollowRequest: false,
+    audio: false,
+    tagged: false,
+    requestAccepted: false,
+    isFollow: false,
+    connectAccepted: false,
+    audioUpdated: false,
+    feedback: false,
+    collabAdded: false,
+  });
+
+  const notificationTypes = {
+    "downloaded-file": "download",
+    "viewed-demo": "viewed",
+    "liked-file": "liked",
+    "audio-shared": "audio",
+    "tagged-in-the-demo": "tagged",
+    "connect-request": "isFollowRequest",
+    "follow": "isFollow",
+    "collaboration-request-accepted": "requestAccepted",
+    "connection-request-accepted": "connectAccepted",
+    "audio-updated": "audioUpdated",
+    "feedback-provided": "feedback",
+    "new-collaborator-added": "collabAdded",
+  };
+
   useEffect(() => {
-    setDownload(type === "downloaded-file");
-    setViewed(type === "viewed-demo");
-    setLiked(type === "liked-file");
-    setAudio(type === "audio-shared");
-    setTagged(type === "tagged-in-the-demo");
-    setIsFollowRequest(type === "connect-request");
-    setIsFollow(type === "follow");
-    setRequestAccepted(type === "collaboration-request-accepted");
-    setConnectAccepted(type === "connection-request-accepted");
-    setAudioUpdated(type === "audio-updated");
-    setFeedback(type=== "feedback-provided")
-    setCollabAdded(type=== "new-collaborator-added")
+    const newState = { ...state };
+    Object.keys(notificationTypes).forEach((key) => {
+      newState[notificationTypes[key]] = type === key;
+    });
+    setState(newState);
   }, [type]);
+
   if (
-    ![
-      "downloaded-file",
-      "tagged-in-the-demo",
-      "viewed-demo",
-      "liked-file",
-      "connect-request",
-      "follow",
-      "audio-shared",
-      "connection-request-accepted",
-      "audio-updated",
-      "collaboration-request-accepted",
-      "feedback-provided",
-      "new-collaborator-added"
-    ].includes(type)
+    !Object.keys(notificationTypes).includes(type)
   ) {
     return null;
   }
@@ -60,19 +59,19 @@ const Notification = () => {
           <div className="w-fit">
             <div
               className={`w-2 h-2 rounded-full ${
-                !read ? "bg-[#2E70E8]" : "bg-transparent"
+                !state.read ? "bg-[#2E70E8]" : "bg-transparent"
               }`}
             ></div>
           </div>
         <div className="flex gap-2 items-center">
-          {(audioUpdated || collabAdded) && (
+          {(state.audioUpdated || state.collabAdded) && (
               <div className="w-fit">
                 <div className="w-12 h-12 relative bg-black flex items-center justify-center rounded-full">
                   <FiMusic className="text-white" />
                 </div>
               </div>
             )}
-          {(!audioUpdated && !collabAdded) && (
+          {(!state.audioUpdated && !state.collabAdded) && (
             <div className="w-fit">
               <div className="w-12 h-12 relative rounded-full">
                 <img
@@ -80,7 +79,7 @@ const Notification = () => {
                   className="w-full h-full object-cover rounded-full"
                   alt="User"
                 />
-                {(tagged || requestAccepted || feedback) && (
+                {(state.tagged || state.requestAccepted || state.feedback) && (
                   <div className="w-2.5 h-2.5 absolute bg-[#12B76A] border-[1.5px] rounded-full bottom-[6px] right-[1px] border-white"></div>
                 )}
               </div>
@@ -88,7 +87,7 @@ const Notification = () => {
           )}
 
           <div>
-            {requestAccepted &&(
+            {state.requestAccepted &&(
               <>
                 <p className="text-[12px] text-[#999999]">
                   <span className="font-semibold pr-[4px] text-white">
@@ -107,20 +106,20 @@ const Notification = () => {
                   View Details
                 </button>
               </>
-            )} { (isFollowRequest || isFollow || connectAccepted ) && (
+            )} { (state.isFollowRequest || state.isFollow || state.connectAccepted ) && (
               <>
                 <p className="text-[12px] mb-2 text-[#999999]">
                   <span className="font-semibold text-white">Poobear</span>
-                  {isFollowRequest
+                  {state.isFollowRequest
                     ? "  sent you a connect request."
-                    : isFollow
+                    : state.isFollow
                     ? " is now following you."
-                    : connectAccepted
+                    : state.connectAccepted
                     ? " has accepted your connection request and you’ve unlocked exclusive content."
                     : " "}
                 </p>
                 <div className="flex gap-2">
-                  {isFollowRequest && (
+                  {state.isFollowRequest && (
                     <>
                       <button className="px-3 py-2 text-[12px] rounded-full bg-[#9EFF00] text-black font-semibold">
                         Accept
@@ -130,7 +129,7 @@ const Notification = () => {
                       </button>
                     </>
                   )}
-                  {isFollow && (
+                  {state.isFollow && (
                     <>
                       <button className="px-3 py-2 text-[12px] rounded-full bg-[#9EFF00] text-black font-semibold">
                         Follow Back
@@ -140,7 +139,7 @@ const Notification = () => {
                       </button>
                     </>
                   )}
-                  {connectAccepted && (
+                  {state.connectAccepted && (
                     <>
                       <button className="px-3 py-2 text-[12px] rounded-full bg-[#9EFF00] text-black font-semibold">
                         View Profile
@@ -150,37 +149,37 @@ const Notification = () => {
                 </div>
               </>
             )}
-            {(audioUpdated || feedback || collabAdded) &&
+            {(state.audioUpdated || state.feedback || state.collabAdded) &&
 
             <>
                             <p className="text-[12px] mb-1 text-[#999999]">
                             <span className="font-semibold text-white pr-[5px]">Soundboyz</span>
-                            {audioUpdated
+                            {state.audioUpdated
                     ? "   has updated the audio file"
-                    : feedback
+                    : state.feedback
                     ? " has provided feedback on your audio demo "
-                    : connectAccepted
+                    : state.connectAccepted
                     ? " has accepted your connection request and you’ve unlocked exclusive content"
-                    : collabAdded
+                    : state.collabAdded
                     ?  " has added a new collaborator to File "
                     : " "}
                             <span className="text-[#2E70E8] font-semibold">
                     "Sunset Serenade"
                   </span> {" "} 
-                  {audioUpdated && 
+                  {state.audioUpdated && 
                   <span> View latest version.</span>}
                             </p>
-                            {(audioUpdated || collabAdded)  && 
+                            {(state.audioUpdated || state.collabAdded)  && 
                   <button className="px-3 py-2 text-[12px] rounded-full bg-[#9EFF00] text-black ">
                   View Details
                 </button>}
-                     {feedback && 
+                     {state.feedback && 
                   <button className="px-3 py-2 text-[12px] rounded-full bg-[#9EFF00] text-black ">
                   View Feedback
                 </button>}
 
             </>}
-            {tagged && (
+            {state.tagged && (
               <>
                 <p className="text-[12px] text-[#999999]">
                   <span className="font-semibold pr-[4px] text-white">
@@ -200,27 +199,27 @@ const Notification = () => {
                 </button>
               </>
             )}
-            {!requestAccepted &&
-              !tagged &&
-              !isFollowRequest &&
-              !isFollow &&
-              !connectAccepted &&
-              !audioUpdated &&
-              !feedback &&
-              !collabAdded && (
+            {!state.requestAccepted &&
+              !state.tagged &&
+              !state.isFollowRequest &&
+              !state.isFollow &&
+              !state.connectAccepted &&
+              !state.audioUpdated &&
+              !state.feedback &&
+              !state.collabAdded && (
                 <>
                   <p className="text-[12px] flex text-[#999999]">
                     <span className="text-white pr-[4px]">Poobear</span>
-                    {liked
+                    {state.liked
                       ? " liked your file."
-                      : download
+                      : state.download
                       ? " downloaded your file."
-                      : viewed
+                      : state.viewed
                       ? " viewed a demo."
-                      : audio
+                      : state.audio
                       ? " has shared an audio file with you."
                       : " "}
-                    {(liked || download || viewed) && (
+                    {(state.liked || state.download || state.viewed) && (
                       <span className="text-[#2E70E8] font-semibold">
                         {" "}
                         "Sunset Serenade"
@@ -232,7 +231,7 @@ const Notification = () => {
                     <span className="px-1">sunset-serenadeV2.pdf</span>
                     <span className="font-normal text-[#666666]">2.2MB</span>
                   </div>
-                  {audio &&   <button className="px-3 py-2 mt-1 w-fit text-[12px] rounded-full bg-[#9EFF00]">
+                  {state.audio &&   <button className="px-3 py-2 mt-1 w-fit text-[12px] rounded-full bg-[#9EFF00]">
                   View File
                 </button>}
                 </>
@@ -242,10 +241,10 @@ const Notification = () => {
         </div>
 
         <div className="flex flex-col gap-1 pb-4 justify-between items-end">
-          {!read && (
+          {!state.read && (
             <span
               className="p-2 bg-black rounded-md opacity-0 hover:opacity-100 cursor-pointer"
-              onClick={() => setRead(true)}
+              onClick={() => setState({ ...state, read: true })}
             >
               <CiCircleCheck className="text-white" />
             </span>
