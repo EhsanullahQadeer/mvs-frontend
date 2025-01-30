@@ -19,6 +19,7 @@ const ActivityNotification: React.FC<ActivityNotificationProps> = ({
     "audioUpdated",
     "feedback",
     "collabAdded",
+    "viewed",
   ].includes(state.type);
 
   if (!isMatchingType) return null;

@@ -15,27 +15,33 @@ export const notificationTypes = {
 
 // Define a type for notification keys
 export type NotificationType = typeof notificationTypes[keyof typeof notificationTypes];
+// Common variables
+const demoTitle = `"Sunset Serenade"`;
+const collaboratorName = "Poobear";
+const userType = "Singer";
+const collaboratorProfile = "Soundboyz";
 
+// Notifications map
 const notificationsMap: Record<NotificationType, any> = {
   requestAccepted: {
-    collaboratorName: "Poobear",
+    collaboratorName,
     message: ` has accepted your collaboration request as a `,
-    userType: "Singer",
+    userType,
     remaining: "on the demo",
-    demoTitle: `"Sunset Serenade"`,
+    demoTitle,
     btnName: "View Details",
     action: () => console.log("View Details clicked"),
   },
   isFollowRequest: {
-    collaboratorName: "Poobear",
+    collaboratorName,
     message: ` sent you a connect request.`,
     btnName: "Accept",
-    action: () => {},
+    action: () => { },
     btnName2: "Decline",
     action2: () => console.log("Decline clicked"),
   },
   isFollow: {
-    collaboratorName: "Poobear",
+    collaboratorName,
     message: ` is now following you.`,
     btnName: "Follow Back",
     action: () => console.log("Follow Back clicked"),
@@ -43,55 +49,56 @@ const notificationsMap: Record<NotificationType, any> = {
     action2: () => console.log("View Profile clicked"),
   },
   connectAccepted: {
-    collaboratorName: "Poobear",
+    collaboratorName,
     message: ` has accepted your connection request and you’ve unlocked exclusive content.`,
     btnName: "View Profile",
     action: () => console.log("View Profile clicked"),
   },
   audioUpdated: {
-    collaboratorProfile: "Soundboyz",
+    collaboratorProfile,
     message: ` has updated the audio file`,
-    demoTitle: `"Sunset Serenade"`,
+    demoTitle,
     btnName: "View Details",
     action: () => console.log("View Details clicked"),
   },
   feedback: {
-    collaboratorProfile: "Soundboyz",
+    collaboratorProfile,
     message: ` has provided feedback on your audio demo`,
-    demoTitle: `"Sunset Serenade"`,
+    demoTitle,
     btnName: "View Feedback",
     action: () => console.log("View Feedback clicked"),
   },
   collabAdded: {
-    collaboratorProfile: "Soundboyz",
+    collaboratorProfile,
     message: ` has added a new collaborator to the file`,
     btnName: "View Details",
     action: () => console.log("View Details clicked"),
   },
   tagged: {
-    collaboratorName: "Poobear",
+    collaboratorName,
     message: ` has tagged you as a `,
-    userType: "Singer",
+    userType,
     remaining: "on the demo",
-    demoTitle: `"Sunset Serenade"`,
+    demoTitle,
     btnName: "View File",
     action: () => console.log("View File clicked"),
   },
   liked: {
-    collaboratorName: "Poobear",
+    collaboratorName,
     message: ` liked your file.`,
   },
   download: {
-    collaboratorName: "Poobear",
+    collaboratorName,
     message: ` downloaded your file`,
-    demoTitle: `"Sunset Serenade"`,
+    demoTitle
   },
   viewed: {
-    collaboratorName: "Poobear",
+    collaboratorName,
     message: ` viewed a demo.`,
+    demoTitle,
   },
   audio: {
-    collaboratorProfile: "Soundboyz",
+    collaboratorProfile,
     message: ` has shared an audio file with you.`,
     btnName: "View File",
     action: () => console.log("View File clicked"),
