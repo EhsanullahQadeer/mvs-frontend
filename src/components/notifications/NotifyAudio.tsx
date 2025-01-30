@@ -51,7 +51,7 @@ const Notification = () => {
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center group">
       <div className="py-5 pr-5 pl-3 flex bg-eerieBlack hover:bg-[#242424] w-[534px] justify-between items-center rounded-md">
         <div className="flex gap-2 items-center">
           <div className="w-fit">
@@ -69,7 +69,7 @@ const Notification = () => {
         <div className="flex flex-col gap-1 pb-4 justify-between items-end">
           {!state.read && (
             <span
-              className="p-2 bg-black rounded-md opacity-0 hover:opacity-100 cursor-pointer"
+              className="p-2 bg-eerieBlack rounded-md transition-opacity duration-300 transition-lg opacity-0 group-hover:opacity-100 cursor-pointer"
               onClick={() => setState({ ...state, read: true })}
             >
               <CiCircleCheck className="text-white" />
