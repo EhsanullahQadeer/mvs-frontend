@@ -1,49 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { CiCircleCheck } from "react-icons/ci";
 import NotificationContent from "./NotificationContent";
 import NotificationIcon from "./NotificationIcon";
+import { NotificationType, notificationTypes } from "./NotificationData";
+
+export interface NotificationState {
+  type: NotificationType;
+  status: "read" | "unread";
+}
 
 const Notification = () => {
   const { type } = useParams();
-  const [state, setState] = useState({
-    read: false,
-    viewed: false,
-    download: false,
-    liked: false,
-    isFollowRequest: false,
-    audio: false,
-    tagged: false,
-    requestAccepted: false,
-    isFollow: false,
-    connectAccepted: false,
-    audioUpdated: false,
-    feedback: false,
-    collabAdded: false,
+
+  const [state, setState] = useState<NotificationState>({
+    type: notificationTypes[type as keyof typeof notificationTypes] || null,
+    status: "unread",
   });
 
-  const notificationTypes = {
-    "downloaded-file": "download",
-    "viewed-demo": "viewed",
-    "liked-file": "liked",
-    "audio-shared": "audio",
-    "tagged-in-the-demo": "tagged",
-    "connect-request": "isFollowRequest",
-    "follow": "isFollow",
-    "collaboration-request-accepted": "requestAccepted",
-    "connection-request-accepted": "connectAccepted",
-    "audio-updated": "audioUpdated",
-    "feedback-provided": "feedback",
-    "new-collaborator-added": "collabAdded",
+  // Function to mark as read
+  const markAsRead = () => {
+    setState((prev) => ({ ...prev, status: "read" }));
   };
-
-  useEffect(() => {
-    const newState = { ...state };
-    Object.keys(notificationTypes).forEach((key) => {
-      newState[notificationTypes[key]] = type === key;
-    });
-    setState(newState);
-  }, [type]);
 
   if (!Object.keys(notificationTypes).includes(type)) {
     return null;
@@ -56,7 +34,7 @@ const Notification = () => {
           <div className="w-fit">
             <div
               className={`w-2 h-2 rounded-full ${
-                !state.read ? "bg-[#2E70E8]" : "bg-transparent"
+                state.status === "unread" ? "bg-[#2E70E8]" : "bg-transparent"
               }`}
             ></div>
           </div>
@@ -66,10 +44,10 @@ const Notification = () => {
           </div>
         </div>
         <div className="flex flex-col gap-1 pb-4 justify-between items-end">
-          {!state.read && (
+          {state.status === "read" && (
             <span
               className="p-2 bg-eerieBlack rounded-md transition-opacity duration-300 transition-lg opacity-0 group-hover:opacity-100 cursor-pointer"
-              onClick={() => setState({ ...state, read: true })}
+              onClick={markAsRead}
             >
               <CiCircleCheck className="text-white" />
             </span>
