@@ -20,8 +20,9 @@ const ContentManagement = (props: Props) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [updateData,setUpdateData] = useState(0);
 
-  const handleCancel = () => {
-    // const response = cancelUploadAPI(fileRedisKey);
+  const handleCancel = async () => {
+    const response = await cancelUploadAPI(fileRedisKey);
+    console.log("response", response);
     setUploadProgress(0);
     setUploadingFile(null);
     setFileRedisKey("");
@@ -78,6 +79,7 @@ const ContentManagement = (props: Props) => {
   };
 
   function trackUploadProgress(sessionId: string) {
+    console.log("sessionIdContentManagement", sessionId);
     const eventSource = new EventSource(
       `${process.env.REACT_APP_API_URL}/sounds/upload/sample/progress/${sessionId}`
     );

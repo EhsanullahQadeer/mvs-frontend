@@ -12,6 +12,7 @@ import DropFilesSection from "pages/settings/content-management/components/DropF
 import UploadingFilesSection from "pages/settings/content-management/components/UploadingFilesSection";
 import { useEffect, useState } from "react";
 import { INewUserForm } from "./types";
+import { cancelUploadAPI } from "api/sounds";
 
 type Props = {
   isActive: boolean;
@@ -29,7 +30,8 @@ const UploadSampleSection = (props: Props) => {
   const [fileRedisKey, setFileRedisKey] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
+    const response = await cancelUploadAPI(fileRedisKey);
     setUploadProgress(0);
     setUploadingFile(null);
     setFileRedisKey("");
@@ -39,6 +41,7 @@ const UploadSampleSection = (props: Props) => {
     if (uploadingFile !== null) {
       handleUploadFile();
       if (fileRedisKey) {
+        console.log("fileRedisKey", fileRedisKey);
         trackUploadProgress(fileRedisKey);
       }
     }
