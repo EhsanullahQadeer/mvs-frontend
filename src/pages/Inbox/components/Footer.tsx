@@ -268,6 +268,12 @@ const Footer = ({
                 <textarea
                   value={messageInputValue}
                   onChange={(e) => setMessageInputValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey && canSendMessage && !isSubmitting) {
+                      e.preventDefault();
+                      handlePurchaseOrder();
+                    }
+                  }}
                   className="resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16"
                   placeholder="Type your message..."
                   maxLength={255}
