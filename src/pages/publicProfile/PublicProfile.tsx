@@ -4,7 +4,7 @@ import ProfileRightSection from "./components/ProfileRightSection";
 
 const PublicProfile = () => {
   return (
-    <div className="min-h-svh flex flex-col">
+    <div className="h-svh flex flex-col overflow-hidden">
       <div className="flex px-10 py-3 justify-between items-center">
         <img
           src={mvssiveLogo}
@@ -17,7 +17,7 @@ const PublicProfile = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex">
+      <div className="flex-1 flex overflow-hidden">
         <div className="flex-[25%] border-r border-eclipseGray bg-jetBlack flex">
           <ProfileInfo />
         </div>
