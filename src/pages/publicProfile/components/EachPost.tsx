@@ -5,6 +5,8 @@ import { SlLock } from "react-icons/sl";
 import like from "../../../assets/img/heart.svg";
 import comment from "../../../assets/img/comment.svg";
 import download from "../../../assets/img/downloadicon.svg";
+import UnlockContentModel from "./UnlockContentModel";
+import SendMessageModel from "./SendMessageModel";
 
 interface PostProps {
   username: string;
@@ -17,7 +19,6 @@ interface PostProps {
   likes: number;
   comments: number;
   isLocked?: boolean;
-  
 }
 
 const EachPost: React.FC<PostProps> = ({
@@ -31,9 +32,29 @@ const EachPost: React.FC<PostProps> = ({
   likes,
   comments,
   isLocked = true,
- 
 }) => {
   const [locked, setLocked] = useState(isLocked);
+  const [openUnlockModal, setOpenUnlockModal] = useState(false);
+  const [openAuthModal, setOpenAuthModal] = useState(true);
+  const [openPurchaseOrder, setOpenPurchaseOrder] = useState(true);
+  const [basePrice, setBasePrice] = useState<number>(parseFloat(price));
+
+  // Handle unlocking content and opening auth modal
+  const handleAuthOpen = () => {
+    setOpenUnlockModal(false);
+    setOpenAuthModal(true);
+  };
+
+  // Handle sending message or tip
+  const handleSendMessage = () => {
+    console.log("Message Sent!");
+    setOpenPurchaseOrder(false);
+  };
+
+  // Set the credit payment amount
+  const setCreditPaymentAmount = (amount: number) => {
+    console.log(`Total payment amount: $${amount}`);
+  };
 
   return (
     <div className="flex rounded-md w-full bg-eerieBlack p-2">
@@ -49,9 +70,7 @@ const EachPost: React.FC<PostProps> = ({
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="text-[18px] text-white font-semibold">
-                  {username}
-                </span>
+                <span className="text-[18px] text-white font-semibold">{username}</span>
                 <MdVerified className="text-limeGreen" />
               </div>
               <span className="text-[14px] text-mediumGray">@{handle}</span>
@@ -62,32 +81,23 @@ const EachPost: React.FC<PostProps> = ({
 
         <div className="relative w-full mt-5">
           {locked && (
-            <div className="absolute top-2 left-2 p-[12px] bg-[#242424CC] rounded-lg flex  gap-2 items-center justify-center z-10">
+            <div className="absolute top-2 left-2 p-[12px] bg-[#242424CC] rounded-lg flex gap-2 items-center justify-center z-10">
               <SlLock className="text-white " />
               <button
-                className="text-white text-[14px] rounded-md font-semibold bg-[#242424CC] "
-                onClick={() => setLocked(false)}
+                className="text-white text-[14px] rounded-md font-semibold bg-[#242424CC]"
+                onClick={() => setOpenUnlockModal(true)}
               >
                 Unlock Content
               </button>
             </div>
           )}
-             {/* <video
-        className={`w-full rounded-lg `}
-        src="/assets/audio.mp3"
-      ></video> */}
-
-          <img
-            src={videoThumbnail}
-            alt="Video Thumbnail"
-            className="w-full h-full"
-          />
+          <img src={videoThumbnail} alt="Video Thumbnail" className="w-full h-full" />
         </div>
 
         {locked && (
           <button
             className="my-5 py-[12px] px-4 text-black text-center font-semibold text-[14px] rounded-full w-full bg-limeGreen"
-            onClick={() => setLocked(false)}
+            onClick={() => setOpenUnlockModal(true)}
           >
             Unlock for {price}
           </button>
@@ -117,11 +127,33 @@ const EachPost: React.FC<PostProps> = ({
               <img src={download} alt="Download" />
             </div>
           </div>
-          <button className="bg-limeGreen px-5 text-black py-[12px] rounded-full">
+          <button
+            className="bg-limeGreen px-5 text-black py-[12px] rounded-full"
+            onClick={() => setOpenPurchaseOrder(true)}
+          >
             Send Tip
           </button>
         </div>
       </div>
+
+      {/* Unlock Content Model */}
+      <UnlockContentModel
+        open={openUnlockModal}
+        onClose={() => setOpenUnlockModal(false)}
+        onAuthClick={handleAuthOpen} 
+      />
+
+      {/* Send Message Modal */}
+      <SendMessageModel
+  openPurchaseOrder={openPurchaseOrder}
+  setOpenPurchaseOrder={setOpenPurchaseOrder}
+  setCreditPaymentAmount={setCreditPaymentAmount}
+  handleSendMessage={handleSendMessage}
+  username={username}        
+  handle={handle}        
+  profileImg={profileImg} 
+/>
+
     </div>
   );
 };
