@@ -64,7 +64,11 @@ const SendMessageModel = (props: Props) => {
     setOpenPurchaseOrder(false);
 
   };
+  const handleBack = () => {
+    setOpenPurchaseOrder(true);
+    setOpenCardInfo(false);
 
+  };
   const handleSendDemo = () => {
     handleSendMessage();
     setOpenPurchaseOrder(false);
@@ -80,7 +84,6 @@ const SendMessageModel = (props: Props) => {
           "& .MuiPaper-root": {
             backgroundColor: "#131313",
             padding: "0 24px",
-            width:"700px",
             border: "1px solid #242424",
             borderRadius: "12px",
             overflow: "hidden",
@@ -168,7 +171,8 @@ const SendMessageModel = (props: Props) => {
         </div>
       </Dialog>
 
-      <CardInfoDialog openCardInfo={openCardInfo} setOpenCardInfo={setOpenCardInfo} formData={formData} setFormData={setFormData} />
+      <CardInfoDialog openCardInfo={openCardInfo}         handleBack={handleBack}
+ setOpenCardInfo={setOpenCardInfo} formData={formData} setFormData={setFormData} />
     </>
   );
 };

@@ -76,7 +76,11 @@ const PurchaseOrderDialog = (props: Props) => {
     setInputTipAmount("");
     setIsSubmitting(false);
   };
+  const handleBack = () => {
+    setOpenPurchaseOrder(true);
+    setOpenCardInfo(false);
 
+  };
   const handleOpenCardInfo = () => {
     setOpenCardInfo(true);
   };
@@ -327,6 +331,7 @@ const PurchaseOrderDialog = (props: Props) => {
         openCardInfo={openCardInfo}
         setOpenCardInfo={setOpenCardInfo}
         formData={setFormData}
+        handleBack={handleBack}
         setFormData={setFormData}
       />
     </div>

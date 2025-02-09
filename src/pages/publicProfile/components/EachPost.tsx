@@ -35,23 +35,21 @@ const EachPost: React.FC<PostProps> = ({
 }) => {
   const [locked, setLocked] = useState(isLocked);
   const [openUnlockModal, setOpenUnlockModal] = useState(false);
-  const [openAuthModal, setOpenAuthModal] = useState(true);
-  const [openPurchaseOrder, setOpenPurchaseOrder] = useState(true);
+  const [openAuthModal, setOpenAuthModal] = useState(false);
+  const [openPurchaseOrder, setOpenPurchaseOrder] = useState(false);
   const [basePrice, setBasePrice] = useState<number>(parseFloat(price));
 
-  // Handle unlocking content and opening auth modal
   const handleAuthOpen = () => {
     setOpenUnlockModal(false);
     setOpenAuthModal(true);
+    setOpenPurchaseOrder(true)
   };
 
-  // Handle sending message or tip
   const handleSendMessage = () => {
     console.log("Message Sent!");
     setOpenPurchaseOrder(false);
   };
 
-  // Set the credit payment amount
   const setCreditPaymentAmount = (amount: number) => {
     console.log(`Total payment amount: $${amount}`);
   };

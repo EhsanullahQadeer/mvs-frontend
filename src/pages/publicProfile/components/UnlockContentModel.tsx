@@ -3,12 +3,12 @@ import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.s
 interface UnlockContentModelProps {
   open: boolean;
   onClose: () => void;
-  onAuthClick: () => void; // Function to open Auth Modal
+  onAuthClick: () => void; 
 }
 const UnlockContentModel: React.FC<UnlockContentModelProps> = ({
   open,
   onClose,
-  onAuthClick, // Function to handle Sign In/Sign Up click
+  onAuthClick,
 }) => {
   return (
     <Dialog
@@ -37,21 +37,19 @@ const UnlockContentModel: React.FC<UnlockContentModelProps> = ({
             </div>
           </div>
           <p className="text-[12px] text-grayishSilver">
-            You are about to pay the Partner's fee to unlock their inbox. This
-            transaction allows you to submit one audio demo for the Partner to
-            review.
+            You need an account to access the content login or sign up to explore exclusive samples, connect with artists and unlock more features
           </p>
         </div>
 
         <div className="flex items-center bottom-0 sticky bg-darkGray justify-end pb-4 pt-1 gap-2">
           <button
-            onClick={onAuthClick} // Trigger onAuthClick to open SendMessageModel
+            onClick={onAuthClick} 
             className="border border-charcoalGray bg-jetBlack text-sm text-white font-semibold py-2 px-3 flex justify-center items-center rounded-full"
           >
             Sign In
           </button>
           <button
-            onClick={onAuthClick} // Trigger onAuthClick to open SendMessageModel
+            onClick={onAuthClick} 
             className="bg-limeGreen text-sm text-jetBlack font-semibold py-2 px-3 rounded-full"
           >
             Sign Up

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Posts from "./Posts";
+import FanWall from "./FanWall";
 
 const ProfileRightSection = () => {
   const [activeTab, setActiveTab] = useState("Posts");
@@ -25,7 +26,7 @@ const ProfileRightSection = () => {
       {/* Tab Content */}
       <div className="p-5">
         {activeTab === "Posts" && <Posts/> }
-        {activeTab === "Fanwall" && <div>Fanwall Content</div>}
+        {activeTab === "Fanwall" && <FanWall />}
         {activeTab === "Library" && <div>Library Content</div>}
       </div>
     </div>
