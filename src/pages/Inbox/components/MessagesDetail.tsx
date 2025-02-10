@@ -39,6 +39,7 @@ type Props = {
   currentUserInfo: ICurrentUser;
   onClose: () => void;
   userInfo: IArtistProfileData;
+  isPublicProfile?: boolean;
 };
 
 const MessagesDetail = (props: Props) => {
@@ -52,10 +53,11 @@ const MessagesDetail = (props: Props) => {
     currentUserInfo,
     onClose,
     userInfo,
+    isPublicProfile = false,
   } = props;
   const navigate = useNavigate();
   const [menuSection, setMenuSection] = useState(false);
-  const { id, thumbnail, displayName } = conversation;
+  const { id, thumbnail, displayName } = conversation || {};
   //const { message, sendMessage } = useMessages();
 
   // Update the chat feed or any other behavior when messages change
@@ -152,10 +154,20 @@ const MessagesDetail = (props: Props) => {
   };
 
   return (
-    <div className="h-full w-full border-l border-eerieBlack bg-richBlack relative">
-      <div className="flex flex-col pt-2 h-full">
-        <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
-          <div className="flex flex-wrap gap-5 justify-between items-center p-4 pt-2 w-full">
+    <div
+      className={`flex-1 h-full w-full flex flex-col bg-richBlack relative ${
+        !isPublicProfile
+          ? "border-l border-eerieBlack"
+          : "border border-eclipseGray rounded-b-xl"
+      }`}
+    >
+      <div className={`flex-1 flex flex-col h-full`}>
+        <div
+          className={`flex flex-col w-full max-md:max-w-full ${
+            !isPublicProfile ? "bg-richBlack" : "bg-darkGray"
+          }`}
+        >
+          <div className="flex flex-wrap gap-5 justify-between items-center p-4 w-full">
             <div className="flex gap-2 items-center">
               <div
                 style={
@@ -178,53 +190,61 @@ const MessagesDetail = (props: Props) => {
                   {displayName}
                 </div>
                 <div className="text-xs text-silver font-normal">
-                  {userInfo.country}, {userInfo?.region}
+                  {userInfo?.country}, {userInfo?.region}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div
-                onClick={handleMenuSection}
-                className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver relative"
-              >
-                <MenuIcon className="w-5 h-5" />
+            {!isPublicProfile && (
+              <>
+                <div className="flex items-center gap-2">
+                  <div
+                    onClick={handleMenuSection}
+                    className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver relative"
+                  >
+                    <MenuIcon className="w-5 h-5" />
 
-                {menuSection ? (
-                  <ActionMenu {...{ menuItems, setMenuSection }} />
-                ) : (
-                  <></>
-                )}
-              </div>
-              <button
-                onClick={onClose}
-                className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver hover:bg-[#2f2f2f]"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-y border-eerieBlack">
-            {headerTabs.map((headerTab) => {
-              const { label, value } = headerTab;
-              return (
-                <div
-                  key={value}
-                  onClick={() => {
-                    setTab(value);
-                  }}
-                  className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
-                    tab === value
-                      ? "text-jetBlack bg-limeGreen text-xs"
-                      : "text-coolGray bg-eclipseGray text-[10px]"
-                  }`}
-                >
-                  {label}
+                    {menuSection ? (
+                      <ActionMenu {...{ menuItems, setMenuSection }} />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <button
+                    onClick={onClose}
+                    className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver hover:bg-[#2f2f2f]"
+                  >
+                    ✕
+                  </button>
                 </div>
-              );
-            })}
+              </>
+            )}
           </div>
+          {!isPublicProfile && (
+            <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-t border-eerieBlack">
+              {headerTabs.map((headerTab) => {
+                const { label, value } = headerTab;
+                return (
+                  <div
+                    key={value}
+                    onClick={() => {
+                      setTab(value);
+                    }}
+                    className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
+                      tab === value
+                        ? "text-jetBlack bg-limeGreen text-xs"
+                        : "text-coolGray bg-eclipseGray text-[10px]"
+                    }`}
+                  >
+                    {label}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
-        <div className="flex flex-col flex-1 relative overflow-hidden">
+        <div
+          className={`flex flex-col flex-1 relative overflow-hidden border-t border-eerieBlack`}
+        >
           {(loading || overlayLoading) && (
             <div
               className={`absolute top-0 left-0 bottom-0 right-0  w-full h-full flex justify-center items-center ${
@@ -306,6 +326,7 @@ const MessagesDetail = (props: Props) => {
             setOverlayLoading,
             getConversationMessages,
             currentUserInfo,
+            isPublicProfile,
           }}
         />
       </div>

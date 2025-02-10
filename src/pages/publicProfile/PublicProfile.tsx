@@ -21,7 +21,7 @@ const PublicProfile = () => {
         <div className="flex-[25%] border-r border-eclipseGray bg-jetBlack flex">
           <ProfileInfo />
         </div>
-        <div className="flex-[75%]">
+        <div className="flex-[75%] flex">
           <ProfileRightSection />
         </div>
       </div>

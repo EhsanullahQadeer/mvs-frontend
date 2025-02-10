@@ -23,6 +23,7 @@ type Props = {
   messageObj?: IMessage;
   messageId?: string;
   reloadData?: () => Promise<void>;
+  isPublicProfile?: boolean;
 };
 
 const Footer = ({
@@ -34,6 +35,7 @@ const Footer = ({
   messageObj,
   messageId,
   reloadData,
+  isPublicProfile = false,
 }: Props) => {
   const { recipient_id } = conversation || {};
 
@@ -58,7 +60,7 @@ const Footer = ({
     }
   }, [reloadComponent]);
 
-  const canSendMessage = 
+  const canSendMessage =
     messageInputValue.trim() &&
     (!isFeedbackSection ||
       (isFeedbackSection && (recordedAudio || messageInputValue)));
@@ -100,8 +102,8 @@ const Footer = ({
       setIsSubmitting(false);
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
-    }finally{
-      reloadData && await reloadData();
+    } finally {
+      reloadData && (await reloadData());
     }
   };
 
@@ -130,11 +132,11 @@ const Footer = ({
       const isDemo = Boolean(selectedAudioFile || recordedAudio);
 
       if (!isFeedbackSection) {
-        const payload = { 
-          senderId: String(currentUserInfo?.id || ''),
-          recipientId: String(recipient_id || ''),
-          message: String(messageInputValue || ''),
-          conversationId: String(conversation.id || ''),
+        const payload = {
+          senderId: String(currentUserInfo?.id || ""),
+          recipientId: String(recipient_id || ""),
+          message: String(messageInputValue || ""),
+          conversationId: String(conversation.id || ""),
           creditPaymentAmount: Number(creditPaymentAmount || 0),
           isDemo: String(isDemo),
           audioMediaId: String(audioMediaId || ""),
@@ -168,7 +170,7 @@ const Footer = ({
       setOverlayLoading?.(false);
       setSelectedAudioFile(null);
       setCreditPaymentAmount(0);
-      reloadData && await reloadData();
+      reloadData && (await reloadData());
       setReloadComponent(true);
       setIsSubmitting(false);
     }
@@ -252,24 +254,40 @@ const Footer = ({
 
   return (
     <>
-      <div className="sticky bottom-0">
-        <div className="flex flex-col p-3 w-full bg-richBlack relative">
-          <div className="absolute left-0 top-3 px-3 w-full">
-            <div className="flex justify-center px-7 bg-[#f9e2dd] rounded-t-xl">
-              <p className="py-2.5 text-sm font-semibold text-[#955353]">
-                Messages with tip appear at the top of the recipient inbox
-              </p>
+      <div className="bottom-0">
+        <div
+          className={`flex flex-col p-3 w-full bg-richBlack relative ${
+            isPublicProfile && "rounded-b-xl"
+          }`}
+        >
+          {!isPublicProfile && (
+            <div className="absolute left-0 top-3 px-3 w-full">
+              <div className="flex justify-center px-7 bg-[#f9e2dd] rounded-t-xl">
+                <p className="py-2.5 text-sm font-semibold text-[#955353]">
+                  Messages with tip appear at the top of the recipient inbox
+                </p>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="flex flex-col justify-center px-3 py-2 w-full bg-[#131313] border border-[#ACD7FFCC] rounded-xl shadow-sm pt-12">
+          <div
+            className={`flex flex-col justify-center px-3 py-2 w-full bg-[#131313] border border-[#ACD7FFCC] rounded-xl shadow-sm ${
+              !isPublicProfile && "pt-12"
+            }`}
+          >
             <div className="flex flex-col w-full">
-              <div className="relative p-2.5">
+              <div className={`relative ${!isPublicProfile && "p-2.5"}`}>
                 <textarea
                   value={messageInputValue}
                   onChange={(e) => setMessageInputValue(e.target.value)}
-                  className="resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16"
-                  placeholder="Type your message..."
+                  className={`resize-none bg-transparent border-none w-full text-[#ACD7FF] focus:ring-0 ${
+                    !isPublicProfile ? "pb-16 text-base" : "h-10 text-sm"
+                  }`}
+                  placeholder={
+                    !isPublicProfile
+                      ? "Type your message..."
+                      : "Hi, type anything here.."
+                  }
                 />
 
                 {recordedAudio && !selectedAudioFile && (
@@ -280,15 +298,25 @@ const Footer = ({
                     />
                   </div>
                 )}
-                {(selectedAudioFile) && (
+                {selectedAudioFile && (
                   <div className="absolute bottom-0 left-2.5 w-[234px] relative">
                     <div className="absolute -top-3 -right-3 z-50">
-                      <button 
+                      <button
                         onClick={() => setSelectedAudioFile(null)}
                         className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-[#3D3D3D] hover:bg-[#2A2A2A] transition-opacity duration-200"
                       >
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                          <path d="M1 1L13 13M1 13L13 1" stroke="#848484" strokeWidth="2" strokeLinecap="round"/>
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                        >
+                          <path
+                            d="M1 1L13 13M1 13L13 1"
+                            stroke="#848484"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -348,7 +376,11 @@ const Footer = ({
                 </div>
               )}
 
-              <div className="flex items-center justify-between mt-3">
+              <div
+                className={`flex items-center justify-between ${
+                  !isPublicProfile && "mt-3"
+                }`}
+              >
                 <div className="flex gap-4 items-center">
                   <div className="flex gap-4 items-center p-2 rounded-lg border border-[#3D3D3D]">
                     <div className="flex flex-col gap-1">
@@ -407,24 +439,34 @@ const Footer = ({
                 <div className="shrink-0">
                   <div
                     className={`${
-                      canSendMessage && !isSubmitting ? "cursor-pointer" : "cursor-not-allowed"
+                      canSendMessage && !isSubmitting
+                        ? "cursor-pointer"
+                        : "cursor-not-allowed"
                     }`}
                   >
                     <div
-                      onClick={canSendMessage && !isSubmitting ? handlePurchaseOrder : undefined}
+                      onClick={
+                        canSendMessage && !isSubmitting
+                          ? handlePurchaseOrder
+                          : undefined
+                      }
                       className={`flex items-center justify-center w-11 h-11 rounded ${
                         canSendMessage && !isSubmitting
                           ? "text-[#9EFF00] pointer-events-auto"
                           : "text-[#242424] pointer-events-none"
                       }`}
                     >
-                      {isSubmitting? (<CircularProgress
-                                      sx={{
-                                        width: "80px",
-                                        height: "80px",
-                                        color: "#9EFF00",
-                                      }}
-                                    />) :(<SendArrowIcon className="w-6 h-6" />)}
+                      {isSubmitting ? (
+                        <CircularProgress
+                          sx={{
+                            width: "80px",
+                            height: "80px",
+                            color: "#9EFF00",
+                          }}
+                        />
+                      ) : (
+                        <SendArrowIcon className="w-6 h-6" />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -434,16 +476,18 @@ const Footer = ({
         </div>
       </div>
 
-      {!reloadComponent&&(<PurchaseOrderDialog
-        {...{
-          openPurchaseOrder,
-          setOpenPurchaseOrder,
-          conversation,
-          setCreditPaymentAmount,
-          handleSendMessage,
-          setIsSubmitting,
-        }}
-      />)}
+      {!reloadComponent && (
+        <PurchaseOrderDialog
+          {...{
+            openPurchaseOrder,
+            setOpenPurchaseOrder,
+            conversation,
+            setCreditPaymentAmount,
+            handleSendMessage,
+            setIsSubmitting,
+          }}
+        />
+      )}
     </>
   );
 };

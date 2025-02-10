@@ -6,15 +6,15 @@ const ProfileRightSection = () => {
   const [activeTab, setActiveTab] = useState("Posts");
 
   return (
-    <div className="w-full">
-      <div className="flex w-full   items-center    border-b border-eerieBlack ">
+    <div className="flex-1 flex flex-col">
+      <div className="flex w-full items-center">
         {["Posts", "Fanwall", "Library"].map((tab) => (
           <span
             key={tab}
-            className={`cursor-pointer text-white flex items-center justify-center flex-1  py-5 px-7 ${
+            className={`cursor-pointer text-white flex items-center justify-center flex-1 py-5 ${
               activeTab === tab
-                ? "font-semibold  border-b border-charcoalGray"
-                : "text-gray-500"
+                ? "font-semibold border-b-2 border-charcoalGray"
+                : "border-b border-eerieBlack"
             }`}
             onClick={() => setActiveTab(tab)}
           >
@@ -24,10 +24,12 @@ const ProfileRightSection = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="p-5">
-        {activeTab === "Posts" && <Posts/> }
-        {activeTab === "Fanwall" && <FanWall />}
-        {activeTab === "Library" && <div>Library Content</div>}
+      <div className="flex-1 py-5 flex flex-col overflow-hidden">
+        <div className="flex-1 px-5 overflow-y-auto custom-dropdown">
+          {activeTab === "Posts" && <Posts />}
+          {activeTab === "Fanwall" && <FanWall />}
+          {activeTab === "Library" && <div>Library Content</div>}
+        </div>
       </div>
     </div>
   );
