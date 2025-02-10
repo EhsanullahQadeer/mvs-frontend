@@ -1,7 +1,7 @@
 import React from "react";
 import Comment from "./Comment";
 import user from "../../../assets/img/artistImg.png"
-
+import icon from '../../../assets/img/icon.svg'
 
 const commentsData = [
   {
@@ -50,16 +50,23 @@ const FanWall = () => {
   return (
     <>
       <div className="">
+        <div className="my-5 relative">
         <textarea
-          rows={4}
           placeholder="Leave a comment"
-          className="w-full resize-none mt-1  hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
+          className="w-full resize-none h-[176px]  hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 text-sm p-[16px] bg-jetBlack border border-eclipseGray text-[#B2B2B2] rounded-lg"
           name=""
           id=""
         ></textarea>
+        <div className="bg-jetBlack  p-1">
+        <img className="absolute bottom-5 left-3" src={icon} alt="" />
+
+        </div>
+
+        </div>
             <div>
       {commentsData.map((comment, index) => (
-        <Comment key={index} {...comment} />
+        <div className="border-b border-eerieBlack">        <Comment key={index} {...comment} />
+</div>
       ))}
     </div>
       </div>

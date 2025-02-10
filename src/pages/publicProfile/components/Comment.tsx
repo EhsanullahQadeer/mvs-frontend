@@ -22,11 +22,11 @@ const Comment: React.FC<CommentProps> = ({ profileImg, username, handle, time, c
   const [showReplies, setShowReplies] = useState(false);
 
   return (
-    <div className="p-4 w-full border-b border-gray-700">
+    <div className="p-4 w-full ">
       <div className="flex items-center w-full justify-between">
         <div className="flex w-fit items-center gap-2">
           <div className="w-[52px] h-[52px] rounded-full ">
-            <img src={profileImg} alt={username} className="w-full h-full object-cover" />
+            <img src={profileImg} alt={username} className="w-full h-full rounded-full object-cover" />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
@@ -39,7 +39,7 @@ const Comment: React.FC<CommentProps> = ({ profileImg, username, handle, time, c
         </div>
         <IoEllipsisHorizontal className="text-white cursor-pointer" />
       </div>
-      <div className="mt-2 text-[15px] text-white">{content}</div>
+      <div className="mt-2 text-[16px] text-[#ccc]">{content}</div>
       <div className="flex items-center gap-4 mt-3">
         <div className="text-mediumGray flex gap-0.5 items-center">
           <img src={likeIcon} alt="Like" className="w-5 h-5" />
@@ -47,20 +47,25 @@ const Comment: React.FC<CommentProps> = ({ profileImg, username, handle, time, c
         </div>
         <div className="text-mediumGray flex gap-0.5 items-center">
           <img src={commentIcon} alt="Comment" className="w-5 h-5" />
-          <span>{comments}</span>
+          <span >{comments}</span>
         </div>
       </div>
-      {replies.length > 0 && (
-        <div className="my-4 text-[14px] text-mediumGray flex items-center gap-0.5 cursor-pointer" onClick={() => setShowReplies(!showReplies)}>
-          <span className='bg-mediumGray w-12 h-[1px]'></span>
+      <div className=''>
+          {replies.length > 0 && (
+        <div className="my-4 text-[14px] text-dimGray flex items-center gap-0.5 cursor-pointer" onClick={() => setShowReplies(!showReplies)}>
+          <span className='bg-dimGray w-12 h-[1px]'></span>
           {showReplies ? "Hide replies" : `See replies (${replies.length})`}
         </div>
       )}
+    
       {showReplies && replies.map((reply, index) => (
-        <div key={index} className="  border-l border-gray-700">
+        <div key={index} className=" ">
           <Comment {...reply} replies={[]} />
+
         </div>
       ))}
+            </div>
+
     </div>
   );
 };
