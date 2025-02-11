@@ -11,6 +11,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import mvssive_text from "../assets/img/massive_text.svg";
 import mvssive_mini from "../assets/img/M-logo.png";
+import NavHeader from "components/ui/Header/organisms/navHeader";
 
 interface ThemeProps {
   isOverflowHidden?: boolean;
@@ -20,7 +21,7 @@ interface ThemeProps {
 
 const Theme = (props: ThemeProps) => {
   return (
-    <div className="grid grid-rows-[69px,1fr] grid-cols-[90px,1fr] h-screen bg-[#08090A]">
+    <div className="grid grid-rows-[90px,1fr] grid-cols-[90px,1fr] h-screen bg-[#08090A]">
       <div
         className="row-start-1 col-start-1 bg-[#08090A] border-b-2 border-r-2 border-[#1F1F1F]
          flex items-center justify-center"
@@ -41,8 +42,13 @@ const Theme = (props: ThemeProps) => {
         </svg>
       </div>
       {/* Header */}
-      <div className="onboard-14 row-start-1 col-start-2 border-b-2 border-[#1F1F1F] flex items-center pl-[20px]">
+      {/* <div className="onboard-14 row-start-1 col-start-2 border-b-2 border-[#1F1F1F] flex items-center pl-[20px]">
         <Header headerTitle={props.headerTitle} />
+      </div> */}
+
+      {/* Nav Header */}
+      <div className="onboard-14 row-start-1 col-start-2 border-b-2 border-[#1F1F1F] flex items-center pl-[20px]">
+        <NavHeader name="navHeader" id="1" username="someUsername" email="test@test.com" />
       </div>
 
       {/* Sidebar */}
