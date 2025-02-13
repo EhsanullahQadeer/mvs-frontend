@@ -11,7 +11,7 @@ const publicRoutes: IRoute[] = [
     component: SamplePage,
   },
   {
-    path: "/:user-name",
+    path: "/:username",
     name: "Public Profile",
     component: PublicProfile,
   },

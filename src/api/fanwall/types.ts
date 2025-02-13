@@ -12,8 +12,8 @@ export interface IGetFanwallPostRepliesParams {
 
 export interface ICreateFanwallPost {
   post: string;
-  main_post_id: number;
-  reply_to_id: number;
+  main_post_id?: number;
+  reply_to_id?: number;
   fanwall_owner_id: number;
 }
 

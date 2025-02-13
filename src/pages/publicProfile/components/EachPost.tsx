@@ -42,7 +42,7 @@ const EachPost: React.FC<PostProps> = ({
   const handleAuthOpen = () => {
     setOpenUnlockModal(false);
     setOpenAuthModal(true);
-    setOpenPurchaseOrder(true)
+    setOpenPurchaseOrder(true);
   };
 
   const handleSendMessage = () => {
@@ -68,7 +68,9 @@ const EachPost: React.FC<PostProps> = ({
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="text-[18px] text-white font-semibold">{username}</span>
+                <span className="text-[18px] text-white font-semibold">
+                  {username}
+                </span>
                 <MdVerified className="text-limeGreen" />
               </div>
               <span className="text-[14px] text-mediumGray">@{handle}</span>
@@ -89,7 +91,11 @@ const EachPost: React.FC<PostProps> = ({
               </button>
             </div>
           )}
-          <img src={videoThumbnail} alt="Video Thumbnail" className="w-full h-full" />
+          <img
+            src={videoThumbnail}
+            alt="Video Thumbnail"
+            className="w-full h-full"
+          />
         </div>
 
         {locked && (
@@ -138,20 +144,19 @@ const EachPost: React.FC<PostProps> = ({
       <UnlockContentModel
         open={openUnlockModal}
         onClose={() => setOpenUnlockModal(false)}
-        onAuthClick={handleAuthOpen} 
+        onAuthClick={handleAuthOpen}
       />
 
       {/* Send Message Modal */}
       <SendMessageModel
-  openPurchaseOrder={openPurchaseOrder}
-  setOpenPurchaseOrder={setOpenPurchaseOrder}
-  setCreditPaymentAmount={setCreditPaymentAmount}
-  handleSendMessage={handleSendMessage}
-  username={username}        
-  handle={handle}        
-  profileImg={profileImg} 
-/>
-
+        openPurchaseOrder={openPurchaseOrder}
+        setOpenPurchaseOrder={setOpenPurchaseOrder}
+        setCreditPaymentAmount={setCreditPaymentAmount}
+        handleSendMessage={handleSendMessage}
+        username={username}
+        handle={handle}
+        profileImg={profileImg}
+      />
     </div>
   );
 };

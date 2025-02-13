@@ -3,7 +3,7 @@ import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.s
 interface UnlockContentModelProps {
   open: boolean;
   onClose: () => void;
-  onAuthClick: () => void; 
+  onAuthClick?: () => void; 
 }
 const UnlockContentModel: React.FC<UnlockContentModelProps> = ({
   open,

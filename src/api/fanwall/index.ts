@@ -1,13 +1,14 @@
-import axiosInstance from "../axios";
+import axiosPublic from "api/axiosPublic";
 import {
   ICreateFanwallPost,
   IGetFanwallPostRepliesParams,
   IGetFanwallPostsParams,
   IToggleFanwallPostLike,
 } from "./types";
+import axiosInstance from "api/axios";
 
 export async function getFanwallPosts(params: IGetFanwallPostsParams) {
-  return axiosInstance.get(`/users/fanwall/posts`, {
+  return axiosPublic.get(`/users/fanwall/posts`, {
     params,
   });
 }
@@ -15,7 +16,7 @@ export async function getFanwallPosts(params: IGetFanwallPostsParams) {
 export async function getFanwallPostReplies(
   params: IGetFanwallPostRepliesParams
 ) {
-  return axiosInstance.get(`/users/fanwall/replies`, {
+  return axiosPublic.get(`/users/fanwall/replies`, {
     params,
   });
 }
@@ -25,5 +26,5 @@ export async function createFanwallPost(body: ICreateFanwallPost) {
 }
 
 export async function toggleFanwallPostLike(body: IToggleFanwallPostLike) {
-  return axiosInstance.post(`/users/fanwall/like`, body);
+  return axiosPublic.post(`/users/fanwall/like`, body);
 }

@@ -1,8 +1,15 @@
 import { useState } from "react";
 import Posts from "./Posts";
 import FanWall from "./FanWall";
+import { IArtistProfileData, ICurrentUser } from "./types";
 
-const ProfileRightSection = () => {
+interface IProps {
+  artistData: IArtistProfileData | null;
+  currentUserInfo: ICurrentUser | null;
+}
+
+const ProfileRightSection = (props: IProps) => {
+  const { artistData, currentUserInfo } = props;
   const [activeTab, setActiveTab] = useState("Posts");
 
   return (
@@ -27,7 +34,9 @@ const ProfileRightSection = () => {
       <div className="flex-1 py-5 flex flex-col overflow-hidden">
         <div className="flex-1 px-5 overflow-y-auto custom-dropdown">
           {activeTab === "Posts" && <Posts />}
-          {activeTab === "Fanwall" && <FanWall />}
+          {activeTab === "Fanwall" && (
+            <FanWall {...{ artistData, currentUserInfo }} />
+          )}
           {activeTab === "Library" && <div>Library Content</div>}
         </div>
       </div>

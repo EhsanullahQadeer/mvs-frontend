@@ -1,5 +1,4 @@
 import { MdVerified } from "react-icons/md";
-import avatarImg from "../../../assets/img/avatar.svg";
 import { IoLocationOutline } from "react-icons/io5";
 import { GoDotFill } from "react-icons/go";
 import { FiUpload, FiInfo } from "react-icons/fi";
@@ -7,54 +6,43 @@ import { FaUserPlus } from "react-icons/fa6";
 import { LuCalendar } from "react-icons/lu";
 import { LuDollarSign } from "react-icons/lu";
 import CreditsInfo from "./CreditsInfo";
+import { IArtistProfileData } from "./types";
 
-const creditsData = [
-  {
-    thumbnail: avatarImg,
-    track_name: "Earned It",
-    artists: [{ professional_name: "The Weeknd" }],
-    preview_url: "",
-  },
-  {
-    thumbnail: avatarImg,
-    track_name: "Earned It",
-    artists: [{ professional_name: "The Weeknd" }],
-    preview_url: "",
-  },
-  {
-    thumbnail: avatarImg,
-    track_name: "Earned It",
-    artists: [{ professional_name: "The Weeknd" }],
-    preview_url: "",
-  },
-  {
-    thumbnail: avatarImg,
-    track_name: "Earned It",
-    artists: [{ professional_name: "The Weeknd" }],
-    preview_url: "",
-  },
-  {
-    thumbnail: avatarImg,
-    track_name: "Earned It",
-    artists: [{ professional_name: "The Weeknd" }],
-    preview_url: "",
-  },
-  {
-    thumbnail: avatarImg,
-    track_name: "Earned It",
-    artists: [{ professional_name: "The Weeknd" }],
-    preview_url: "",
-  },
-];
+interface IProps {
+  artistData: IArtistProfileData | null;
+  creditsData: {
+    thumbnail: string;
+    track_name: string;
+    artists: any;
+    preview_url: any;
+  }[];
+}
 
-const ProfileInfo = () => {
+const ProfileInfo = (props: IProps) => {
+  const { artistData, creditsData } = props;
+
+  const {
+    professional_name,
+    thumbnail,
+    country,
+    region,
+    primary_role,
+    secondary_role,
+    followers,
+    bio,
+    demo_fee,
+  } = artistData || {};
+
+  const truncatedBio =
+    bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
+
   return (
     <div className="flex-1 overflow-y-auto custom-dropdown">
       <div className="w-full h-[80px] bg-[#1a1a1a]"></div>
       <div className="px-4">
         <div className="rounded-full p-1 bg-jetBlack w-[108px] h-[108px] relative -translate-y-1/2">
           <img
-            src={avatarImg}
+            src={thumbnail}
             alt="Profile"
             className="h-full w-full rounded-full object-cover"
           />
@@ -63,7 +51,7 @@ const ProfileInfo = () => {
         <div className="text-white flex flex-col -mt-12">
           <div className="flex flex-col gap-2 mb-2">
             <h1 className={`text-lg flex items-center gap-1 font-semibold`}>
-              DannyBoyStyles
+              {professional_name}
               <MdVerified className="text-limeGreen" />
             </h1>
           </div>
@@ -71,22 +59,22 @@ const ProfileInfo = () => {
           <div className="text-silver flex items-center gap-1 mb-3">
             <IoLocationOutline className="w-5 h-5" />
             <span className="text-base font-medium text-coolGray">
-              City, State
+              {country}, {region}
             </span>
           </div>
 
           <div className="flex items-center gap-1 mb-3">
             <div className="px-2 py-1 bg-eclipseGray text-dimGray rounded-md text-sm font-normal">
-              Artist
+              {primary_role}
             </div>
 
             <div className="px-2 py-1 bg-eclipseGray text-dimGray rounded-md text-sm font-normal">
-              Songwriter
+              {secondary_role}
             </div>
           </div>
 
           <div className="mb-3.5 flex items-center gap-2 text-silver text-xs flex-wrap">
-            <span className="font-semibold">2,992 followers</span>
+            <span className="font-semibold">{followers} followers</span>
             <span className="font-semibold">
               <GoDotFill className="w-1.5 h-1.5" />
             </span>
@@ -117,9 +105,7 @@ const ProfileInfo = () => {
       <div className="px-5 py-3 pb-5 border-t border-eclipseGray">
         <h3 className="text-base text-platinum font-semibold mb-1">About</h3>
         <p className="mb-2 text-sm text-mediumGray font-normal">
-          Danyboystyles, Grammy-winning producer behind hits for The Weeknd,
-          Belly, and more, blending cinematic sounds with modern R&B to craft
-          global chart-toppers.
+          {truncatedBio}
         </p>
 
         <span className="text-base text-platinum font-semibold">
@@ -147,7 +133,7 @@ const ProfileInfo = () => {
           </div>
 
           <span className="font-semibold border border-mediumGray rounded-full px-2 py-0.5">
-            $25
+            ${demo_fee}
           </span>
         </div>
         <div className="flex items-center justify-between max-lg:flex-wrap gap-1">

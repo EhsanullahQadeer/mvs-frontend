@@ -3,7 +3,12 @@ import pauseIcon from "../../../assets/img/player/pause-circle.svg";
 import playIcon from "../../../assets/img/player/play-circle.svg";
 
 interface IProps {
-  creditsData?: any;
+  creditsData: {
+    thumbnail: string;
+    track_name: string;
+    artists: any;
+    preview_url: any;
+  }[];
 }
 
 const CreditsInfo = (props: IProps) => {

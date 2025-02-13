@@ -1,62 +1,32 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Comment from "./Comment";
-import user from "../../../assets/img/artistImg.png";
 import icon from "../../../assets/img/icon.svg";
 import { createFanwallPost, getFanwallPosts } from "api/fanwall";
 import { CircularProgress } from "@mui/material";
+import { IArtistProfileData, ICurrentUser } from "./types";
+import UnlockContentModel from "./UnlockContentModel";
 
-const commentsData = [
-  {
-    profileImg: user,
-    username: "John Doe",
-    handle: "writer",
-    time: "2h ago",
-    content: "This is a sample comment!",
-    likes: 12,
-    comments: 3,
-    replies: [
-      {
-        profileImg: user,
-        username: "Mike Ross",
-        handle: "singer",
-        time: "1h ago",
-        content: "I totally agree with this!",
-        likes: 4,
-        comments: 1,
-      },
-      {
-        profileImg: user,
-        username: "Mike Ross",
-        handle: "singer",
-        time: "1h ago",
-        content: "I totally agree with this!",
-        likes: 4,
-        comments: 1,
-      },
-    ],
-  },
-  {
-    profileImg: user,
-    username: "Jane Smith",
-    handle: "writer",
-    time: "1h ago",
-    content: "Great post! Thanks for sharing.",
-    likes: 5,
-    comments: 1,
-    replies: [],
-  },
-];
+interface IProps {
+  artistData: IArtistProfileData | null;
+  currentUserInfo: ICurrentUser | null;
+}
 
-const FanWall = () => {
+const FanWall = (props: IProps) => {
+  const { artistData, currentUserInfo } = props;
+  const { id } = artistData;
   const [isLoading, setLoading] = useState(true);
   const [fanwallPostsData, setFanwallPostsData] = useState([]);
   const [newPost, setNewPost] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [openUnlockModal, setOpenUnlockModal] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [replyText, setReplyText] = useState("");
 
   const getFanwallPostsData = async () => {
     try {
       setLoading(true);
       const params = {
-        fanwall_owner: 1, //fanwall owner id
+        fanwall_owner: id,
         skip: 0,
         take: 10,
       };
@@ -73,19 +43,26 @@ const FanWall = () => {
     getFanwallPostsData();
   }, []);
 
-  const handleFanwallPostSend = async () => {
-    if (!newPost.trim()) return;
+  const handleFanwallPostSend = async (postId?: number, replyToId?: number) => {
+    if (postId) {
+      if (!replyText.trim()) return;
+    } else {
+      if (!newPost.trim()) return;
+    }
+
     try {
       setLoading(true);
       const body = {
-        post: newPost,
-        main_post_id: 0, // post id
-        reply_to_id: 0,
-        fanwall_owner_id: 1, // fanwall owner id
+        post: postId ? replyText : newPost,
+        ...(postId && { main_post_id: replyToId || postId }),
+        ...(postId && { reply_to_id: postId }),
+        fanwall_owner_id: id,
       };
 
       await createFanwallPost(body);
-      setNewPost("");
+      handleCancel();
+      setReplyText("");
+      setReplyingTo(null);
       await getFanwallPostsData();
     } catch (error) {
       console.log("error", error);
@@ -94,11 +71,21 @@ const FanWall = () => {
     }
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault(); // Prevent new line on Enter
-      handleFanwallPostSend();
+  const handleSend = (postId?: number, replyToId?: number) => {
+    if (currentUserInfo) {
+      handleFanwallPostSend(postId, replyToId);
+    } else {
+      setOpenUnlockModal(true);
     }
+  };
+
+  const handleTextareaFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleCancel = () => {
+    setNewPost("");
+    setIsFocused(false);
   };
 
   return (
@@ -124,17 +111,54 @@ const FanWall = () => {
             className="w-full resize-none h-[176px]  hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 text-sm p-[16px] bg-jetBlack border border-eclipseGray text-silver rounded-lg"
             value={newPost}
             onChange={(e) => setNewPost(e.target.value)}
-            onKeyDown={handleKeyPress}
+            onFocus={handleTextareaFocus}
           ></textarea>
-          <img className="absolute bottom-5 left-3" src={icon} alt="" />
+          <div className="w-full absolute bottom-5 flex justify-between items-center px-3">
+            <img src={icon} alt="" />
+
+            {isFocused && (
+              <>
+                <div className="flex items-center gap-2">
+                  <div
+                    onClick={handleCancel}
+                    className="w-full px-4 py-2 bg-transparent text-silver border border-silver rounded-full text-sm font-semibold cursor-pointer"
+                  >
+                    Cancel
+                  </div>
+                  <div
+                    onClick={() => handleSend()}
+                    className="w-full px-3 py-2 bg-limeGreen text-[#203300] rounded-full text-sm font-semibold cursor-pointer"
+                  >
+                    Comment
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
         <div>
-          {fanwallPostsData.map((fanwallPost, index) => (
-            <div className="border-b border-eerieBlack">
-              <Comment key={index} {...{ fanwallPost }} />
-            </div>
-          ))}
+          {!isLoading &&
+            fanwallPostsData.map((fanwallPost, index) => (
+              <div key={index}>
+                <Comment
+                  {...{
+                    fanwallPost,
+                    replyingTo,
+                    setReplyingTo,
+                    replyText,
+                    setReplyText,
+                    handleSendReply: handleSend,
+                    rootCommentId: fanwallPost.id,
+                  }}
+                />
+              </div>
+            ))}
         </div>
+
+        <UnlockContentModel
+          open={openUnlockModal}
+          onClose={() => setOpenUnlockModal(false)}
+        />
       </div>
     </>
   );
