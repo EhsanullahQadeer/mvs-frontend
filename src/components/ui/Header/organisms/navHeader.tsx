@@ -7,19 +7,121 @@
  *************************************************************************/
 
 /* IMPORTS */
-import React from "react";
+import { useNavigate } from "react-router-dom";
+import { getUserNotifications } from "api/user";
+import React, { useEffect, useState } from "react";
 import { UserData } from "theme/Header/Header.types";
 import HeaderNavMenu from "../molecules/headerNavMenu";
-import { useNavigate } from "react-router-dom";
-import Button from "../atoms/notificationButton";
 import ProfileButton from "theme/Sidebar/ProfileButton";
+import NotificationPopUpWindow from "./NotificationsManager";
+import { useNotification } from "services/WebSocket/useNotification.hook";
+import NotificationButton from "../atoms/notificationAtoms/notificationBellButton";
+import notificationSound from "../../../../assets/audio/notification.mp3";
+import { TNotificationData } from "../molecules/notifications/Notification";
+import NotificationBellButton from "../atoms/notificationAtoms/notificationBellButton";
+
+const NOTIFICATION_GROUPS = {
+  social: [
+    'CONNECTION_REQUEST',
+    'CONNECTION_RESPONSE',
+    'COLLABORATION_REQUEST',
+    'COLLABORATION_ACCEPT',
+    'FEEDBACK_PROVIDED',
+    'NEW_COLLABORATOR',
+    'AUDIO_SHARE',
+  ],
+  activity: [
+    'FOLLOW',
+    'LIKE',
+    'AUDIO_UPDATE',
+    'DOWNLOAD_FILE',
+    'VIEW_PROFILE',
+    'VIEW_DEMO',
+  ]
+} as const;
 
 const NavHeader: React.FC<UserData> = ({ name }) => {
   const navigate = useNavigate();
+  const [isPopUpVisible, setIsPopUpVisible] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+  
+  const fetchNotifications = async () => {
+    const notifications = await getUserNotifications();
+    console.log('notifications', notifications);
+    setNotifications(notifications?.data);
+  };
 
-  // Example button click handler
+  const handleNotification = (rawData: any) => {
+    const formattedNotification: TNotificationData = {
+      id: Date.now(), // SNS messages don't include an id, so we generate one
+      type: rawData.type,
+      created_at: rawData.data.created_at,
+      is_read: rawData.data.is_read,
+      sender: {
+        id: rawData.data.sender.id,
+        displayName: rawData.data.sender.displayName,
+        thumbnail: rawData.data.sender.thumbnail,
+        username: rawData.data.sender.username,
+      },
+      sample: rawData.data.sampleId ? {
+        id: Number(rawData.data.sampleId),
+        name: rawData.data.sampleName,
+        filename: rawData.data.sampleFilename,
+      } : null,
+      media: rawData.data.mediaId ? {
+        id: Number(rawData.data.mediaId),
+        name: rawData.data.mediaName,
+      } : null,
+      metadata: rawData.data.metadata || {},
+    };
+
+    setNotifications(prev => {
+      if (window.isNotificationInCurrentTab?.(formattedNotification.type)) {
+        return [formattedNotification, ...prev];
+      }
+      return prev;
+    });
+    playSound();
+  };
+
+  const playSound = () => {
+    const audio = new Audio(notificationSound);
+    audio.play().catch(err => {
+      console.warn('Could not play notification sound:', err);
+    });
+  };
+
+  // Register each notification type individually
+  useNotification('CONNECTION_REQUEST', handleNotification);
+  useNotification('CONNECTION_RESPONSE', handleNotification);
+  useNotification('COLLABORATION_REQUEST', handleNotification);
+  useNotification('COLLABORATION_ACCEPT', handleNotification);
+  useNotification('FEEDBACK_PROVIDED', handleNotification);
+  useNotification('NEW_COLLABORATOR', handleNotification);
+  useNotification('AUDIO_SHARE', handleNotification);
+  useNotification('FOLLOW', handleNotification);
+  useNotification('LIKE', handleNotification);
+  useNotification('AUDIO_UPDATE', handleNotification);
+  useNotification('DOWNLOAD_FILE', handleNotification);
+  useNotification('VIEW_PROFILE', handleNotification);
+  useNotification('VIEW_DEMO', handleNotification);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  useEffect(() => {
+    console.log('notifications', notifications);
+    // Check for unread notifications
+    const unreadExists = notifications.some(notification => !notification.is_read);
+    console.log("Unread Notifications: ", unreadExists);
+    setHasUnreadNotifications(unreadExists); // Update the state based on the check
+  }, [notifications]);
+
+
   const handleNotifClick = () => {
-    console.log("Profile button clicked");
+    setIsPopUpVisible((prev) => !prev);
   };
 
   const menuItems = [
@@ -71,8 +173,17 @@ const NavHeader: React.FC<UserData> = ({ name }) => {
   return (
     <>
       <HeaderNavMenu menuItems={menuItems}></HeaderNavMenu>
-      <Button onClick={handleNotifClick}></Button>
+      <NotificationBellButton onClick={handleNotifClick} unreadNotifications={hasUnreadNotifications}/>
       <ProfileButton></ProfileButton>
+
+      {isPopUpVisible && (
+        <NotificationPopUpWindow
+        notifications={notifications}
+        isOpen={isPopUpVisible}
+        setIsOpen={setIsPopUpVisible}
+        setNotifications={setNotifications}
+        />
+      )}
     </>    
   );
 };

@@ -17,6 +17,8 @@ import Avatar from "react-avatar";
 import UserSettingsModal from "components/modals/user-settings";
 import ContactModal from "components/modals/contact-us";
 import { useHeaderHooks } from "../Header/Header.hooks";
+import { classNames, HeaderProps } from "../Header/Header.types";
+import { useNotification } from "services/WebSocket/useNotification.hook";
 
 interface ProfileButtonProps {
   direction?: 'left' | 'right';

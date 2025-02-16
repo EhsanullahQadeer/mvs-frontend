@@ -15,7 +15,7 @@ import {
 import MessagesDetail from "pages/Inbox/components/MessagesDetail";
 import { requestConncetAPI } from "api/user";
 import avatarImg from "../../../assets/img/avatar.svg";
-import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
+import { useNotification } from "services/WebSocket/useNotification.hook";
 import { useMessages } from "../../../pages/profile/messageContextProvider";
 
 type Props = {
@@ -63,7 +63,7 @@ const ProfileAboutSection = (props: Props) => {
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
 
-    useLambdaEvent("NEW_MESSAGE", (event) => {
+    useNotification("NEW_MESSAGE", (event) => {
       try {
         const { conversationId, sender, message, timestamp } = event.data;
     

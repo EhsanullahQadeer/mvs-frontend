@@ -14,6 +14,7 @@
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.7",
     "@react-input/mask": "^1.0.20",
+    "@reduxjs/toolkit": "^1.9.0",
     "@stripe/react-stripe-js": "^2.7.1",
     "@stripe/stripe-js": "^2.4.0",
     "@tailwindcss/forms": "^0.5.2",
@@ -62,6 +63,7 @@
     "react-meta-tags": "^1.0.1",
     "react-modal": "^3.16.1",
     "react-modern-audio-player": "^1.4.0-rc.2",
+    "react-native-sound": "^0.11.2",
     "react-paginate": "^8.2.0",
     "react-payment-icons": "^1.2.6",
     "react-phone-input-2": "^2.15.1",
@@ -91,8 +93,7 @@
     "wavesurfer.js": "^7.7.10",
     "web-vitals": "^0.2.4",
     "yarn": "^1.22.22",
-    "yup": "^0.32.11",
-    "@reduxjs/toolkit": "^1.9.0"
+    "yup": "^0.32.11"
   },
   "scripts": {
     "start": "react-scripts start",

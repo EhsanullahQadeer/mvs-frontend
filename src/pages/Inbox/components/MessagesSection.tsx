@@ -61,8 +61,6 @@ const MessagesSection = (props: Props) => {
           audio_media,
         } = msg;
 
-        console.log("MSG ", msg);
-
         const isDemoSender = currentUserInfo.id === sender.id;
         const details = formatMediaDetails(
           audio_media?.duration,

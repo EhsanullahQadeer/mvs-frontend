@@ -103,31 +103,6 @@ const Sidebar = () => {
             </span>
           </button>
 
-          {/* Notifications Button */}
-          <button
-            onClick={() => {
-              // @TODO redirect to notifications page
-              navigate('/home');
-            }}
-            className="cursor-pointer w-[100%] h-[76px] flex flex-col items-center justify-center"
-          >
-            <div
-              className={`rounded-[8px] h-[40px] w-[40px] p-[8px] flex items-center justify-center 
-              ${pathname === '/unknown'
-                  ? 'bg-[#9EFF00] text-[#000]'
-                  : 'bg-[#1C1C1C] hover:bg-[#B4FF15] text-[#FFFFFF] hover:text-[#000]'
-                }`}
-            >
-              <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8.30005 20.5C8.46743 20.8044 8.7135 21.0583 9.01254 21.2352C9.31158 21.412 9.65263 21.5053 10 21.5053C10.3475 21.5053 10.6885 21.412 10.9876 21.2352C11.2866 21.0583 11.5327 20.8044 11.7 20.5M4 7.5C4 5.9087 4.63214 4.38258 5.75736 3.25736C6.88258 2.13214 8.4087 1.5 10 1.5C11.5913 1.5 13.1174 2.13214 14.2426 3.25736C15.3679 4.38258 16 5.9087 16 7.5C16 14.5 19 16.5 19 16.5H1C1 16.5 4 14.5 4 7.5Z"
-                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-
-            </div>
-            <span className={`pt-[4px] text-[12px] font-["Mona-Sans-S"] text-[#FFFFFF]`}>
-              Notifications
-            </span>
-          </button>
           <div className="onboard-2">
             {/* Library button */}
             <button

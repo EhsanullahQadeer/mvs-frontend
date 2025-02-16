@@ -1,5 +1,3 @@
-import React from 'react';
-
 const NotificationButton = ({ buttonName, bgColor, textColor, borderColor, onClick }) => {
   const defaultBgColor = bgColor || 'bg-transparent'; 
     const defaultTextColor = textColor || 'text-white';
@@ -7,7 +5,7 @@ const NotificationButton = ({ buttonName, bgColor, textColor, borderColor, onCli
 
   return (
     <button
-      className={`px-[12px] py-[8px]  w-fit text-[12px] border rounded-full ${defaultBgColor} ${defaultTextColor} ${defaultBorderColor} `}
+      className={`px-[12px] py-[8px] w-fit text-[12px] border rounded-full ${defaultBgColor} ${defaultTextColor} ${defaultBorderColor} `}
       onClick={onClick}
     >
       {buttonName}

@@ -27,7 +27,6 @@ import { HiOutlineEye } from "react-icons/hi";
 import { GrShareOption } from "react-icons/gr";
 import { LuShieldAlert, LuBellOff } from "react-icons/lu";
 import { IArtistProfileData } from "pages/profile/components/types";
-import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
 
 type Props = {
   conversation: IConversation;

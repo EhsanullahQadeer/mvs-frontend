@@ -25,14 +25,10 @@ class APIGatewayManager {
   private initialize() {
     this.socket = new WebSocket( this.websocketUrl );
 
-    // @TODO: make this more robust by actually having some logic here
     this.socket.onopen = () => {};
 
     this.socket.onmessage = (event: MessageEvent) => {
-      console.log('Raw WebSocket message:', event.data);
       const data = JSON.parse(event.data);
-      console.log('Parsed message:', data);
-      
       const handler = this.dynamicHandlers[data.type];
       if (handler) {
         handler(data);

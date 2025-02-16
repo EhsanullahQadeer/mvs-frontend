@@ -40,7 +40,7 @@ import EngineerProfile from "./engineerProfile/EngineerProfile";
 import MembershipsConnects from "./settings/memberships-connects/MembershipsConnects";
 import Plans from "./settings/plans/Plans";
 import CreditsHistory from "./settings/credits-history/CreditsHistory";
-import Notification from "components/notifications/Notification";
+import Notification from "components/ui/Header/molecules/notifications/NotificationList"
 
 interface IRoute {
   path: string;
