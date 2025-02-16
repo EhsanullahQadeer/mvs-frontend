@@ -25,7 +25,7 @@ import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
 import useGetMessagesNotes from "../hooks/useGetMessagesNotes";
 import { IConversation } from "./types";
-import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
+import { useNotification } from "services/WebSocket/useNotification.hook";
 
 const headerTabs = [
   {
@@ -219,7 +219,7 @@ const MessagesList = () => {
     );
   };
 
-  useLambdaEvent("NEW_MESSAGE", (event) => {
+  useNotification("NEW_MESSAGE", (event) => {
     console.log('[debug] Received NEW_MESSAGE event:', event);
     try {
       const { conversationId, sender, message, timestamp } = event.data;

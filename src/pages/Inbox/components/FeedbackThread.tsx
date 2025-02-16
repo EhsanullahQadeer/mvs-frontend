@@ -9,7 +9,9 @@ import { formatMediaDetails } from "../handlers/mediaUtils";
 import { useEffect, useState } from "react";
 import ThreadMessageItem from "./ThreadMessageItem";
 import { getThreadMessages } from "api/messenger";
-import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
+import { useNotification } from "services/WebSocket/useNotification.hook";
+import { setViewDemo } from "api/notifier";
+import { useSelector } from "react-redux";
 
 type Props = {
   conversation: IConversation;
@@ -27,6 +29,21 @@ const FeedbackThread = (props: Props) => {
 
   const [msgId, setMsgId] = useState<number | null>(null);
   const [threadReplyObjs, setThreadReplyObjs] = useState<IMessage[]>([]);
+  const user = useSelector((state: any) => state.user);
+
+  useEffect(() => {
+
+    const mediaId = messages[0]?.messages[0]?.audio_media?.id;
+    const recipientId = conversation.user_a.id === user.id ? conversation.user_b.id : conversation.user_a.id;
+
+    if (mediaId) {
+      setViewDemo({
+        mediaId: mediaId,
+        recipientId: recipientId,
+      });
+    }
+  }, []);
+
 
   async function fetchThreadMessages () {
     if (msgId) {
@@ -50,7 +67,7 @@ const FeedbackThread = (props: Props) => {
   useEffect(() => {
     fetchThreadMessages();
   }, [msgId]);
-  useLambdaEvent("NEW_MESSAGE", (event) => {
+  useNotification("NEW_MESSAGE", (event) => {
     try {
       const { conversationId, parentMessageId } = event.data;
       

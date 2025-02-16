@@ -158,9 +158,9 @@ export type IMessage = {
   audio_recording_url?: string;
 };
 
-interface IReaction {
-  userId: number;
+export interface IReaction {
   count: number;
+  users: Array<{ id: number }>;
 }
 
 export interface IMessageReactions {

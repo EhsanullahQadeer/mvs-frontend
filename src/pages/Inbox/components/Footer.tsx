@@ -268,8 +268,15 @@ const Footer = ({
                 <textarea
                   value={messageInputValue}
                   onChange={(e) => setMessageInputValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey && canSendMessage && !isSubmitting) {
+                      e.preventDefault();
+                      handlePurchaseOrder();
+                    }
+                  }}
                   className="resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16"
                   placeholder="Type your message..."
+                  maxLength={255}
                 />
 
                 {recordedAudio && !selectedAudioFile && (
@@ -403,8 +410,12 @@ const Footer = ({
                     onDelete={() => setRecordedAudio(null)}
                   />
                 </div>
+                
+                <div className="shrink-0 flex items-center gap-2">
+                  <div className="flex items-center justify-end text-sm font-normal leading-none" style={{ color: messageInputValue.length >= 255 ? '#EF4444' : '#848484' }}>
+                    {messageInputValue.length} / 255
+                  </div>
 
-                <div className="shrink-0">
                   <div
                     className={`${
                       canSendMessage && !isSubmitting ? "cursor-pointer" : "cursor-not-allowed"
@@ -412,19 +423,23 @@ const Footer = ({
                   >
                     <div
                       onClick={canSendMessage && !isSubmitting ? handlePurchaseOrder : undefined}
-                      className={`flex items-center justify-center w-11 h-11 rounded ${
+                      className={`flex items-center justify-center w-11 h-11 ${
                         canSendMessage && !isSubmitting
                           ? "text-[#9EFF00] pointer-events-auto"
                           : "text-[#242424] pointer-events-none"
                       }`}
                     >
-                      {isSubmitting? (<CircularProgress
-                                      sx={{
-                                        width: "80px",
-                                        height: "80px",
-                                        color: "#9EFF00",
-                                      }}
-                                    />) :(<SendArrowIcon className="w-6 h-6" />)}
+                      {isSubmitting ? (
+                        <CircularProgress
+                          sx={{
+                            width: "80px",
+                            height: "80px",
+                            color: "#9EFF00",
+                          }}
+                        />
+                      ) : (
+                        <SendArrowIcon className="w-6 h-6" />
+                      )}
                     </div>
                   </div>
                 </div>

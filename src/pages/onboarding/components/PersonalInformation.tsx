@@ -33,8 +33,16 @@ type Props = {
 };
 
 const validationSchema = Yup.object({
-  username: Yup.string().required("Username is required"),
-  professional_name: Yup.string().required("Professional name is required"),
+  username: Yup.string()
+    .required("Username is required")
+    .matches(
+      /^[@]?[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores"
+    )
+    .max(36, "Username must not exceed 36 characters"),
+  professional_name: Yup.string()
+    .required("Professional name is required")
+    .max(35, "Professional name must not exceed 35 characters"),
   country: Yup.string().required("Country is required"),
   region: Yup.string().required("Region is required"),
   bio: Yup.string()
@@ -129,12 +137,13 @@ const PersonalInformation = (props: Props) => {
       return;
     }
 
-    const sanitizedUsername = values.username.startsWith('@')
-      ? values.username.substring(1)
-      : values.username;
+    const sanitizedValues = {
+      ...values,
+      username: values.username.replace(/^@/, '')
+    };
 
     try {
-      const response = await checkUsernameIsAvailable(sanitizedUsername);
+      const response = await checkUsernameIsAvailable(sanitizedValues.username);
       if (!response.data.available) {
         setUsernameError("Username is already taken. Please choose another.");
         return;
@@ -148,7 +157,7 @@ const PersonalInformation = (props: Props) => {
 
     setFormData({
       ...formData,
-      ...values,
+      ...sanitizedValues,
       password: password,
       thumbnail: thumbnail,
       thumbnail_type: thumbnailType,
@@ -203,9 +212,18 @@ const PersonalInformation = (props: Props) => {
 
             const handleUsernameChange = (event: any) => {
               let value = event.target.value;
+              
+              // Replace spaces with underscores and remove invalid characters
+              value = value.replace(/\s+/g, '_')
+                          .replace(/[^a-zA-Z0-9_@]/g, '');
+              
+              // Ensure @ is only at the start if present
               if (value && !value.startsWith("@")) {
                 value = "@" + value;
               }
+              
+              // Limit to 36 characters (including @)
+              value = value.slice(0, 36);
 
               setFieldValue("username", value);
             };

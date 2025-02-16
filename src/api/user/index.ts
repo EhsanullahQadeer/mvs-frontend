@@ -19,6 +19,20 @@ import {
   UserFiltersDTO,
 } from "../user/types";
 
+export async function getUserNotifications(types?: string[]) {
+  return axiosInstance.get("/users/notifications", {
+    params: {
+      skip: 0,
+      take: 25,
+      type: types,
+    },
+  });
+}
+
+export async function markNotificationAsRead(id?: number) {
+  return axiosInstance.post(`/notifier/mark-read/${id}`);
+}
+
 export async function requestInvitationCodeWithEmailAPI(body: IRequestInvitation) {
   return axiosInstance.post("/users/request/access", body);
 }
