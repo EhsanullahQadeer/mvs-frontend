@@ -109,7 +109,9 @@ const Comment: React.FC<IProps> = ({
     <div className="w-full">
       <div
         onClick={handleCommentClick}
-        className="p-4 cursor-pointer hover:bg-eclipseGray transition-all duration-200 rounded border-b border-eerieBlack"
+        className={`p-4 cursor-pointer hover:bg-eclipseGray transition-all duration-200 rounded border-b border-eerieBlack ${
+          id !== rootCommentId ? "ml-14" : ""
+        }`}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -199,7 +201,7 @@ const Comment: React.FC<IProps> = ({
       </div>
 
       {fanwallRepliesData.length > 0 && showReplies && (
-        <div className="ml-14 mt-4">
+        <div className="mt-4">
           {fanwallRepliesData.map((reply) => (
             <Comment
               key={reply.id}

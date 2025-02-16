@@ -13,7 +13,7 @@ interface IProps {
 
 const FanWall = (props: IProps) => {
   const { artistData, currentUserInfo } = props;
-  const { id } = artistData;
+  const { id } = artistData || {};
   const [isLoading, setLoading] = useState(true);
   const [fanwallPostsData, setFanwallPostsData] = useState([]);
   const [newPost, setNewPost] = useState("");
