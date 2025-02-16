@@ -88,6 +88,10 @@ const FanWall = (props: IProps) => {
     setIsFocused(false);
   };
 
+  useEffect(() => {
+    console.log("post comment data...", fanwallPostsData);
+  }, [fanwallPostsData]);
+
   return (
     <>
       <div className="relative">

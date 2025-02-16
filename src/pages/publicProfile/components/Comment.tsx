@@ -52,8 +52,15 @@ const Comment: React.FC<IProps> = ({
   handleSendReply,
   rootCommentId,
 }) => {
-  const { id, comment, author, created_at, likes_count, replies_count } =
-    fanwallPost;
+  const {
+    id,
+    comment,
+    author,
+    created_at,
+    likes_count,
+    replies_count,
+    first_reply,
+  } = fanwallPost;
   const { professional_name, thumbnail } = author;
   const [showReplies, setShowReplies] = useState(false);
   const [totalLikes, setTotalLikes] = useState(likes_count);
@@ -88,7 +95,7 @@ const Comment: React.FC<IProps> = ({
   };
 
   useEffect(() => {
-    if (replies_count) {
+    if (replies_count > 1 || !first_reply) {
       getFanwallRepliesData();
     }
   }, [id]);
@@ -184,25 +191,45 @@ const Comment: React.FC<IProps> = ({
           </div>
         )}
 
-        {fanwallRepliesData.length > 0 && (
-          <div
-            className="my-4 text-[14px] text-dimGray flex items-center gap-0.5 cursor-pointer"
-            onClick={(e) => {
-              setShowReplies(!showReplies);
-              e.stopPropagation();
-            }}
-          >
-            <span className="bg-dimGray w-12 h-[1px]"></span>
-            {showReplies
-              ? "Hide replies"
-              : `See replies (${fanwallRepliesData.length})`}
-          </div>
-        )}
+        {(replies_count > 1 || !first_reply) &&
+          fanwallRepliesData.length > 0 && (
+            <div
+              className="my-4 text-[14px] text-dimGray flex items-center gap-0.5 cursor-pointer"
+              onClick={(e) => {
+                setShowReplies(!showReplies);
+                e.stopPropagation();
+              }}
+            >
+              <span className="bg-dimGray w-12 h-[1px]"></span>
+              {showReplies
+                ? "Hide replies"
+                : `See replies (${fanwallRepliesData.length})`}
+            </div>
+          )}
       </div>
+
+      {first_reply && (
+        <div className="mt-4">
+          <Comment
+            {...{
+              fanwallPost: first_reply,
+              replyingTo,
+              setReplyingTo,
+              replyText,
+              setReplyText,
+              handleSendReply,
+              rootCommentId: rootCommentId,
+            }}
+          />
+        </div>
+      )}
 
       {fanwallRepliesData.length > 0 && showReplies && (
         <div className="mt-4">
-          {fanwallRepliesData.map((reply) => (
+          {(first_reply
+            ? fanwallRepliesData.filter((reply) => reply.id !== first_reply.id)
+            : fanwallRepliesData
+          ).map((reply) => (
             <Comment
               key={reply.id}
               {...{
