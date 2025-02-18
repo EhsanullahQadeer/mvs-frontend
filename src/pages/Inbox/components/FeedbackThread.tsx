@@ -29,28 +29,42 @@ const FeedbackThread = (props: Props) => {
 
   const [msgId, setMsgId] = useState<number | null>(null);
   const [threadReplyObjs, setThreadReplyObjs] = useState<IMessage[]>([]);
-  const user = useSelector((state: any) => state.user);
+  const user = useSelector((state: any) => state.auth.user);
+  const [mediaId, setMediaId] = useState<number | null>(null);
+
+  console.log('FeedbackThread user:', user);
 
   useEffect(() => {
-
-    const mediaId = messages[0]?.messages[0]?.audio_media?.id;
+    console.log('FeedbackThread messages:', messages[0]?.messages[0]);
+    console.log('FeedbackThread useEffect:', {
+      mediaId: mediaId,
+      conversation: conversation,
+      user: user,
+    });
     const recipientId = conversation.user_a.id === user.id ? conversation.user_b.id : conversation.user_a.id;
 
+    console.log('FeedbackThread recipientId:', recipientId);
+
+
     if (mediaId) {
+      console.log('FeedbackThread setViewDemo:') 
       setViewDemo({
-        mediaId: mediaId,
+        audioMediaId: mediaId,
         recipientId: recipientId,
       });
+    
     }
-  }, []);
+  }, [mediaId]);
 
 
   async function fetchThreadMessages () {
     if (msgId) {
       try {
         const response = await getThreadMessages(msgId);
+        console.log('FeedbackThread fetchThreadMessages response:', response);
         const replies = response.data.filter(msg => msg.id !== msgId);
         setThreadReplyObjs(replies);
+        setMediaId(response.data[0]?.audio_media?.id);
       } catch (error) {
         console.error("Error fetching thread messages:", error);
       }
@@ -66,7 +80,7 @@ const FeedbackThread = (props: Props) => {
 
   useEffect(() => {
     fetchThreadMessages();
-  }, [msgId]);
+  }, [msgId, mediaId]);
   useNotification("NEW_MESSAGE", (event) => {
     try {
       const { conversationId, parentMessageId } = event.data;
@@ -143,7 +157,18 @@ const FeedbackThread = (props: Props) => {
                 {threadReplyObjs?.map((reply, index) => {
                   return (
                     <>
-                      {index === 1 && (
+                      
+                      <ThreadMessageItem {...{ 
+                        message: reply, 
+                        index, 
+                        isDemo: false, 
+                        details: formatMediaDetails(
+                          reply?.audio_media?.duration,
+                          reply?.audio_media?.file_size_bytes
+                        )
+                      }} />
+                    
+                    {index === 0 && (
                         <div className="my-4 w-full text-charcoalGray flex items-center justify-center">
                         <div className="h-px w-full m-2 bg-charcoalGray"></div>
                         <div className="flex gap-2 text-sm font-medium items-center text-[#CACACA]">
@@ -159,15 +184,6 @@ const FeedbackThread = (props: Props) => {
                         <div className="h-px w-full m-2 bg-charcoalGray"></div>
                       </div>
                       )}
-                      <ThreadMessageItem {...{ 
-                        message: reply, 
-                        index, 
-                        isDemo: false, 
-                        details: formatMediaDetails(
-                          reply?.audio_media?.duration,
-                          reply?.audio_media?.file_size_bytes
-                        )
-                      }} />
                     </>
                   );
                 })}
