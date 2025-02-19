@@ -3,9 +3,10 @@ import axiosInstance from "api/axios";
 
 
 export type IViewDemoEventParams = {
-  mediaId: number;
+  audioMediaId: number;
   recipientId: number;
 }
 export async function setViewDemo(params: IViewDemoEventParams) {
-  return axiosInstance.post("/notifier/view-demo-event", params);
+  return axiosInstance.post("/messenger/view-demo-event", params);
+
 }

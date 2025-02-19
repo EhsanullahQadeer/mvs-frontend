@@ -49,10 +49,34 @@ module.exports = {
         'slide-in': {
           '0%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(0)' }
+        },
+        "shake": {
+          "0%,to": {
+            transform: "translateX(0%)",
+          },
+          "15%": {
+            transform: "rotate(25deg)"
+          },
+          "30%": {
+            transform: "rotate(-25deg)"
+          },
+          "45%": {
+            transform: "rotate(10deg)"
+          },
+          "60%": {
+            transform: "rotate(-10deg)"
+          },
+          "75%": {
+            transform: "rotate(1.2deg)"
+          },
+          "100%": {
+            transform: "rotate(0deg)"
+          }
         }
       },
       animation: {
-        'slide-in': 'slide-in 0.2s ease-out'
+        'slide-in': 'slide-in 0.2s ease-out',
+        "shake": "shake 0.8s ease  infinite both"
       }
     },
   },

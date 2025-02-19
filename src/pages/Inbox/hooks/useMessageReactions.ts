@@ -23,39 +23,40 @@ export const useMessageReactions = (
       }, {})
   );
 
+  const refreshReactions = async () => {
+    try {
+      const messagesToUpdate = messages[0]?.messages || [];
+      
+      // referesh reactions for all messages in background
+      const updatedReactions = await Promise.allSettled(
+        messagesToUpdate.map(msg => 
+          getMessageReactionsApi(msg.id)
+            .then(response => ({
+              messageId: msg.id,
+              data: response.data
+            }))
+        )
+      );
+
+      updatedReactions.forEach(result => {
+        if (result.status === 'fulfilled') {
+          const { messageId, data } = result.value;
+          const processed = processReactions(data, messageId);
+          setMessageReactions(prev => ({
+            ...prev,
+            [messageId]: processed[messageId]
+          }));
+        }
+      });
+    } catch (error) {
+      console.error("Background refresh error:", error.message);
+    }
+  };
+
 
   // emojis background refreshing
   useEffect(() => {
-    const refreshReactions = async () => {
-      try {
-        const messagesToUpdate = messages[0]?.messages || [];
-        
-        // referesh reactions for all messages in background
-        const updatedReactions = await Promise.allSettled(
-          messagesToUpdate.map(msg => 
-            getMessageReactionsApi(msg.id)
-              .then(response => ({
-                messageId: msg.id,
-                data: response.data
-              }))
-          )
-        );
-
-        updatedReactions.forEach(result => {
-          if (result.status === 'fulfilled') {
-            const { messageId, data } = result.value;
-            const processed = processReactions(data, messageId);
-            setMessageReactions(prev => ({
-              ...prev,
-              [messageId]: processed[messageId]
-            }));
-          }
-        });
-      } catch (error) {
-        console.error("Background refresh error:", error.message);
-      }
-    };
-
+    refreshReactions();
   }, [messages]);
 
   const handleEmojiSelect = async (messageId: number, emoji: string) => {

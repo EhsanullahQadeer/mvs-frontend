@@ -33,8 +33,6 @@ const MessagesSection = (props: Props) => {
     currentUserInfo.id
   );
 
-  const [hoveredMessageId, setHoveredMessageId] = useState(null);
-
   const chatMessages = messages[0]?.messages?.filter(
     (msg) => msg.message_reply === null
   );
@@ -105,25 +103,17 @@ const MessagesSection = (props: Props) => {
               </div>
             )}
 
-            <div
-              onMouseEnter={() => setHoveredMessageId(id)}
-              onMouseLeave={() => setHoveredMessageId(null)}
-              className={`flex flex-wrap gap-2 px-4 py-2 w-full relative group ${
-                hoveredMessageId === id && "bg-gunMetal"
-              }`}
-            >
-              <div className="absolute -top-8 left-28 mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                {hoveredMessageId === id && (
-                  <MessageReactions
-                    {...{
-                      handleEmojiSelect,
-                      id,
-                      isDemoSender,
-                      isOwner: currentUserInfo.id === sender.id,
-                      onMessageDeleted: refreshMessages,
-                    }}
-                  />
-                )}
+            <div className="flex flex-wrap gap-2 px-4 py-2 w-full relative group hover:bg-gunMetal">
+              <div className="absolute -top-8 left-28 mt-2 mr-2 hidden group-hover:flex transition-opacity duration-200">
+                <MessageReactions
+                  {...{
+                    handleEmojiSelect,
+                    id,
+                    isDemoSender,
+                    isOwner: currentUserInfo.id === sender.id,
+                    onMessageDeleted: refreshMessages,
+                  }}
+                />
               </div>
 
               <div
@@ -242,10 +232,12 @@ const MessagesSection = (props: Props) => {
                             {threadReplyObjs?.length} reply
                           </span>
 
-                          <span className="text-mediumGray text-[10px] font-normal">
-                            {hoveredMessageId === id
-                              ? "See Thread"
-                              : lastMsgTimeStamp(lastThreadReply?.created_at)}
+                          <span className="text-mediumGray text-[10px] font-normal group-hover:hidden">
+                            {lastMsgTimeStamp(lastThreadReply?.created_at)}
+                          </span>
+
+                          <span className="text-mediumGray text-[10px] font-normal hidden group-hover:flex">
+                            See Thread
                           </span>
                         </div>
 

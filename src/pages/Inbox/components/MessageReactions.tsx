@@ -150,7 +150,7 @@ const MessageReactions = (props: Props) => {
       {emojis.map((emoji) => (
         <button
           key={emoji}
-          className="py-2 px-1 text-base"
+          className="py-2 px-1 text-base" // THIS NEEDS A HOVER OR SOMETHING IT.. FIX WHEN WE FIX REACTIONS
           onClick={() => handleEmojiSelect(id, emoji)}
         >
           {emoji}

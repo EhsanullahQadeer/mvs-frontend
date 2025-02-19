@@ -4,6 +4,7 @@ import songwriterIcon from "../../../assets/icons/userTypeIcons/songwriterIcon.s
 import masteringEngineerIcon from "../../../assets/icons/userTypeIcons/masteringEngineerIcon.svg";
 import mixingEngineerIcon from "../../../assets/icons/userTypeIcons/mixingEngineerIcon.svg";
 import composerIcon from "../../../assets/icons/userTypeIcons/composerIcon.svg";
+import loopmakerIcon from "../../../assets/icons/userTypeIcons/loop-maker-white.svg";
 
 import sampleImg from "./Ellipse 730.png";
 
@@ -37,6 +38,11 @@ export const userTypes = [
     label: "Composer/Musician",
     value: "Composer/Musician",
     iconSrc: composerIcon,
+  },
+  {
+    label: "Loopmaker",
+    value: "Loopmaker",
+    iconSrc: loopmakerIcon,
   },
 ];
 

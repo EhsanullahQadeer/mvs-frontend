@@ -57,8 +57,32 @@ const InfoSection = (props: Props) => {
   };
 
   useEffect(() => {
+    // Reset states when conversation changes
+    setFilesInfo([]);
+    setSkip(0);
+    setHasMore(true);
+    // Stop any playing audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setPlayingAudio(null);
+      setProgress(0);
+    }
+  }, [conversation.id]);
+
+  // Add cleanup effect to stop audio when component unmounts
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        setPlayingAudio(null);
+        setProgress(0);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     getConversationInfo();
-  }, [skip]);
+  }, [skip, conversation.id]); // Add conversation.id as dependency
 
   const handleScroll = () => {
     const container = filesContainerRef.current;

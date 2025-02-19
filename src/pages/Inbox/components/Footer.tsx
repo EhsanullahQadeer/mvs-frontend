@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, createRef } from "react";
 import { ReactComponent as SendArrowIcon } from "../../../assets/icons/sendArrowIcon.svg";
 import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFile.svg";
 import { AudioRecorder } from "react-audio-voice-recorder";
@@ -51,6 +51,9 @@ const Footer = ({
   const isCancelledRef = useRef(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reloadComponent, setReloadComponent] = useState(false);
+  const textareRef = useRef<HTMLTextAreaElement>();
+  let onChangeTimeout;
+
 
   useEffect(() => {
     if (reloadComponent) {
@@ -73,6 +76,15 @@ const Footer = ({
     }
     e.target.value = "";
   };
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    // Timeout so it saves after no change has been made after 100ms to save the data
+    // Was added because the audio player would rerender too many time that it would error out
+    clearTimeout(onChangeTimeout);
+    onChangeTimeout = setTimeout(()=> {
+      setMessageInputValue(e.target.value);
+    },100);
+  }
 
   const handleSendMessage = async () => {
     try {
@@ -266,8 +278,8 @@ const Footer = ({
             <div className="flex flex-col w-full">
               <div className="relative p-2.5">
                 <textarea
-                  value={messageInputValue}
-                  onChange={(e) => setMessageInputValue(e.target.value)}
+                  ref={textareRef}
+                  onChange={(e) => handleInputChange(e)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey && canSendMessage && !isSubmitting) {
                       e.preventDefault();

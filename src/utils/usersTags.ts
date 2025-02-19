@@ -5,6 +5,8 @@ export const userTagsObj: { [key: string]: string } = {
     mastering_engineer: "Mastering Engineers",
     mixing_engineer: "Mixing Engineers",
     musicians: "Musicians",
+    loopmaker: "Loopmaker",
+
 };
 const userTags = Object.keys(userTagsObj);
 const userLabels = Object.values(userTagsObj)
