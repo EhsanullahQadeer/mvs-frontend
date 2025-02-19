@@ -33,22 +33,10 @@ const FeedbackThread = (props: Props) => {
   const user = useSelector((state: any) => state.auth.user);
   const [mediaId, setMediaId] = useState<number | null>(null);
 
-  console.log('FeedbackThread user:', user);
-
   useEffect(() => {
-    console.log('FeedbackThread messages:', messages[0]?.messages[0]);
-    console.log('FeedbackThread useEffect:', {
-      mediaId: mediaId,
-      conversation: conversation,
-      user: user,
-    });
-    const recipientId = conversation.user_a.id === user.id ? conversation.user_b.id : conversation.user_a.id;
-
-    console.log('FeedbackThread recipientId:', recipientId);
-
+    const recipientId = conversation.user_a?.id === user.id ? conversation.user_b?.id : conversation.user_a?.id;
 
     if (mediaId) {
-      console.log('FeedbackThread setViewDemo:') 
       setViewDemo({
         audioMediaId: mediaId,
         recipientId: recipientId,
