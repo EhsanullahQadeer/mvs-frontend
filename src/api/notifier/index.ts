@@ -8,4 +8,5 @@ export type IViewDemoEventParams = {
 }
 export async function setViewDemo(params: IViewDemoEventParams) {
   return axiosInstance.post("/messenger/view-demo-event", params);
+
 }

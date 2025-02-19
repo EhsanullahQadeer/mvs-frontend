@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const CheckEmail: React.FC = () => {
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownTime, setCooldownTime] = useState(60);
-  const [attempts, setAttempts] = useState(0);
+  const [attemptsLock, setAttemptsLock] = useState(false);
   const navigate = useNavigate();
   
   // Retrieve email from localStorage (from your previous flow)
@@ -34,11 +34,11 @@ const CheckEmail: React.FC = () => {
   const handleResendEmail = async () => {
     if (!isCooldown && email) {
       try {
-        await forgotPasswordAPI({ email });
-        console.log("Resend email successful");
+        const response = await forgotPasswordAPI({ email });
+        //console.log("Resend email successful", response.data.error);
 
         setIsCooldown(true);
-        setAttempts((prev) => prev + 1);
+        setAttemptsLock(response.data.error);
       } catch (error) {
         console.error("Error resending email", error);
       }
@@ -60,9 +60,14 @@ const CheckEmail: React.FC = () => {
             type="button"
             className=" w-72  my-5  border text-platinum border-platinum text-sm font-semibold py-3 rounded-full "
             onClick={handleResendEmail}
-            disabled={isCooldown || attempts >= 3} // Disable during cooldown or if max attempts reached
+            disabled={isCooldown || attemptsLock} // Disable during cooldown or if max attempts reached
           >
-            {isCooldown ? `Re-send in ${cooldownTime}s` : "Re-send Email"}
+            {attemptsLock 
+              ? "Please try again at another time"
+              : isCooldown 
+                ? `Re-send in ${cooldownTime}s` 
+                : "Re-send Email"
+            }
           </button>
         </div>
         <p className="py-3.5 w-72 px-2 text-center text-xs text-softGray">
@@ -70,8 +75,8 @@ const CheckEmail: React.FC = () => {
           <span className="text-limeGreen">Terms of Service</span> and{" "}
           <span className="text-limeGreen">Privacy Policy</span>
         </p>
-        {attempts >= 3 && (
-          <p className="text-xs text-red-500">You've reached the maximum resend attempts.</p>
+        {attemptsLock && (
+          <p className="text-xs text-red-500">You've reached the maximum resend attempts. Please wait 24 hours before trying again.</p>
         )}
       </div>
     </>

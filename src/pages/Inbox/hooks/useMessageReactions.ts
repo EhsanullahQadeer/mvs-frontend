@@ -57,7 +57,6 @@ export const useMessageReactions = (
   // emojis background refreshing
   useEffect(() => {
     refreshReactions();
-
   }, [messages]);
 
   const handleEmojiSelect = async (messageId: number, emoji: string) => {

@@ -9,33 +9,62 @@
 // THIRD PARTY IMPORTS
 import React, { useState } from 'react';
 import { Form, Formik } from 'formik';
+import { validatePasswordAPI } from '../../../../api/user'; 
+import PasswordField from './PasswordSecurityField';
+import * as Yup from 'yup';
+import { changeUserPasswordAPI } from 'api/auth';
 
-
-import PasswordField from './PasswordSecurityField'; // Adjust the import path as necessary
-import { boolean } from 'yup';
+const validationSchema = Yup.object({
+  currentPassword: Yup.string().required('Current password is required'),
+  newPassword: Yup.string()
+    .min(8, 'Password must be at least 8 characters')
+    .required('New password is required'),
+  confirmNewPassword: Yup.string()
+    .oneOf([Yup.ref('newPassword')], 'Passwords must match')
+    .required('Please confirm your password'),
+});
 
 const PasswordSecurityComponent = () => {
     const initialValues = {
-        email: "",
-        userpassword: "AngelIsDummy",
         currentPassword: "",
-        confirmPassword: "",
         newPassword: "",
-        verified: false,
+        confirmNewPassword: "",
     };
 
+    const [hasPasswordError, setHasPasswordError] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
-    const handleFormSubmit = (values: any) => {
-      console.log("values ", values);
-      
-      // Compare the submitted currentPassword with the actual user password
-      if (initialValues.userpassword === values.currentPassword) {
-          setIsSubmitted(true); 
-      } else {
-          setIsSubmitted(false); 
-      }
-  };
+    const handleFormSubmit = async (values: any, { resetForm }) => {
+        try {
+            console.log("values ", values);
+            const response = await validatePasswordAPI(values.currentPassword);
+            console.log("response ", response);
+            if (response.data.results.isValid) {
+                setHasPasswordError(false);
+                setIsSubmitted(true);
+                setErrorMessage("");
+                await changeUserPasswordAPI({
+                    currentPassword: values.currentPassword,
+                    newPassword: values.newPassword
+                });
+                resetForm();
+                setSuccessMessage("Password Successfully Changed");
+                console.log('Password validated successfully');
+            } else {
+                setHasPasswordError(true);
+                setIsSubmitted(false);
+                setErrorMessage(response.data.message);
+                setSuccessMessage("");
+            }
+        } catch (error) {
+            console.error('Error validating password:', error);
+            setHasPasswordError(true);
+            setIsSubmitted(false);
+            setSuccessMessage("");
+        }
+    };
 
     return (
         <div className="px-3 flex flex-col">
@@ -48,28 +77,67 @@ const PasswordSecurityComponent = () => {
                 </div>
             </div>
             <div className="py-3 flex flex-col">
-                <Formik initialValues={initialValues} onSubmit={handleFormSubmit}>
-                    {() => (
-                        <Form className="flex flex-col gap-4"> {/* Changed to flex-col and added gap */}
+                <Formik 
+                    initialValues={initialValues} 
+                    validationSchema={validationSchema}
+                    onSubmit={handleFormSubmit}
+                >
+                    {({ isValid, dirty, errors, touched }) => (
+                        <Form className="flex flex-col gap-4">
                             <div className="flex flex-col gap-4">
                                 <h4 className="text-sm font-semibold text-platinum">Current Password</h4>
-                                <div className="flex gap-4 items-center">
-                                    <PasswordField name="currentPassword" placeholder="Current Password" mode={!isSubmitted}/>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex gap-4 items-center">
+                                        <PasswordField 
+                                            name="currentPassword" 
+                                            placeholder="Current Password" 
+                                            mode={!isSubmitted}
+                                        />
+                                        {hasPasswordError && (
+                                            <p className="text-xs text-red-500">Incorrect password</p>
+                                        )}
+                                    </div>
+                                    {errors.currentPassword && touched.currentPassword && (
+                                        <p className="text-xs text-red-500">{errors.currentPassword as string}</p>
+                                    )}
                                 </div>
                             </div>
                             <div className="flex flex-col gap-4">
                                 <h4 className="text-sm font-semibold text-platinum">New Password</h4>
-                                <div className="flex gap-4 items-center">
-                                    <PasswordField name="newPassword" placeholder="New Password" mode={!isSubmitted}/>
-                                    <PasswordField name="confirmNewPassword" placeholder="Confirm New Password" mode={!isSubmitted}/>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex gap-4 items-center">
+                                        <PasswordField 
+                                            name="newPassword" 
+                                            placeholder="New Password" 
+                                            mode={!isSubmitted}
+                                        />
+                                        <PasswordField 
+                                            name="confirmNewPassword" 
+                                            placeholder="Confirm New Password" 
+                                            mode={!isSubmitted}
+                                        />
+                                    </div>
+                                    {errors.newPassword && touched.newPassword && (
+                                        <p className="text-xs text-red-500">{errors.newPassword as string}</p>
+                                    )}
+                                    {errors.confirmNewPassword && touched.confirmNewPassword && (
+                                        <p className="text-xs text-red-500">{errors.confirmNewPassword as string}</p>
+                                    )}
+                                    {errorMessage && (
+                                        <p className="text-xs text-red-500">{errorMessage}</p>
+                                    )}
+                                    {successMessage && (
+                                        <p className="text-xs text-[#9EFF00]">{successMessage}</p>
+                                    )}
                                 </div>
                             </div>
                             <div className="flex justify-end">
                                 <button 
                                     type="submit" 
                                     className="text-black bg-[#9EFF00] px-4 py-2 rounded-full hover:bg-gray-300 transition-colors"
+                                    disabled={!isValid || !dirty}
                                 >
-                                    Save Changes        
+                                   Save Changes
                                 </button>
                             </div>
                         </Form>

@@ -291,7 +291,7 @@ const PersonalInformation = (props: Props) => {
               if (value && !value.startsWith("@")) {
                 value = "@" + value;
               }
-              
+
               value = value.slice(0, 36);
 
               setFieldValue("username", value);

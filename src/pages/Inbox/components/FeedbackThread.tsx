@@ -29,6 +29,7 @@ const FeedbackThread = (props: Props) => {
 
   const [msgId, setMsgId] = useState<number | null>(null);
   const [threadReplyObjs, setThreadReplyObjs] = useState<IMessage[]>([]);
+
   const user = useSelector((state: any) => state.auth.user);
   const [mediaId, setMediaId] = useState<number | null>(null);
 

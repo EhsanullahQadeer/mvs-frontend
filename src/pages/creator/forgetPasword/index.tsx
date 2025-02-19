@@ -13,7 +13,7 @@ const validationSchema = Yup.object({
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
+  const [attemptsLock, setAttemptsLock] = useState(false);
   const handleBack = () => {
     navigate("/");
   };
@@ -21,11 +21,15 @@ const ForgotPassword: React.FC = () => {
   const handleSubmit = async (values: { email: string }) => {
     const { email } = values;
     try {
-      const response = forgotPasswordAPI({
+      const response = await forgotPasswordAPI({
         email,
       });
-      localStorage.setItem("user", JSON.stringify({ email }));
-      navigate("/forgot-password-sent");
+      if (response.data.error) {
+        setAttemptsLock(true);
+      } else {
+        localStorage.setItem("user", JSON.stringify({ email }));
+        navigate("/forgot-password-sent");
+      }
     } catch (error) {
       console.log("error", error);
     }
@@ -52,7 +56,9 @@ const ForgotPassword: React.FC = () => {
                 instructions to reset your password.
               </p>
             </div>
-
+            {attemptsLock && (
+              <p className="text-sm text-red-500">You've reached the maximum resend attempts. Please wait 24 hours before trying again.</p>
+            )}
             <Formik
               initialValues={{ email: "" }}
               validationSchema={validationSchema}
@@ -75,7 +81,10 @@ const ForgotPassword: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-limeGreen text-sm text-black font-semibold py-3 rounded-full"
+                  className={`w-full ${
+                    attemptsLock ? 'bg-charcoalGray' : 'bg-limeGreen'
+                  } text-sm text-black font-semibold py-3 rounded-full`}
+                  disabled={attemptsLock}
                 >
                   Continue
                 </button>
