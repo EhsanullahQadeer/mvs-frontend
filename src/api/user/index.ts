@@ -29,8 +29,8 @@ export async function getUserNotifications(types?: string[]) {
   });
 }
 
-export async function markNotificationAsRead(id?: number) {
-  return axiosInstance.post(`/notifier/mark-read/${id}`);
+export async function toggleNotificationAsRead(id?: number) {
+  return axiosInstance.post(`/notifier/toggle-read/${id}`);
 }
 
 export async function requestInvitationCodeWithEmailAPI(body: IRequestInvitation) {
@@ -189,4 +189,34 @@ export const resendInvitationCodeAPI = async (email: string) => {
     console.error('Error resending invitation code:', error);
     throw error;
   }
+};
+
+export const handleConnectionRequest = async (requestId: number, acceptRequest: boolean) => {
+  try {
+    const response = await axiosInstance.post('/users/handle-connection-request', { 
+      requestId,
+      acceptRequest,
+     });
+    return response.data;
+  } catch (error) {
+    console.error('Error resending invitation code:', error);
+    throw error;
+  }
+};
+
+export const handleFollowUsers = async (followUserIds: number[]) => {
+  try {
+    const response = await axiosInstance.post('/users/follow-users', { 
+      followUserIds,
+     });
+    return response.data;
+  } catch (error) {
+    console.error('Error resending invitation code:', error);
+    throw error;
+  }
+};
+
+export async function checkIfFollowing( id: number ) {
+  const respose = axiosInstance.get(`/users/is-following/${id}`);
+  return (await respose).data;
 };

@@ -40,7 +40,7 @@ export function SearchHeader() {
   };
 
   const getUniqueResults = (data) => {
-    console.log('Incoming data:', data);
+    //console.log('Incoming data:', data);
     return data;
   };
 
@@ -48,7 +48,7 @@ export function SearchHeader() {
     (async () => {
       const response = await searchAllUsers("", 10, true, true);
       setSearchResults(response.data);
-      console.log("searchResults", searchResults);
+      //console.log("searchResults", searchResults);
     })();
   }, []);
 

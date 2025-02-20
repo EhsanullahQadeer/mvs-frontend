@@ -10,23 +10,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
-import React, { useEffect, useRef, useState } from "react";
-import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
-import MessagesSection from "./MessagesSection";
 import Footer from "./Footer";
-import { IConversation, ICurrentUser, IMessagesData, INotes } from "./types";
+import ActionMenu from "./ActionMenu";
 import InfoSection from "./InfoSection";
 import NotesSection from "./NotesSection";
-import { CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { toggleMessageToRead } from "api/messenger";
-import ActionMenu from "./ActionMenu";
-import { FiUser, FiUnlock, FiUserX } from "react-icons/fi";
-import { IoVideocamOutline } from "react-icons/io5";
 import { HiOutlineEye } from "react-icons/hi";
 import { GrShareOption } from "react-icons/gr";
+import { useNavigate } from "react-router-dom";
+import MessagesSection from "./MessagesSection";
+import { CircularProgress } from "@mui/material";
+import { toggleMessageToRead } from "api/messenger";
+import { IoVideocamOutline } from "react-icons/io5";
 import { LuShieldAlert, LuBellOff } from "react-icons/lu";
+import { useEffect, useRef, useState } from "react";
+import { FiUser, FiUnlock, FiUserX } from "react-icons/fi";
 import { IArtistProfileData } from "pages/profile/components/types";
+import { IConversation, ICurrentUser, IMessagesData, INotes } from "./types";
+import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 
 type Props = {
   conversation: IConversation;

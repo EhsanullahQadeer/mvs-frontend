@@ -23,8 +23,8 @@ const initialState: BreadcrumbState = {
 };
 
 const breadcrumbReducer = (state = initialState, action: any): BreadcrumbState => {
-  console.log("=== Reducer Breadcrumb ===");
-  console.log(action);
+  //console.log("=== Reducer Breadcrumb ===");
+  //console.log(action);
 
   switch (action.type) {
     case ActionType.SET_BREADCRUMBS:

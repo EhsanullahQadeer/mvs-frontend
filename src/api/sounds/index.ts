@@ -164,3 +164,10 @@ export async function uploadMedia(payload: any) {
     },
   });
 }
+
+export async function handleCollaborationRequest(sampleId: number, action: boolean) {
+  return axiosInstance.post(`/sounds/collaboration/accept`, {
+    sampleId,
+    action
+  });
+}

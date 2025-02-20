@@ -22,7 +22,7 @@ const { filtersArr } = artistData;
 const ScrollableComponent = (props: Props) => {
 
   const { primaryUserRole, dataArr, title, setUsersByTag, setIsFilterApplied } = props;
-  console.log("props", props);
+  //console.log("props", props);
   const { handleArtistSelected } = useHandleArtistSelected();
 
   const [filterValue, setFilterValue] = useState<string>("");
@@ -54,7 +54,7 @@ const ScrollableComponent = (props: Props) => {
 
     // Fetch users based on the applied filters
     const users = await getUsersByTag(params, 50);
-    console.log("users here", users.data);
+    //console.log("users here", users.data);
     // If filter is cleared, reset to initial data
     if (value === "") {
       setFilteredData(initialData);

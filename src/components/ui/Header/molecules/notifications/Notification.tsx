@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { markNotificationAsRead } from "api/user";
+import { toggleNotificationAsRead } from "api/user";
 import NotifTimestamp from "../../atoms/notificationAtoms/notifTimestamp";
 import AudioShareNotifContent from "./notificationContents/audioShareContent";
 import ReadBubble from "components/ui/Header/atoms/notificationAtoms/readOrUnreadBubble";
@@ -26,12 +26,11 @@ export type TSender = {
 }
 
 export type TNotificationData = {
-  created_at: string;
+  createdAt: string;
   sender: TSender;
   id: number;
-  is_read: boolean;
+  isRead: boolean;
   type: string;
-  metadata: any,
   media: {
     id: number;
     name: string;
@@ -41,6 +40,15 @@ export type TNotificationData = {
     name: string;
     filename: string;
   };
+  connectionRequest: {
+    id: number;
+    status: boolean;
+  }
+  collaborationRequest: {
+    id: number;
+    roles: string[];
+    status: string;
+  }
 }
 
 const NOTIFICATION_COMPONENTS = {
@@ -59,15 +67,24 @@ const NOTIFICATION_COMPONENTS = {
   VIEW_PROFILE: ViewProfileNotifContent,
 } as const;
 
-const Notification = ({ notification }: { notification: TNotificationData }) => {
+const Notification = ({ notification, unreadNotifCount, setUnreadNotifCount }: { notification: TNotificationData, unreadNotifCount: number, setUnreadNotifCount: any }) => {
+  //console.log("Unread Notif Count: ", unreadNotifCount);
   const [isHovered, setIsHovered] = useState(false);
+  const [isRead, setIsRead] = useState(notification.isRead);
 
   const NotificationContent = 
     NOTIFICATION_COMPONENTS[notification.type as keyof typeof NOTIFICATION_COMPONENTS];
 
   const handleMarkAsRead = async () => {
     try {
-      await markNotificationAsRead(notification.id);
+      await toggleNotificationAsRead(notification.id);
+      notification.isRead = !notification.isRead;
+      if(isRead) {
+        setUnreadNotifCount(unreadNotifCount + 1);
+      } else {
+        setUnreadNotifCount(unreadNotifCount - 1);
+      }
+      setIsRead(!isRead);
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
     }
@@ -79,10 +96,10 @@ const Notification = ({ notification }: { notification: TNotificationData }) => 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="py-10 pr-5 pl-3 flex flex-grow bg-[eerieBlack] hover:bg-[#242424] border-b-2 border-b-[#242424]">
+      <div className="py-10 pr-5 pl-3 flex flex-grow bg-[#1C1C1C] hover:bg-[#242424] border-b-2 border-b-[#242424]">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center flex-shrink-0">
-            <ReadBubble isRead={notification.is_read} />
+            <ReadBubble isRead={isRead} />
             <div className="mr-2">
               <Thumbnail thumbnail={notification.sender.thumbnail} />
             </div>
@@ -96,9 +113,9 @@ const Notification = ({ notification }: { notification: TNotificationData }) => 
             ) : (
               <NotifTimestamp
                 isHovered={isHovered}
-                isRead={notification.is_read}
+                isRead={notification.isRead}
                 id={notification.id}
-                createdAt={notification.created_at}
+                createdAt={notification.createdAt}
               />
             )}
           </div>

@@ -58,7 +58,7 @@ const Theme = (props: ThemeProps) => {
 
       {/* Main content */}
       <div
-        className={`row-start-2 col-start-2 flex flex-col ${
+        className={`row-start-2 col-start-2 flex flex-col scrollbar-hidden ${
           props.isOverflowHidden ? "overflow-hidden" : "overflow-auto"
         }`}
       >

@@ -16,8 +16,8 @@ const initialState = {
 };
 
 const authReducer = (state = initialState, action: any): any => {
-  console.log("=== Reducer Authentication ===");
-  console.log(action);
+  //console.log("=== Reducer Authentication ===");
+  //console.log(action);
   switch (action.type) {
     case ActionType.USER_LOGIN_SUCCESS:
       return {

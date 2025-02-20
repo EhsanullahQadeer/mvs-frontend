@@ -149,7 +149,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen }) => {
         type: selectedTab,
         includeUserInfo: true,
       });
-      console.log('response here', _sound?.data?.results);
+      //console.log('response here', _sound?.data?.results);
       const samplesArray = Object.values(_sound?.data?.results?.samples || {}) as AudioTrackType[];
       
       setSamples(samplesArray);

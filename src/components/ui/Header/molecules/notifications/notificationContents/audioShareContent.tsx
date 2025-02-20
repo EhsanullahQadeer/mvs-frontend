@@ -1,18 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { truncateFilename } from 'utils/dateUtils';
+import { TNotificationData } from '../Notification';
 import FileMediaAttachment from '../FileMediaAttachment';
 import audioIcon from "../../../../../../assets/img/voice.svg";
 import NotificationButton from 'components/ui/Header/atoms/notificationAtoms/NotificationsButton';
-import { TNotificationData } from '../Notification';
 
-export type TAudioShareNotifData = TNotificationData & {
-  filename?: string;
-  sampleId?: string;
-  sampleName?: string;
-  sampleFilename?: string;
-  mediaName?: string;
-}
-
-const AudioShareNotifContent = ({ notification }: { notification: TAudioShareNotifData }) => {
+const AudioShareNotifContent = ({ notification }: { notification: TNotificationData }) => {
+  const navigate = useNavigate();
+  
   return (
     <div className="flex-grow">
       <p className="text-[12px] text-[#999999] pb-[6px]">
@@ -31,7 +26,8 @@ const AudioShareNotifContent = ({ notification }: { notification: TAudioShareNot
           bgColor="bg-[#9EFF00]"
           textColor="text-black"
           borderColor="border-transparent"
-          onClick={() => console.log("Viewing File")}
+          onClick={() => navigate(`/inbox`)}
+          icon={null}
         />
       </div>
     </div>

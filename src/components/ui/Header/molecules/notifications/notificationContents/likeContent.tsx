@@ -1,17 +1,9 @@
 import { truncateFilename } from 'utils/dateUtils';
+import { TNotificationData } from '../Notification';
 import FileMediaAttachment from '../FileMediaAttachment';
 import audioIcon from "../../../../../../assets/img/voice.svg";
-import { TNotificationBase } from "./notification_base.type";
-import { TNotificationData } from '../Notification';
 
-export type TLikeNotifData = TNotificationData & {
-  filename?: string;
-  sampleId?: string;
-  sampleName?: string;
-}
-
-const LikeNotifContent = ({ notification }: { notification: TLikeNotifData }) => {
-  console.log('like notification', notification);
+const LikeNotifContent = ({ notification }: { notification: TNotificationData }) => {
   return (
     <div>
       <p className="text-[12px] text-[#999999] pb-[6px]">
