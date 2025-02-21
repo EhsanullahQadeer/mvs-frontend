@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import { getUserNotifications } from 'api/user';
+import React, { useState, useEffect } from 'react';
 import NotificationList from '../molecules/notifications/NotificationList';
+import NotificationCountBubble from '../atoms/notificationAtoms/notificationCountBubble';
+import NoNotificationsYetPrompt from '../molecules/notificationMolecules/noNotificationsYet';
 
 declare global {
   interface Window {
@@ -22,6 +24,8 @@ interface NotificationManagerProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setNotifications: React.Dispatch<React.SetStateAction<NotificationBody[]>>;
+  unreadNotifCount: number;
+  setUnreadNotifCount: React.Dispatch<React.SetStateAction<number>>;
 }
 
 type NotificationType = 'CONNECTION_REQUEST' | 'CONNECTION_RESPONSE' | 'COLLABORATION_REQUEST' | 
@@ -52,7 +56,9 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   notifications, 
   isOpen, 
   setIsOpen, 
-  setNotifications 
+  setNotifications,
+  unreadNotifCount,
+  setUnreadNotifCount
 }) => {
   const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
   const [isToggled, setIsToggled] = useState<boolean>(false);
@@ -81,7 +87,6 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
     setNotifications(response.data);
   };
 
-  // Add this function to check if notification belongs to current tab
   const isNotificationInCurrentTab = (type: string) => {
     if (selectedTab === 'all') return true;
     return selectedTab in NOTIFICATION_GROUPS && NOTIFICATION_GROUPS[selectedTab as keyof typeof NOTIFICATION_GROUPS].includes(type as NotificationType);
@@ -98,7 +103,7 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 z-[8]" onClick={() => setIsOpen(false)} /> // Overlay
       )}
       {isOpen && (
-        <div className='fixed w-[418px] h-[621px] top-[80px] right-[230px] shadow-lg rounded-[12px] z-[10] bg-[#131313] overflow-hidden border border-[#3D3D3D]'>
+        <div className='fixed w-[418px] h-[621px] top-[80px] right-[320px] shadow-lg rounded-[12px] z-[10] bg-[#131313] overflow-hidden border border-[#3D3D3D]'>
           <div className="pt-[10px] px-5">
             <div className="flex justify-between items-center pb-[21px]">
               <h2 className="text-[18px] font-semibold text-white pt-5">Notifications</h2>
@@ -122,10 +127,11 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
             <div className="flex justify-between items-center h-[45px]">
               <div className="flex">
                 <div
-                  className={`text-[14px] font-normal cursor-pointer px-[10px] py-[11px] ${selectedTab === 'all' ? 'text-white border-b-2 border-[#3D3D3D]' : 'text-[#666666] hover:border-b-2 hover:border-gray-300'}`}
+                  className={`flex text-[14px] font-normal cursor-pointer px-[10px] py-[11px] ${selectedTab === 'all' ? 'text-white border-b-2 border-[#3D3D3D]' : 'text-[#666666] hover:border-b-2 hover:border-gray-300'}`}
                   onClick={() => handleTabClick('all')}
                 >
                   All
+                  <NotificationCountBubble unreadNotifications={unreadNotifCount}/>
                 </div>
                 <div
                   className={`text-[14px] font-normal cursor-pointer px-[10px] py-[11px] ${selectedTab === 'social' ? 'text-white border-b-2 border-[#3D3D3D]' : 'text-[#666666] hover:border-b-2 hover:border-gray-300'}`}
@@ -143,9 +149,13 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
             </div>
           </div>
 
-          <div className="flex flex-col overflow-y-auto h-[calc(621px-120px)]">
-            <NotificationList data={notifications} setNotifIdForIsRead={setNotifIdForIsRead}/>
-          </div>
+          {notifications.length === 0 ? 
+            <NoNotificationsYetPrompt/>
+            :
+            <div className="flex flex-col overflow-y-auto h-[calc(621px-120px)] scrollbar-hidden">
+              <NotificationList data={notifications} setNotifIdForIsRead={setNotifIdForIsRead} unreadNotifCount={unreadNotifCount} setUnreadNotifCount={setUnreadNotifCount}/>
+            </div>
+          }
         </div>
       )}
     </>

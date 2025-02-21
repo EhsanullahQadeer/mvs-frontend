@@ -1,15 +1,10 @@
-import NotificationButton from "components/ui/Header/atoms/notificationAtoms/NotificationsButton";
+import { useNavigate } from "react-router-dom";
 import { TNotificationData } from "../Notification";
+import NotificationButton from "components/ui/Header/atoms/notificationAtoms/NotificationsButton";
 
-export type TConnectionResponseNotifData = TNotificationData & {
-  filename?: string;
-  sampleId?: string;
-  sampleName?: string;
-  sampleFilename?: string;
-  mediaName?: string;
-}
-
-const ConnectionResponseNotifContent = ({ notification }: { notification: TConnectionResponseNotifData }) => {
+const ConnectionResponseNotifContent = ({ notification }: { notification: TNotificationData }) => {
+  const navigate = useNavigate();
+  
   return (
     <div className="flex-grow">
       <p className="text-[12px] text-[#999999] pb-[6px]">
@@ -24,7 +19,8 @@ const ConnectionResponseNotifContent = ({ notification }: { notification: TConne
           bgColor="bg-[#9EFF00]"
           textColor="text-black"
           borderColor="border-transparent"
-          onClick={() => console.log("Viewing Profile")}
+          onClick={() => navigate(`/profile/${notification.sender.username}`)}
+          icon={null}
         />
       </div>
     </div>

@@ -29,8 +29,9 @@ const MeetingFee = (props: Props) => {
     console.log("values: ", values);
   };
 
+  {/* Meeting fee -  disabled for now */}
   return (
-    <div className="bg-darkGray rounded-lg border border-eerieBlack p-5">
+    <div className="hidden bg-darkGray rounded-lg border border-eerieBlack p-5">
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
         {() => {
           return (

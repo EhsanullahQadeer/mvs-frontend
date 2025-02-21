@@ -58,7 +58,7 @@ const FilterResultComponent = (props: Props) => {
       setFilteredData(initialData);
     } else {
       // Otherwise, set the filtered data
-      console.log("users", users);
+      //console.log("users", users);
       setFilteredData(users.data);
     }
   };

@@ -1,18 +1,10 @@
-import NotificationButton from "components/ui/Header/atoms/notificationAtoms/NotificationsButton";
-import { TNotificationBase } from "./notification_base.type";
-import { TNotificationData } from "../Notification";
 import { useNavigate } from "react-router-dom";
+import { TNotificationData } from "../Notification";
+import NotificationButton from "components/ui/Header/atoms/notificationAtoms/NotificationsButton";
 
-export type TViewProfileNotifData = TNotificationData & {
-  filename?: string;
-  sampleId?: string;
-  sampleName?: string;
-  sampleFilename?: string;
-  mediaName?: string;
-}
-
-const ViewProfileNotifContent = ({ notification }: { notification: TViewProfileNotifData }) => {
+const ViewProfileNotifContent = ({ notification }: { notification: TNotificationData }) => {
   const navigate = useNavigate();
+
   return (
     <div className="flex-grow">
       <p className="text-[12px] text-[#999999] pb-[6px]">
@@ -28,6 +20,7 @@ const ViewProfileNotifContent = ({ notification }: { notification: TViewProfileN
           textColor="text-black"
           borderColor="border-transparent"
           onClick={() => navigate(`/profile/${notification.sender.username}`)}
+          icon={null}
         />
       </div>
     </div>

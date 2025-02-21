@@ -1,16 +1,9 @@
 import { truncateFilename } from 'utils/dateUtils';
+import { TNotificationData } from '../Notification';
 import FileMediaAttachment from '../FileMediaAttachment';
 import audioIcon from "../../../../../../assets/img/voice.svg";
-import { TNotificationData } from '../Notification';
 
-export type TDownloadFileNotifData = TNotificationData & {
-  filename?: string;
-  sampleId?: string;
-  sampleName?: string;
-  sampleFilename?: string;
-}
-
-const DownloadFileNotifContent = ({ notification }: { notification: TDownloadFileNotifData }) => {
+const DownloadFileNotifContent = ({ notification }: { notification: TNotificationData }) => {
   return (
     <div className="flex-grow">
       <div>

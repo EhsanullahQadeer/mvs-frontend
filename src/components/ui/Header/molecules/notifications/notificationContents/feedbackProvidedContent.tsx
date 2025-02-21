@@ -1,15 +1,10 @@
-import NotificationButton from "components/ui/Header/atoms/notificationAtoms/NotificationsButton";
+import { useNavigate } from "react-router-dom";
 import { TNotificationData } from "../Notification";
+import NotificationButton from "components/ui/Header/atoms/notificationAtoms/NotificationsButton";
 
-export type TFeedbackProvidedNotifData = TNotificationData & {
-  filename?: string;
-  sampleId?: string;
-  sampleName?: string;
-  sampleFilename?: string;
-  mediaName?: string;
-}
+const FeedbackProvidedNotifContent = ({ notification }: { notification: TNotificationData }) => {
+  const navigate = useNavigate();
 
-const FeedbackProvidedNotifContent = ({ notification }: { notification: TFeedbackProvidedNotifData }) => {
   return (
     <div className="flex-grow">
       <p className="text-[12px] text-[#999999] pb-[6px]">
@@ -18,7 +13,7 @@ const FeedbackProvidedNotifContent = ({ notification }: { notification: TFeedbac
         </span>
         <span>has provided feedback on your audio demo </span>
         <span className="font-semibold pr-[4px] text-[#0185FF]">
-            "{notification.mediaName}"
+            "{notification.media.name}"
           </span>
       </p>
       <div className=" flex items-center gap-2 pt-[4px]">
@@ -27,7 +22,8 @@ const FeedbackProvidedNotifContent = ({ notification }: { notification: TFeedbac
           bgColor="bg-[#9EFF00]"
           textColor="text-black"
           borderColor="border-transparent"
-          onClick={() => console.log("Viewing Feedback")}
+          onClick={() => navigate(`/inbox`)}
+          icon={null}
         />
       </div>
     </div>

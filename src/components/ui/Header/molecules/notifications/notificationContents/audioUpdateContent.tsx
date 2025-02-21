@@ -1,14 +1,12 @@
-import NotificationButton from "components/ui/Header/atoms/notificationAtoms/NotificationsButton";
+import { useNavigate } from "react-router-dom";
 import { TNotificationData } from "../Notification";
+import { useHeaderHooks } from "theme/Header/Header.hooks";
+import NotificationButton from "components/ui/Header/atoms/notificationAtoms/NotificationsButton";
 
-export type TAudioUpdateNotifData = TNotificationData & {
-  filename?: string;
-  sampleId?: string;
-  sampleName?: string;
-  sampleFilename?: string;
-}
+const AudioUpdateNotifContent = ({ notification }: { notification: TNotificationData }) => {
+  const navigate = useNavigate();
+  const { state } = useHeaderHooks();
 
-const AudioUpdateNotifContent = ({ notification }: { notification: TAudioUpdateNotifData }) => {
   return (
     <div className="flex-grow">
       <p className="text-[12px] text-[#999999] pb-[6px]">
@@ -17,9 +15,8 @@ const AudioUpdateNotifContent = ({ notification }: { notification: TAudioUpdateN
         </span>
         <span>has updated the audio file </span>
         <span className="font-semibold pr-[4px] text-[#0185FF]">
-            "{notification.sampleName}"
+            "{notification.sample.filename}"
           </span>
-        <span>View latest version. </span>
       </p>
       <div className=" flex items-center gap-2 pt-[4px]">
         <NotificationButton
@@ -27,7 +24,8 @@ const AudioUpdateNotifContent = ({ notification }: { notification: TAudioUpdateN
           bgColor="bg-[#9EFF00]"
           textColor="text-black"
           borderColor="border-transparent"
-          onClick={() => console.log("Viewing Details")}
+          onClick={() => navigate(`/settings/content-management/${state?.auth?.user?.id}`)}
+          icon={null}
         />
       </div>
     </div>

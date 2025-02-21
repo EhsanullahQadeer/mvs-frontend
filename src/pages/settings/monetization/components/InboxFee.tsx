@@ -62,7 +62,8 @@ const InboxFee = (props: Props) => {
                   />
                 </div>
 
-                <div className="p-4 flex flex-col gap-4 border-t border-eerieBlack">
+                {/* Automatic message -  disabled for now */}
+                <div className="hidden p-4 flex flex-col gap-4 border-t border-eerieBlack">
                   <div>
                     <div className="flex items-center gap-1.5">
                       <div className="text-white w-6 h-6 flex">

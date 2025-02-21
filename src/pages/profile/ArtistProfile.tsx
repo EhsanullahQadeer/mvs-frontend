@@ -97,10 +97,10 @@ const ArtistProfile = () => {
           );
         }
 
-        console.log(
-          "response check connect",
-          response.data.results.connectionDetails
-        );
+        // console.log(
+        //   "response check connect",
+        //   response.data.results.connectionDetails
+        // );
       } catch (error) {
         console.log("error while checking connection", error);
       }

@@ -76,7 +76,7 @@ module.exports = {
       },
       animation: {
         'slide-in': 'slide-in 0.2s ease-out',
-        "shake": "shake 0.8s ease  infinite both"
+        "shake": "shake 0.8s ease both"
       }
     },
   },

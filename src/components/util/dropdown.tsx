@@ -135,7 +135,7 @@ const DropDown = (props: any) => {
           <div>
             <Menu.Button>
               <EllipsisVerticalIcon
-                className="onboard-9 -mr-5 text-[14px] mt-[4px] "
+                className="onboard-9 -mr-5 text-[14px] mt-[4px]"
                 aria-hidden="true"
               />
             </Menu.Button>
