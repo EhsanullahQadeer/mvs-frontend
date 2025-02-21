@@ -33,6 +33,7 @@ const FeedbackThread = (props: Props) => {
   const user = useSelector((state: any) => state.auth.user);
   const [mediaId, setMediaId] = useState<number | null>(null);
 
+
   console.log('FeedbackThread user:', user);
 
   useEffect(() => {
