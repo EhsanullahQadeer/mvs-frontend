@@ -14,10 +14,12 @@ const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 type Props = {
   uploadingFile: File | null;
   setUploadingFile: (file: File | null) => void;
+  isLoginProfile?: boolean;
+
 };
 
 const CustomFileDropper = (props: Props) => {
-  const { uploadingFile, setUploadingFile } = props;
+  const { uploadingFile, setUploadingFile ,isLoginProfile } = props;
 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -83,7 +85,7 @@ const CustomFileDropper = (props: Props) => {
 
       <label
         htmlFor="file-upload"
-        className="cursor-pointer flex flex-col gap-2 items-center px-5 py-10"
+        className="cursor-pointer flex flex-col gap-2 items-center px-5 py-5"
       >
         <div className="w-[74px] h-[88px]">
           <img
@@ -107,7 +109,10 @@ const CustomFileDropper = (props: Props) => {
           <p className="text-sm text-dimGray font-normal">
             Maximum file size 50MB.
           </p>
-          <p className="text-red-300 text-base">Only ".WAV" and ".MP3"</p>
+          {!isLoginProfile &&
+                    <p className="text-red-300 text-base">Only ".WAV" and ".MP3"</p>
+
+                  }
         </div>
 
         {(errorMessage || uploadingFile) && (

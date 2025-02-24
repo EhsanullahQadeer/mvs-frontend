@@ -1,6 +1,6 @@
 import { IArtistProfileData } from "./types";
 import { MdVerified } from "react-icons/md";
-import { FiSend, FiUserPlus } from "react-icons/fi";
+import { FiInfo, FiSend, FiUpload, FiUserPlus } from "react-icons/fi";
 import { LiaEllipsisHSolid } from "react-icons/lia";
 import { useRef, useState } from "react";
 import pauseIcon from "../../../assets/img/player/pause-circle.svg";
@@ -17,6 +17,8 @@ import { requestConncetAPI } from "api/user";
 import avatarImg from "../../../assets/img/avatar.svg";
 import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
 import { useMessages } from "../../../pages/profile/messageContextProvider";
+import { GoDotFill } from "react-icons/go";
+import { LuCalendar, LuDollarSign } from "react-icons/lu";
 
 type Props = {
   artistData: IArtistProfileData | null;
@@ -345,13 +347,75 @@ const ProfileAboutSection = (props: Props) => {
         </div>
       </div>
 
-      <div className="border-t border-b border-eclipseGray px-2.5 pb-6">
-        <div className="px-4 pt-5 text-platinum font-semibold text-base">
-          About
-        </div>
+      <div className=" border-b border-eclipseGray px-2.5 py-2">
+        
+                  <div className="mb-3.5 flex items-center gap-2 text-silver text-xs flex-wrap">
+                    <span className="font-semibold">2 followers</span>
+                    <span className="font-semibold">
+                      <GoDotFill className="w-1.5 h-1.5" />
+                    </span>
+                    <span className="font-semibold text-[#0185FF]">
+                      500+ connections
+                    </span>
+                  </div>
+        
+                  <div className="flex flex-col items-center gap-2 mb-2">
+                    <div className="flex-1 w-full px-3 py-2 bg-transparent text-white rounded-md text-xs font-semibold flex items-center justify-center gap-1 border border-dimGray cursor-pointer hover:text-jetBlack hover:bg-limeGreen transition-all duration-200">
+                      <FiUpload />
+                      Share
+                    </div>
+        
+                    <div className="flex-1 w-full px-3 py-2 hover:text-white rounded-md text-xs font-semibold flex items-center justify-center gap-1 border border-dimGray cursor-pointer text-jetBlack hover:bg-transparent bg-limeGreen transition-all duration-200">
+                      Make  a post
+                    </div>
+                  </div>
+        
+                </div>
+                <div className="px-5 py-3 pb-5 border-t border-eclipseGray">
+        <h3 className="text-base text-platinum font-semibold mb-1">About</h3>
+        <p className="mb-2 text-sm text-mediumGray font-normal">
+          {truncatedBio}
+        </p>
 
-        <div className="text-dimGray font-normal text-sm">{truncatedBio}</div>
+        <span className="text-base text-platinum font-semibold">
+          Publisher / Label
+        </span>
+
+        <div className="mt-1.5 flex max-lg:flex-wrap items-center gap-1">
+          <div className="px-2 py-1 bg-transparent text-dimGray rounded text-sm font-normal border border-charcoalGray whitespace-nowrap">
+            Warner Chappell
+          </div>
+
+          <div className="px-2 py-1 bg-transparent text-dimGray rounded text-sm font-normal border border-charcoalGray whitespace-nowrap">
+            Polydor Records
+          </div>
+        </div>
       </div>
+        <div className="px-5 py-4 pb-20 border-t border-eclipseGray text-silver text-sm flex flex-col gap-5">
+              <div className="flex items-center justify-between max-lg:flex-wrap gap-1">
+                <div className="flex items-center gap-1">
+                  <LuDollarSign />
+                  <span className="font-normal leading-[18px]">
+                    Demo submission starting at
+                  </span>
+                </div>
+      
+                <span className="font-semibold border border-mediumGray rounded-full px-2 py-0.5">
+                  $25
+                </span>
+              </div>
+             
+              <div className="flex items-center justify-between max-lg:flex-wrap gap-1">
+                <div className="flex items-center gap-1">
+                  <FiInfo />
+                  <span className="font-normal leading-[18px]">
+                    Cancellation policy
+                  </span>
+                </div>
+      
+                <span className="font-semibold text-[#7ECC00]">Flexible</span>
+              </div>
+            </div>
 
       {creditsData && creditsData.length > 0 && (
         <div className={`px-3 py-3`}>

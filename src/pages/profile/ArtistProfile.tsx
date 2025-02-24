@@ -28,6 +28,9 @@ import ProfileAboutSection from "./components/ProfileAboutSection";
 import searchIcon from "../../assets/icons/searchIcon.svg";
 import SamplesContainer from "components/SampleContainer/player-container";
 import { MessageContextProvider } from "./messageContextProvider";
+import UploadFileSection from "./components/UploadFileSection";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/reducers";
 
 // import { getUserSamplesAPI } from "api/sounds";
 
@@ -39,10 +42,16 @@ const ArtistProfile = () => {
   const [isLoading, setLoading] = useState(true);
   const [connectionDetail, setConnectionDetail] = useState();
   const [chatOpen, setChatOpen] = useState(false);
+  const [isLoginUser, setIsLoginUser] = useState(false);
+  const user = useSelector((state: RootState) => state.auth.user);
 
-  // const [musicTableArr, setMusicTableArr] = useState<MusicTableArr | null>(
-  //   null
-  // );
+  useEffect(() => {
+    if (artistData && user) {
+      if (artistData.id === user.id) {
+        setIsLoginUser(true);
+      }
+    }
+  }, [artistData, user]);
 
   const [creditsData, setCreditsData] = useState([]);
 
@@ -121,6 +130,8 @@ const ArtistProfile = () => {
         <>
           <div className="relative flex overflow-hidden">
             <section className="flex-1 min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">
+              {isLoginUser && <UploadFileSection />}
+
               <div className={`text-coolGray flex flex-col py-3 mb-2 px-4 `}>
                 <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
                 <div className="flex justify-between items-center">
@@ -134,7 +145,7 @@ const ArtistProfile = () => {
                             ? "text-softGray bg-eerieBlack"
                             : "text-charcoalGray bg-darkGray"
                         } ${index === 0 && "rounded-l-md border-r-0"} ${
-                          index === tabs.length-1 && "rounded-r-md border-l-0"
+                          index === tabs.length - 1 && "rounded-r-md border-l-0"
                         } transition duration-300`}
                       >
                         {tab.label}
@@ -184,7 +195,14 @@ const ArtistProfile = () => {
 
             <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
               <ProfileAboutSection
-                {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
+                {...{
+                  artistData,
+                  creditsData,
+                  connectionDetail,
+                  setConnectionDetail,
+                  chatOpen,
+                  setChatOpen,
+                }}
               />
             </section>
           </div>{" "}

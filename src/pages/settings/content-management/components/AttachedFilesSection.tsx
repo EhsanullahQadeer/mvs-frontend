@@ -11,7 +11,12 @@ import { useEffect, useState } from "react";
 import AttachedFilesTable from "./AttachedFilesTable";
 import { deleteSampleAPI, getUserSamplesAPI } from "api/sounds";
 import AlertDialog from "components/util/AlertDialog";
-import { ICurrentUser, ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "./types";
+import {
+  ICurrentUser,
+  ISample,
+  ISampleSearchConstraints,
+  IGetUserSamplesResponse,
+} from "./types";
 import UpdateSamplePopup from "./UpdateSamplePopup";
 
 type Props = {
@@ -19,6 +24,7 @@ type Props = {
   currentUserInfo: ICurrentUser;
   isNewUser?: boolean;
   updateData?: number;
+  isLoginProfile?: boolean;
 };
 
 const tableTabs = [
@@ -33,10 +39,14 @@ const defaultSampleSearchConstraints: ISampleSearchConstraints = {
 };
 
 const AttachedFilesSection = (props: Props) => {
-  const { setLoading, currentUserInfo, isNewUser, updateData } = props;
+  const { setLoading, currentUserInfo, isNewUser, updateData, isLoginProfile } =
+    props;
   const [selectedTab, setSelectedTab] = useState("all");
-  const [sampleSearchConstraints, setSampleSearchConstraints] = useState(defaultSampleSearchConstraints);
-  const [getUserSamplesResponse, setGetUserSamplesResponse] = useState<IGetUserSamplesResponse>();
+  const [sampleSearchConstraints, setSampleSearchConstraints] = useState(
+    defaultSampleSearchConstraints
+  );
+  const [getUserSamplesResponse, setGetUserSamplesResponse] =
+    useState<IGetUserSamplesResponse>();
 
   const handleTabClick = (value: string, clickFunc: () => void) => {
     setSelectedTab(value);
@@ -47,11 +57,10 @@ const AttachedFilesSection = (props: Props) => {
     if (!isNewUser) {
       getSamplesData();
     }
-  }, [selectedTab,sampleSearchConstraints]);
-  useEffect(()=>{
+  }, [selectedTab, sampleSearchConstraints]);
+  useEffect(() => {
     getSamplesData();
-
-  },[updateData])
+  }, [updateData]);
 
   const getSamplesData = async () => {
     setLoading(true);
@@ -63,7 +72,7 @@ const AttachedFilesSection = (props: Props) => {
         filter: selectedTab,
       });
       console.log("response here!!!", response);
-      const samples:IGetUserSamplesResponse = response.data.results;
+      const samples: IGetUserSamplesResponse = response.data.results;
       setGetUserSamplesResponse(samples);
     } catch (error) {
       console.log("error while fetching samples data: ", error);
@@ -127,46 +136,51 @@ const AttachedFilesSection = (props: Props) => {
           currentUserInfo,
         }}
       />
+      {!isLoginProfile && (
+        <>
+          <div className="py-3 flex flex-col gap-2">
+            <h3 className="text-lg font-semibold text-platinum">
+              Attached files
+            </h3>
+            <p className="text-sm font-normal text-coolGray">
+              Files Associated with This Profile
+            </p>
+          </div>
+          <div className="my-2 p-4 bg-darkGray rounded-lg flex items-center">
+            {tableTabs.map((tab, idx) => {
+              const { label, value, func } = tab;
+              return (
+                <button
+                  key={label + idx}
+                  onClick={() => handleTabClick(value, func)}
+                  className={`py-3 px-4 text-xs font-semibold flex items-center justify-center border border-eclipseGray ${
+                    selectedTab === value
+                      ? "text-silver bg-eerieBlack"
+                      : "text-charcoalGray bg-jetBlack"
+                  } ${idx === 0 && "rounded-l-lg border-r-0"} ${
+                    idx === 2 && "rounded-r-lg border-l-0"
+                  } transition duration-300`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
 
-      <div className="py-3 flex flex-col gap-2">
-        <h3 className="text-lg font-semibold text-platinum">Attached files</h3>
-        <p className="text-sm font-normal text-coolGray">
-          Files Associated with This Profile
-        </p>
-      </div>
-
-      <div className="my-2 p-4 bg-darkGray rounded-lg flex items-center">
-        {tableTabs.map((tab, idx) => {
-          const { label, value, func } = tab;
-          return (
-            <button
-              key={label + idx}
-              onClick={() => handleTabClick(value, func)}
-              className={`py-3 px-4 text-xs font-semibold flex items-center justify-center border border-eclipseGray ${
-                selectedTab === value
-                  ? "text-silver bg-eerieBlack"
-                  : "text-charcoalGray bg-jetBlack"
-              } ${idx === 0 && "rounded-l-lg border-r-0"} ${
-                idx === 2 && "rounded-r-lg border-l-0"
-              } transition duration-300`}
-            >
-              {label}
-            </button>
-          );
-        })}
-      </div>
-
-      {getUserSamplesResponse &&(
-      <div>
-        <AttachedFilesTable
-          {...{
-            getUserSamplesResponse,
-            handleOpenDialog,
-            sampleSearchConstraints,
-            setSampleSearchConstraints
-          }}
-        />
-      </div>)}
+      {getUserSamplesResponse && (
+        <div>
+          <AttachedFilesTable
+            {...{
+              getUserSamplesResponse,
+              handleOpenDialog,
+              sampleSearchConstraints,
+              setSampleSearchConstraints,
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

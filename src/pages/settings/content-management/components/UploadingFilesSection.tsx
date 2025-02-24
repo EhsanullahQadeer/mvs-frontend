@@ -19,6 +19,8 @@ type Props = {
   handleCancel: () => void;
   currentUserInfo: ICurrentUser;
   setUpdateData?: (event: number) => void;
+  isLoginProfile?: boolean;
+
 };
 
 const UploadingFilesSection = (props: Props) => {
@@ -29,6 +31,7 @@ const UploadingFilesSection = (props: Props) => {
     handleCancel,
     currentUserInfo,
     setUpdateData,
+    isLoginProfile
   } = props;
 
   function formatFileSize(sizeInBytes: number): string {
@@ -118,8 +121,10 @@ const UploadingFilesSection = (props: Props) => {
             </div>
           )}
         </div>
+        {!isLoginProfile &&
+                <MetaDataForm {...{ fileRedisKey, handleCancel, currentUserInfo, setUpdateData }} />
+}
 
-        <MetaDataForm {...{ fileRedisKey, handleCancel, currentUserInfo, setUpdateData }} />
       </div>
     </>
   );
