@@ -14,6 +14,8 @@ import AlertDialog from "components/util/AlertDialog";
 import ContributersTable from "./ContributersTable";
 import UploadingFileMetaData from "./UploadingFileMetaData";
 import { CircularProgress } from "@mui/material";
+import * as Yup from "yup";
+import { sanitizeInput } from "utils/stringUtils";
 
 type Props = {
   fileRedisKey?: string;
@@ -26,6 +28,10 @@ type Props = {
   collaborators?: ICollaborator[];
   setUpdateData?: (event: any) => void;
 };
+
+const validationSchema = Yup.object().shape({
+  songName: Yup.string().required('Sample name is required'),
+});
 
 const MetaDataForm = (
   props: Props
@@ -46,6 +52,7 @@ const MetaDataForm = (
 
   const {
     filename,
+    name,
     bpm,
     key,
     type,
@@ -87,7 +94,8 @@ const MetaDataForm = (
   const [isSaving, setIsSaving] = useState(false);
 
   const initialValues = {
-    songName: filename ? filename : "",
+    filename: filename ? sanitizeInput(filename) : "",
+    songName: name ? name : "",
     songBpm: bpm ? bpm : "",
     songType: type ? type : "sample",
     songTags: tags ? tags : "",
@@ -134,7 +142,7 @@ const MetaDataForm = (
   const handleSubmit = async (values) => {
     setIsSaving(true);
     try {
-      const { 
+      const {
         songName, 
         songBpm,
         sampleKey,
@@ -175,7 +183,7 @@ const MetaDataForm = (
         }));
 
       const body = {
-        filename: songName,
+        name: songName,
         bpm: songBpm,
         key: sampleKey,
         type: songType?.value || songType,
@@ -258,6 +266,7 @@ const MetaDataForm = (
 
       <Formik 
         initialValues={initialValues}
+        validationSchema={validationSchema}
         onSubmit={(values) => handleSubmit(values)}
       >
         {({ handleSubmit, errors, touched }) => (
@@ -277,6 +286,11 @@ const MetaDataForm = (
                     sample: sampleToEdit,
                   }}
                 />
+                {errors.songName && touched.songName && (
+                  <div className="text-red-500 text-xs mt-1 ml-4">
+                    {errors.songName}
+                  </div>
+                )}
               </div>
 
               {selectedComposer?.length > 0 && (

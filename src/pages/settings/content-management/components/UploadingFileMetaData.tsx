@@ -56,7 +56,7 @@ const UploadingFileMetaData = (
       console.log('Setting field value to:', matchingType || props.sample.type);
       setFieldValue('songType', matchingType || props.sample.type);
       setFieldValue('songBpm', props.sample.bpm);
-      setFieldValue('songName', props.sample.filename);
+      setFieldValue('songName', props.sample.name);
       
       // Format initial tags
       const formattedTags = Array.isArray(props.sample.tags) 
