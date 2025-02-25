@@ -3,6 +3,7 @@ import AttachedFilesSection from 'pages/settings/content-management/components/A
 import DropFilesSection from 'pages/settings/content-management/components/DropFilesSection'
 import UploadingFilesSection from 'pages/settings/content-management/components/UploadingFilesSection'
 import React, { useEffect, useState } from 'react'
+import SampleUploadModel from './SampleUploadModel'
 
 const UploadFileSection = () => {
   const [loading, setLoading] = useState(false);

@@ -11,6 +11,8 @@ import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIco
 import { FaCircleCheck } from "react-icons/fa6";
 import MetaDataForm from "./MetaDataForm";
 import { ICurrentUser } from "./types";
+import { useState } from "react";
+import SampleUploadModel from "pages/profile/components/SampleUploadModel";
 
 type Props = {
   uploadingFile: File;
@@ -38,6 +40,7 @@ const UploadingFilesSection = (props: Props) => {
     const sizeInMB = sizeInBytes / (1024 * 1024);
     return `${sizeInMB.toFixed(0)} Mb`;
   }
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   return (
     <>
@@ -124,6 +127,20 @@ const UploadingFilesSection = (props: Props) => {
         {!isLoginProfile &&
                 <MetaDataForm {...{ fileRedisKey, handleCancel, currentUserInfo, setUpdateData }} />
 }
+{isLoginProfile && (
+  <SampleUploadModel
+    open={isModalOpen}
+    handleCloses={() => setIsModalOpen(false)}
+    fileRedisKey={fileRedisKey}
+    handleCancel={handleCancel}
+    currentUserInfo={currentUserInfo}
+    setUpdateData={setUpdateData}
+    isEditSample={false} // Provide default or actual value
+    sampleToEdit={null}  // Provide actual value if applicable
+    collaborators={[]}   // Provide actual value if applicable
+  />
+)}
+
 
       </div>
     </>

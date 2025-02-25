@@ -37,6 +37,7 @@ const UploadingFileMetaData = (
     setSelectedComposer,
     isEditSample,
     handleClose,
+    isLoginProfile,
     sampleOwner,
   } = props;
 
@@ -176,10 +177,11 @@ const UploadingFileMetaData = (
         } p-5 flex flex-col gap-4`}
       >
         <div className="flex items-center justify-between">
+          {!isLoginProfile &&
           <span className="text-[28px] text-white font-medium leading-[34px]">
             File Metadata
           </span>
-
+}
           {isEditSample && (
             <div
               onClick={handleClose}
@@ -235,7 +237,7 @@ const UploadingFileMetaData = (
 
           <div className="flex-1 flex flex-col gap-1">
             <span className="text-silver text-sm font-normal">
-              collaborators / Collaborators
+              Composers / Collaborators
             </span>
 
             <div
@@ -250,7 +252,7 @@ const UploadingFileMetaData = (
                       key={professional_name + idx}
                       className="flex gap-2 py-1 px-3 rounded-[20px] bg-eerieBlack border border-eerieBlack items-center"
                     >
-                      <span className="text-xs text-mediumGray font-normal">
+                      <span className="text-xs text-mediumGray whitespace-nowrap font-normal">
                         {composer?.user?.professional_name}
                       </span>
                       <div className="w-2.5 h-2.5 cursor-pointer text-mediumGray flex justify-center items-center">
@@ -265,7 +267,7 @@ const UploadingFileMetaData = (
             </div>
           </div>
         </div>
-
+{!isLoginProfile &&
         <div className="flex justify-between items-center px-4">
           <div>
             <div className="text-coolGray text-lg font-normal mb-3">
@@ -327,6 +329,24 @@ const UploadingFileMetaData = (
             </div>
           )}
         </div>
+}
+{isLoginProfile && 
+     <div className="w-[132px] h-[50px] border border-[#66666659] rounded-lg flex justify-end items-end self-end">
+     <label
+       className="text-mediumGray text-sm font-medium w-full h-full cursor-pointer flex justify-center items-center"
+     >
+       Replace File
+     </label>
+
+     <input
+       accept="file/*"
+       type="file"
+       name="add-midi-file"
+       id="add-midi-file"
+       onChange={handleFileUpload}
+       className="hidden"
+     />
+   </div>}
       </div>
     </>
   );

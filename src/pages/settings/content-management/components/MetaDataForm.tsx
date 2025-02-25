@@ -25,6 +25,7 @@ type Props = {
   currentUserInfo?: ICurrentUser;
   collaborators?: ICollaborator[];
   setUpdateData?: (event: any) => void;
+  isLoginProfile?: boolean;
 };
 
 const MetaDataForm = (
@@ -40,6 +41,7 @@ const MetaDataForm = (
     currentUserInfo,
     collaborators,
     setUpdateData,
+    isLoginProfile
   } = props;
 
   console.log("MetaDataForm - received composer:", collaborators);
@@ -276,10 +278,13 @@ const MetaDataForm = (
                     handleClose,
                     sample: sampleToEdit,
                   }}
+                  isLoginProfile={isLoginProfile}
+
                 />
+
               </div>
 
-              {selectedComposer?.length > 0 && (
+              {(selectedComposer?.length > 0  && !isLoginProfile) && (
                 <div className={`${isEditSample && "px-5"} my-2`}>
                   <ContributersTable
                     {...{
@@ -293,27 +298,30 @@ const MetaDataForm = (
                   />
                 </div>
               )}
-
+              {!isLoginProfile && 
               <div
-                className={`py-5 ${
-                  isEditSample ? "px-5" : "px-2.5"
-                } flex justify-end gap-4`}
+              className={`py-5 ${
+                isEditSample ? "px-5" : "px-2.5"
+              } flex justify-end gap-4`}
+            >
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="bg-transparent border border-limeGreen w-[151px] flex justify-center items-center py-3 text-limeGreen text-sm font-semibold rounded-[60px]"
               >
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="bg-transparent border border-limeGreen w-[151px] flex justify-center items-center py-3 text-limeGreen text-sm font-semibold rounded-[60px]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"
-                >
-                  {isSaving ? "Saving..." : "Save Changes"}
-                </button>
-              </div>
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"
+              >
+                {isSaving ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+              }
+
+              
 
               {errors.songType && touched.songType && (
                 <div className="text-red-500 text-xs mt-1">{errors.songType}</div>

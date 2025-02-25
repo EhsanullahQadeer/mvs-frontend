@@ -31,6 +31,7 @@ import { MessageContextProvider } from "./messageContextProvider";
 import UploadFileSection from "./components/UploadFileSection";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
+import SampleUploadModel from "./components/SampleUploadModel";
 
 // import { getUserSamplesAPI } from "api/sounds";
 
@@ -42,6 +43,7 @@ const ArtistProfile = () => {
   const [isLoading, setLoading] = useState(true);
   const [connectionDetail, setConnectionDetail] = useState();
   const [chatOpen, setChatOpen] = useState(false);
+
   const [isLoginUser, setIsLoginUser] = useState(false);
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -130,7 +132,7 @@ const ArtistProfile = () => {
         <>
           <div className="relative flex overflow-hidden">
             <section className="flex-1 min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">
-              {isLoginUser && <UploadFileSection />}
+              {isLoginUser && <UploadFileSection  />}
 
               <div className={`text-coolGray flex flex-col py-3 mb-2 px-4 `}>
                 <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
@@ -221,6 +223,7 @@ const ArtistProfile = () => {
           </div>
         </>
       )}
+
     </Theme>
   );
 };

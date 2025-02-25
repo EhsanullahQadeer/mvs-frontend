@@ -17,6 +17,8 @@ export interface IUploadingFileMetaDataProps {
   handleClose?: () => void;
   sample?: ISample;
   sampleOwner?: IUserProfile;
+  isLoginProfile?: boolean;
+
 }
 
 export interface IEditComposerData {
