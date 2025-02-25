@@ -1,13 +1,21 @@
-import { ReactComponent as ArrowDown } from "../../../assets/icons/arrowDown.svg";
-import { ReactComponent as ArchieveIcon } from "../../../assets/icons/archieveIcon.svg";
-import { ReactComponent as AlertOctagonIcon } from "../../../assets/icons/alertOctagon.svg";
-import { ReactComponent as DeleteIcon } from "../../../assets/icons/deleteIcon.svg";
-import { ReactComponent as MailOpenIcon } from "../../../assets/icons/mailOpenIcon.svg";
-import { ReactComponent as FolderInputIcon } from "../../../assets/icons/folderInputIcon.svg";
-import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
-import { IoIosArrowBack } from "react-icons/io";
-import { IoChevronForwardOutline } from "react-icons/io5";
+import { useState } from "react";
+import { IMessage } from "./types";
+import ActionMenu from "./ActionMenu";
 import { toast } from "react-toastify";
+import { FiInbox } from "react-icons/fi";
+import { FaRegStar } from "react-icons/fa";
+import { LuFileClock } from "react-icons/lu";
+import { IoIosArrowBack } from "react-icons/io";
+import AlertDialog from "components/util/AlertDialog";
+import { IoChevronForwardOutline } from "react-icons/io5";
+import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
+import { ReactComponent as ArrowDown } from "../../../assets/icons/arrowDown.svg";
+import { ReactComponent as DeleteIcon } from "../../../assets/icons/deleteIcon.svg";
+import { ReactComponent as CircleAlert } from "../../../assets/icons/circleWarning.svg";
+import { ReactComponent as ArchieveIcon } from "../../../assets/icons/archieveIcon.svg";
+import { ReactComponent as MailOpenIcon } from "../../../assets/icons/mailOpenIcon.svg";
+import { ReactComponent as AlertOctagonIcon } from "../../../assets/icons/alertOctagon.svg";
+import { ReactComponent as FolderInputIcon } from "../../../assets/icons/folderInputIcon.svg";
 import {
   deleteConversationsApi,
   markConvoReadApi,
@@ -15,14 +23,6 @@ import {
   toggleArchiveConvoApi,
   toggleConvoPriorityApi,
 } from "api/messenger";
-import AlertDialog from "components/util/AlertDialog";
-import { useState } from "react";
-import { IMessage } from "./types";
-import ActionMenu from "./ActionMenu";
-import { FiInbox } from "react-icons/fi";
-import { ReactComponent as CircleAlert } from "../../../assets/icons/circleWarning.svg";
-import { FaRegStar } from "react-icons/fa";
-import { LuFileClock } from "react-icons/lu";
 
 interface Props {
   selectedConversations: number[];
@@ -298,7 +298,6 @@ const MsgListHeaderOptions = (props: Props) => {
               {icon}
             </div>
           ))}
-
           <div
             onClick={handleMenuSection}
             className={`flex justify-center items-center w-8 h-8 rounded cursor-pointer bg-[#242424] text-white pointer-events-auto relative`}

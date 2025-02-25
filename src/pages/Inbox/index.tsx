@@ -9,9 +9,9 @@
 
 /* IMPORTS */
 import Theme from "theme";
-import MessagesList from "./components/MessagesList";
-import { useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import MessagesList from "./components/MessagesList";
 import { setBreadcrumbs } from "redux/actions/breadcrumb.actions";
 
 const InboxPage = () => {
@@ -25,7 +25,7 @@ const InboxPage = () => {
   }, [dispatch]);
   return (
     <Theme isOverflowHidden={true}>
-      <div className="flex overflow-hidden grow">
+      <div className="flex overflow-hidden">
         <MessagesList />
       </div>
     </Theme>

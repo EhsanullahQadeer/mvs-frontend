@@ -1,10 +1,9 @@
-import featuredIcon from "../../../assets/icons/featured-icon.svg";
+import { useNavigate } from "react-router-dom";
 import starIcon from "../../../assets/icons/star.svg";
 import { IConversation, ICurrentUser } from "./types";
-import { useNavigate } from "react-router-dom";
-import { lastMsgTimeStamp } from "../handlers/mediaUtils";
-import axios from 'axios';
 import { markConversationAsRead } from "api/messenger";
+import { lastMsgTimeStamp } from "../handlers/mediaUtils";
+import featuredIcon from "../../../assets/icons/featured-icon.svg";
 
 interface Props {
   conversation: IConversation;
