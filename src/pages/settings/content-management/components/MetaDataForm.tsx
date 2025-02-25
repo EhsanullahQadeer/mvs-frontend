@@ -6,13 +6,14 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import { useEffect, useState } from "react";
-import { getSampleCollaborators, updateFileMetadata, uploadedFileMetadata } from "api/sounds";
 import { Form, Formik } from "formik";
-import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
-import AlertDialog from "components/util/AlertDialog";
+import { useEffect, useState } from "react";
+import { CircularProgress } from "@mui/material";
 import ContributersTable from "./ContributersTable";
+import AlertDialog from "components/util/AlertDialog";
 import UploadingFileMetaData from "./UploadingFileMetaData";
+import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
+import { getSampleCollaborators, updateFileMetadata, uploadedFileMetadata } from "api/sounds";
 import { CircularProgress } from "@mui/material";
 import * as Yup from "yup";
 import { sanitizeInput } from "utils/stringUtils";
@@ -48,8 +49,6 @@ const MetaDataForm = (
     setUpdateData,
   } = props;
 
-  console.log("MetaDataForm - received composer:", collaborators);
-
   const {
     filename,
     name,
@@ -81,7 +80,7 @@ const MetaDataForm = (
       },
       contribution: composer.contribution,
       id: composer.id,
-      roles: composer.roles,
+      roles: [],
       isEditable: false,
     }))
   );
@@ -106,7 +105,7 @@ const MetaDataForm = (
     setComposerData((prevComposerData) => {
       const updatedComposerData = selectedComposer?.map((composer) => {
         const existingComposer = prevComposerData?.find(
-          (existing) => existing.id === composer.id
+          (existing) => existing.user.id === composer.user.id
         );
         
         const initialCollaborator = collaborators?.find( 
@@ -128,7 +127,7 @@ const MetaDataForm = (
         
         return {
           ...composer,
-          roles: composer.roles || [],
+          roles: [],
           percentValue,
           isEditable: false,
         };
@@ -242,7 +241,7 @@ const MetaDataForm = (
   const handleDeleteComposer = () => {
     if (composerToDelete) {
       const updatedComposerData = composerData.filter(
-        (composer) => composer.id !== composerToDelete.id
+        (composer) => composer.user.id !== composerToDelete.user.id
       );
 
       setSelectedComposer(updatedComposerData);

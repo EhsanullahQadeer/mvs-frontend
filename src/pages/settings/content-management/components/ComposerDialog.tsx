@@ -6,14 +6,14 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import React, { useState, useEffect } from "react";
-import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
+import useDebounce from "hooks/useDebounce";
+import { styled } from "@mui/material/styles";
+import { CircularProgress } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import useDebounce from "hooks/useDebounce";
 import { userProfessionalNameSearch } from "api/user";
-import { CircularProgress } from "@mui/material";
+import React, { useState, useEffect, useRef } from "react";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -52,8 +52,21 @@ function ComposerDialog(props: Props) {
   const [selected,setSelected] = useState(null);
   // Debounce the search value
   const debouncedSearchValue = useDebounce(searchTerm, 300);
-
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchResults, setSearchResults] = useState([]);
+
+  useEffect(() => {
+    if (openComposerDialog) { // Check if dialog is open
+      const timer = setTimeout(() => {
+        if (inputRef.current) {
+          console.log("Focusing...");
+          inputRef.current.focus(); // Focus the input
+        }
+      }, 0); // Delay the focus call
+
+      return () => clearTimeout(timer); // Cleanup the timer on unmount
+    }
+  }, [openComposerDialog]); // Run this effect when openComposerDialog changes
 
   const handleClose = () => {
     setOpenComposerDialog(false);
@@ -120,178 +133,185 @@ function ComposerDialog(props: Props) {
   const isOwner = false;
 
   return (
-    <React.Fragment>
-      <BootstrapDialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={openComposerDialog}
-        sx={{
-          "& .MuiDialog-paper": {
-            background: "#1C1C1C",
-            borderRadius: "8px",
-            border: "1px solid #242424",
-            padding: "12px",
-            color: "#E5E5E5",
-            width: "500px",
-            overflow: "visible",
-          },
-        }}
-      >
-        <div className="flex justify-between items-center gap-2 pb-2.5">
-          <span className="text-sm font-normal">
-            Invite collaborators by name or email
-          </span>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{
-              color: "#848484",
-              width: "16px",
-              height: "16px",
-            }}
+    <BootstrapDialog
+      onClose={handleClose}
+      aria-labelledby="customized-dialog-title"
+      open={openComposerDialog}
+      sx={{
+        "& .MuiDialog-paper": {
+          background: "#1C1C1C",
+          borderRadius: "8px",
+          border: "1px solid #242424",
+          padding: "12px",
+          color: "#E5E5E5",
+          width: "500px",
+          overflow: "visible",
+        },
+      }}
+    >
+      <div className="flex justify-between items-center gap-2 pb-2.5">
+        <span className="text-sm font-normal">
+          Invite collaborators by name or email
+        </span>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            color: "#848484",
+            width: "16px",
+            height: "16px",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </div>
+
+      <div className="py-4 border-t border-b border-eclipseGray flex flex-col gap-3 w-full items-stretch relative">
+        <div className="flex gap-3">
+          <div className="flex-1 relative">
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="Search collaborators"
+              className="px-4 relative py-3 text-sm font-normal text-coolGray w-full bg-jetBlack rounded-lg border border-eclipseGray hover:border-secondaryBlue focus:border-transparent focus:outline-secondaryBlue focus:outline-2 focus:outline-offset-0"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <div className="absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer flex">
+              {loading && (
+                <CircularProgress style={{ color: "#C4FF48" }} size={20} />
+              )}
+            </div>
+          </div>
+
+          <div
+            className={`${
+              selected
+                ? "bg-[#059669] text-softGray cursor-pointer"
+                : "bg-eclipseGray text-dimGray pointer-events-none"
+            } rounded-lg text-sm font-semibold w-[69px] flex justify-center items-center`}
+            onClick={handleButtonClick}
           >
-            <CloseIcon />
-          </IconButton>
-        </div>
-
-        <div className="py-4 border-t border-b border-eclipseGray flex flex-col gap-3 w-full items-stretch relative">
-          <div className="flex gap-3">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                placeholder="Search collaborators"
-                className="px-4 relative py-3 text-sm font-normal text-coolGray w-full bg-jetBlack rounded-lg border border-eclipseGray hover:border-secondaryBlue focus:border-transparent focus:outline-secondaryBlue focus:outline-2 focus:outline-offset-0"
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-              <div className="absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer flex">
-                {loading && (
-                  <CircularProgress style={{ color: "#C4FF48" }} size={20} />
-                )}
-              </div>
-            </div>
-
-            <div
-              className={`${
-                selected
-                  ? "bg-[#059669] text-softGray cursor-pointer"
-                  : "bg-eclipseGray text-dimGray pointer-events-none"
-              } rounded-lg text-sm font-semibold w-[69px] flex justify-center items-center`}
-              onClick={handleButtonClick}
-            >
-              {isInvite ? "Invite" : "Add"}
-            </div>
+            {isInvite ? "Invite" : "Add"}
           </div>
-          <div className={`flex flex-col bg-[#1C1C17] absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown`}>
-              {searchResults.map((composer, idx) => {
-                const { thumbnail, professional_name, primary_role, secondary_role } =
-                  composer;
-                return (
-                  <div
-                    onClick={() => {
-                      handleSelectingContributor(composer);
-                    }}
-                    key={professional_name + idx}
-                    className={`px-2.5 py-${searchedContributorItemYPadding} cursor-pointer flex gap-2.5 hover:bg-darkGray rounded`}
-                  >
-                    <div className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}>
-                      <img
-                        src={thumbnail}
-                        alt="thumbnail"
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-
-                    <div className="flex-1 flex justify-between items-center">
-                      <div>
-                        <div className="flex items-center">
-                          <span className="text-sm font-semibold text-white">
-                            {professional_name}
-                          </span>
-
-                          {isOwner && (
-                            <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">
-                              You
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="text-sm font-normal text-dimGray flex gap-1">
-                          {`${primary_role} / ${secondary_role}`}
-                        </div>
-                      </div>
-                      {isOwner && (
-                        <div className="text-coolGray text-xs font-normal">
-                          Owner
-                        </div>
-                      )}
-                    </div>
-                    {isSelected(composer)?<div className="text-coolGray text-xs font-normal content-center">Already added</div>:""}
+        </div>
+        <div className={`flex flex-col bg-[#1C1C17] absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown`}>
+            {searchResults.map((composer, idx) => {
+              const { thumbnail, professional_name, primary_role, secondary_role } =
+                composer;
+              return (
+                <div
+                  onClick={() => {
+                    handleSelectingContributor(composer);
+                  }}
+                  key={professional_name + idx}
+                  className={`px-2.5 py-${searchedContributorItemYPadding} cursor-pointer flex gap-2.5 hover:bg-darkGray rounded`}
+                >
+                  <div className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}>
+                    <img
+                      src={thumbnail}
+                      alt="thumbnail"
+                      className="w-full h-full object-cover rounded-full"
+                    />
                   </div>
-                );
-              })}
-          </div>
-        </div>
 
-        <div className="flex flex-col gap-1 overflow-hidden">
-          <div className="text-silver text-xs font-normal p-2">
-            Contributors to this sample
-          </div>
-          <div className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}>
-            {contributors?.length ? (
-              contributors?.map((composer, idx) => {
-                const { user: { thumbnail, professional_name, primary_role, secondary_role } } =
-                  composer;
+                  <div className="flex-1 flex justify-between items-center">
+                    <div>
+                      <div className="flex items-center">
+                        <span className="text-sm font-semibold text-white">
+                          {professional_name}
+                        </span>
 
-                return (
-                  <div
-                    key={"contributor" + idx}
-                    className={`px-2.5 py-${searchedContributorItemYPadding} flex gap-2.5 rounded`}
-                  >
-                    <div className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}>
-                      <img
-                        src={thumbnail}
-                        alt={`${professional_name} thumbnail`}
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-
-                    <div className="flex-1 flex justify-between items-center">
-                      <div>
-                        <div className="flex items-center">
-                          <span className="text-sm font-semibold text-white">
-                            {professional_name}
+                        {isOwner && (
+                          <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">
+                            You
                           </span>
-
-                          {isOwner && (
-                            <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">
-                              You
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="text-sm font-normal text-dimGray flex gap-1">
-                          {`${primary_role} / ${secondary_role}`}
-                        </div>
+                        )}
                       </div>
-                      {isOwner && (
-                        <div className="text-coolGray text-xs font-normal">
-                          Owner
+
+                      {primary_role || secondary_role ? (
+                        <div className="text-sm font-normal text-dimGray flex gap-1">
+                          {primary_role && secondary_role
+                            ? `${primary_role} / ${secondary_role}`
+                            : primary_role || secondary_role}
                         </div>
-                      )}
+                      ) : null}
                     </div>
+                    {isOwner && (
+                      <div className="text-coolGray text-xs font-normal">
+                        Owner
+                      </div>
+                    )}
                   </div>
-                );
-              })
-            ) : (
-              <div className="white text-sm fotn-normal p-2">
-                Your search term does not match to any name or email.
-              </div>
-            )}
-          </div>
+                  {isSelected(composer)?<div className="text-coolGray text-xs font-normal content-center">Already added</div>:""}
+                </div>
+              );
+            })}
         </div>
-      </BootstrapDialog>
-    </React.Fragment>
+      </div>
+
+      <div className="flex flex-col gap-1 overflow-hidden">
+        <div className="text-silver text-xs font-normal p-2">
+          Contributors to this sample
+        </div>
+        <div className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}>
+          {contributors?.length ? (
+            contributors?.map((composer, idx) => {
+              const { user: { thumbnail, professional_name, primary_role, secondary_role } } =
+                composer;
+
+              return (
+                <div
+                  key={"contributor" + idx}
+                  className={`px-2.5 py-${searchedContributorItemYPadding} flex gap-2.5 rounded`}
+                >
+                  <div className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}>
+                    <img
+                      src={thumbnail}
+                      alt={`${professional_name} thumbnail`}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+
+                  <div className="flex-1 flex justify-between items-center">
+                    <div>
+                      <div className="flex items-center">
+                        <span className="text-sm font-semibold text-white">
+                          {professional_name}
+                        </span>
+
+                        {isOwner && (
+                          <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">
+                            You
+                          </span>
+                        )}
+                      </div>
+
+                      {primary_role || secondary_role ? (
+                        <div className="text-sm font-normal text-dimGray flex gap-1">
+                          {primary_role && secondary_role
+                            ? `${primary_role} / ${secondary_role}`
+                            : primary_role || secondary_role}
+                        </div>
+                      ) : null}
+                    </div>
+                    {isOwner && (
+                      <div className="text-coolGray text-xs font-normal">
+                        Owner
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="white text-sm fotn-normal p-2">
+              Your search term does not match to any name or email.
+            </div>
+          )}
+        </div>
+      </div>
+    </BootstrapDialog>
   );
 }
 
