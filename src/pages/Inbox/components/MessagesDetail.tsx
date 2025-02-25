@@ -110,21 +110,6 @@ const MessagesDetail = (props: Props) => {
       func: () => {},
     },
     {
-      label: "Schedule Meeting",
-      icon: <IoVideocamOutline />,
-      func: () => {},
-    },
-    {
-      label: "Request Demo Review",
-      icon: <HiOutlineEye />,
-      func: () => {},
-    },
-    {
-      label: "Unlock Inbox",
-      icon: <FiUnlock />,
-      func: () => {},
-    },
-    {
       label: "Share Profile",
       icon: <GrShareOption />,
       func: () => {},

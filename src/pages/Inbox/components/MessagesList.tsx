@@ -34,7 +34,7 @@ const MessagesList = () => {
   const user = useSelector((state: RootState) => state);
   const currentUserInfo = user.auth.user;
 
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(1);
   const [showArchivedConvos, setShowArchivedConvos] = useState(false);
   const [showFavoriteConvos, setShowFavoriteConvos] = useState(false);
   const [filteredConversations, setFilteredConversations] = useState([]);
