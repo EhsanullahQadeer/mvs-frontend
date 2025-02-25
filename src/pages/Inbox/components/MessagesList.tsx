@@ -10,22 +10,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
-import { useEffect, useState } from "react";
 import React from "react";
-import MessagesDetail from "./MessagesDetail";
-import searchIcon from "../../../assets/icons/searchIcon.svg";
-import { Conversations } from "./Conversations";
-import { getMessages, toggleFavoriteCovoApi } from "api/messenger";
-import { CircularProgress } from "@mui/material";
-import { useParams } from "react-router-dom";
-import FeedbackThread from "./FeedbackThread";
-import MsgListHeaderOptions from "./MsgListHeaderOptions";
-import useMessageList from "../hooks/useMessageList";
-import { RootState } from "redux/reducers";
-import { useSelector } from "react-redux";
-import useGetMessagesNotes from "../hooks/useGetMessagesNotes";
 import { IConversation } from "./types";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/reducers";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import MessagesDetail from "./MessagesDetail";
+import FeedbackThread from "./FeedbackThread";
+import { Conversations } from "./Conversations";
+import { CircularProgress } from "@mui/material";
+import useMessageList from "../hooks/useMessageList";
+import MsgListHeaderOptions from "./MsgListHeaderOptions";
+import searchIcon from "../../../assets/icons/searchIcon.svg";
+import useGetMessagesNotes from "../hooks/useGetMessagesNotes";
+import { toggleFavoriteCovoApi } from "api/messenger";
 import { useNotification } from "services/WebSocket/useNotification.hook";
+import InboxDateFilterDropdown from "components/ui/Header/atoms/inboxDateFilterDropdown";
 
 const headerTabs = [
   {
@@ -285,7 +286,8 @@ const MessagesList = () => {
     <React.Fragment>
       <div className="flex flex-1 overflow-hidden flex-col pt-4 bg-[#08090a] relative">
         <div className="flex flex-col justify-center px-3 w-full text-sm leading-none bg-[#08090a] border-b border-eerieBlack">
-          <div className="flex flex-col justify-center items-start w-full">
+
+          <div className="flex justify-right items-center w-full">
             <div className="flex items-center pl-4 max-w-full rounded-full bg-[#1c1c1c] min-h-[40px] w-[271px]">
               <div className="flex flex-1 shrink gap-2 items-center self-stretch my-auto w-full basis-0">
                 <img
@@ -303,6 +305,10 @@ const MessagesList = () => {
                   />
                 </div>
               </div>
+            </div>
+            
+            <div className="ml-[18px]">
+              <InboxDateFilterDropdown />
             </div>
           </div>
 

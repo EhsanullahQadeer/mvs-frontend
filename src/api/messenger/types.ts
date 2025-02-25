@@ -50,10 +50,12 @@ export interface IGetConversationNotesParams {
 
 export interface IGetConversationsListParams {
   searchTerm: string;
-  order: boolean;
+  ascending: boolean;
   skip: number;
   take: number;
-  limit: number;
+  afterDate: Date;
+  sortByTime: boolean;
+  hasActiveIcebreaker: boolean;
 }
 
 export interface IDeleteConversationsPayload {

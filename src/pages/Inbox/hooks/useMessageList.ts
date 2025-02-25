@@ -1,7 +1,7 @@
-import { getConversationsList } from "api/messenger";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
+import { getConversationsList } from "api/messenger";
 
 const useMessageList = () => {
   const user = useSelector((state: RootState) => state);
@@ -18,10 +18,12 @@ const useMessageList = () => {
 
       const response = await getConversationsList({
         searchTerm: "",
-        order: true,
+        ascending: false,
         skip: 0,
         take: 20,
-        limit: 20,
+        afterDate: null,
+        sortByTime: false,
+        hasActiveIcebreaker: false
       });
       const allConversations = response.data.conversations.filter((convo) => {
         const isUserA = currentUserInfo?.id === convo.user_a.id;
