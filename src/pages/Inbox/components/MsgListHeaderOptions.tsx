@@ -4,7 +4,6 @@ import ActionMenu from "./ActionMenu";
 import { toast } from "react-toastify";
 import { FiInbox } from "react-icons/fi";
 import { FaRegStar } from "react-icons/fa";
-import { LuFileClock } from "react-icons/lu";
 import { IoIosArrowBack } from "react-icons/io";
 import AlertDialog from "components/util/AlertDialog";
 import { IoChevronForwardOutline } from "react-icons/io5";
@@ -23,14 +22,6 @@ import {
   toggleArchiveConvoApi,
   toggleConvoPriorityApi,
 } from "api/messenger";
-
-import AlertDialog from "components/util/AlertDialog";
-import { useState } from "react";
-import { IMessage } from "./types";
-import ActionMenu from "./ActionMenu";
-import { FiInbox } from "react-icons/fi";
-import { ReactComponent as CircleAlert } from "../../../assets/icons/circleWarning.svg";
-import { FaRegStar } from "react-icons/fa";
 
 interface Props {
   selectedConversations: number[];

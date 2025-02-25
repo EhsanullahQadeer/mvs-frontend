@@ -24,7 +24,7 @@ import useMessageList from "../hooks/useMessageList";
 import MsgListHeaderOptions from "./MsgListHeaderOptions";
 import searchIcon from "../../../assets/icons/searchIcon.svg";
 import useGetMessagesNotes from "../hooks/useGetMessagesNotes";
-import { getMessages, toggleFavoriteCovoApi } from "api/messenger";
+import { toggleFavoriteCovoApi } from "api/messenger";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 import NoMessagesYetPrompt from "components/ui/Header/molecules/noMessagesYet";
 import InboxMessageTabList from "components/ui/Header/molecules/inboxMessageTabList";
@@ -323,7 +323,8 @@ const MessagesList = () => {
           <>{renderConversations()}</>
         ) : (
           <>
-          <InboxMessageTabList setTab={setTab} tab={tab}></InboxMessageTabList>
+          {/* TODO: Remove hard coded values on unreadMessageCount values and replace with api call returned values */}
+          <InboxMessageTabList setTab={setTab} tab={tab} unreadMessageCount={[999, 3, 15]}></InboxMessageTabList>
             {renderConversations()}
           </>
         )}
