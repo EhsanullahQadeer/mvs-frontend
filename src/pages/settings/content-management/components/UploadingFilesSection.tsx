@@ -14,6 +14,7 @@ import { ICurrentUser } from "./types";
 
 type Props = {
   uploadingFile: File;
+  setUploadingFile?: (file: File) => void;
   fileRedisKey: string;
   uploadProgress: number;
   handleCancel: () => void;
@@ -24,6 +25,7 @@ type Props = {
 const UploadingFilesSection = (props: Props) => {
   const {
     uploadingFile,
+    setUploadingFile,
     fileRedisKey,
     uploadProgress,
     handleCancel,
@@ -119,7 +121,7 @@ const UploadingFilesSection = (props: Props) => {
           )}
         </div>
 
-        <MetaDataForm {...{ fileRedisKey, handleCancel, currentUserInfo, setUpdateData }} />
+        <MetaDataForm {...{ fileRedisKey, handleCancel, currentUserInfo, uploadProgress,setUpdateData, setUploadingFile }} />
       </div>
     </>
   );

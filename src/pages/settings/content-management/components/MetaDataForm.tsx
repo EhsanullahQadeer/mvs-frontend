@@ -14,13 +14,14 @@ import AlertDialog from "components/util/AlertDialog";
 import UploadingFileMetaData from "./UploadingFileMetaData";
 import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
 import { getSampleCollaborators, updateFileMetadata, uploadedFileMetadata } from "api/sounds";
-import { CircularProgress } from "@mui/material";
 import * as Yup from "yup";
 import { sanitizeInput } from "utils/stringUtils";
 
 type Props = {
   fileRedisKey?: string;
+  setUploadingFile?: (file: File) => void;
   handleCancel?: () => void;
+  uploadProgress?: number;
   isEditSample?: boolean;
   handleClose?: () => void;
   sampleOwner?: IUserProfile;
@@ -41,6 +42,8 @@ const MetaDataForm = (
   const {
     fileRedisKey,
     handleCancel,
+    setUploadingFile,
+    uploadProgress,
     isEditSample,
     handleClose,
     sampleToEdit,
@@ -208,7 +211,7 @@ const MetaDataForm = (
         const response = await uploadedFileMetadata(fileRedisKey, body);
         console.log('Upload response:', response);
         setUpdateData && setUpdateData(Date.now());
-        handleCancel?.();
+        setUploadingFile && setUploadingFile(null);
         return;
       } 
       
@@ -216,7 +219,7 @@ const MetaDataForm = (
         const response = await updateFileMetadata(sampleToEdit.id, body);
         console.log('Update response:', response);
         setUpdateData && setUpdateData(Date.now());
-        handleClose?.();
+        setUploadingFile && setUploadingFile(null);
         return;
       }
 
@@ -321,10 +324,10 @@ const MetaDataForm = (
                 </button>
                 <button
                   type="submit"
-                  disabled={isSaving}
+                  disabled={uploadProgress < 100}
                   className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"
                 >
-                  {isSaving ? "Saving..." : "Save Changes"}
+                  {isSaving || uploadProgress < 100 ? "Saving..." : "Save Changes"}
                 </button>
               </div>
 

@@ -24,14 +24,6 @@ import {
   toggleConvoPriorityApi,
 } from "api/messenger";
 
-import AlertDialog from "components/util/AlertDialog";
-import { useState } from "react";
-import { IMessage } from "./types";
-import ActionMenu from "./ActionMenu";
-import { FiInbox } from "react-icons/fi";
-import { ReactComponent as CircleAlert } from "../../../assets/icons/circleWarning.svg";
-import { FaRegStar } from "react-icons/fa";
-
 interface Props {
   selectedConversations: number[];
   handleApiSuccessfull: () => void;
