@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, createRef } from "react";
 import { ReactComponent as SendArrowIcon } from "../../../assets/icons/sendArrowIcon.svg";
-import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFile.svg";
+import { ReactComponent as AudioFileIconFromSample } from "../../../assets/icons/audioFile.svg";
+import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFileFromDevice.svg";
 import { AudioRecorder } from "react-audio-voice-recorder";
 import PurchaseOrderDialog from "./PurchaseOrderDialog";
 import { replyToMessage, sendInboxMessage } from "api/messenger";
@@ -13,6 +14,7 @@ import { CircularProgress } from "@mui/material";
 import AudioWaveform from "components/util/AudioWaveform";
 import CustomAudioRecorder from "./CustomAudioRecorder";
 import RecordedAudioPlayer from "./RecordedAudioPlayer";
+import SampleModalFooter from "./SampleModalFooter";
 
 type Props = {
   conversation: IConversation;
@@ -53,7 +55,7 @@ const Footer = ({
   const [reloadComponent, setReloadComponent] = useState(false);
   const textareRef = useRef<HTMLTextAreaElement>();
   let onChangeTimeout;
-
+  const [isSampleModalOpen, setIsSampleModalOpen] = useState(false);
 
   useEffect(() => {
     if (reloadComponent) {
@@ -262,6 +264,12 @@ const Footer = ({
     setIsRecording(false);
   };
 
+  const handleSampleSelect = (sample: any) => {
+    // Handle the selected sample here
+    // You might want to set it as the selectedAudioFile or handle it differently
+    setIsSampleModalOpen(false);
+  };
+
   return (
     <>
       <div className="sticky bottom-0">
@@ -388,6 +396,25 @@ const Footer = ({
                     </div>
                   </div>
 
+                  <button
+                    onClick={() => setIsSampleModalOpen(true)}
+                    className={`text-dimGray ${
+                      isFeedbackSection
+                        ? "cursor-not-allowed pointer-events-none"
+                        : "cursor-pointer pointer-events-auto"
+                    }`}
+                  >
+                    <AudioFileIconFromSample />
+                  </button>
+
+                  <CustomAudioRecorder
+                    onRecordingComplete={handleRecordingComplete}
+                    onDurationChange={handleDurationChange}
+                    onRecordingStateChange={handleRecordingStateChange}
+                    onStopRef={stopRecordingRef}
+                    onDelete={() => setRecordedAudio(null)}
+                  />
+
                   <div
                     className={`${
                       isFeedbackSection
@@ -413,14 +440,6 @@ const Footer = ({
                       <AudioFileIcon />
                     </label>
                   </div>
-
-                  <CustomAudioRecorder
-                    onRecordingComplete={handleRecordingComplete}
-                    onDurationChange={handleDurationChange}
-                    onRecordingStateChange={handleRecordingStateChange}
-                    onStopRef={stopRecordingRef}
-                    onDelete={() => setRecordedAudio(null)}
-                  />
                 </div>
                 
                 <div className="shrink-0 flex items-center gap-2">
@@ -471,6 +490,13 @@ const Footer = ({
           setIsSubmitting,
         }}
       />)}
+
+      <SampleModalFooter
+        open={isSampleModalOpen}
+        onClose={() => setIsSampleModalOpen(false)}
+        onSelect={handleSampleSelect}
+        userId={currentUserInfo?.id}
+      />
     </>
   );
 };

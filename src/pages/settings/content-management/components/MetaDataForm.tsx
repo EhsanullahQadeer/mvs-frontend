@@ -201,7 +201,6 @@ const MetaDataForm = (
         const response = await uploadedFileMetadata(fileRedisKey, body);
         console.log('Upload response:', response);
         setUpdateData && setUpdateData(Date.now());
-        handleCancel?.();
         return;
       } 
       
