@@ -14,7 +14,6 @@ import AlertDialog from "components/util/AlertDialog";
 import UploadingFileMetaData from "./UploadingFileMetaData";
 import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
 import { getSampleCollaborators, updateFileMetadata, uploadedFileMetadata } from "api/sounds";
-import { CircularProgress } from "@mui/material";
 import * as Yup from "yup";
 import { sanitizeInput } from "utils/stringUtils";
 
