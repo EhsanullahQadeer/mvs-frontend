@@ -188,7 +188,7 @@ const MessagesDetail = (props: Props) => {
             </div>
           </div>
           <div className="flex px-4 py-2 w-full">
-              <MessageInfoNotesTabMenu headerTabs={headerTabs} tab={tab} setTab={setTab}></MessageInfoNotesTabMenu>
+              <MessageInfoNotesTabMenu headerTabs={headerTabs} tab={tab} setTab={setTab}/>
           </div>
         </div>
         <div className="flex flex-col flex-1 relative overflow-hidden">
