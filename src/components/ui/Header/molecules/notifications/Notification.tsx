@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { toggleNotificationAsRead } from "api/user";
+import { useEffect, useState } from "react";
+import { toggleNotificationAsRead } from "api/notifier";
 import NotifTimestamp from "../../atoms/notificationAtoms/notifTimestamp";
 import AudioShareNotifContent from "./notificationContents/audioShareContent";
 import ReadBubble from "components/ui/Header/atoms/notificationAtoms/readOrUnreadBubble";
@@ -25,21 +25,29 @@ export type TSender = {
   username: string;
 }
 
+export type TRecipient = {
+  id: number;
+  displayName: string;
+  thumbnail: string;
+  username: string;
+}
+
 export type TNotificationData = {
   createdAt: string;
-  sender: TSender;
   id: number;
   isRead: boolean;
-  type: string;
-  media: {
-    id: number;
-    name: string;
-  };
+  recipient: TRecipient;
   sample: {
     id: number;
     name: string;
     filename: string;
   };
+  media: {
+    id: number;
+    name: string;
+  };
+  sender: TSender;
+  type: string;
   connectionRequest: {
     id: number;
     status: boolean;
@@ -68,9 +76,7 @@ const NOTIFICATION_COMPONENTS = {
 } as const;
 
 const Notification = ({ notification, unreadNotifCount, setUnreadNotifCount }: { notification: TNotificationData, unreadNotifCount: number, setUnreadNotifCount: any }) => {
-  //console.log("Unread Notif Count: ", unreadNotifCount);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isRead, setIsRead] = useState(notification.isRead);
+  const [isClosing, setIsClosing] = useState(false); // New state for closing animation
 
   const NotificationContent = 
     NOTIFICATION_COMPONENTS[notification.type as keyof typeof NOTIFICATION_COMPONENTS];
@@ -78,13 +84,15 @@ const Notification = ({ notification, unreadNotifCount, setUnreadNotifCount }: {
   const handleMarkAsRead = async () => {
     try {
       await toggleNotificationAsRead(notification.id);
-      notification.isRead = !notification.isRead;
-      if(isRead) {
+      if(notification.isRead) {
         setUnreadNotifCount(unreadNotifCount + 1);
       } else {
         setUnreadNotifCount(unreadNotifCount - 1);
+        setIsClosing(true);  // THIS DOES NOTHING
       }
-      setIsRead(!isRead);
+      notification.isRead = !notification.isRead;
+      setTimeout(() => {
+      }, 300); // Match this duration with your CSS transition duration
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
     }
@@ -92,14 +100,11 @@ const Notification = ({ notification, unreadNotifCount, setUnreadNotifCount }: {
 
   return (
     <div 
-      className="flex" 
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+      className={"flex group"} >
       <div className="py-10 pr-5 pl-3 flex flex-grow bg-[#1C1C1C] hover:bg-[#242424] border-b-2 border-b-[#242424]">
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center flex-shrink-0">
-            <ReadBubble isRead={isRead} />
+          <div className="flex items-center">
+            <ReadBubble isRead={notification.isRead} />
             <div className="mr-2">
               <Thumbnail thumbnail={notification.sender.thumbnail} />
             </div>
@@ -107,17 +112,17 @@ const Notification = ({ notification, unreadNotifCount, setUnreadNotifCount }: {
           <div className="flex-grow">
             {NotificationContent && <NotificationContent notification={notification} />}
           </div>
-          <div className="flex items-center max-w-[36px] ml-2">
-            {isHovered ? (
+          <div className="flex items-center max-w-[36px] ml-2 ">
+            <div className="hidden group-hover:flex">
               <CheckmarkButton onClick={handleMarkAsRead} />
-            ) : (
+            </div>
+            <div className="flex group-hover:hidden">
               <NotifTimestamp
-                isHovered={isHovered}
                 isRead={notification.isRead}
                 id={notification.id}
                 createdAt={notification.createdAt}
               />
-            )}
+            </div>
           </div>
         </div>
       </div>

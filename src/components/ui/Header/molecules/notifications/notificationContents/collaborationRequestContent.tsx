@@ -28,7 +28,7 @@ const CollaborationRequestNotifContent = ({ notification }: {
         </span>
         <span>on the sample </span>
         <span className="font-semibold pr-[4px] text-[#0185FF]">
-            "{notification.sample.name}"
+            "{notification.media.name}"
           </span>
       </p>
       <div className="flex items-center gap-2 pt-[4px]">

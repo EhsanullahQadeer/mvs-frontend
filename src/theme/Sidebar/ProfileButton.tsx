@@ -7,18 +7,16 @@
  *************************************************************************/
 
 /* IMPORTS */
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
 import Avatar from "react-avatar";
+import { useNavigate } from "react-router-dom";
+import { Menu, Transition } from "@headlessui/react";
+import React, { useState, useRef, useEffect } from "react";
 
 /* LOCAL IMPORTS */
-import UserSettingsModal from "components/modals/user-settings";
 import ContactModal from "components/modals/contact-us";
 import { useHeaderHooks } from "../Header/Header.hooks";
-import { classNames, HeaderProps } from "../Header/Header.types";
-import { useNotification } from "services/WebSocket/useNotification.hook";
+import UserSettingsModal from "components/modals/user-settings";
 
 interface ProfileButtonProps {
   direction?: 'left' | 'right';

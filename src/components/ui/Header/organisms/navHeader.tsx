@@ -30,14 +30,31 @@ const NavHeader: React.FC<UserData> = () => {
   const { triggerAnimation } = useNotificationAnimation();
   const [isPopUpVisible, setIsPopUpVisible] = useState(false);
   const [unreadNotifCount, setUnreadNotifCount] = useState<number>(0);
+  const [allowLoading, setAllowLoading] = useState<boolean>(true);
 
   const fetchNotifications = async () => {
-    const notifications = await getUserNotifications();
+    const notifications = await getUserNotifications([
+      'CONNECTION_REQUEST',
+      'CONNECTION_RESPONSE',
+      'COLLABORATION_REQUEST',
+      'COLLABORATION_ACCEPT',
+      'FEEDBACK_PROVIDED',
+      'NEW_COLLABORATOR',
+      'AUDIO_SHARE',
+      'FOLLOW',
+      'LIKE',
+      'AUDIO_UPDATE',
+      'DOWNLOAD_FILE',
+      'VIEW_PROFILE',
+      'VIEW_DEMO',
+    ], false, 0);
     console.log('notifications', notifications);
     setNotifications(notifications?.data);
   };
 
   const handleNotifClick = () => {
+    fetchNotifications();
+    setAllowLoading(true);
     setIsPopUpVisible((prev) => !prev);
   };
 
@@ -52,6 +69,12 @@ const NavHeader: React.FC<UserData> = () => {
         displayName: rawData?.sender?.displayName,
         thumbnail: rawData?.sender?.thumbnail,
         username: rawData?.sender?.username,
+      },
+      recipient: {
+        id: rawData?.recipient?.id,
+        displayName: rawData?.recipient?.displayName,
+        thumbnail: rawData?.recipient?.thumbnail,
+        username: rawData?.recipient?.username,
       },
       sample: rawData?.sample ? {
         id: Number(rawData?.sample?.id),
@@ -165,6 +188,8 @@ const NavHeader: React.FC<UserData> = () => {
         setNotifications={setNotifications}
         unreadNotifCount={unreadNotifCount}
         setUnreadNotifCount={setUnreadNotifCount}
+        allowLoading={allowLoading}
+        setAllowLoading={setAllowLoading}
         />
       )}
     </>    
