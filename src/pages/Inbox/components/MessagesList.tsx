@@ -324,7 +324,7 @@ const MessagesList = () => {
         ) : (
           <>
           {/* TODO: Remove hard coded values on unreadMessageCount values and replace with api call returned values */}
-          <InboxMessageTabList setTab={setTab} tab={tab} unreadMessageCount={[999, 3, 15]}></InboxMessageTabList>
+          <InboxMessageTabList setTab={setTab} tab={tab} unreadMessageCount={[999, 3, 15]}/>
             {renderConversations()}
           </>
         )}

@@ -13,7 +13,7 @@ const MessageCountBubble: React.FC<InboxMessageCountBubbleProps> = ({
   isSelected = false,
 }) => {
   // Determine the display value
-  const displayCount = unreadMessages > 99 ? "99+" : unreadMessages < 0 ? 0 : unreadMessages;
+  const displayCount = unreadMessages > 99 ? "99+" : unreadMessages;
 
   return (
     <div className={`flex items-center justify-center px-2 py-1 text-[12px] ${color} text-white rounded-full ml-[10px] ${isSelected ? 'font-semibold' : 'font-normal'}`}>
