@@ -3,15 +3,15 @@ import DropFilesSection from "pages/settings/content-management/components/DropF
 import UploadingFilesSection from "pages/settings/content-management/components/UploadingFilesSection";
 import { useEffect, useState } from "react";
 
-const UploadFileSection = () => {
-  const [currentUserInfo, setCurrentUserInfo] = useState(null);
+const UploadFileSection = (props) => {
+  const { user } = props;
+  const [currentUserInfo, setCurrentUserInfo] = useState(user);
   const [uploadingFile, setUploadingFile] = useState<File>(null);
   const [fileRedisKey, setFileRedisKey] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [updateData, setUpdateData] = useState(0);
 
   const handleCancel = () => {
-    // const response = cancelUploadAPI(fileRedisKey);
     setUploadProgress(0);
     setUploadingFile(null);
     setFileRedisKey("");
