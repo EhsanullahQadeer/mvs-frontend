@@ -24,7 +24,6 @@ type Props = {
   currentUserInfo: ICurrentUser;
   isNewUser?: boolean;
   updateData?: number;
-  isLoginProfile?: boolean;
 };
 
 const tableTabs = [
@@ -39,8 +38,7 @@ const defaultSampleSearchConstraints: ISampleSearchConstraints = {
 };
 
 const AttachedFilesSection = (props: Props) => {
-  const { setLoading, currentUserInfo, isNewUser, updateData, isLoginProfile } =
-    props;
+  const { setLoading, currentUserInfo, isNewUser, updateData } = props;
   const [selectedTab, setSelectedTab] = useState("all");
   const [sampleSearchConstraints, setSampleSearchConstraints] = useState(
     defaultSampleSearchConstraints
@@ -136,38 +134,34 @@ const AttachedFilesSection = (props: Props) => {
           currentUserInfo,
         }}
       />
-      {!isLoginProfile && (
-        <>
-          <div className="py-3 flex flex-col gap-2">
-            <h3 className="text-lg font-semibold text-platinum">
-              Attached files
-            </h3>
-            <p className="text-sm font-normal text-coolGray">
-              Files Associated with This Profile
-            </p>
-          </div>
-          <div className="my-2 p-4 bg-darkGray rounded-lg flex items-center">
-            {tableTabs.map((tab, idx) => {
-              const { label, value, func } = tab;
-              return (
-                <button
-                  key={label + idx}
-                  onClick={() => handleTabClick(value, func)}
-                  className={`py-3 px-4 text-xs font-semibold flex items-center justify-center border border-eclipseGray ${
-                    selectedTab === value
-                      ? "text-silver bg-eerieBlack"
-                      : "text-charcoalGray bg-jetBlack"
-                  } ${idx === 0 && "rounded-l-lg border-r-0"} ${
-                    idx === 2 && "rounded-r-lg border-l-0"
-                  } transition duration-300`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
+
+      <div className="py-3 flex flex-col gap-2">
+        <h3 className="text-lg font-semibold text-platinum">Attached files</h3>
+        <p className="text-sm font-normal text-coolGray">
+          Files Associated with This Profile
+        </p>
+      </div>
+
+      <div className="my-2 p-4 bg-darkGray rounded-lg flex items-center">
+        {tableTabs.map((tab, idx) => {
+          const { label, value, func } = tab;
+          return (
+            <button
+              key={label + idx}
+              onClick={() => handleTabClick(value, func)}
+              className={`py-3 px-4 text-xs font-semibold flex items-center justify-center border border-eclipseGray ${
+                selectedTab === value
+                  ? "text-silver bg-eerieBlack"
+                  : "text-charcoalGray bg-jetBlack"
+              } ${idx === 0 && "rounded-l-lg border-r-0"} ${
+                idx === 2 && "rounded-r-lg border-l-0"
+              } transition duration-300`}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
 
       {getUserSamplesResponse && (
         <div>

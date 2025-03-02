@@ -7,7 +7,11 @@
  *************************************************************************/
 
 import { useEffect, useState } from "react";
-import { getSampleCollaborators, updateFileMetadata, uploadedFileMetadata } from "api/sounds";
+import {
+  getSampleCollaborators,
+  updateFileMetadata,
+  uploadedFileMetadata,
+} from "api/sounds";
 import { Form, Formik } from "formik";
 import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
 import AlertDialog from "components/util/AlertDialog";
@@ -25,13 +29,9 @@ type Props = {
   currentUserInfo?: ICurrentUser;
   collaborators?: ICollaborator[];
   setUpdateData?: (event: any) => void;
-  isLoginProfile?: boolean;
 };
 
-const MetaDataForm = (
-  props: Props
-) => {
-
+const MetaDataForm = (props: Props) => {
   const {
     fileRedisKey,
     handleCancel,
@@ -41,7 +41,6 @@ const MetaDataForm = (
     currentUserInfo,
     collaborators,
     setUpdateData,
-    isLoginProfile
   } = props;
 
   console.log("MetaDataForm - received composer:", collaborators);
@@ -58,7 +57,6 @@ const MetaDataForm = (
     mime_type,
     length,
   } = sampleToEdit || {};
-
 
   const [selectedComposer, setSelectedComposer] = useState(() => collaborators);
   const [composerToDelete, setComposerToDelete] = useState(null);
@@ -102,12 +100,12 @@ const MetaDataForm = (
         const existingComposer = prevComposerData?.find(
           (existing) => existing.id === composer.id
         );
-        
-        const initialCollaborator = collaborators?.find( 
-          collab => collab.id === composer.id
+
+        const initialCollaborator = collaborators?.find(
+          (collab) => collab.id === composer.id
         );
 
-        const percentValue = initialCollaborator?.contribution 
+        const percentValue = initialCollaborator?.contribution
           ? initialCollaborator.contribution
           : parseFloat((100 / selectedComposer?.length).toFixed(2));
 
@@ -119,7 +117,7 @@ const MetaDataForm = (
             isEditable: existingComposer.isEditable || false,
           };
         }
-        
+
         return {
           ...composer,
           roles: composer.roles || [],
@@ -136,18 +134,12 @@ const MetaDataForm = (
   const handleSubmit = async (values) => {
     setIsSaving(true);
     try {
-      const { 
-        songName, 
-        songBpm,
-        sampleKey,
-        songType, 
-        songTags 
-      } = values;
+      const { songName, songBpm, sampleKey, songType, songTags } = values;
 
       const formattedTags = songTags
-        .split(' ')
-        .filter(tag => tag.trim())
-        .map(tag => tag.startsWith('#') ? tag.slice(1) : tag)
+        .split(" ")
+        .filter((tag) => tag.trim())
+        .map((tag) => (tag.startsWith("#") ? tag.slice(1) : tag))
         .filter((tag, index, self) => self.indexOf(tag) === index);
 
       const percentSum = composerData.reduce((sum, composer) => {
@@ -192,32 +184,32 @@ const MetaDataForm = (
         }),
       };
 
-      console.log('Attempting save with:', { 
-        isEditSample, 
-        editFileId: sampleToEdit?.id, 
-        fileRedisKey, 
-        body 
+      console.log("Attempting save with:", {
+        isEditSample,
+        editFileId: sampleToEdit?.id,
+        fileRedisKey,
+        body,
       });
-      
+
       if (fileRedisKey) {
         const response = await uploadedFileMetadata(fileRedisKey, body);
-        console.log('Upload response:', response);
+        console.log("Upload response:", response);
         setUpdateData && setUpdateData(Date.now());
         handleCancel?.();
         return;
-      } 
-      
+      }
+
       if (isEditSample && sampleToEdit?.id) {
         const response = await updateFileMetadata(sampleToEdit.id, body);
-        console.log('Update response:', response);
+        console.log("Update response:", response);
         setUpdateData && setUpdateData(Date.now());
         handleClose?.();
         return;
       }
 
-      console.error('No valid file key or sample ID for update');
+      console.error("No valid file key or sample ID for update");
     } catch (error) {
-      console.error('Save error:', error);
+      console.error("Save error:", error);
     } finally {
       setIsSaving(false);
     }
@@ -258,7 +250,7 @@ const MetaDataForm = (
         }}
       />
 
-      <Formik 
+      <Formik
         initialValues={initialValues}
         onSubmit={(values) => handleSubmit(values)}
       >
@@ -278,13 +270,10 @@ const MetaDataForm = (
                     handleClose,
                     sample: sampleToEdit,
                   }}
-                  isLoginProfile={isLoginProfile}
-
                 />
-
               </div>
 
-              {(selectedComposer?.length > 0  && !isLoginProfile) && (
+              {selectedComposer?.length > 0 && (
                 <div className={`${isEditSample && "px-5"} my-2`}>
                   <ContributersTable
                     {...{
@@ -298,33 +287,32 @@ const MetaDataForm = (
                   />
                 </div>
               )}
-              {!isLoginProfile && 
-              <div
-              className={`py-5 ${
-                isEditSample ? "px-5" : "px-2.5"
-              } flex justify-end gap-4`}
-            >
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="bg-transparent border border-limeGreen w-[151px] flex justify-center items-center py-3 text-limeGreen text-sm font-semibold rounded-[60px]"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"
-              >
-                {isSaving ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
-              }
 
-              
+              <div
+                className={`py-5 ${
+                  isEditSample ? "px-5" : "px-2.5"
+                } flex justify-end gap-4`}
+              >
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="bg-transparent border border-limeGreen w-[151px] flex justify-center items-center py-3 text-limeGreen text-sm font-semibold rounded-[60px]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"
+                >
+                  {isSaving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
 
               {errors.songType && touched.songType && (
-                <div className="text-red-500 text-xs mt-1">{errors.songType}</div>
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.songType}
+                </div>
               )}
             </>
           </Form>

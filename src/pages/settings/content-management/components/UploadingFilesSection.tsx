@@ -22,7 +22,6 @@ type Props = {
   currentUserInfo: ICurrentUser;
   setUpdateData?: (event: number) => void;
   isLoginProfile?: boolean;
-
 };
 
 const UploadingFilesSection = (props: Props) => {
@@ -33,7 +32,7 @@ const UploadingFilesSection = (props: Props) => {
     handleCancel,
     currentUserInfo,
     setUpdateData,
-    isLoginProfile
+    isLoginProfile,
   } = props;
 
   function formatFileSize(sizeInBytes: number): string {
@@ -124,24 +123,24 @@ const UploadingFilesSection = (props: Props) => {
             </div>
           )}
         </div>
-        {!isLoginProfile &&
-                <MetaDataForm {...{ fileRedisKey, handleCancel, currentUserInfo, setUpdateData }} />
-}
-{isLoginProfile && (
-  <SampleUploadModel
-    open={isModalOpen}
-    handleCloses={() => setIsModalOpen(false)}
-    fileRedisKey={fileRedisKey}
-    handleCancel={handleCancel}
-    currentUserInfo={currentUserInfo}
-    setUpdateData={setUpdateData}
-    isEditSample={false} // Provide default or actual value
-    sampleToEdit={null}  // Provide actual value if applicable
-    collaborators={[]}   // Provide actual value if applicable
-  />
-)}
-
-
+        {!isLoginProfile && (
+          <MetaDataForm
+            {...{ fileRedisKey, handleCancel, currentUserInfo, setUpdateData }}
+          />
+        )}
+        {isLoginProfile && (
+          <SampleUploadModel
+            open={isModalOpen}
+            handleClose={() => setIsModalOpen(false)}
+            fileRedisKey={fileRedisKey}
+            handleCancel={handleCancel}
+            currentUserInfo={currentUserInfo}
+            setUpdateData={setUpdateData}
+            isEditSample={false}
+            sampleToEdit={null}
+            collaborators={[]}
+          />
+        )}
       </div>
     </>
   );

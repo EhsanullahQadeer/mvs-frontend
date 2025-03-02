@@ -1,18 +1,14 @@
-import { uploadFile } from 'api/sounds'
-import AttachedFilesSection from 'pages/settings/content-management/components/AttachedFilesSection'
-import DropFilesSection from 'pages/settings/content-management/components/DropFilesSection'
-import UploadingFilesSection from 'pages/settings/content-management/components/UploadingFilesSection'
-import React, { useEffect, useState } from 'react'
-import SampleUploadModel from './SampleUploadModel'
+import { uploadFile } from "api/sounds";
+import DropFilesSection from "pages/settings/content-management/components/DropFilesSection";
+import UploadingFilesSection from "pages/settings/content-management/components/UploadingFilesSection";
+import { useEffect, useState } from "react";
 
 const UploadFileSection = () => {
-  const [loading, setLoading] = useState(false);
-
-const [currentUserInfo, setCurrentUserInfo] = useState(null);
+  const [currentUserInfo, setCurrentUserInfo] = useState(null);
   const [uploadingFile, setUploadingFile] = useState<File>(null);
   const [fileRedisKey, setFileRedisKey] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [updateData,setUpdateData] = useState(0);
+  const [updateData, setUpdateData] = useState(0);
 
   const handleCancel = () => {
     // const response = cancelUploadAPI(fileRedisKey);
@@ -20,12 +16,12 @@ const [currentUserInfo, setCurrentUserInfo] = useState(null);
     setUploadingFile(null);
     setFileRedisKey("");
   };
-  
+
   function trackUploadProgress(sessionId: string) {
     const eventSource = new EventSource(
       `${process.env.REACT_APP_API_URL}/sounds/upload/sample/progress/${sessionId}`
     );
-    
+
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.progress === 100) {
@@ -45,54 +41,53 @@ const [currentUserInfo, setCurrentUserInfo] = useState(null);
     };
   }
   const handleUploadFile = async () => {
-      try {
-        const formData = new FormData();
-        formData.append("file", uploadingFile);
-  
-        const uploadResponse = await uploadFile(formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          maxBodyLength: Infinity,
-          maxContentLength: Infinity,
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            console.log(
-              `Client-to-Backend Upload Progress: ${percentCompleted}%`
-            );
-            setUploadProgress(percentCompleted);
-          },
-        });
-        setFileRedisKey(uploadResponse.data.redis_key);
-      } catch (error) {
-        console.log("error ", error);
+    try {
+      const formData = new FormData();
+      formData.append("file", uploadingFile);
+
+      const uploadResponse = await uploadFile(formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.log(
+            `Client-to-Backend Upload Progress: ${percentCompleted}%`
+          );
+          setUploadProgress(percentCompleted);
+        },
+      });
+      setFileRedisKey(uploadResponse.data.redis_key);
+    } catch (error) {
+      console.log("error ", error);
+    }
+  };
+  useEffect(() => {
+    if (uploadingFile !== null) {
+      handleUploadFile();
+      if (fileRedisKey) {
+        trackUploadProgress(fileRedisKey);
       }
-    };
-   useEffect(() => {
-      if (uploadingFile !== null) {
-        handleUploadFile();
-        if (fileRedisKey) {
-          trackUploadProgress(fileRedisKey);
-        }
-      }
-    }, [uploadingFile]);
+    }
+  }, [uploadingFile]);
 
   return (
     <div>
-         (<div>
-        
-
+      (
+      <div>
         <div className="px-3">
-        <DropFilesSection
-  {...{
-    uploadingFile, 
-    setUploadingFile,
-    currentUserInfo
-  }}
-  isLoginProfile={true} 
-/>
+          <DropFilesSection
+            {...{
+              uploadingFile,
+              setUploadingFile,
+              currentUserInfo,
+            }}
+            isLoginProfile={true}
+          />
 
           {uploadingFile && (
             <UploadingFilesSection
@@ -104,16 +99,14 @@ const [currentUserInfo, setCurrentUserInfo] = useState(null);
                 currentUserInfo,
                 setUpdateData,
               }}
-              isLoginProfile={true} 
-
+              isLoginProfile={true}
             />
           )}
-          <AttachedFilesSection {...{ setLoading, currentUserInfo, updateData }}               isLoginProfile={true} 
- />
         </div>
-      </div>)
+      </div>
+      )
     </div>
-  )
-}
+  );
+};
 
-export default UploadFileSection
+export default UploadFileSection;
