@@ -1,7 +1,8 @@
 import { getUserNotifications } from 'api/user';
+import { CircularProgress } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 import NotificationList from '../molecules/notifications/NotificationList';
-import NotificationCountBubble from '../atoms/notificationAtoms/notificationCountBubble';
+import NotificationManagerTab from '../molecules/notificationMolecules/notificationTabs';
 import NoNotificationsYetPrompt from '../molecules/notificationMolecules/noNotificationsYet';
 
 declare global {
@@ -26,6 +27,8 @@ interface NotificationManagerProps {
   setNotifications: React.Dispatch<React.SetStateAction<NotificationBody[]>>;
   unreadNotifCount: number;
   setUnreadNotifCount: React.Dispatch<React.SetStateAction<number>>;
+  allowLoading: boolean;
+  setAllowLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type NotificationType = 'CONNECTION_REQUEST' | 'CONNECTION_RESPONSE' | 'COLLABORATION_REQUEST' | 
@@ -49,7 +52,8 @@ const NOTIFICATION_GROUPS = {
     'DOWNLOAD_FILE',
     'VIEW_PROFILE',
     'VIEW_DEMO',
-  ] as NotificationType[]
+  ] as NotificationType[],
+  archive: [] as NotificationType[]
 } as const;
 
 const NotificationsManager: React.FC<NotificationManagerProps> = ({ 
@@ -58,11 +62,15 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   setIsOpen, 
   setNotifications,
   unreadNotifCount,
-  setUnreadNotifCount
+  setUnreadNotifCount,
+  allowLoading,
+  setAllowLoading,
 }) => {
-  const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
+  let skip = 0;
   const [isToggled, setIsToggled] = useState<boolean>(false);
   const [notifIdForIsRead, setNotifIdForIsRead] = useState<number>();
+  const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
 
   const handleToggle = () => {
     setIsToggled(!isToggled);
@@ -80,11 +88,46 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
     }
   }, [notifIdForIsRead]);
 
-
   const handleTabClick = async (tab: 'all' | keyof typeof NOTIFICATION_GROUPS) => {
+    skip = 0;
+    setAllowLoading(true);
     setSelectedTab(tab);
-    const response = await getUserNotifications(NOTIFICATION_GROUPS[tab]);
-    setNotifications(response.data);
+    try {
+      let response;
+      if (tab === "archive") {
+        response = await getUserNotifications(NOTIFICATION_GROUPS[tab], true, skip);
+      } else {
+        response = await getUserNotifications(NOTIFICATION_GROUPS[tab], false, skip);
+      }
+      if (response.data.length < 10) {setAllowLoading(false)}
+      setNotifications(response.data); // Update notifications with the new data
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      // Handle error (e.g., show a notification or set an error state)
+    }
+  };
+
+  const loadMoreNotifications = async () => {
+    if (!allowLoading) return; // Prevent multiple calls if already loading or not allowed
+    try {
+      skip += 10;
+      const response = await getUserNotifications(NOTIFICATION_GROUPS[selectedTab], false, skip);
+      if (response.data.length < 10) {setAllowLoading(false)}
+      setNotifications((prev) => [...prev, ...response.data]);
+    } catch (error) {
+      console.error("Error loading more notifications:", error);
+      // Handle error (e.g., show a notification or set an error state)
+    }
+  };
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      setScrollTimeout(setTimeout(() => {
+        loadMoreNotifications();
+      }, 500)); // Wait for 500ms after scrolling stops
+    }
   };
 
   const isNotificationInCurrentTab = (type: string) => {
@@ -92,10 +135,15 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
     return selectedTab in NOTIFICATION_GROUPS && NOTIFICATION_GROUPS[selectedTab as keyof typeof NOTIFICATION_GROUPS].includes(type as NotificationType);
   };
 
-  // Export this for NavHeader to use
   useEffect(() => {
     window.isNotificationInCurrentTab = isNotificationInCurrentTab;
   }, [selectedTab]);
+
+  useEffect(() => {
+    if (notifications.length < 3) {
+      setAllowLoading(false);
+    }
+  }, [notifications]);
 
   return (
     <>
@@ -126,25 +174,10 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
             </div>
             <div className="flex justify-between items-center h-[45px]">
               <div className="flex">
-                <div
-                  className={`flex text-[14px] font-normal cursor-pointer px-[10px] py-[11px] ${selectedTab === 'all' ? 'text-white border-b-2 border-[#3D3D3D]' : 'text-[#666666] hover:border-b-2 hover:border-gray-300'}`}
-                  onClick={() => handleTabClick('all')}
-                >
-                  All
-                  <NotificationCountBubble unreadNotifications={unreadNotifCount}/>
-                </div>
-                <div
-                  className={`text-[14px] font-normal cursor-pointer px-[10px] py-[11px] ${selectedTab === 'social' ? 'text-white border-b-2 border-[#3D3D3D]' : 'text-[#666666] hover:border-b-2 hover:border-gray-300'}`}
-                  onClick={() => handleTabClick('social')}
-                >
-                  Social
-                </div>
-                <div
-                  className={`text-[14px] font-normal cursor-pointer px-[10px] py-[11px] ${selectedTab === 'activity' ? 'text-white border-b-2 border-[#3D3D3D]' : 'text-[#666666] hover:border-b-2 hover:border-gray-300'}`}
-                  onClick={() => handleTabClick('activity')}
-                >
-                  Activity
-                </div>
+                <NotificationManagerTab tabName={"All"} selectedTab={selectedTab} handleTabClick={handleTabClick} unreadNotifCount={unreadNotifCount}></NotificationManagerTab>
+                <NotificationManagerTab tabName={"Social"} selectedTab={selectedTab} handleTabClick={handleTabClick} unreadNotifCount={null}></NotificationManagerTab>
+                <NotificationManagerTab tabName={"Activity"} selectedTab={selectedTab} handleTabClick={handleTabClick} unreadNotifCount={null}></NotificationManagerTab>
+                <NotificationManagerTab tabName={"Archive"} selectedTab={selectedTab} handleTabClick={handleTabClick} unreadNotifCount={null}></NotificationManagerTab>
               </div>
             </div>
           </div>
@@ -152,8 +185,19 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
           {notifications.length === 0 ? 
             <NoNotificationsYetPrompt/>
             :
-            <div className="flex flex-col overflow-y-auto h-[calc(621px-120px)] scrollbar-hidden">
+            <div className="flex flex-col overflow-y-auto h-[calc(621px-120px)] scrollbar-hidden" onScroll={handleScroll}>
               <NotificationList data={notifications} setNotifIdForIsRead={setNotifIdForIsRead} unreadNotifCount={unreadNotifCount} setUnreadNotifCount={setUnreadNotifCount}/>
+              <div className={`h-[100px] pb-1 ${allowLoading ? "": "hidden"}`}>
+                <div className="w-full flex justify-center items-center bg-black opacity-40 z-[999px] h-[50px]">
+                  <CircularProgress
+                    sx={{
+                      width: "30px !important",
+                      height: "30px !important",
+                      color: "#9EFF00",
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           }
         </div>

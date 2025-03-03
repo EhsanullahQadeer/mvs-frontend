@@ -16,6 +16,7 @@ export const timeAgo = (date: Date) => {
 
 // Function to truncate the filename
 export const truncateFilename = (filename: string, maxLength: number = 20) => {
+  if (filename === undefined) return "";
   if (filename.length <= maxLength) return filename; // Return if the filename is short enough
   const start = filename.slice(0, 15); // First 5 characters
   const end = filename.slice(-4); // Last 4 characters

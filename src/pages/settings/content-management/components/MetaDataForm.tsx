@@ -6,16 +6,16 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import { sanitizeInput } from "utils/stringUtils";
 import ContributersTable from "./ContributersTable";
 import AlertDialog from "components/util/AlertDialog";
 import UploadingFileMetaData from "./UploadingFileMetaData";
+import { updateFileMetadata, uploadedFileMetadata } from "api/sounds";
 import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
-import { getSampleCollaborators, updateFileMetadata, uploadedFileMetadata } from "api/sounds";
-import * as Yup from "yup";
-import { sanitizeInput } from "utils/stringUtils";
 
 type Props = {
   fileRedisKey?: string;

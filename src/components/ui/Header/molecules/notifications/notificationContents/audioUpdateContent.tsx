@@ -15,7 +15,7 @@ const AudioUpdateNotifContent = ({ notification }: { notification: TNotification
         </span>
         <span>has updated the audio file </span>
         <span className="font-semibold pr-[4px] text-[#0185FF]">
-            "{notification.sample.filename}"
+            "{notification.media.name}"
           </span>
       </p>
       <div className=" flex items-center gap-2 pt-[4px]">
