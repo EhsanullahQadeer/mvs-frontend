@@ -23,6 +23,7 @@ import {
   IArtistProfileData,
   // MusicTableArr
 } from "./components/types";
+import { getCheckUserHasSampleType } from "api/sounds";
 import { CircularProgress } from "@mui/material";
 import ProfileAboutSection from "./components/ProfileAboutSection";
 import searchIcon from "../../assets/icons/searchIcon.svg";
@@ -37,7 +38,6 @@ import SampleUploadModel from "./components/SampleUploadModel";
 
 const ArtistProfile = () => {
   const { username } = useParams();
-  const [selectedTab, setSelectedTab] = useState("instrumental");
   const [isConnect, setIsConnect] = useState(true);
   const [artistData, setArtistData] = useState<IArtistProfileData | null>(null);
   const [isLoading, setLoading] = useState(true);
@@ -47,6 +47,21 @@ const ArtistProfile = () => {
   const [isLoginUser, setIsLoginUser] = useState(false);
   const user = useSelector((state: RootState) => state.auth.user);
 
+  const tabs = [
+    { label: "Instrumentals", value: "instrumental" },
+    { label: "Samples", value: "sample" },
+    { label: "Contributions", value: "contributions" },
+    { label: "Full Songs", value: "full_song" },
+  ];
+
+  const [hasSampleType, setHasSampleType] = useState<Record<string, boolean>>({
+    instrumental: false,
+    sample: false,
+    contribution: false,
+    full_song: false
+  });
+  const [selectedTab, setSelectedTab] = useState('');
+  const types = ["instrumental", "sample", "contribution", "full_song"];
   useEffect(() => {
     if (artistData && user) {
       if (artistData.id === user.id) {
@@ -55,14 +70,31 @@ const ArtistProfile = () => {
     }
   }, [artistData, user]);
 
+  const fetchSampleTypes = async () => {
+    if (user && artistData) {
+      const typeString = types.join(',');
+      const response = await getCheckUserHasSampleType(typeString, artistData.id);
+      console.log("response", response);
+      console.log("response", user.id, artistData.id);
+      setHasSampleType(response.data);
+    }
+  }
+
+  useEffect(() => {
+    // Reset states when user or artist changes
+    setHasSampleType({
+      instrumental: false,
+      sample: false,
+      contribution: false,
+      full_song: false
+    });
+    setSelectedTab('');
+    fetchSampleTypes();
+  }, [artistData, user]);
+
   const [creditsData, setCreditsData] = useState([]);
 
-  const tabs = [
-    { label: "Instrumentals", value: "instrumental" },
-    { label: "Samples", value: "sample" },
-    { label: "Contributions", value: "contributions" },
-    { label: "Full Songs", value: "full_song" },
-  ];
+  
 
   const getArtistData = useCallback(async () => {
     try {
@@ -138,21 +170,30 @@ const ArtistProfile = () => {
                 <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
                 <div className="flex justify-between items-center">
                   <div className="flex">
-                    {tabs.map((tab, index) => (
-                      <button
-                        key={tab.value}
-                        onClick={() => setSelectedTab(tab.value)}
-                        className={`py-2 px-3 text-sm flex items-center justify-center border border-eclipseGray ${
-                          selectedTab === tab.value
-                            ? "text-softGray bg-eerieBlack"
-                            : "text-charcoalGray bg-darkGray"
-                        } ${index === 0 && "rounded-l-md border-r-0"} ${
-                          index === tabs.length - 1 && "rounded-r-md border-l-0"
-                        } transition duration-300`}
-                      >
-                        {tab.label}
-                      </button>
-                    ))}
+                    {tabs.map((tab) => {
+                      if (!hasSampleType[tab.value]) return null;
+
+                      // Get array of visible tabs
+                      const visibleTabs = tabs.filter(t => hasSampleType[t.value]);
+                      const isFirst = visibleTabs[0].value === tab.value;
+                      const isLast = visibleTabs[visibleTabs.length - 1].value === tab.value;
+
+                      return (
+                        <button
+                          key={tab.value}
+                          onClick={() => setSelectedTab(tab.value)}
+                          className={`py-2 px-3 text-sm flex items-center justify-center border border-eclipseGray ${
+                            selectedTab === tab.value
+                              ? "text-softGray bg-eerieBlack"
+                              : "text-charcoalGray bg-darkGray"
+                          } ${isFirst && "rounded-l-md border-r-0"} ${
+                            isLast && "rounded-r-md border-l-0"
+                          } transition duration-300`}
+                        >
+                          {tab.label}
+                        </button>
+                      );
+                    })}
                   </div>
 
                   <div className="flex items-center pl-4 max-w-full rounded-lg bg-[#1c1c1c] min-h-[33px] w-[149px]">
