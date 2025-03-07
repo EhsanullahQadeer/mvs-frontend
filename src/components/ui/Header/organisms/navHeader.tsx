@@ -172,7 +172,7 @@ const NavHeader: React.FC<UserData> = () => {
   
   return (
     <>
-      <HeaderNavMenu menuItems={menuItems}></HeaderNavMenu>
+      <HeaderNavMenu menuItems={menuItems}/>
       <NotificationBellButton 
         onClick={handleNotifClick} 
         unreadNotifications={unreadNotifCount > 0}
