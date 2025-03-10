@@ -2,7 +2,7 @@ import React from 'react';
 
 type AudioWaveformProps = {
   isRecording: boolean;
-  duration: string;
+  duration: number;
   onStop: () => void;
   onCancel: () => void;
 };

@@ -15,10 +15,10 @@ import DialogContent from "@mui/material/DialogContent";
 interface Props {
   open: boolean;
   handleClose: () => void;
-  title: string;
-  desciption: string;
-  button1: string;
-  button2: string;
+  title?: string;
+  desciption?: string;
+  button1?: string;
+  button2?: string;
   onConfirm: () => void;
 }
 export default function AlertDialog(props: Props) {

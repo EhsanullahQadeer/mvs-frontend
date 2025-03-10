@@ -1,26 +1,29 @@
-import { useState, useEffect, useRef, useCallback, memo } from "react";
-import { ReactComponent as MicIcon } from "../../../assets/icons/micIcon.svg";
-import { ReactComponent as CheckIcon } from "../../../assets/icons/checkIcon.svg";
+import React, { createContext, useState, useContext, useRef, useCallback } from 'react';
 
-interface CustomAudioRecorderProps {
-  onRecordingComplete: (blob: Blob, duration: string) => void;
-  onDurationChange: (duration: string) => void;
-  onRecordingStateChange: (isRecording: boolean) => void;
-  onStopRef: React.MutableRefObject<(() => void) | null>;
-  onDelete?: () => void;
+interface AudioRecordingContextType {
+  isRecording: boolean;
+  recordedAudio: Blob | null;
+  recordingDuration: string;
+  startRecording: () => Promise<void>;
+  stopRecording: () => void;
+  clearRecording: () => void;
 }
 
-const buttonStyles = "p-2 rounded-lg hover:bg-[#202327]";
+const AudioRecordingContext = createContext<AudioRecordingContextType | undefined>(undefined);
 
-const CustomAudioRecorder = memo(({
-  onRecordingComplete,
-  onDurationChange,
-  onRecordingStateChange,
-  onStopRef,
-  onDelete,
-}: CustomAudioRecorderProps) => {
+export const useAudioRecording = () => {
+  const context = useContext(AudioRecordingContext);
+  if (!context) {
+    throw new Error('useAudioRecording must be used within an AudioRecordingProvider');
+  }
+  return context;
+};
+
+export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isRecording, setIsRecording] = useState(false);
-  const [duration, setDuration] = useState("0:00");
+  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
+  const [recordingDuration, setRecordingDuration] = useState('0:00');
+  
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const timerInterval = useRef<NodeJS.Timeout | null>(null);
   const startTime = useRef<number | null>(null);
@@ -32,7 +35,7 @@ const CustomAudioRecorder = memo(({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   }, []);
 
-  const getMimeType = () => {
+  const getMimeType = useCallback(() => {
     const formats = [
       'audio/mp4',
       'audio/mp4;codecs=mp4a.40.5', // AAC-HE
@@ -50,14 +53,17 @@ const CustomAudioRecorder = memo(({
     
     console.error('No cross-compatible format found');
     return '';
-  };
+  }, []);
 
   const startRecording = useCallback(async () => {
     try {
-      if (onDelete) {
-        onDelete();
-      }
+      // Clear any existing recording
+      setRecordedAudio(null);
       
+      // Set a flag to indicate we're preparing to record
+      setIsRecording(true);
+      
+      // Get the audio stream first
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           channelCount: 1,
@@ -66,6 +72,9 @@ const CustomAudioRecorder = memo(({
           noiseSuppression: true
         } 
       });
+      
+      // Add a small delay to let the audio system stabilize
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       const mimeType = getMimeType();
       const recorder = new MediaRecorder(stream, {
@@ -76,33 +85,53 @@ const CustomAudioRecorder = memo(({
       chunks.current = [];
 
       recorder.ondataavailable = (e: BlobEvent) => {
-        chunks.current.push(e.data);
+        // Only add chunks that have actual data
+        if (e.data.size > 0) {
+          chunks.current.push(e.data);
+        }
       };
 
       recorder.onstop = async () => {
+        if (chunks.current.length === 0) {
+          console.log("No audio data recorded");
+          setRecordedAudio(null);
+          setRecordingDuration('0:00');
+          return;
+        }
+        
         const finalDuration = formatDuration(Math.floor((Date.now() - startTime.current!) / 1000));
         const blob = new Blob(chunks.current, {
           type: mediaRecorder.current?.mimeType || mimeType 
         });
-        onRecordingComplete(blob, finalDuration);
+        
+        // Only set the recorded audio if we have actual data
+        if (blob.size > 0) {
+          setRecordedAudio(blob);
+          setRecordingDuration(finalDuration);
+        } else {
+          console.log("Empty audio blob created");
+          setRecordedAudio(null);
+          setRecordingDuration('0:00');
+        }
+        
         chunks.current = [];
       };
 
-      recorder.start();
-      setIsRecording(true);
-      onRecordingStateChange(true);
-      
+      // Start the timer before starting the recorder
       startTime.current = Date.now();
       timerInterval.current = setInterval(() => {
         const currentDuration = (Date.now() - startTime.current!) / 1000;
         const formattedDuration = formatDuration(currentDuration);
-        setDuration(formattedDuration);
-        onDurationChange(formattedDuration);
+        setRecordingDuration(formattedDuration);
       }, 1000);
+      
+      // Start the recorder with a smaller timeslice to get more frequent chunks
+      recorder.start(100);
     } catch (err) {
       console.error("Error starting recording:", err);
+      setIsRecording(false);
     }
-  }, [onDelete, formatDuration, onRecordingComplete, onRecordingStateChange, onDurationChange]);
+  }, [formatDuration, getMimeType]);
 
   const stopRecording = useCallback(() => {
     if (!mediaRecorder.current) return;
@@ -110,17 +139,20 @@ const CustomAudioRecorder = memo(({
     mediaRecorder.current.stop();
     mediaRecorder.current.stream.getTracks().forEach(track => track.stop());
     setIsRecording(false);
-    onRecordingStateChange(false);
     
     if (timerInterval.current) {
       clearInterval(timerInterval.current);
       timerInterval.current = null;
     }
-    setDuration("0:00");
-    onDurationChange("0:00");
-  }, [onRecordingStateChange, onDurationChange]);
+  }, []);
 
-  useEffect(() => {
+  const clearRecording = useCallback(() => {
+    setRecordedAudio(null);
+    setRecordingDuration('0:00');
+  }, []);
+
+  // Clean up on unmount
+  React.useEffect(() => {
     return () => {
       if (timerInterval.current) {
         clearInterval(timerInterval.current);
@@ -131,28 +163,18 @@ const CustomAudioRecorder = memo(({
     };
   }, [isRecording]);
 
-  useEffect(() => {
-    if (onStopRef) {
-      onStopRef.current = stopRecording;
-    }
-  }, [onStopRef, stopRecording]);
+  const value = {
+    isRecording,
+    recordedAudio,
+    recordingDuration,
+    startRecording,
+    stopRecording,
+    clearRecording
+  };
 
   return (
-    <div>
-      <button
-        onClick={isRecording ? stopRecording : startRecording}
-        className={buttonStyles}
-      >
-        {isRecording ? (
-          <CheckIcon className="text-[#9EFF00] w-6 h-6" />
-        ) : (
-          <MicIcon className="text-[#848484]" />
-        )}
-      </button>
-    </div>
+    <AudioRecordingContext.Provider value={value}>
+      {children}
+    </AudioRecordingContext.Provider>
   );
-});
-
-CustomAudioRecorder.displayName = 'CustomAudioRecorder';
-
-export default CustomAudioRecorder;
+}; 
