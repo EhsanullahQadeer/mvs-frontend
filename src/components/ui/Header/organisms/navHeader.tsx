@@ -108,7 +108,7 @@ const NavHeader: React.FC<UserData> = () => {
         // Stop any current playback
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
-        
+
         // Ensure volume is set
         audioRef.current.volume = 1.0;
 
@@ -173,6 +173,9 @@ const NavHeader: React.FC<UserData> = () => {
       } : null,
     };
 
+    // Play sound before any filtering
+    debouncedPlaySound(formattedNotification.type);
+    
     setNotifications(prev => {
       if (window.isNotificationInCurrentTab?.(formattedNotification.type)) {
         return [formattedNotification, ...prev];
@@ -180,7 +183,6 @@ const NavHeader: React.FC<UserData> = () => {
       return prev;
     });
 
-    debouncedPlaySound(formattedNotification.type);
     triggerAnimation();
     setUnreadNotifCount(unreadNotifCount + 1);
   }, [debouncedPlaySound, triggerAnimation, unreadNotifCount]);
