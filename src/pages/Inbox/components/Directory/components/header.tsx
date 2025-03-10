@@ -24,7 +24,8 @@ const InboxHeader = () => {
     selectedMenuItem,
     setSelectedMenuItem,
     loadFavoritedConversations,
-    handleDeleteConversations
+    handleDeleteConversations,
+    loadConversations
   } = useConversation();
 
   const {
@@ -34,21 +35,29 @@ const InboxHeader = () => {
     toggleConversationIsArchived,
     toggleConversationsIsSpam,
     toggleConversationsIsPriority,
+    getTotalConversationUnread,
   } = useMessenger();
+
+  function refreshConversations(){
+    loadConversations();
+    getTotalConversationUnread({
+      types: ["priority", "general", "icebreaker"]
+    });
+  }
 
   const options = [
     { 
       id: "archive", 
       icon: <ArchiveIcon />,
       onClick: () => {
-        toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) })
+        toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
       }
     },
     {
       id: "spam",
       icon: <AlertOctagonIcon />,
       onClick: () => {
-        toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) })
+        toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
       }
     },
     {
@@ -67,7 +76,7 @@ const InboxHeader = () => {
       id: "folder",
       icon: <FolderInputIcon />,
       onClick: () => {
-        toggleConversationsIsPriority({ conversationIds: selectedConversations.map(conv => conv.id) })
+        toggleConversationsIsPriority({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
       }
     },
   ];
