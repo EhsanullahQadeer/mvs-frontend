@@ -9,7 +9,7 @@
 /* IMPORTS */
 import { useNavigate } from "react-router-dom";
 import { getUserNotifications } from "api/user";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { UserData } from "theme/Header/Header.types";
 import HeaderNavMenu from "../molecules/headerNavMenu";
 import ProfileButton from "theme/Sidebar/ProfileButton";
@@ -17,11 +17,12 @@ import { useHeaderHooks } from "theme/Header/Header.hooks";
 import HeaderCreditCount from "../atoms/headerCreditCount";
 import NotificationPopUpWindow from "./NotificationsManager";
 import { useNotification } from "services/WebSocket/useNotification.hook";
-import notificationSound from "../../../../assets/audio/notification.mp3";
-import messageNotificationSound from "../../../../assets/audio/mvssive-message-notification.mp3";
 import { TNotificationData } from "../molecules/notifications/Notification";
 import NotificationBellButton from "../atoms/notificationAtoms/notificationBellButton";
 import { useNotificationAnimation , NotificationAnimationProvider } from "../context/NotificationAnimationContext";
+
+const NOTIFICATION_SOUND_URL = process.env.REACT_APP_CDN_URL + '/audio/notification.mp3';
+const MESSAGE_NOTIFICATION_SOUND_URL = process.env.REACT_APP_CDN_URL + '/audio/mvssive-message-notification.mp3';
 
 const NavHeader: React.FC<UserData> = () => {
   const navigate = useNavigate();
@@ -33,34 +34,48 @@ const NavHeader: React.FC<UserData> = () => {
   const [unreadNotifCount, setUnreadNotifCount] = useState<number>(0);
   const [allowLoading, setAllowLoading] = useState<boolean>(true);
 
-  const fetchNotifications = async () => {
-    const notifications = await getUserNotifications([
-      'CONNECTION_REQUEST',
-      'CONNECTION_RESPONSE',
-      'COLLABORATION_REQUEST',
-      'COLLABORATION_ACCEPT',
-      'FEEDBACK_PROVIDED',
-      'NEW_COLLABORATOR',
-      'AUDIO_SHARE',
-      'FOLLOW',
-      'LIKE',
-      'AUDIO_UPDATE',
-      'DOWNLOAD_FILE',
-      'VIEW_PROFILE',
-      'VIEW_DEMO',
-      'NEW_MESSAGE',
-    ], false, 0);
-    console.log('notifications', notifications);
-    setNotifications(notifications?.data);
-  };
+  const notificationAudioRef = useRef<HTMLAudioElement | null>(null);
+  const messageAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  const handleNotifClick = () => {
-    fetchNotifications();
-    setAllowLoading(true);
-    setIsPopUpVisible((prev) => !prev);
-  };
+  // Initialize audio refs
+  useEffect(() => {
+    notificationAudioRef.current = new Audio(NOTIFICATION_SOUND_URL);
+    messageAudioRef.current = new Audio(MESSAGE_NOTIFICATION_SOUND_URL);
+    
+    // Set CORS and preload
+    notificationAudioRef.current.crossOrigin = "anonymous";
+    messageAudioRef.current.crossOrigin = "anonymous";
+    notificationAudioRef.current.load();
+    messageAudioRef.current.load();
 
-  const handleNotification = (rawData: any) => {
+    return () => {
+      if (notificationAudioRef.current) {
+        notificationAudioRef.current.pause();
+        notificationAudioRef.current = null;
+      }
+      if (messageAudioRef.current) {
+        messageAudioRef.current.pause();
+        messageAudioRef.current = null;
+      }
+    };
+  }, []);
+
+  const playSound = useCallback((type: string) => {
+    const audioRef = type === 'NEW_MESSAGE' ? messageAudioRef : notificationAudioRef;
+    
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(err => {
+          console.warn('Could not play notification sound:', err);
+        });
+      }
+    }
+  }, []);
+
+  const handleNotification = useCallback((rawData: any) => {
     const formattedNotification: TNotificationData = {
       id: rawData?.id,
       type: rawData?.type,
@@ -104,23 +119,41 @@ const NavHeader: React.FC<UserData> = () => {
       }
       return prev;
     });
-    playSound(formattedNotification.type);
+
+    // Only play sound if tab is not focused
+    if (!document.hasFocus()) {
+      playSound(formattedNotification.type);
+    }
+    
     triggerAnimation();
     setUnreadNotifCount(unreadNotifCount + 1);
+  }, [playSound, triggerAnimation, unreadNotifCount]);
+
+  const fetchNotifications = async () => {
+    const notifications = await getUserNotifications([
+      'CONNECTION_REQUEST',
+      'CONNECTION_RESPONSE',
+      'COLLABORATION_REQUEST',
+      'COLLABORATION_ACCEPT',
+      'FEEDBACK_PROVIDED',
+      'NEW_COLLABORATOR',
+      'AUDIO_SHARE',
+      'FOLLOW',
+      'LIKE',
+      'AUDIO_UPDATE',
+      'DOWNLOAD_FILE',
+      'VIEW_PROFILE',
+      'VIEW_DEMO',
+      'NEW_MESSAGE',
+    ], false, 0);
+    console.log('notifications', notifications);
+    setNotifications(notifications?.data);
   };
 
-  const playSound = (type: string) => {
-    if (type === 'NEW_MESSAGE') {
-      const audio = new Audio(messageNotificationSound);
-      audio.play().catch(err => {
-        console.warn('Could not play notification sound:', err);
-      });
-    } else {
-      const audio = new Audio(notificationSound);
-      audio.play().catch(err => {
-        console.warn('Could not play notification sound:', err);
-      });
-    }
+  const handleNotifClick = () => {
+    fetchNotifications();
+    setAllowLoading(true);
+    setIsPopUpVisible((prev) => !prev);
   };
 
   const menuItems = [
