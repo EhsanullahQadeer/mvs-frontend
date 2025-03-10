@@ -19,6 +19,7 @@ import RecordedAudioPlayer from "../../RecordedAudioPlayer";
 import AudioRecorder from './audioRecorder';
 import { useAudioRecording } from './audioRecorder';
 import { toast } from "react-toastify";
+
 const Footer = () => {
 
   const {
@@ -200,7 +201,7 @@ const Footer = () => {
         await getConversationMessages({ conversationId: activeConversation.conversation_id });
         clearMessageInputs();
       }
-      refreshMessages();
+      // refreshMessages();
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
       toast.error("An error occurred while sending the message");
