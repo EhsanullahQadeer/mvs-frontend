@@ -21,9 +21,8 @@ import { TNotificationData } from "../molecules/notifications/Notification";
 import NotificationBellButton from "../atoms/notificationAtoms/notificationBellButton";
 import { useNotificationAnimation , NotificationAnimationProvider } from "../context/NotificationAnimationContext";
 import { debounce } from "lodash";
-
-const NOTIFICATION_SOUND_URL = process.env.REACT_APP_CDN_URL + '/audio/notification.mp3';
-const MESSAGE_NOTIFICATION_SOUND_URL = process.env.REACT_APP_CDN_URL + '/audio/mvssive-message-notification.mp3';
+import notificationSound from "../../../../assets/audio/notification.mp3";
+import messageSound from "../../../../assets/audio/mvssive-message-notification.mp3";
 
 const NavHeader: React.FC<UserData> = () => {
   const navigate = useNavigate();
@@ -44,12 +43,12 @@ const NavHeader: React.FC<UserData> = () => {
     const initAudio = async () => {
       try {
         // Create and configure notification audio
-        notificationAudioRef.current = new Audio(NOTIFICATION_SOUND_URL);
+        notificationAudioRef.current = new Audio(notificationSound);
         notificationAudioRef.current.crossOrigin = "anonymous";
         notificationAudioRef.current.preload = "auto";
         
         // Create and configure message audio
-        messageAudioRef.current = new Audio(MESSAGE_NOTIFICATION_SOUND_URL);
+        messageAudioRef.current = new Audio(messageSound);
         messageAudioRef.current.crossOrigin = "anonymous";
         messageAudioRef.current.preload = "auto";
 

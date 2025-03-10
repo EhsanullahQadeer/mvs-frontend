@@ -27,7 +27,7 @@ import CheckerIcon from "../../../../assets/icons/checker.svg";
 import { IMessage } from "api/messenger/objects/states.types";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
 
-import notificationSound from "../../../../assets/audio/mvssive-message-notification.mp3";
+// import notificationSound from "../../../../assets/audio/mvssive-message-notification.mp3";
 
 const Chatbox = ({ onClose }: { onClose: () => void }) => {
   const {
@@ -100,17 +100,17 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
 
   const { refreshUnreadCount } = useUnreadCount();
 
-  useEffect(() => {
-    audioRef.current = new Audio(notificationSound);
-    audioRef.current.load();
+  // useEffect(() => {
+  //   audioRef.current = new Audio(notificationSound);
+  //   audioRef.current.load();
     
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (audioRef.current) {
+  //       audioRef.current.pause();
+  //       audioRef.current = null;
+  //     }
+  //   };
+  // }, []);
 
   const playSound = useCallback(() => {
     if (audioRef.current) {
@@ -130,9 +130,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
   }, []);
 
   useNotification("NEW_MESSAGE", (data) => {
-    if (!document.hasFocus()) {
-      playSound();
-    }
+    playSound();
     
     refreshMessages();
     refreshUnreadCount();
