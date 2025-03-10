@@ -102,6 +102,7 @@ const Message: React.FC<MessageProps> = ({
 
   useEffect(() => {
     console.log('messages here', message);
+    console.log('message.threadStats', message.threadStats?.replyCount === 1);
   }, [message.threadStats]);
 
   function renderDemoMessage() {
@@ -178,9 +179,7 @@ const Message: React.FC<MessageProps> = ({
           )}
         </div>
 
-
-
-        { message.threadStats?.replyCount > 1 && (
+        { (message.threadStats?.replyCount > 1 || (message.threadStats?.replyCount === 1 && message.sender.id !== authUserId)) && (
           <div className="flex gap-2.5 items-center pt-2">
             <div
               className="flex gap-1.5 items-center cursor-pointer w-max"
