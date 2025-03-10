@@ -92,8 +92,12 @@ const NavHeader: React.FC<UserData> = () => {
   }, []);
 
   const playSound = useCallback(async (type: string) => {
-    // Don't try to play if audio isn't loaded or tab is focused
-    if (!audioLoadedRef.current || document.hasFocus()) {
+    console.log(`Attempting to play sound: ${type}`);
+    console.log(`Audio loaded: ${audioLoadedRef.current}`);
+    console.log(`Tab focused: ${document.hasFocus()}`);
+
+    if (!audioLoadedRef.current) {
+      console.log('Audio not loaded, skipping playback');
       return;
     }
 
@@ -104,15 +108,23 @@ const NavHeader: React.FC<UserData> = () => {
         // Stop any current playback
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
+        
+        // Ensure volume is set
+        audioRef.current.volume = 1.0;
 
         // Try to play with user interaction check
-        await audioRef.current.play();
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'NotAllowedError') {
-          console.warn('Audio playback requires user interaction first');
-        } else {
-          console.error('Error playing notification sound:', error);
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            if (error instanceof DOMException && error.name === 'NotAllowedError') {
+              console.warn('Audio playback requires user interaction first');
+            } else {
+              console.error('Error playing notification sound:', error);
+            }
+          });
         }
+      } catch (error) {
+        console.error('Error playing notification sound:', error);
       }
     }
   }, []);
@@ -168,9 +180,7 @@ const NavHeader: React.FC<UserData> = () => {
       return prev;
     });
 
-    // Use debounced play sound
     debouncedPlaySound(formattedNotification.type);
-    
     triggerAnimation();
     setUnreadNotifCount(unreadNotifCount + 1);
   }, [debouncedPlaySound, triggerAnimation, unreadNotifCount]);

@@ -103,12 +103,11 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
       setNotifications(response.data); // Update notifications with the new data
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      // Handle error (e.g., show a notification or set an error state)
     }
   };
 
   const loadMoreNotifications = async () => {
-    if (!allowLoading) return; // Prevent multiple calls if already loading or not allowed
+    if (!allowLoading) return;
     try {
       skip += 10;
       const response = await getUserNotifications(NOTIFICATION_GROUPS[selectedTab], false, skip);
@@ -116,7 +115,6 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
       setNotifications((prev) => [...prev, ...response.data]);
     } catch (error) {
       console.error("Error loading more notifications:", error);
-      // Handle error (e.g., show a notification or set an error state)
     }
   };
 
@@ -126,7 +124,7 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
       if (scrollTimeout) clearTimeout(scrollTimeout);
       setScrollTimeout(setTimeout(() => {
         loadMoreNotifications();
-      }, 500)); // Wait for 500ms after scrolling stops
+      }, 500));
     }
   };
 
