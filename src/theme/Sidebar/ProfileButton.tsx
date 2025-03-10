@@ -7,24 +7,17 @@
  *************************************************************************/
 
 /* IMPORTS */
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
 import Avatar from "react-avatar";
+import { Fragment, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Menu, Transition } from "@headlessui/react";
 
 /* LOCAL IMPORTS */
-import UserSettingsModal from "components/modals/user-settings";
 import ContactModal from "components/modals/contact-us";
 import { useHeaderHooks } from "../Header/Header.hooks";
-import { classNames, HeaderProps } from "../Header/Header.types";
-import { useNotification } from "services/WebSocket/useNotification.hook";
+import UserSettingsModal from "components/modals/user-settings";
 
-interface ProfileButtonProps {
-  direction?: 'left' | 'right';
-}
-
-const ProfileButton: React.FC<ProfileButtonProps> = ({ direction = 'right' }) => {
+const ProfileButton = () => {
   /* States and Hooks */
   const {
     state,
@@ -32,36 +25,11 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ direction = 'right' }) =>
     setContactUs,
     user_settings,
     setUserSettings,
-    onboardGuide,
     LogOut,
   } = useHeaderHooks();
 
-  /**
-   * TEMPORARY CODE: Depicted here for demonstrative purposes
-   */
-  // State for highlighting notification button
-  const [isHighlighted, setIsHighlighted] = useState(false);
-
   const navigate = useNavigate();
-
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [menuPosition, setMenuPosition] = useState<'bottom' | 'top'>('bottom');
-
-  useEffect(() => {
-    const updatePosition = () => {
-      if (buttonRef.current) {
-        const rect = buttonRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const spaceBelow = windowHeight - rect.bottom;
-        
-        setMenuPosition(spaceBelow < 300 ? 'top' : 'bottom');
-      }
-    };
-
-    updatePosition();
-    window.addEventListener('resize', updatePosition);
-    return () => window.removeEventListener('resize', updatePosition);
-  }, []);
 
   return (
     <Fragment>
@@ -96,19 +64,7 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ direction = 'right' }) =>
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items 
-              className={`zindex fixed ${
-                menuPosition === 'bottom' 
-                  ? 'mt-2' 
-                  : 'mb-2'
-              } w-[230px] bg-[#1C1C1C] border border-[#3D3D3D] rounded-[8px] p-[10px]`}
-              style={{
-                top: menuPosition === 'bottom' ? buttonRef.current?.getBoundingClientRect().bottom : 'auto',
-                bottom: menuPosition === 'top' ? (window.innerHeight - (buttonRef.current?.getBoundingClientRect().top || 0)) : 'auto',
-                left: direction === 'right' ? buttonRef.current?.getBoundingClientRect().left : 'auto',
-                right: direction === 'left' ? (window.innerWidth - (buttonRef.current?.getBoundingClientRect().right || 0)) : 'auto',
-              }}
-            >
+            <Menu.Items className="zindex fixed mt-2 w-[230px] bg-[#1C1C1C] border border-[#3D3D3D] rounded-[8px] p-[10px]">
               {/* Menu Items */}
 
               {/* My Profile */}

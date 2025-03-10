@@ -6,12 +6,11 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import React from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 
 interface Props {
   open: boolean;
@@ -27,7 +26,6 @@ export default function AlertDialog(props: Props) {
     props;
 
   return (
-    <React.Fragment>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -71,12 +69,13 @@ export default function AlertDialog(props: Props) {
             sx={{
               border: "1px solid #242424",
               borderRadius: "30px",
-              background: "tranparent",
+              background: "transparent",
               width: "120px",
-              color: "#242424",
+              color: "#666666",
               textTransform: "capitalize",
               "&:hover": {
-                background: "tranparent",
+                background: "transparent",
+                cursor: "pointer",
               },
             }}
           >
@@ -93,6 +92,7 @@ export default function AlertDialog(props: Props) {
               textTransform: "capitalize",
               "&:hover": {
                 background: "#9EFF00",
+                cursor: "pointer",
               },
             }}
           >
@@ -100,6 +100,5 @@ export default function AlertDialog(props: Props) {
           </Button>
         </DialogActions>
       </Dialog>
-    </React.Fragment>
   );
 }

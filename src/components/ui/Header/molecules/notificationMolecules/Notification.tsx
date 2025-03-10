@@ -3,8 +3,8 @@ import NotifTimestamp from "../../atoms/notificationAtoms/notifTimestamp";
 import ReadBubble from "components/ui/Header/atoms/notificationAtoms/readOrUnreadBubble";
 import CheckmarkButton from "../../atoms/notificationAtoms/markNotificationAsReadButton";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
-import { MarkAsUnread } from "@mui/icons-material";
-import { toggleNotificationAsRead } from "api/user";
+
+import { toggleNotificationAsRead } from "api/notifier";
 
 export interface NotificationData {
   created_at?: string;
@@ -105,7 +105,7 @@ const Notification = ({ notification, markAsRead }: { notification: Notification
                 toggleNotificationAsRead(notification.id).then(() => markAsRead());
               }} />
             ) : (
-              <NotifTimestamp isHovered={isHovered} isRead={notification.is_read} id={notification.id} createdAt={notification.created_at} ></NotifTimestamp>
+              <NotifTimestamp isRead={notification.is_read} id={notification.id} createdAt={notification.created_at} ></NotifTimestamp>
             )}
           </div>
         </div>

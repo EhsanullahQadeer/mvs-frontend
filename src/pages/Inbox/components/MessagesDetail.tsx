@@ -14,19 +14,18 @@ import Footer from "./Footer";
 import ActionMenu from "./ActionMenu";
 import InfoSection from "./InfoSection";
 import NotesSection from "./NotesSection";
-import { HiOutlineEye } from "react-icons/hi";
 import { GrShareOption } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
 import MessagesSection from "./MessagesSection";
 import { CircularProgress } from "@mui/material";
 import { toggleMessageToRead } from "api/messenger";
-import { IoVideocamOutline } from "react-icons/io5";
 import { LuShieldAlert, LuBellOff } from "react-icons/lu";
 import { useEffect, useRef, useState } from "react";
-import { FiUser, FiUnlock, FiUserX } from "react-icons/fi";
+import { FiUser, FiUserX } from "react-icons/fi";
 import { IArtistProfileData } from "pages/profile/components/types";
 import { IConversation, ICurrentUser, IMessagesData, INotes } from "./types";
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
+import MessageInfoNotesTabMenu from "components/ui/Header/molecules/messageInfoNotesMenu";
 
 type Props = {
   conversation: IConversation;
@@ -110,21 +109,6 @@ const MessagesDetail = (props: Props) => {
       func: () => {},
     },
     {
-      label: "Schedule Meeting",
-      icon: <IoVideocamOutline />,
-      func: () => {},
-    },
-    {
-      label: "Request Demo Review",
-      icon: <HiOutlineEye />,
-      func: () => {},
-    },
-    {
-      label: "Unlock Inbox",
-      icon: <FiUnlock />,
-      func: () => {},
-    },
-    {
       label: "Share Profile",
       icon: <GrShareOption />,
       func: () => {},
@@ -152,9 +136,16 @@ const MessagesDetail = (props: Props) => {
 
   return (
     <div className="h-full w-full border-l border-eerieBlack bg-richBlack relative">
-      <div className="flex flex-col pt-2 h-full">
+      <div className="flex flex-col h-full">
         <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
-          <div className="flex flex-wrap gap-5 justify-between items-center p-4 pt-2 w-full">
+
+          <div className="flex text-white items-center p-2 border-b border-[#1F1F1F]">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={onClose} className="cursor-pointer transform scale-x-[-1]">
+              <path d="M18 7L13 12L18 17M11 7L6 12L11 17" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+
+          <div className="flex flex-wrap gap-5 justify-between items-center p-4 w-full">
             <div className="flex gap-2 items-center">
               <div
                 style={
@@ -194,33 +185,10 @@ const MessagesDetail = (props: Props) => {
                   <></>
                 )}
               </div>
-              <button
-                onClick={onClose}
-                className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver hover:bg-[#2f2f2f]"
-              >
-                ✕
-              </button>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-y border-eerieBlack">
-            {headerTabs.map((headerTab) => {
-              const { label, value } = headerTab;
-              return (
-                <div
-                  key={value}
-                  onClick={() => {
-                    setTab(value);
-                  }}
-                  className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
-                    tab === value
-                      ? "text-jetBlack bg-limeGreen text-xs"
-                      : "text-coolGray bg-eclipseGray text-[10px]"
-                  }`}
-                >
-                  {label}
-                </div>
-              );
-            })}
+          <div className="flex px-4 py-2 w-full">
+              <MessageInfoNotesTabMenu headerTabs={headerTabs} tab={tab} setTab={setTab}/>
           </div>
         </div>
         <div className="flex flex-col flex-1 relative overflow-hidden">

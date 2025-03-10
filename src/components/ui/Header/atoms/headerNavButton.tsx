@@ -20,7 +20,7 @@ const Button: React.FC<ButtonProps> = ({
     <button
       type={type}
       onClick={onClick}
-      className={`px-3 py-2 rounded-full font-meduim text-center flex-1 border border-transparent ${className}`}
+      className={`px-3 py-2 rounded-full font-meduim text-center border border-transparent ${className}`}
       disabled={disabled}
     >
       {children}

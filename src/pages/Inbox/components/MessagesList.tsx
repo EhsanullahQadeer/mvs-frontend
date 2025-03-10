@@ -10,40 +10,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
-import { useEffect, useState } from "react";
 import React from "react";
-import MessagesDetail from "./MessagesDetail";
-import searchIcon from "../../../assets/icons/searchIcon.svg";
-import { Conversations } from "./Conversations";
-import { getMessages, toggleFavoriteCovoApi } from "api/messenger";
-import { CircularProgress } from "@mui/material";
-import { useParams } from "react-router-dom";
-import FeedbackThread from "./FeedbackThread";
-import MsgListHeaderOptions from "./MsgListHeaderOptions";
-import useMessageList from "../hooks/useMessageList";
-import { RootState } from "redux/reducers";
-import { useSelector } from "react-redux";
-import useGetMessagesNotes from "../hooks/useGetMessagesNotes";
 import { IConversation } from "./types";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/reducers";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import MessagesDetail from "./MessagesDetail";
+import FeedbackThread from "./FeedbackThread";
+import { Conversations } from "./Conversations";
+import { CircularProgress } from "@mui/material";
+import useMessageList from "../hooks/useMessageList";
+import MsgListHeaderOptions from "./MsgListHeaderOptions";
+import searchIcon from "../../../assets/icons/searchIcon.svg";
+import useGetMessagesNotes from "../hooks/useGetMessagesNotes";
+import { toggleFavoriteCovoApi } from "api/messenger";
 import { useNotification } from "services/WebSocket/useNotification.hook";
-
-const headerTabs = [
-  {
-    label: "General Inbox",
-    value: 0,
-  },
-  {
-    label: "Priority Inbox",
-    value: 1,
-  },
-];
+import NoMessagesYetPrompt from "components/ui/Header/molecules/noMessagesYet";
+import InboxMessageTabList from "components/ui/Header/molecules/inboxMessageTabList";
 
 const MessagesList = () => {
   const { id, thread } = useParams();
   const user = useSelector((state: RootState) => state);
   const currentUserInfo = user.auth.user;
 
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(1);
   const [showArchivedConvos, setShowArchivedConvos] = useState(false);
   const [showFavoriteConvos, setShowFavoriteConvos] = useState(false);
   const [filteredConversations, setFilteredConversations] = useState([]);
@@ -178,20 +169,17 @@ const MessagesList = () => {
 
   const renderConversations = () => {
     return (
-      <div className="flex flex-col w-full flex-1 overflow-y-auto overflow-x-hidden custom-dropdown">
-        <div className="flex flex-col pb-1 w-full flex-1 relative">
+      <div className="flex flex-col h-full">
           {loadingConversations ? (
-            <>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999]">
-                <CircularProgress
-                  sx={{
-                    width: "50px !important",
-                    height: "50px !important",
-                    color: "#9EFF00",
-                  }}
-                />
-              </div>
-            </>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999]">
+              <CircularProgress
+                sx={{
+                  width: "50px !important",
+                  height: "50px !important",
+                  color: "#9EFF00",
+                }}
+              />
+            </div>
           ) : (
             <>
               {paginatedConversations.length > 0
@@ -210,11 +198,13 @@ const MessagesList = () => {
                         updateConversationStats,
                       }}
                     />
-                  ))
-                : null}
+                  )) : (
+                  <div className="flex items-center justify-center h-full">
+                    <NoMessagesYetPrompt></NoMessagesYetPrompt>
+                  </div>
+              )}
             </>
           )}
-        </div>
       </div>
     );
   };
@@ -284,7 +274,7 @@ const MessagesList = () => {
   return (
     <React.Fragment>
       <div className="flex flex-1 overflow-hidden flex-col pt-4 bg-[#08090a] relative">
-        <div className="flex flex-col justify-center px-3 w-full text-sm leading-none bg-[#08090a] border-b border-eerieBlack">
+        <div className="flex flex-col justify-center px-3 w-full text-sm leading-none bg-[#08090a]">
           <div className="flex flex-col justify-center items-start w-full">
             <div className="flex items-center pl-4 max-w-full rounded-full bg-[#1c1c1c] min-h-[40px] w-[271px]">
               <div className="flex flex-1 shrink gap-2 items-center self-stretch my-auto w-full basis-0">
@@ -333,27 +323,8 @@ const MessagesList = () => {
           <>{renderConversations()}</>
         ) : (
           <>
-            <div className="flex flex-wrap gap-2 items-center px-4 py-4 w-full border-b border-eerieBlack">
-              {headerTabs.map((headerTab) => {
-                const { label, value } = headerTab;
-                return (
-                  <div
-                    key={value}
-                    onClick={() => {
-                      setTab(value);
-                      setCurrentPage(1);
-                    }}
-                    className={`gap-2.5 px-3 py-2 font-semibold rounded-[35px] cursor-pointer ${
-                      tab === value
-                        ? "text-jetBlack bg-limeGreen text-xs"
-                        : "text-coolGray bg-eclipseGray text-[10px]"
-                    }`}
-                  >
-                    {label}
-                  </div>
-                );
-              })}
-            </div>
+          {/* TODO: Remove hard coded values on unreadMessageCount values and replace with api call returned values */}
+          <InboxMessageTabList setTab={setTab} tab={tab} unreadMessageCount={[999, 3, 15]}/>
             {renderConversations()}
           </>
         )}
