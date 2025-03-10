@@ -26,6 +26,7 @@ import { AudioRecordingProvider } from "./components/audioRecorder";
 import CheckerIcon from "../../../../assets/icons/checker.svg";
 import { IMessage } from "api/messenger/objects/states.types";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
+import notificationSound from "../../../../assets/audio/mvssive-message-notification.mp3";
 
 const Chatbox = ({ onClose }: { onClose: () => void }) => {
   const {
@@ -96,7 +97,15 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
 
   const { refreshUnreadCount } = useUnreadCount();
 
+  const playSound = () => {
+    const audio = new Audio(notificationSound);
+    audio.play().catch(err => {
+      console.warn('Could not play notification sound:', err);
+    });
+  };
+
   useNotification("NEW_MESSAGE", (data) => {
+    playSound();
     refreshMessages();
     refreshUnreadCount();
   });
