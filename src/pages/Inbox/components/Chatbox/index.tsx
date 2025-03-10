@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { GrShareOption } from "react-icons/gr";
 import { CircularProgress } from "@mui/material";
 import { FiUser, FiUserX } from "react-icons/fi";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { getConversationNotes } from "api/messenger";
 import { useMessenger } from "api/messenger/context";
 import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
@@ -58,6 +58,8 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     if (prevIsThread !== isThread) {
       setIsAnimating(true);
@@ -98,16 +100,40 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
 
   const { refreshUnreadCount } = useUnreadCount();
 
-  const playSound = () => {
-    const audio = new Audio(notificationSound);
-    audio.play().catch(err => {
-      console.warn('Could not play notification sound:', err);
-    });
-  };
+  useEffect(() => {
+    audioRef.current = new Audio(notificationSound);
+    audioRef.current.load();
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const playSound = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Audio played successfully
+          })
+          .catch(err => {
+            console.warn('Could not play notification sound:', err);
+          });
+      }
+    }
+  }, []);
 
   useNotification("NEW_MESSAGE", (data) => {
-    playSound();
-
+    if (!document.hasFocus()) {
+      playSound();
+    }
+    
     refreshMessages();
     refreshUnreadCount();
   });
