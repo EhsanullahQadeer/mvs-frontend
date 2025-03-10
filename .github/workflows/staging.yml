@@ -27,6 +27,7 @@ jobs:
           REACT_APP_API_URL: https://staging-api.mvssive.net
           REACT_APP_STRIPE_PUBLISHABLE_KEY: ${{ secrets.REACT_APP_STRIPE_PUBLISHABLE_KEY_STAGING }}
           REACT_APP_APIGATEWAY_URL: ${{ secrets.REACT_APP_APIGATEWAY_URL_STAGING }}
+          REACT_APP_CDN_URL: ${{ secrets.REACT_APP_CDN_URL_STAGING }}
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
