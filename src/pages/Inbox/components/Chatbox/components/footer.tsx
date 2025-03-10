@@ -5,6 +5,7 @@ import { AudioPlayer } from "react-audio-play";
 import { CircularProgress } from "@mui/material";
 import { useMessenger } from "api/messenger/context";
 import AudioWaveform from "components/util/AudioWaveform";
+import { convertToCurrencyFormat } from "utils/dateUtils";
 import React, { useState, useEffect, useRef } from "react";
 import PurchaseOrderDialog from "../../PurchaseOrderDialog";
 import RecordedAudioPlayer from "../../RecordedAudioPlayer";
@@ -37,7 +38,9 @@ const Footer = () => {
     clearRecording,
   } = useAudioRecording();
 
+  const MAX_TIP_AMOUNT = 1000000;
   const [tipAmount, setTipAmount] = useState(0);
+  const [inputTipAmount, setInputTipAmount] = useState("$0.00");
   const [uploadedAudioFile, setUploadedAudioFile] = useState<File | null>(null);
   const [audioMediaId, setAudioMediaId] = useState<number | null>(null);
   const [openPurchaseOrder, setOpenPurchaseOrder] = useState(false);
@@ -48,7 +51,7 @@ const Footer = () => {
   const textareaRef = useRef<HTMLTextAreaElement>();
   const stopRecordingRef = useRef<(() => void) | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null); // Create a ref for the file input
-  const isSendButtonDisabled = messageInputValue.length === 0 && !recordedAudio && !uploadedAudioFile && tipAmount === 0;
+  const isSendButtonDisabled = messageInputValue.length === 0 && !recordedAudio && !uploadedAudioFile && tipAmount < 1;
 
   useEffect(() => {
     if (reloadComponent) {
@@ -159,7 +162,53 @@ const Footer = () => {
     setUploadedAudioFile(null);
     setAudioMediaId(null);
     setTipAmount(0);
+    setInputTipAmount("$0.00")
   }
+
+  const handleTipAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let inputValue = event.target.value; // Get the current input value
+    let cleanedValue = inputValue.replace("$", "");
+    let updatedNumericValue = 0;
+    let updatedInputValue = "";
+    // Example usage:
+    updatedInputValue = convertToCurrencyFormat(cleanedValue); // Output: "$0.01"
+    updatedNumericValue = parseFloat(updatedInputValue.replace("$", "").replace(/,/g, ""));
+    if (updatedNumericValue > MAX_TIP_AMOUNT) {
+      updatedInputValue = "$1,000,000.00";
+      updatedNumericValue = MAX_TIP_AMOUNT;
+    }
+    setInputTipAmount(updatedInputValue);
+    if(updatedNumericValue >= 1) {
+      setTipAmount(updatedNumericValue);
+    } else {
+      setTipAmount(0);
+    }
+  };
+
+  function determineTextColor() {
+    let updatedNumericValue = parseFloat(inputTipAmount.replace("$", "").replace(/,/g, ""));
+    if(updatedNumericValue < 1) {
+      if(updatedNumericValue === 0) {
+        return "text-[#848484]"; // Return gray
+      } else {
+        return "text-[#EF4444]"; // Return red
+      }
+    }
+    return "text-[#848484]"; // Return gray
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    // Prevent arrow keys
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+    }
+  };
+
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    // Move the cursor to the end of the input value
+    const input = event.target;
+    input.setSelectionRange(input.value.length, input.value.length);
+  };
 
   return (
     <>
@@ -256,6 +305,7 @@ const Footer = () => {
 
               <div className="flex items-center justify-between mt-3">
                 <div className="flex gap-4 items-center">
+
                   <div className="flex gap-4 items-center p-2 rounded-lg border border-[#3D3D3D]">
                     <div className="flex flex-col gap-1">
                       <div className="text-sm font-semibold leading-none text-white whitespace-nowrap">
@@ -266,15 +316,20 @@ const Footer = () => {
                       </div>
                     </div>
                     <div className="w-3.5 -rotate-90 border border-[#3D3D3D]"></div>
-                    <div className="text-sm leading-none text-right whitespace-nowrap text-[#848484] font-normal w-[60px]">
+                    <div className={`flex-1 text-sm leading-none text-right font-normal ${determineTextColor()}`}>
                       <input
-                        type="number"
-                        placeholder="0.00"
-                        className="bg-transparent max-w-[60px] border-none border-transparent focus:border-transparent focus:ring-0"
-                        onChange={(e) => setTipAmount(Number(e.target.value))}
+                        name="inputTipAmount"
+                        placeholder="$0.00"
+                        value={inputTipAmount}
+                        onChange={handleTipAmountChange}
+                        onKeyDown={handleKeyDown}
+                        onFocus={handleFocus}
+                        className="bg-transparent border-none border-transparent focus:border-transparent focus:ring-0 w-auto min-w-[50px] max-w-full px-0 py-2" // Allow the input to grow and shrink
+                        style={{ width: `${inputTipAmount.length}ch` }} // Dynamically set width based on input length
                       />
                     </div>
                   </div>
+
                   <div
                     className={`${
                       isThread
