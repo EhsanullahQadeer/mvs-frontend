@@ -92,12 +92,8 @@ const NavHeader: React.FC<UserData> = () => {
   }, []);
 
   const playSound = useCallback(async (type: string) => {
-    console.log(`Attempting to play sound: ${type}`);
-    console.log(`Audio loaded: ${audioLoadedRef.current}`);
-    console.log(`Tab focused: ${document.hasFocus()}`);
-
-    if (!audioLoadedRef.current) {
-      console.log('Audio not loaded, skipping playback');
+    // Don't try to play if audio isn't loaded or tab is focused
+    if (!audioLoadedRef.current || document.hasFocus()) {
       return;
     }
 
@@ -109,22 +105,14 @@ const NavHeader: React.FC<UserData> = () => {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
 
-        // Ensure volume is set
-        audioRef.current.volume = 1.0;
-
         // Try to play with user interaction check
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            if (error instanceof DOMException && error.name === 'NotAllowedError') {
-              console.warn('Audio playback requires user interaction first');
-            } else {
-              console.error('Error playing notification sound:', error);
-            }
-          });
-        }
+        await audioRef.current.play();
       } catch (error) {
-        console.error('Error playing notification sound:', error);
+        if (error instanceof DOMException && error.name === 'NotAllowedError') {
+          console.warn('Audio playback requires user interaction first');
+        } else {
+          console.error('Error playing notification sound:', error);
+        }
       }
     }
   }, []);
@@ -136,6 +124,7 @@ const NavHeader: React.FC<UserData> = () => {
   );
 
   const handleNotification = useCallback((rawData: any) => {
+    console.log("NEW_MESSAGE from navHeader");
     const formattedNotification: TNotificationData = {
       id: rawData?.id,
       type: rawData?.type,
@@ -173,9 +162,6 @@ const NavHeader: React.FC<UserData> = () => {
       } : null,
     };
 
-    // Play sound before any filtering
-    debouncedPlaySound(formattedNotification.type);
-    
     setNotifications(prev => {
       if (window.isNotificationInCurrentTab?.(formattedNotification.type)) {
         return [formattedNotification, ...prev];
@@ -183,6 +169,9 @@ const NavHeader: React.FC<UserData> = () => {
       return prev;
     });
 
+    // Use debounced play sound
+    debouncedPlaySound(formattedNotification.type);
+    
     triggerAnimation();
     setUnreadNotifCount(unreadNotifCount + 1);
   }, [debouncedPlaySound, triggerAnimation, unreadNotifCount]);
@@ -269,6 +258,7 @@ const NavHeader: React.FC<UserData> = () => {
   useNotification('DOWNLOAD_FILE', handleNotification);
   useNotification('VIEW_PROFILE', handleNotification);
   useNotification('VIEW_DEMO', handleNotification);
+  useNotification('NEW_MESSAGE', handleNotification);
   
   return (
     <>

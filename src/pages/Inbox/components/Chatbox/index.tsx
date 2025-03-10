@@ -27,7 +27,7 @@ import CheckerIcon from "../../../../assets/icons/checker.svg";
 import { IMessage } from "api/messenger/objects/states.types";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
 
-// import notificationSound from "../../../../assets/audio/mvssive-message-notification.mp3";
+import messageSound from "../../../../assets/audio/mvssive-message-notification.mp3";
 
 const Chatbox = ({ onClose }: { onClose: () => void }) => {
   const {
@@ -100,19 +100,42 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
 
   const { refreshUnreadCount } = useUnreadCount();
 
-  // useEffect(() => {
-  //   audioRef.current = new Audio(notificationSound);
-  //   audioRef.current.load();
-    
-  //   return () => {
-  //     if (audioRef.current) {
-  //       audioRef.current.pause();
-  //       audioRef.current = null;
-  //     }
-  //   };
-  // }, []);
+  // Add useEffect for audio initialization
+  useEffect(() => {
+    const initAudio = async () => {
+      try {
+        audioRef.current = new Audio(messageSound);
+        audioRef.current.crossOrigin = "anonymous";
+        audioRef.current.preload = "auto";
+
+        // Wait for audio to load
+        await new Promise(resolve => {
+          if (audioRef.current) {
+            audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
+            audioRef.current.load();
+          }
+        });
+
+        console.log('Message sound loaded successfully');
+      } catch (error) {
+        console.error('Error initializing message sound:', error);
+      }
+    };
+
+    initAudio();
+
+    // Cleanup
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   const playSound = useCallback(() => {
+    console.log('Attempting to play message sound');
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
       
@@ -120,18 +143,20 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            // Audio played successfully
+            console.log('Message sound played successfully');
           })
           .catch(err => {
-            console.warn('Could not play notification sound:', err);
+            console.warn('Could not play message sound:', err);
           });
       }
+    } else {
+      console.log("Audio not loaded, skipping playback");
     }
   }, []);
 
   useNotification("NEW_MESSAGE", (data) => {
     playSound();
-    
+    console.log("NEW_MESSAGE from Chatbox");
     refreshMessages();
     refreshUnreadCount();
   });

@@ -11,7 +11,7 @@ class APIGatewayManager {
   private socket: WebSocket | null = null;
   private reconnectInterval: number = 5000; // 5 seconds
   private userId: string;
-  private dynamicHandlers: { [key: string]: (data: any) => void } = {};
+  private dynamicHandlers: { [key: string]: { [handlerId: string]: (data: any) => void } } = {};
 
   constructor(
     websocketUrl: string, 
@@ -23,18 +23,18 @@ class APIGatewayManager {
   }
 
   private initialize() {
-    this.socket = new WebSocket( this.websocketUrl );
+    this.socket = new WebSocket(this.websocketUrl);
 
     this.socket.onopen = () => {};
 
     this.socket.onmessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
-      const handler = this.dynamicHandlers[data.type];
-      if (handler) {
-        handler(data);
+      const handlers = this.dynamicHandlers[data.type];
+      if (handlers && Object.keys(handlers).length > 0) {
+        Object.values(handlers).forEach(handler => handler(data));
       } else {
-        console.warn(`No handler found for message type: ${data.type}`);
-        console.log('Available handlers:', Object.keys(this.dynamicHandlers));
+        console.warn(`No handlers found for message type: ${data.type}`);
+        console.log('Available event types:', Object.keys(this.dynamicHandlers));
       }
     };
 
@@ -44,12 +44,9 @@ class APIGatewayManager {
       }, this.reconnectInterval);
     };
 
-    this.socket.onerror = (
-      error: Event
-    ) => {
+    this.socket.onerror = (error: Event) => {
       this.socket?.close();
     };
-
 
     window.addEventListener('beforeunload', this.cleanup.bind(this));
     window.addEventListener('unload', this.cleanup.bind(this));
@@ -69,12 +66,20 @@ class APIGatewayManager {
     window.removeEventListener('unload', this.cleanup.bind(this));
   }
 
-  public registerHandler(type: string, handler: (data: any) => void) {
-    this.dynamicHandlers[type] = handler;
+  public registerHandler(type: string, handler: (data: any) => void, handlerId: string) {
+    if (!this.dynamicHandlers[type]) {
+      this.dynamicHandlers[type] = {};
+    }
+    this.dynamicHandlers[type][handlerId] = handler;
   }
 
-  public unregisterHandler(type: string) {
-    delete this.dynamicHandlers[type];
+  public unregisterHandler(type: string, handlerId: string) {
+    if (this.dynamicHandlers[type] && this.dynamicHandlers[type][handlerId]) {
+      delete this.dynamicHandlers[type][handlerId];
+      if (Object.keys(this.dynamicHandlers[type]).length === 0) {
+        delete this.dynamicHandlers[type];
+      }
+    }
   }
 }
 
