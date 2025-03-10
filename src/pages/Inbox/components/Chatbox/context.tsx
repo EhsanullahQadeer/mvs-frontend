@@ -14,6 +14,7 @@ interface ChatboxContextType {
   chatMessages: IMessage[] | null;
   activeConversation: IConversation | null;
   loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   overlayLoading: boolean;
   setOverlayLoading: React.Dispatch<React.SetStateAction<boolean>>;
   notes: any[];
@@ -55,7 +56,6 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const authUser = useSelector((state: RootState) => state.auth?.user);
   const {
     messages,
-    loading,
     getConversationMessages,
     conversationNotes,
     getThreadMessages,
@@ -67,7 +67,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const [activeTab, setActiveTab] = useState<ChatTabType>('messages');
   const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<IMessage[] | null>(null);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const [recipient, setRecipient] = useState<TUser>(activeConversation?.recipient || null);
   const [totalPaid, setTotalPaid] = useState<number>(activeConversation?.total_paid || 0);
   const [notes, setNotes] = useState<INotes[]>(conversationNotes);
@@ -105,11 +105,18 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const refreshMessages = useCallback(() => {
     console.log('threadMessages', threadMessages);
     if (activeConversation) {
+      setLoading(true);
       if (!isThread) {
         setChatMessages(null);
-        getConversationMessages({ conversationId: activeConversation.conversation_id });
+        getConversationMessages({ conversationId: activeConversation.conversation_id })
+          .finally(() => {
+            setLoading(false);
+          });
       } else if (threadMessages?.[0]?.id) {
-        getThreadMessages({ parentMessageId: threadMessages[0].id });
+        getThreadMessages({ parentMessageId: threadMessages[0].id })
+          .finally(() => {
+            setLoading(false);
+          });
       }
     }
   }, [
@@ -168,8 +175,13 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   
   useEffect(() => {
     if (activeConversation) {
-      refreshMessages();
-      getNotes();
+      setLoading(true);
+      Promise.all([
+        refreshMessages(),
+        getNotes()
+      ]).finally(() => {
+        setLoading(false);
+      });
     }
   }, [activeConversation, refreshMessages, getNotes]);
 
@@ -178,6 +190,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     setActiveTab,
     activeConversation,
     loading,
+    setLoading,
     overlayLoading,
     setOverlayLoading,
     notes,

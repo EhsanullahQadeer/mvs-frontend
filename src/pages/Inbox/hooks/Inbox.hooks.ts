@@ -16,8 +16,14 @@ import { useSelector } from 'react-redux';
 /* LOCAL IMPORTS */
 import { RootState } from "../../../redux/reducers";
 import { getConversationMessages, getConversations } from "api/messenger";
+import { useChatbox } from '../components/Chatbox/context';
 
 export const useInboxHooks = () => {
+
+  const {
+    setLoading,
+  } = useChatbox();
+
 
   /* States */
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -50,18 +56,28 @@ export const useInboxHooks = () => {
   }, [ state.auth.user ]);
 
 
-  const handleConversationClick = async (
-    conversation
-  ) => {
+  const handleConversationClick = (conversation) => {
     setSelectedConversation(conversation);
-    const conversationMessages = await getConversationMessages({
-      conversationId: conversation.id,
-      skip: 0,
-      take: 20,
-    });
-    setMessages(conversationMessages.data?.messages);
+    setLoading(true);
+    setMessages(null);
   };
 
+  // New useEffect to handle message loading
+  useEffect(() => {
+    const loadMessages = async () => {
+      if (messages === null && selectedConversation) {
+        const conversationMessages = await getConversationMessages({
+          conversationId: selectedConversation.id,
+          skip: 0,
+          take: 20,
+        });
+        setMessages(conversationMessages.data?.messages);
+        setLoading(false);
+      }
+    };
+
+    loadMessages();
+  }, [messages, selectedConversation]);
 
   useEffect(() => {
     console.log('conversation list', conversationsList);

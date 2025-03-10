@@ -35,7 +35,8 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
     recipient,
     refreshMessages,
     isThread,
-    setIsThread
+    setIsThread,
+    loading
   } = useChatbox();
   const {
     activeConversation,
@@ -56,8 +57,6 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -160,12 +159,6 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
     refreshMessages();
     refreshUnreadCount();
   });
-
-  useEffect(() => {
-    if (messages !== null && messages !== undefined) {
-      setLoading(false);
-    }
-  }, [messages]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -291,7 +284,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
           </div>
         </div>
         <div className="flex flex-col flex-1 relative overflow-hidden">
-          {messages === null ? (
+          {loading || messages === null ? (
             <div className="absolute top-0 left-0 bottom-0 right-0 w-full h-full flex justify-center items-center">
               <CircularProgress
                 sx={{
@@ -308,7 +301,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
             >
               {activeTab === "messages" && (
                 <>
-                  {messages.length === 0 ? (
+                  {messages?.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-4">
                       <div className="text-limeGreen text-xl mb-2">
                         Start your conversation!
