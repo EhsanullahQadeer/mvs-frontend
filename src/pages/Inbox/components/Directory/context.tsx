@@ -84,8 +84,11 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   let prevtab:ConversationTabType = 'priority';
 
   useEffect(() => {
+    const favConvos = conversations.filter(conv => conv.is_favorite);
+    setFavoriteConversations(favConvos);
+
+    //Idk what this does.
     if (!initialized.current && conversations.length > 0) {
-      setFavoriteConversations(() => conversations.filter(conv => conv.is_favorite));
       initialized.current = true;
     }
   }, [conversations]);
