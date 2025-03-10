@@ -12,6 +12,8 @@ import Sidebar from "./Sidebar";
 import mvssive_text from "../assets/img/massive_text.svg";
 import mvssive_mini from "../assets/img/M-logo.png";
 import NavHeader from "components/ui/Header/organisms/navHeader";
+import { MessengerProvider } from "api/messenger/context";
+import { useState } from "react";
 
 interface ThemeProps {
   isOverflowHidden?: boolean;
@@ -20,9 +22,24 @@ interface ThemeProps {
 }
 
 const Theme = (props: ThemeProps) => {
+
+  // size in pixels but should be changed to rems/vw once we refactor the design
+  const sidebarWidth = "80px"; // when not expanded
+  const largeSidebarWidth = "250px";
+  const headerHeight = "80px";
+
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
-    <div className="grid grid-rows-[90px,1fr] grid-cols-[90px,1fr] h-screen bg-[#08090A]">
-      <div
+    <MessengerProvider>
+    <div
+      className="grid h-screen bg-[#08090A] z-[1000] relative"
+      style={{
+        gridTemplateRows: `${headerHeight} 1fr`,
+        gridTemplateColumns: `${sidebarWidth} 1fr`
+      }}
+    >
+      <div        
         className="row-start-1 col-start-1 bg-[#08090A] border-b-2 border-r-2 border-[#1F1F1F]
          flex items-center justify-center"
         onClick={() => (window.location.href = "/home")}
@@ -41,10 +58,6 @@ const Theme = (props: ThemeProps) => {
           />
         </svg>
       </div>
-      {/* Header */}
-      {/* <div className="onboard-14 row-start-1 col-start-2 border-b-2 border-[#1F1F1F] flex items-center pl-[20px]">
-        <Header headerTitle={props.headerTitle} />
-      </div> */}
 
       {/* Nav Header */}
       <div className="onboard-14 row-start-1 col-start-2 border-b-2 border-[#1F1F1F] flex items-center pl-[20px]">
@@ -52,8 +65,20 @@ const Theme = (props: ThemeProps) => {
       </div>
 
       {/* Sidebar */}
-      <div className="row-start-2 col-start-1 overflow-y-auto custom-dropdown border-r-2 border-[#1F1F1F]">
-        <Sidebar />
+      <div 
+        className={`row-start-2 col-start-1] 
+          overflow-y-auto custom-dropdown border-r-2 border-[#1F1F1F]
+          z-[1000] relative`}
+          style={{
+            width: isExpanded ? largeSidebarWidth : sidebarWidth,
+            transition: 'all 0.15s ease-in-out'
+          }}
+          onClick={() => console.log("largeSidebarWidth", largeSidebarWidth)}>
+          <Sidebar
+            isExpanded={isExpanded}
+            setIsExpanded={setIsExpanded}
+            sidebarWidth={sidebarWidth}
+            headerHeight={headerHeight} />
       </div>
 
       {/* Main content */}
@@ -65,6 +90,7 @@ const Theme = (props: ThemeProps) => {
         {props.children}
       </div>
     </div>
+    </MessengerProvider>
   );
 };
 

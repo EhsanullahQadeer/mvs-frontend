@@ -1,24 +1,29 @@
-import { getConversationNotes, getConversationsById } from "api/messenger";
+import { getConversationMessages, getConversationNotes } from "api/messenger";
 import { IConversation, INotes } from "../components/types";
 import moment from "moment";
 import { useState } from "react";
+import { IGetConversationMessages } from "api/messenger/objects/api.interfaces";
 
 const useGetMessagesNotes = (setActiveConversation) => {
   const [localMessages, setLocalMessages] = useState([]);
   const [notes, setNotes] = useState<INotes[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const getConversationMessages = async (conversation: IConversation) => {
+  const getConvMessages = async (conversation: IConversation) => {
     setActiveConversation(conversation);
-    const _msgs = await getConversationsById(
-      {
-        limit: 10,
-      },
-      conversation.id
-    );
+    const payload: IGetConversationMessages = {
+      conversationId: String(conversation.conversation_id),
+      skip: 0,
+      take: 10,
+    }
+    const _msgs = await getConversationMessages(payload);
+    console.log('getConvMessages _msgs:', _msgs);
 
-    const results = _msgs.data.messages;
-
+    const results = Array.isArray(_msgs.data?.results) 
+      ? _msgs.data?.results 
+      : Object.values(_msgs.data?.results || {});
+    
+    console.log('getConvMessages results:', results);
     for (var i = 0; i < results.length; i++) {
       results[i].date = moment(results[i].Timestamp).format("YYYY-MM-DD");
     }
@@ -53,7 +58,7 @@ const useGetMessagesNotes = (setActiveConversation) => {
 
   const getMessagesNotes = async (selectedConvo: IConversation) => {
     setLoading(true);
-    await getConversationMessages(selectedConvo);
+    await getConvMessages(selectedConvo);
     await getNotes(selectedConvo.id);
     setLoading(false);
   };
@@ -62,7 +67,7 @@ const useGetMessagesNotes = (setActiveConversation) => {
     localMessages,
     notes,
     loading,
-    getConversationMessages,
+    getConvMessages,
     getNotes,
     getMessagesNotes,
     setLocalMessages,

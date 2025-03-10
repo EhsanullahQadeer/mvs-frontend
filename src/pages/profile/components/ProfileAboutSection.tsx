@@ -8,16 +8,18 @@ import playIcon from "../../../assets/img/player/play-circle.svg";
 import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
 import {
-  getConversationsById,
-  getConversationsList,
-  getConversationWithUser,
+  createNewConversation,
+  getConversationMessages,
+  getConversationsWithUser
 } from "api/messenger";
-import MessagesDetail from "pages/Inbox/components/MessagesDetail";
+import Chatbox from "pages/Inbox/components/Chatbox";
 import { requestConncetAPI } from "api/user";
 import avatarImg from "../../../assets/img/avatar.svg";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 import { useMessages } from "../../../pages/profile/messageContextProvider";
-
+import { ICreateNewConversation, IGetConversationMessages, IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
+import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
+import { useNavigate } from "react-router-dom";
 type Props = {
   artistData: IArtistProfileData | null;
   creditsData: {
@@ -45,7 +47,7 @@ const ProfileAboutSection = (props: Props) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: RootState) => state);
-
+  const navigate = useNavigate();
   const isConnectionPending =
     connectionDetail === false ||
     connectionDetail === null ||
@@ -63,39 +65,39 @@ const ProfileAboutSection = (props: Props) => {
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
 
-    useNotification("NEW_MESSAGE", (event) => {
-      try {
-        const { conversationId, sender, message, timestamp } = event.data;
+    // useNotification("NEW_MESSAGE", (event) => {
+    //   try {
+    //     const { conversationId, sender, message, timestamp } = event.data;
     
-        const timeoutId = setTimeout(async () => {
-          try {
-            if (chatData.id === Number(conversationId)) {
-              // const newMessage = {
-              //   conversation_id: conversationId,
-              //   Timestamp: timestamp || new Date().toISOString(),
-              //   message_content: message,
-              //   sender_id: sender
-              // };
-              // const formatMessages = [
-              //   {
-              //     date: new Date().toISOString().split("T")[0],
-              //     messages: [...messages[0]?.messages || [], newMessage]
-              //   }
-              // ]
-              //setMessages(formatMessages);
-              getConversationMessages(chatData);
-            }
-          } catch (error) {
-            console.error('Error refreshing data:', error);
-          }
-        }, 300);
+    //     const timeoutId = setTimeout(async () => {
+    //       try {
+    //         if (chatData.id === Number(conversationId)) {
+    //           // const newMessage = {
+    //           //   conversation_id: conversationId,
+    //           //   Timestamp: timestamp || new Date().toISOString(),
+    //           //   message_content: message,
+    //           //   sender_id: sender
+    //           // };
+    //           // const formatMessages = [
+    //           //   {
+    //           //     date: new Date().toISOString().split("T")[0],
+    //           //     messages: [...messages[0]?.messages || [], newMessage]
+    //           //   }
+    //           // ]
+    //           //setMessages(formatMessages);
+    //           getConversationMessages(chatData);
+    //         }
+    //       } catch (error) {
+    //         console.error('Error refreshing data:', error);
+    //       }
+    //     }, 300);
     
-        return () => clearTimeout(timeoutId);
+    //     return () => clearTimeout(timeoutId);
     
-      } catch (error) {
-        console.error('Error processing new message event:', error);
-      }
-    });
+    //   } catch (error) {
+    //     console.error('Error processing new message event:', error);
+    //   }
+    // });
 
   const handlePlayClick = (previewUrl: string, index: number) => {
     if (!previewUrl) return;
@@ -115,16 +117,18 @@ const ProfileAboutSection = (props: Props) => {
 
   const handleMessageClick = async () => {
     if (!artistData?.id) return;
-
+    navigate(`/inbox/`);
     try {
       setLoading(true);
 
       // Pass recipient_id as a query parameter
-      const response = await getConversationWithUser(artistData.id);
+      const payload: IGetConversationsWithUser = {userId:artistData?.id};
+      const response = await getConversationsWithUser(payload);
       console.log("conversation with user response:", response);
 
+      let conversation;
       if (response.data) {
-        const conversation = {
+        conversation = {
           id: response.data.id,
           thumbnail: artistData.thumbnail,
           displayName: artistData.professional_name,
@@ -132,36 +136,31 @@ const ProfileAboutSection = (props: Props) => {
           recipient_id: artistData.id,
           conversation_id: response.data.id,
         };
-
         console.log("existing conversation found:", conversation);
-        setChatData(conversation);
         await getConversationMessages(conversation);
-        setChatOpen(true);
       } else {
-        // For new conversations, use a temporary ID that will be replaced
-        const tempId = `temp_${Date.now()}`;
+        const payload: ICreateNewConversation = {recipientId:artistData?.id}
+        const response = await createNewConversation(payload)
         const conversation = {
-          id: tempId, // Add a temporary ID here
+          id: response.data.results?.conversationId, // Add a temporary ID here
           thumbnail: artistData.thumbnail,
           displayName: artistData.professional_name,
           sender: user.auth.user.id,
           recipient_id: artistData.id,
           conversation_id: null,
           messages: [],
-          isNew: true, // Flag to indicate this is a new conversation
+          isNew: true,
         };
-
-        console.log("creating new conversation:", conversation);
-        setChatData(conversation);
         setMessages([
           {
             date: new Date().toISOString().split("T")[0],
             messages: [],
           },
         ]);
-        setChatOpen(true);
+        
       }
-
+      setChatData(conversation);
+      setChatOpen(true);
       setShowChat(true);
     } catch (error) {
       console.error("Error opening chat:", error);
@@ -183,7 +182,7 @@ const ProfileAboutSection = (props: Props) => {
     }
   };
 
-  const getConversationMessages = async (conversation) => {
+  const getConvoMessages = async (conversation) => {
     try {
       console.log("Getting messages for conversation:", conversation);
 
@@ -199,8 +198,7 @@ const ProfileAboutSection = (props: Props) => {
 
       let conversationId = conversation.id || conversation.conversation_id;
       if (String(conversationId).startsWith("temp")){
-        const response = await getConversationWithUser(artistData.id);
-
+        const response = await getConversationsWithUser({userId:artistData?.id});
         if (response.data) {
           conversationId = response.data.id
           setChatData({
@@ -214,10 +212,10 @@ const ProfileAboutSection = (props: Props) => {
         }
       }
       if (conversationId) {
-        const messagesResponse = await getConversationsById(
-          { limit: 10 },
-          conversationId
-        );
+        const payload: IGetConversationMessages = {
+          conversationId: conversationId
+        }
+        const messagesResponse = await getConversationMessages(payload);
 
         // Format messages in the expected structure
         const formattedMessages = [
@@ -246,17 +244,11 @@ const ProfileAboutSection = (props: Props) => {
   if (showChat && chatData) {
     return (
       <div className="relative w-full h-[calc(100vh-70px)] bg-richBlack overflow-hidden">
-        <MessagesDetail
-          conversation={chatData}
-          loading={loading}
-          messages={messages}
-          getConversationMessages={getConversationMessages}
-          getNotes={() => {}}
-          notes={[]}
-          currentUserInfo={user.auth.user}
-          onClose={() => {setShowChat(false); setChatOpen(false)}}
-          userInfo={artistData}
-        />
+        <ChatboxProvider>
+          <Chatbox
+            onClose={() => {setShowChat(false); setChatOpen(false)}}
+          />
+        </ChatboxProvider>
       </div>
     );
   }

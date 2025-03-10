@@ -1,38 +1,33 @@
 import { useState, useEffect, useRef } from "react";
-import { IConversation } from "./types";
-import { getConversationFilesInfo } from "api/messenger";
+import { IConversation } from "../../types";
+import { getConversationFiles } from "api/messenger";
 import { FiDownload } from "react-icons/fi";
+import { IGetConversationFiles } from "api/messenger/objects/api.interfaces";
+import { useChatbox } from "../context";
 
-type Props = {
-  conversation: IConversation;
-};
+const InfoTab = () => {
+  
+  const {
+    recipient,
+    totalPaid,
+  } = useChatbox();
 
-const InfoSection = (props: Props) => {
-  const { conversation } = props;
 
-  const { 
-    displayName, 
-    recipient_id,
-    user_a, 
-    user_b,
-    total_payments_a,
-    total_payments_b,
-  } = conversation;
-  const splitName = displayName.trim().split(" ");
-  const firstName = displayName
+  useEffect(() => {
+    console.log('recipient', recipient);
+  }, [recipient]);
+
+  const splitName = recipient?.name?.trim().split(" ");
+  const firstName = recipient
     ? splitName.length > 0
       ? splitName[0]
       : "..."
     : "...";
-  const lastName = displayName
+  const lastName = recipient
     ? splitName.length > 1
       ? splitName.slice(1).join(" ")
       : "..."
     : "...";
-
-  const recipientUser = user_b?.id === recipient_id ? user_b : user_a;
-
-  const totalPayment = recipientUser?.id === user_a?.id ? total_payments_a : total_payments_b;
 
   const [filesInfo, setFilesInfo] = useState<any[]>([]);
   const [skip, setSkip] = useState(0);
@@ -44,45 +39,49 @@ const InfoSection = (props: Props) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
-  const getConversationInfo = async () => {
-    try {
-      const response = await getConversationFilesInfo(conversation.id, skip, TAKE);
-      const newFiles = response.data.data;
-      console.log("newFiles... here", newFiles);
-      setFilesInfo(prev => [...prev, ...newFiles]);
-      setHasMore(newFiles.length === TAKE);
-    } catch (error) {
-      console.error('Error fetching files:', error);
-    }
-  };
+  // const getConversationInfo = async () => {
+  //   try {
+  //     const payload = { 
+  //       conversationId: conversation.conversation_id,
+  //       skip: skip,
+  //       take: TAKE
+  //     } as IGetConversationFiles
+  //     const response = await getConversationFiles(payload);
+  //     const newFiles = response.data.data;
+  //     console.log("newFiles... here", newFiles);
+  //     setFilesInfo(prev => [...prev, ...newFiles]);
+  //     setHasMore(newFiles.length === TAKE);
+  //   } catch (error) {
+  //     console.error('Error fetching files:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    // Reset states when conversation changes
-    setFilesInfo([]);
-    setSkip(0);
-    setHasMore(true);
-    // Stop any playing audio
-    if (audioRef.current) {
-      audioRef.current.pause();
-      setPlayingAudio(null);
-      setProgress(0);
-    }
-  }, [conversation.id]);
+  // useEffect(() => {
+  //   // Reset states when conversation changes
+  //   setFilesInfo([]);
+  //   setSkip(0);
+  //   setHasMore(true);
+  //   // Stop any playing audio
+  //   if (audioRef.current) {
+  //     audioRef.current.pause();
+  //     setPlayingAudio(null);
+  //     setProgress(0);
+  //   }
+  // }, [conversation.id]);
 
-  // Add cleanup effect to stop audio when component unmounts
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        setPlayingAudio(null);
-        setProgress(0);
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     if (audioRef.current) {
+  //       audioRef.current.pause();
+  //       setPlayingAudio(null);
+  //       setProgress(0);
+  //     }
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    getConversationInfo();
-  }, [skip, conversation.id]); // Add conversation.id as dependency
+  // useEffect(() => {
+  //   getConversationInfo();
+  // }, [skip, conversation.id]); // Add conversation.id as dependency
 
   const handleScroll = () => {
     const container = filesContainerRef.current;
@@ -138,7 +137,7 @@ const InfoSection = (props: Props) => {
             First Name
           </div>
           <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center whitespace-nowrap rounded-lg border border-solid border-neutral-200 text-neutral-200">
-            {firstName}
+            {recipient?.name ? recipient.name.trim().split(" ")[0] : "..."}
           </div>
         </div>
         <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-0">
@@ -146,7 +145,11 @@ const InfoSection = (props: Props) => {
             Last Name
           </div>
           <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center whitespace-nowrap rounded-lg border border-solid border-neutral-200 text-neutral-200">
-            {lastName}
+            {recipient?.name ? 
+              (recipient.name.trim().split(" ").length > 1 ? 
+                recipient.name.trim().split(" ").slice(1).join(" ") : 
+                "...") : 
+              "..."}
           </div>
         </div>
       </div>
@@ -156,7 +159,7 @@ const InfoSection = (props: Props) => {
             User Role
           </div>
           <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center whitespace-nowrap rounded-lg border border-solid border-neutral-200 text-neutral-200">
-            {recipientUser?.primary_role ? recipientUser?.primary_role : "..."}
+            {recipient?.primaryRole}
           </div>
         </div>
       </div>
@@ -166,7 +169,7 @@ const InfoSection = (props: Props) => {
             Amount Spent
           </div>
           <div className="gap-2 self-stretch px-3.5 py-2.5 w-full text-sm leading-none text-center whitespace-nowrap bg-lime-400 rounded-lg text-stone-950">
-            ${totalPayment}
+            ${totalPaid}
           </div>
         </div>
         <div className="flex flex-col flex-1 shrink self-stretch my-auto basis-0">
@@ -265,4 +268,4 @@ const InfoSection = (props: Props) => {
   );
 };
 
-export default InfoSection;
+export default InfoTab;

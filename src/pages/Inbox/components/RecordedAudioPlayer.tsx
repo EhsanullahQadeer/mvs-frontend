@@ -21,10 +21,7 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = React.memo(({ au
   const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isMuted, setIsMuted] = useState(false);
-  const animationFrameId = useRef<number | null>(null);
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
-  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const lastUpdateTime = useRef<number>(0);
+
 
   useEffect(() => {
     if (!waveformRef.current || !audioUrl) return;

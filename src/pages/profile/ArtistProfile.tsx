@@ -183,9 +183,11 @@ const ArtistProfile = () => {
             </section>
 
             <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
-              <ProfileAboutSection
-                {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
-              />
+              <MessageContextProvider>
+                <ProfileAboutSection
+                  {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
+                />
+              </MessageContextProvider>
             </section>
           </div>{" "}
         </>
