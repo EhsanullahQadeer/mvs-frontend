@@ -35,7 +35,6 @@ const CollectionsButton = (props: {
             //navigate(destination);
             setIsDropdownOpen(!isDropdownOpen);
           }}
-          onMouseEnter={() => setIsExpanded(true)}
           className={`cursor-pointer rounded-[8px] ${isExpanded ? 'w-[100%] gap-[8px]' : 'h-[40px] w-[40px]'} p-[8px] flex 
                 ${pathname === destination
               ? `bg-[${selectedButtonColor}] text-[#000]`
