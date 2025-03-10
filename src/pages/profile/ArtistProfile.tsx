@@ -167,7 +167,7 @@ const ArtistProfile = () => {
                         <input
                           style={{ boxShadow: "none" }}
                           type="text"
-                          className="rounded-full outline-none bg-transparent border-none w-full py-2.5 pl-0 text-xs font-normal text-charcoalGray"
+                          className="rounded-full outline-none bg-transparent border-none w-full py-2.5 pl-0 text-xs font-normal text-white"
                           placeholder="search anything..."
                         />
                       </div>

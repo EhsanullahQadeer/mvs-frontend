@@ -93,6 +93,7 @@ const UploadFileSection = (props) => {
             <UploadingFilesSection
               {...{
                 uploadingFile,
+                setUploadingFile,
                 fileRedisKey,
                 uploadProgress,
                 handleCancel,
