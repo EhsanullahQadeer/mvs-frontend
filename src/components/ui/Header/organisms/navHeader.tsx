@@ -18,6 +18,7 @@ import HeaderCreditCount from "../atoms/headerCreditCount";
 import NotificationPopUpWindow from "./NotificationsManager";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 import notificationSound from "../../../../assets/audio/notification.mp3";
+import messageNotificationSound from "../../../../assets/audio/mvssive-message-notification.mp3";
 import { TNotificationData } from "../molecules/notifications/Notification";
 import NotificationBellButton from "../atoms/notificationAtoms/notificationBellButton";
 import { useNotificationAnimation , NotificationAnimationProvider } from "../context/NotificationAnimationContext";
@@ -47,6 +48,7 @@ const NavHeader: React.FC<UserData> = () => {
       'DOWNLOAD_FILE',
       'VIEW_PROFILE',
       'VIEW_DEMO',
+      'NEW_MESSAGE',
     ], false, 0);
     console.log('notifications', notifications);
     setNotifications(notifications?.data);
@@ -102,16 +104,23 @@ const NavHeader: React.FC<UserData> = () => {
       }
       return prev;
     });
-    playSound();
+    playSound(formattedNotification.type);
     triggerAnimation();
     setUnreadNotifCount(unreadNotifCount + 1);
   };
 
-  const playSound = () => {
-    const audio = new Audio(notificationSound);
-    audio.play().catch(err => {
-      console.warn('Could not play notification sound:', err);
-    });
+  const playSound = (type: string) => {
+    if (type === 'NEW_MESSAGE') {
+      const audio = new Audio(messageNotificationSound);
+      audio.play().catch(err => {
+        console.warn('Could not play notification sound:', err);
+      });
+    } else {
+      const audio = new Audio(notificationSound);
+      audio.play().catch(err => {
+        console.warn('Could not play notification sound:', err);
+      });
+    }
   };
 
   const menuItems = [
