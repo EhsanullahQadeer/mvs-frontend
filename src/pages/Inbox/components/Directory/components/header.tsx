@@ -5,6 +5,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import InboxDropdownMenu from "../../ActionMenu";
 import { useMessenger } from "api/messenger/context";
 import AlertDialog from "components/util/AlertDialog";
+import Tooltip from "components/ui/Header/atoms/tooltip";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { ReactComponent as HamburgerIcon } from "../../../../../assets/icons/menuIcon.svg";
 import { ReactComponent as DeleteIcon } from "../../../../../assets/icons/deleteIcon.svg";
@@ -51,33 +52,32 @@ const InboxHeader = () => {
       icon: <ArchiveIcon />,
       onClick: () => {
         toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
-      }
+      },
+      label: "Archive Conversation"
     },
     {
       id: "spam",
       icon: <AlertOctagonIcon />,
       onClick: () => {
         toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
-      }
+      },
+      label: "Mark as Spam"
     },
     {
       id: "delete",
       icon: <DeleteIcon />,
       onClick: () => {
         setOpenDeleteDialog(true);
-      }
+      },
+      label: "Delete Conversation"
     },
-    // { 
-    // id: "read", 
-    // icon: <MailOpenIcon />, 
-    // func: handleMarkConvoRead 
-    // },
     {
       id: "folder",
       icon: <FolderInputIcon />,
       onClick: () => {
         toggleConversationsIsPriority({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
-      }
+      },
+      label: "Move to Folder"
     },
   ];
 
@@ -172,7 +172,8 @@ const InboxHeader = () => {
               />
             </div>
           </div>
-          {options.map(({ id, icon, onClick }) => (
+          {options.map(({ id, icon, onClick, label }) => (
+            <Tooltip key={id} text={label}>
             <div
               key={id}
               onClick={onClick}
@@ -186,6 +187,7 @@ const InboxHeader = () => {
             >
               {icon}
             </div>
+            </Tooltip>
           ))}
           <div
             onClick={handleMenuSection}
