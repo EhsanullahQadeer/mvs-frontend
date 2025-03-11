@@ -73,11 +73,10 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
   const refreshRef = useRef(null);
 
-  const onIntersection = (entries, observer) => {
-    for (const { isIntersecting, target } of entries) {
+  const onIntersection = (entries) => {
+    for (const {isIntersecting} of entries) {
       if (isIntersecting) {
         loadMoreNotifications()
-        observer.unobserve(target);
       }
     }
   };
@@ -131,20 +130,10 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
     try {
       skip += 10;
       const response = await getUserNotifications(NOTIFICATION_GROUPS[selectedTab], false, skip);
-      if (response.data.length < 10) {setAllowLoading(false)}else{observer.observe(refreshRef.current);}
+      if (response.data.length < 10) {setAllowLoading(false)}
       setNotifications((prev) => [...prev, ...response.data]);
     } catch (error) {
       console.error("Error loading more notifications:", error);
-    }
-  };
-
-  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - 50) {
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-      setScrollTimeout(setTimeout(() => {
-        loadMoreNotifications();
-      }, 500));
     }
   };
 
