@@ -24,10 +24,6 @@ interface ChatboxContextType {
     // handleEmojiSelect: (id: number, emoji: string) => void;
   
   // Functions
-  // canSendMessage: (hasText: boolean, tipAmount: number, thereIsDemo: boolean) => boolean;
-  handleDemoBtn: (id: number) => void;
-  handleReviewBtn: (id: number) => void;
-  handleThreadReply: (id: number) => void;
   refreshMessages: () => void;
   handleSendMessage: (content: string, mediaId?: string) => Promise<void>;
   getNotes: () => Promise<void>;
@@ -81,7 +77,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [activeConversation]);
   
   useEffect(() => {
-    if (messages) {
+    if (messages === null) {
       setChatMessages(messages);
     }
   }, [messages]);
@@ -103,7 +99,6 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [messages]);
 
   const refreshMessages = useCallback(() => {
-    console.log('threadMessages', threadMessages);
     if (activeConversation) {
       setLoading(true);
       if (!isThread) {
@@ -126,31 +121,9 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     isThread
   ]);
 
-  const handleDemoBtn = useCallback((id: number) => {
-    // Implementation for handling demo button click
-    console.log('Demo button clicked for message:', id);
-    // Add your implementation here
-  }, []);
-
-  const handleReviewBtn = useCallback((id: number) => {
-    // Implementation for handling review button click
-    console.log('Review button clicked for message:', id);
-    // Add your implementation here
-  }, []);
-
-  const handleThreadReply = useCallback((id: number) => {
-    // Implementation for handling thread reply
-    console.log('Thread reply for message:', id);
-    // Add your implementation here
-  }, []);
-
   const handleSendMessage = useCallback(async (content: string, mediaId?: string) => {
-    // Implementation for sending a message
     console.log('Sending message:', content, mediaId);
-    // Add your implementation here
-
     refreshMessages();
-
   }, [refreshMessages]);
 
   const getNotes = useCallback(async () => {
@@ -173,17 +146,17 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [messages]);
 
   
-  useEffect(() => {
-    if (activeConversation) {
-      setLoading(true);
-      Promise.all([
-        refreshMessages(),
-        getNotes()
-      ]).finally(() => {
-        setLoading(false);
-      });
-    }
-  }, [activeConversation, refreshMessages, getNotes]);
+  // useEffect(() => {
+  //   if (activeConversation) {
+  //     setLoading(true);
+  //     Promise.all([
+  //       refreshMessages(),
+  //       getNotes()
+  //     ]).finally(() => {
+  //       setLoading(false);
+  //     });
+  //   }
+  // }, [activeConversation, refreshMessages, getNotes]);
 
   const value: ChatboxContextType = {
     activeTab,
@@ -199,10 +172,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     totalPaid,
     // messageReactions,
     // handleEmojiSelect,
-    
-    handleDemoBtn,
-    handleReviewBtn,
-    handleThreadReply,
+  
     refreshMessages,
     handleSendMessage,
     getNotes,

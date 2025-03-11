@@ -28,6 +28,7 @@ class APIGatewayManager {
     this.socket.onopen = () => {};
 
     this.socket.onmessage = (event: MessageEvent) => {
+      console.log('onmessage', event);
       const data = JSON.parse(event.data);
       const handlers = this.dynamicHandlers[data.type];
       if (handlers && Object.keys(handlers).length > 0) {

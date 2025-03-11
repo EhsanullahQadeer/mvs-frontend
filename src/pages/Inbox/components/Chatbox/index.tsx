@@ -44,6 +44,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
   } = useConversation();
   const {
     messages,
+    setMessages,
     conversationNotes,
     getTotalConversationUnread,
     setThreadMessages,
@@ -153,10 +154,28 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
     }
   }, []);
 
+
   useNotification("NEW_MESSAGE", (data) => {
+    console.log("1. Data received:", data);
+    
+    if (!data || !data.message) {
+      console.log("No data or message");
+      return;
+    }
+
+    const message = data.message as IMessage;
+    console.log("2. Message:", message);
+    console.log("3. Current messages:", messages);
+    
+    if (!messages) {
+      console.log("4a. Setting initial messages");
+      setMessages([message]);
+    } else {
+      console.log("4b. Appending to existing messages");
+      setMessages([...messages, message]);
+    }
+
     playSound();
-    console.log("NEW_MESSAGE from Chatbox");
-    refreshMessages();
     refreshUnreadCount();
   });
 
@@ -168,41 +187,6 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
       }
     });
   }, [messages, conversationNotes]);
-
-  // const handleDemoBtn = (msgId: number) => {
-  //   localStorage.setItem("msgId", msgId.toString());
-  //   navigate(`/inbox/${id}/thread`);
-  // };
-
-  // const handleReviewBtn = async (msgId: number) => {
-  //   localStorage.setItem("msgId", msgId.toString());
-  //   navigate(`/inbox/${id}/thread`);
-  //   try {
-  //     await toggleMessageRead({ messageId: msgId });
-  //     await getConvMessages(conversation);
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
-
-  // const handleThreadReply = (msgId: number) => {
-  //   localStorage.setItem("msgId", msgId.toString());
-  //   navigate(`/inbox/${id}/thread`);
-  // };
-
-  // const findThreadReplyObj = (msgId: number) => {
-  //   if (Array.isArray(messages)) {
-  //     return messages.filter((msg: IMessage) => msg.reply_to?.id === msgId);
-  //   } else if (messages && typeof messages === 'object') {
-  //     const messagesArray = Object.values(messages);
-  //     if (messagesArray.length > 0 && Array.isArray(messagesArray[0])) {
-  //       return messagesArray.flat().filter((msg: IMessage) => msg.reply_to?.id === msgId);
-  //     } else {
-  //       return messagesArray.filter((msg: IMessage) => msg.reply_to?.id === msgId);
-  //     }
-  //   }
-  //   return [];
-  // };
 
   const handleMenuSection = () => {
     setMenuSection(!menuSection);
@@ -284,7 +268,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
           </div>
         </div>
         <div className="flex flex-col flex-1 relative overflow-hidden">
-          {loading || messages === null ? (
+          {messages === null ? (
             <div className="absolute top-0 left-0 bottom-0 right-0 w-full h-full flex justify-center items-center">
               <CircularProgress
                 sx={{
@@ -375,14 +359,28 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
                         </>
                       ) : (
                         <div className="w-full overflow-x-hidden">
-                          {messages.map((message: IMessage, index) => (
-                            <Message
-                              key={message.id}
-                              message={message}
-                              index={index}
-                              prevMessageDate={index > 0 ? messages[index - 1].created_at : undefined}
-                            />
-                          ))}
+                          {messages && Array.isArray(messages) ? messages.map((message: IMessage, index) => (
+                            <div
+                              key={message?.id || index}
+                              ref={index === messages.length - 1 ? (el) => {
+                                // Scroll to the last message smoothly
+                                if (el) {
+                                  el.scrollIntoView({ 
+                                    behavior: 'smooth',
+                                    block: 'end'
+                                  });
+                                }
+                              } : undefined}
+                            >
+                              <Message
+                                message={message}
+                                index={index}
+                                prevMessageDate={index > 0 && messages[index - 1] ? messages[index - 1].created_at : undefined}
+                              />
+                            </div>
+                          )) : (
+                            <div>Loading messages...</div>
+                          )}
                         </div>
                       )}
                     </div>

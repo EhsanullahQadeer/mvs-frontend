@@ -63,21 +63,21 @@ export const useInboxHooks = () => {
   };
 
   // New useEffect to handle message loading
-  useEffect(() => {
-    const loadMessages = async () => {
-      if (messages === null && selectedConversation) {
-        const conversationMessages = await getConversationMessages({
-          conversationId: selectedConversation.id,
-          skip: 0,
-          take: 20,
-        });
-        setMessages(conversationMessages.data?.messages);
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const loadMessages = async () => {
+  //     if (messages === null && selectedConversation) {
+  //       const conversationMessages = await getConversationMessages({
+  //         conversationId: selectedConversation.id,
+  //         skip: 0,
+  //         take: 20,
+  //       });
+  //       setMessages(conversationMessages.data?.messages);
+  //       setLoading(false);
+  //     }
+  //   };
 
-    loadMessages();
-  }, [messages, selectedConversation]);
+  //   loadMessages();
+  // }, [messages, selectedConversation]);
 
   useEffect(() => {
     console.log('conversation list', conversationsList);
