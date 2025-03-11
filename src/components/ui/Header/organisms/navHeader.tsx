@@ -22,7 +22,7 @@ import NotificationBellButton from "../atoms/notificationAtoms/notificationBellB
 import { useNotificationAnimation , NotificationAnimationProvider } from "../context/NotificationAnimationContext";
 import { debounce } from "lodash";
 import notificationSound from "../../../../assets/audio/notification.mp3";
-import messageSound from "../../../../assets/audio/mvssive-message-notification.mp3";
+import messageSound from "../../../../assets/audio/message-notification.mp3";
 
 const NavHeader: React.FC<UserData> = () => {
   const navigate = useNavigate();
