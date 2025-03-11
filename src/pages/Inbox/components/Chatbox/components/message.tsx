@@ -100,11 +100,11 @@ const Message: React.FC<MessageProps> = ({
     is_read = true;
   }
 
-  if (!message || !activeConversation || !activeConversation.user) {
-    console.error('Missing required data:', { message, activeConversation });
-    return null;
-  }
-  const user = activeConversation.user;
+  useEffect(() => {
+    console.log('messages here', message);
+    console.log('message.threadStats', message.threadStats?.replyCount === 1);
+  }, [message.threadStats]);
+
 
   function renderDemoMessage() {
     return (
@@ -179,10 +179,7 @@ const Message: React.FC<MessageProps> = ({
             </button>
           )}
         </div>
-
-
-
-        { message?.threadStats?.replyCount > 1 && (
+        { (message.threadStats?.replyCount > 1 || (message.threadStats?.replyCount === 1 && message.sender.id !== authUserId)) && (
           <div className="flex gap-2.5 items-center pt-2">
             <div
               className="flex gap-1.5 items-center cursor-pointer w-max"

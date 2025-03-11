@@ -79,7 +79,6 @@ const SidebarContent = ({ isExpanded, setIsExpanded, sidebarWidth, headerHeight 
           height: `calc(100vh - ${headerHeight})`,
           overflowX: 'hidden',
         }}
-        onMouseLeave={() => setIsExpanded(false)}
       >
         <div className="flex-grow overflow-hidden transition-all duration-300">
           {/* Main Sidebar Icons */}

@@ -51,12 +51,6 @@ const InboxDirectory = () => {
   };
 
   useEffect(() => {
-    const initialize = () => {
-      loadConversations();
-      getTotalConversationUnread({
-        types: ["priority", "general", "icebreaker"]
-      });
-    };
     initialize();
   }, [inboxTab, loadConversations]);
 
