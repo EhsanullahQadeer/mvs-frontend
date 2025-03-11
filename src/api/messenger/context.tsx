@@ -34,7 +34,7 @@ import { useSendMessage } from './hooks/useSendMessage';
 interface MessengerContextType {
   // State
   activeConversation: IConversation | null;
-  messages: IMessage[];
+  messages: IMessage[] | null;
   loading: boolean;
   error: string | null;
   conversations: IConversation[];

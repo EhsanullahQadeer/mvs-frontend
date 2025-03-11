@@ -27,7 +27,7 @@ import CheckerIcon from "../../../../assets/icons/checker.svg";
 import { IMessage } from "api/messenger/objects/states.types";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
 
-import notificationSound from "../../../../assets/audio/mvssive-message-notification.mp3";
+import messageSound from "../../../../assets/audio/message-notification.mp3";
 
 const Chatbox = ({ onClose }: { onClose: () => void }) => {
   const {
@@ -35,7 +35,8 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
     recipient,
     refreshMessages,
     isThread,
-    setIsThread
+    setIsThread,
+    loading
   } = useChatbox();
   const {
     activeConversation,
@@ -43,6 +44,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
   } = useConversation();
   const {
     messages,
+    setMessages,
     conversationNotes,
     getTotalConversationUnread,
     setThreadMessages,
@@ -56,8 +58,6 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -100,19 +100,42 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
 
   const { refreshUnreadCount } = useUnreadCount();
 
+  // Add useEffect for audio initialization
   useEffect(() => {
-    audioRef.current = new Audio(notificationSound);
-    audioRef.current.load();
-    
+    const initAudio = async () => {
+      try {
+        audioRef.current = new Audio(messageSound);
+        audioRef.current.crossOrigin = "anonymous";
+        audioRef.current.preload = "auto";
+
+        // Wait for audio to load
+        await new Promise(resolve => {
+          if (audioRef.current) {
+            audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
+            audioRef.current.load();
+          }
+        });
+
+        console.log('Message sound loaded successfully');
+      } catch (error) {
+        console.error('Error initializing message sound:', error);
+      }
+    };
+
+    initAudio();
+
+    // Cleanup
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
+        audioRef.current.src = '';
         audioRef.current = null;
       }
     };
   }, []);
 
   const playSound = useCallback(() => {
+    console.log('Attempting to play message sound');
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
       
@@ -120,29 +143,41 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            // Audio played successfully
+            console.log('Message sound played successfully');
           })
           .catch(err => {
-            console.warn('Could not play notification sound:', err);
+            console.warn('Could not play message sound:', err);
           });
       }
+    } else {
+      console.log("Audio not loaded, skipping playback");
     }
   }, []);
 
+
   useNotification("NEW_MESSAGE", (data) => {
-    if (!document.hasFocus()) {
-      playSound();
-    }
+    console.log("1. Data received:", data);
     
-    refreshMessages();
+    if (!data || !data.message) {
+      console.log("No data or message");
+      return;
+    }
+
+    const message = data.message as IMessage;
+    console.log("2. Message:", message);
+    console.log("3. Current messages:", messages);
+    
+    if (!messages) {
+      console.log("4a. Setting initial messages");
+      setMessages([message]);
+    } else {
+      console.log("4b. Appending to existing messages");
+      setMessages([...messages, message]);
+    }
+
+    playSound();
     refreshUnreadCount();
   });
-
-  useEffect(() => {
-    if (messages !== null && messages !== undefined) {
-      setLoading(false);
-    }
-  }, [messages]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -152,41 +187,6 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
       }
     });
   }, [messages, conversationNotes]);
-
-  // const handleDemoBtn = (msgId: number) => {
-  //   localStorage.setItem("msgId", msgId.toString());
-  //   navigate(`/inbox/${id}/thread`);
-  // };
-
-  // const handleReviewBtn = async (msgId: number) => {
-  //   localStorage.setItem("msgId", msgId.toString());
-  //   navigate(`/inbox/${id}/thread`);
-  //   try {
-  //     await toggleMessageRead({ messageId: msgId });
-  //     await getConvMessages(conversation);
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
-
-  // const handleThreadReply = (msgId: number) => {
-  //   localStorage.setItem("msgId", msgId.toString());
-  //   navigate(`/inbox/${id}/thread`);
-  // };
-
-  // const findThreadReplyObj = (msgId: number) => {
-  //   if (Array.isArray(messages)) {
-  //     return messages.filter((msg: IMessage) => msg.reply_to?.id === msgId);
-  //   } else if (messages && typeof messages === 'object') {
-  //     const messagesArray = Object.values(messages);
-  //     if (messagesArray.length > 0 && Array.isArray(messagesArray[0])) {
-  //       return messagesArray.flat().filter((msg: IMessage) => msg.reply_to?.id === msgId);
-  //     } else {
-  //       return messagesArray.filter((msg: IMessage) => msg.reply_to?.id === msgId);
-  //     }
-  //   }
-  //   return [];
-  // };
 
   const handleMenuSection = () => {
     setMenuSection(!menuSection);
@@ -285,7 +285,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
             >
               {activeTab === "messages" && (
                 <>
-                  {messages.length === 0 ? (
+                  {messages?.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-4">
                       <div className="text-limeGreen text-xl mb-2">
                         Start your conversation!
@@ -359,14 +359,28 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
                         </>
                       ) : (
                         <div className="w-full overflow-x-hidden">
-                          {messages.map((message: IMessage, index) => (
-                            <Message
-                              key={message.id}
-                              message={message}
-                              index={index}
-                              prevMessageDate={index > 0 ? messages[index - 1].created_at : undefined}
-                            />
-                          ))}
+                          {messages && Array.isArray(messages) ? messages.map((message: IMessage, index) => (
+                            <div
+                              key={message?.id || index}
+                              ref={index === messages.length - 1 ? (el) => {
+                                // Scroll to the last message smoothly
+                                if (el) {
+                                  el.scrollIntoView({ 
+                                    behavior: 'smooth',
+                                    block: 'end'
+                                  });
+                                }
+                              } : undefined}
+                            >
+                              <Message
+                                message={message}
+                                index={index}
+                                prevMessageDate={index > 0 && messages[index - 1] ? messages[index - 1].created_at : undefined}
+                              />
+                            </div>
+                          )) : (
+                            <div>Loading messages...</div>
+                          )}
                         </div>
                       )}
                     </div>
