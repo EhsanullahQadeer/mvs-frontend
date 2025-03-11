@@ -1,7 +1,7 @@
 import TipIcon from '../../../assets/icons/dollar-sign.svg';
 
 const TipMessage = ({ amount, message }) => {
-  console.log("amount", amount);
+  //console.log("amount", amount);
   return (
     <div className="flex gap-2 p-1 rounded-md">
       <div className="flex items-start bg-[#1c1c1c] border border-[#3f6600] rounded-lg p-2 text-white inline-flex max-w-full">

@@ -148,9 +148,9 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
 
   const getNotes = useCallback(async () => {
     // Implementation for fetching notes
-    console.log('Fetching notes for activeConversation:', activeConversation?.conversation_id);
+    //console.log('Fetching notes for activeConversation:', activeConversation?.conversation_id);
     const fetchedNotes = await getConversationNotes({ conversationId: activeConversation?.id, ascending: true });
-    console.log("fetchedNotes", fetchedNotes);
+    //console.log("fetchedNotes", fetchedNotes);
     // setNotes(fetchedNotes);
   }, [activeConversation]);
 
@@ -160,11 +160,6 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
       parentMessageId
     });
   }, [getThreadMessages]);
-
-  useEffect(() => {
-    console.log('messagessdfdsf', messages);
-  }, [messages]);
-
   
   useEffect(() => {
     if (activeConversation) {

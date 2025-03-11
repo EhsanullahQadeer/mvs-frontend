@@ -1,14 +1,12 @@
 import moment from "moment";
 import { useChatbox } from "../context";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
-import { useIntersection } from 'react-use';
-import { AudioPlayer } from "react-audio-play";
 import { useMessenger } from "api/messenger/context";
 import MessageReactions from "../../MessageReactions";
-import { formatMediaDetails, lastMsgTimeStamp } from "../../../handlers/mediaUtils";
+import { formatMediaDetails } from "../../../handlers/mediaUtils";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
 
@@ -98,11 +96,6 @@ const Message: React.FC<MessageProps> = ({
     console.log(`MARKING THIS AS READ Content:${content} and messagedID:${id}`); // TODO : This console.log should stay here until we actually want actually mark them as read
     is_read = true;
   }
-
-
-  useEffect(() => {
-    console.log('messages here', message);
-  }, [message.threadStats]);
 
   function renderDemoMessage() {
     return (

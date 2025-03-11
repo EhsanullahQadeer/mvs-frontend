@@ -1,7 +1,6 @@
-import { MicrophoneIcon } from '@heroicons/react/20/solid';
-import { CheckIcon, PauseIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/solid';
-import React, { createContext, useState, useContext, useRef, useCallback, useEffect, memo } from 'react';
+import { CheckIcon } from '@heroicons/react/24/solid';
 import { ReactComponent as MicIcon } from '../../../../../assets/icons/micIcon.svg';
+import React, { createContext, useState, useContext, useRef, useCallback, useEffect, memo } from 'react';
 
 const formatDuration = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -68,7 +67,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
     try {
       if (isInitialized) return;
       
-      console.log("Pre-initializing audio system...");
+      //console.log("Pre-initializing audio system...");
       
       // Request permissions and get the audio stream
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -87,7 +86,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       stream.getTracks().forEach(track => track.stop());
       
       setIsInitialized(true);
-      console.log("Audio system pre-initialized");
+      //console.log("Audio system pre-initialized");
     } catch (err) {
       console.error("Error pre-initializing audio system:", err);
     }

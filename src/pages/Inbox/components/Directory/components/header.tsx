@@ -17,16 +17,15 @@ const InboxHeader = () => {
   const {
     currentPage,
     setCurrentPage,
-    setShowArchivedConvos,
-    setShowFavoriteConvos,
-    setActiveConversation,
     CONVERSATIONS_PER_PAGE,
-    setGetArchived,
     selectedMenuItem,
     setSelectedMenuItem,
-    loadFavoritedConversations,
     handleDeleteConversations,
-    loadConversations
+    loadConversations,
+    setArchiveSpamFav,
+    inboxTab,
+    selectedConversations,
+    setSelectedConversations
   } = useConversation();
 
   const {
@@ -41,6 +40,7 @@ const InboxHeader = () => {
 
   function refreshConversations(){
     loadConversations();
+    setSelectedConversations([]);
     getTotalConversationUnread({
       types: ["priority", "general", "icebreaker"]
     });
@@ -81,13 +81,6 @@ const InboxHeader = () => {
     },
   ];
 
-  const { 
-    inboxTab,
-    setInboxTab,
-    selectedConversations,
-    setSelectedConversations
-  } = useConversation();
-
   const [menuSection, setMenuSection] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [selectAll, setSelectAll] = useState(false);
@@ -123,19 +116,36 @@ const InboxHeader = () => {
       label: "Favorited",
       icon: <FaRegStar />,
       func: () => {
-        setShowArchivedConvos(false);
-        setShowFavoriteConvos(true);
+        setArchiveSpamFav("favorite");
         setSelectedMenuItem("Favorited");
-        loadFavoritedConversations();
+        setSelectedConversations([]);
       },
     },
     {
       label: "Archived",
       icon: <ArchiveIcon />,
       func: () => {
-        setShowFavoriteConvos(false);
-        setGetArchived(true);
+        setArchiveSpamFav("archive");
         setSelectedMenuItem("Archived");
+        setSelectedConversations([]);
+      },
+    },
+    {
+      label: "Spam",
+      icon: <AlertOctagonIcon />,
+      func: () => {
+        setArchiveSpamFav("spam");
+        setSelectedMenuItem("Spam");
+        setSelectedConversations([]);
+      },
+    },
+    {
+      label: "REG",
+      icon: <AlertOctagonIcon />,
+      func: () => {
+        setArchiveSpamFav("");
+        setSelectedMenuItem("Regular");
+        setSelectedConversations([]);
       },
     },
   ];
