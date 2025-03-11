@@ -213,23 +213,23 @@ const Message: React.FC<MessageProps> = ({
     )
   }
   
-  async function emojiPassthrough(id:number, emoji:any){
-    const userId = user.id;
-    const emojiUsage: {id:number,name:string}[] = reactions[emoji]?.users ?? [];
-    if(emojiUsage.length > 0 && emojiUsage.filter((val)=>val.id===userId).length > 0) {
-      await deleteReactionMessage({messageId:id,emoji})
-    }
-    else{
-      await addReactionMessage({messageId:id,emoji});      
-    }
-    // refreshMessages();
-  }
+  // async function emojiPassthrough(id:number, emoji:any){
+  //   const userId = user.id;
+  //   const emojiUsage: {id:number,name:string}[] = reactions[emoji]?.users ?? [];
+  //   if(emojiUsage.length > 0 && emojiUsage.filter((val)=>val.id===userId).length > 0) {
+  //     await deleteReactionMessage({messageId:id,emoji})
+  //   }
+  //   else{
+  //     await addReactionMessage({messageId:id,emoji});      
+  //   }
+  //   // refreshMessages();
+  // }
 
-  function handleEmojiSelect(id: number, emoji:any):void{
-    console.log('test', id, emoji);
-    console.log('reactions', reactions);
-    emojiPassthrough(id, emoji);
-  }
+  // function handleEmojiSelect(id: number, emoji:any):void{
+  //   console.log('test', id, emoji);
+  //   console.log('reactions', reactions);
+  //   emojiPassthrough(id, emoji);
+  // }
 
   return (
     <div ref={intersectionRef}>
@@ -249,12 +249,12 @@ const Message: React.FC<MessageProps> = ({
 
       <div className="flex flex-wrap gap-2 px-4 py-2 w-full relative group hover:bg-gunMetal">
         <div className="absolute -top-8 left-28 mt-2 mr-2 hidden group-hover:flex transition-opacity duration-200">
-          <MessageReactions
-            handleEmojiSelect = {handleEmojiSelect}
+          {/* <MessageReactions
+            // handleEmojiSelect = {handleEmojiSelect}
             id={id}
             isDemoSender={isDemoSender}
             isOwner={isDemoSender}
-          />
+          /> */}
         </div>
 
         <div className="flex rounded-full p-0.5 w-12 h-12">
