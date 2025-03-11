@@ -1,6 +1,6 @@
 import { getUserNotifications } from 'api/user';
 import { CircularProgress } from "@mui/material";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NotificationList from '../molecules/notifications/NotificationList';
 import NotificationManagerTab from '../molecules/notificationMolecules/notificationTabs';
 import NoNotificationsYetPrompt from '../molecules/notificationMolecules/noNotificationsYet';
@@ -71,6 +71,26 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   const [notifIdForIsRead, setNotifIdForIsRead] = useState<number>();
   const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
   const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
+  const refreshRef = useRef(null);
+
+  const onIntersection = (entries, observer) => {
+    for (const { isIntersecting, target } of entries) {
+      if (isIntersecting) {
+        loadMoreNotifications()
+        observer.unobserve(target);
+      }
+    }
+  };
+
+  const observer = new IntersectionObserver(onIntersection, {
+    root: null,
+    rootMargin: '0px',
+    threshold: .9
+  });
+
+  useEffect(() => {
+      observer.observe(refreshRef.current);
+    }, [])
 
   const handleToggle = () => {
     setIsToggled(!isToggled);
@@ -111,7 +131,7 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
     try {
       skip += 10;
       const response = await getUserNotifications(NOTIFICATION_GROUPS[selectedTab], false, skip);
-      if (response.data.length < 10) {setAllowLoading(false)}
+      if (response.data.length < 10) {setAllowLoading(false)}else{observer.observe(refreshRef.current);}
       setNotifications((prev) => [...prev, ...response.data]);
     } catch (error) {
       console.error("Error loading more notifications:", error);
@@ -137,12 +157,7 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
     window.isNotificationInCurrentTab = isNotificationInCurrentTab;
   }, [selectedTab]);
 
-  useEffect(() => {
-    if (notifications.length < 3) {
-      setAllowLoading(false);
-    }
-  }, [notifications]);
-
+  
   return (
     <>
       {isOpen && (
@@ -183,9 +198,9 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
           {notifications.length === 0 ? 
             <NoNotificationsYetPrompt/>
             :
-            <div className="flex flex-col overflow-y-auto h-[calc(621px-120px)] scrollbar-hidden" onScroll={handleScroll}>
+            <div className="flex flex-col overflow-y-auto h-[calc(621px-120px)] scrollbar-hidden">
               <NotificationList data={notifications} setNotifIdForIsRead={setNotifIdForIsRead} unreadNotifCount={unreadNotifCount} setUnreadNotifCount={setUnreadNotifCount}/>
-              <div className={`h-[100px] pb-1 ${allowLoading ? "": "hidden"}`}>
+                <div ref={refreshRef} className={`h-[100px] pb-1 ${allowLoading ? "": "hidden"}`}>
                 <div className="w-full flex justify-center items-center bg-black opacity-40 z-[999px] h-[50px]">
                   <CircularProgress
                     sx={{
