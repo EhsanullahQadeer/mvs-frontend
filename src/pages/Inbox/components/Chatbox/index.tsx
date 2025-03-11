@@ -27,7 +27,7 @@ import CheckerIcon from "../../../../assets/icons/checker.svg";
 import { IMessage } from "api/messenger/objects/states.types";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
 
-import messageSound from "../../../../assets/audio/mvssive-message-notification.mp3";
+import messageSound from "../../../../assets/audio/message-notification.mp3";
 
 const Chatbox = ({ onClose }: { onClose: () => void }) => {
   const {
