@@ -24,8 +24,8 @@ import { config } from 'config/ConfigManager';
 
 interface WebSocketContextType {
   webSocketManager: APIGatewayManager | null;
-  registerHandler: (type: string, handler: (data: any) => void) => void;
-  unregisterHandler: (type: string) => void;
+  registerHandler: (type: string, handler: (data: any) => void, handlerId: string) => void;
+  unregisterHandler: (type: string, handlerId: string) => void;
 }
 
 interface WebSocketProviderProps {
@@ -51,12 +51,12 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
     }
   }, [userId, websocketUrl]);
 
-  const registerHandler = (type: string, handler: (data: any) => void) => {
-    webSocketManager?.registerHandler(type, handler);
+  const registerHandler = (type: string, handler: (data: any) => void, handlerId: string) => {
+    webSocketManager?.registerHandler(type, handler, handlerId);
   };
 
-  const unregisterHandler = (type: string) => {
-    webSocketManager?.unregisterHandler(type);
+  const unregisterHandler = (type: string, handlerId: string) => {
+    webSocketManager?.unregisterHandler(type, handlerId);
   };
 
   return (

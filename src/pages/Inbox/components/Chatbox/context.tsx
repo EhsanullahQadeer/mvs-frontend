@@ -14,6 +14,7 @@ interface ChatboxContextType {
   chatMessages: IMessage[] | null;
   activeConversation: IConversation | null;
   loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   overlayLoading: boolean;
   setOverlayLoading: React.Dispatch<React.SetStateAction<boolean>>;
   notes: any[];
@@ -23,10 +24,6 @@ interface ChatboxContextType {
     // handleEmojiSelect: (id: number, emoji: string) => void;
   
   // Functions
-  // canSendMessage: (hasText: boolean, tipAmount: number, thereIsDemo: boolean) => boolean;
-  handleDemoBtn: (id: number) => void;
-  handleReviewBtn: (id: number) => void;
-  handleThreadReply: (id: number) => void;
   refreshMessages: () => void;
   handleSendMessage: (content: string, mediaId?: string) => Promise<void>;
   getNotes: () => Promise<void>;
@@ -55,7 +52,6 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const authUser = useSelector((state: RootState) => state.auth?.user);
   const {
     messages,
-    loading,
     getConversationMessages,
     conversationNotes,
     getThreadMessages,
@@ -67,7 +63,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const [activeTab, setActiveTab] = useState<ChatTabType>('messages');
   const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<IMessage[] | null>(null);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const [recipient, setRecipient] = useState<TUser>(activeConversation?.recipient || null);
   const [totalPaid, setTotalPaid] = useState<number>(activeConversation?.total_paid || 0);
   const [notes, setNotes] = useState<INotes[]>(conversationNotes);
@@ -81,7 +77,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [activeConversation]);
   
   useEffect(() => {
-    if (messages) {
+    if (messages === null) {
       setChatMessages(messages);
     }
   }, [messages]);
@@ -103,13 +99,19 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [messages]);
 
   const refreshMessages = useCallback(() => {
-    console.log('threadMessages', threadMessages);
     if (activeConversation) {
+      setLoading(true);
       if (!isThread) {
         setChatMessages(null);
-        getConversationMessages({ conversationId: activeConversation.conversation_id });
+        getConversationMessages({ conversationId: activeConversation.conversation_id })
+          .finally(() => {
+            setLoading(false);
+          });
       } else if (threadMessages?.[0]?.id) {
-        getThreadMessages({ parentMessageId: threadMessages[0].id });
+        getThreadMessages({ parentMessageId: threadMessages[0].id })
+          .finally(() => {
+            setLoading(false);
+          });
       }
     }
   }, [
@@ -119,31 +121,9 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     isThread
   ]);
 
-  const handleDemoBtn = useCallback((id: number) => {
-    // Implementation for handling demo button click
-    console.log('Demo button clicked for message:', id);
-    // Add your implementation here
-  }, []);
-
-  const handleReviewBtn = useCallback((id: number) => {
-    // Implementation for handling review button click
-    console.log('Review button clicked for message:', id);
-    // Add your implementation here
-  }, []);
-
-  const handleThreadReply = useCallback((id: number) => {
-    // Implementation for handling thread reply
-    console.log('Thread reply for message:', id);
-    // Add your implementation here
-  }, []);
-
   const handleSendMessage = useCallback(async (content: string, mediaId?: string) => {
-    // Implementation for sending a message
     console.log('Sending message:', content, mediaId);
-    // Add your implementation here
-
     refreshMessages();
-
   }, [refreshMessages]);
 
   const getNotes = useCallback(async () => {
@@ -166,18 +146,24 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [messages]);
 
   
-  useEffect(() => {
-    if (activeConversation) {
-      refreshMessages();
-      getNotes();
-    }
-  }, [activeConversation, refreshMessages, getNotes]);
+  // useEffect(() => {
+  //   if (activeConversation) {
+  //     setLoading(true);
+  //     Promise.all([
+  //       refreshMessages(),
+  //       getNotes()
+  //     ]).finally(() => {
+  //       setLoading(false);
+  //     });
+  //   }
+  // }, [activeConversation, refreshMessages, getNotes]);
 
   const value: ChatboxContextType = {
     activeTab,
     setActiveTab,
     activeConversation,
     loading,
+    setLoading,
     overlayLoading,
     setOverlayLoading,
     notes,
@@ -186,10 +172,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     totalPaid,
     // messageReactions,
     // handleEmojiSelect,
-    
-    handleDemoBtn,
-    handleReviewBtn,
-    handleThreadReply,
+  
     refreshMessages,
     handleSendMessage,
     getNotes,
