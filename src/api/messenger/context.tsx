@@ -1,4 +1,4 @@
-import { useToggleMessageIsRead } from './hooks/useToggleMessageIsRead';
+import { useToggleMessageIsRead, IToggleMessageRead } from './hooks/useToggleMessageIsRead';
 import { useDeleteConversations } from './hooks/useDeleteConversations';
 import { useGetConversationNotes } from './hooks/useGetConversationNotes';
 import { useGetConversationMessages } from './hooks/useGetConversationMessages';
@@ -26,7 +26,6 @@ import {
   IGetConversationMessages,
   IGetConversationNotes,
   IDeleteConversations,
-  IToggleMessageRead,
   ISendMessage,
 } from './objects/api.interfaces';
 import { IReplyInThread, useReplyInThread } from './hooks/useReplyInThread';

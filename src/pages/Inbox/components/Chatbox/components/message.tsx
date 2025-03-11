@@ -94,7 +94,7 @@ const Message: React.FC<MessageProps> = ({
   
   async function markMessagedAsRead(){
     if (is_read === true || sender.id === activeConversation.user.id) return;
-    await toggleMessageIsRead({messageId:id});
+    await toggleMessageIsRead({messageId:[id]});
     console.log(`MARKING THIS AS READ Content:${content} and messagedID:${id}`); // TODO : This console.log should stay here until we actually want actually mark them as read
     is_read = true;
   }
