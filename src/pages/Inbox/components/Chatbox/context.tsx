@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { useMessenger } from 'api/messenger/context';
 import { IConversation, IMessage, INotes, TUser } from 'api/messenger/objects/states.types';
-import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
 // import { useMessageReactions } from '../../hooks/useMessageReactions';
 
 type ChatTabType = 'messages' | 'info' | 'notes';
@@ -31,6 +31,7 @@ interface ChatboxContextType {
   handleLoadThread: (parentMessageId: number) => void;
   isThread: boolean;
   setIsThread: (isThread: boolean) => void;
+  markMessageAsRead: (id:number)=> void;
 }
 
 const ChatboxContext = createContext<ChatboxContextType | undefined>(undefined);
@@ -57,7 +58,8 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     getThreadMessages,
     getConversationNotes,
     threadMessages,
-    activeConversation
+    activeConversation,
+    toggleMessageIsRead
   } = useMessenger();
 
   const [activeTab, setActiveTab] = useState<ChatTabType>('messages');
@@ -68,6 +70,27 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const [totalPaid, setTotalPaid] = useState<number>(activeConversation?.total_paid || 0);
   const [notes, setNotes] = useState<INotes[]>(conversationNotes);
   const [isThread, setIsThread] = useState<boolean>(false);
+
+  let onMessageReadTimeout;
+  const updateMessageReadIds = useRef<number[]>([]);
+
+
+  async function markMessageAsRead(id:number){
+    clearTimeout(onMessageReadTimeout);
+    updateMessageReadIds.current.push(id);
+    onMessageReadTimeout= setTimeout(()=> {
+      if (updateMessageReadIds.current.length === 0) return;
+      toggleMessageIsRead({messageIds:updateMessageReadIds.current});
+      updateMessageReadIds.current = [];
+    },5000);
+  }
+
+  useEffect(() => {
+    if (updateMessageReadIds.current.length > 0) {
+      toggleMessageIsRead({messageIds:updateMessageReadIds.current});
+      updateMessageReadIds.current = [];
+    }
+  }, [activeConversation]);
 
   const getConversationInfo = useCallback(async () => {
     if (activeConversation) {
@@ -179,7 +202,8 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     getConversationInfo,
     handleLoadThread,
     isThread,
-    setIsThread
+    setIsThread,
+    markMessageAsRead
   };
 
   return (
