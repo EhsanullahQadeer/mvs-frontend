@@ -12,10 +12,6 @@ import RecordedAudioPlayer from "../../RecordedAudioPlayer";
 import AudioRecorder, { useAudioRecording } from './audioRecorder';
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import { ReactComponent as SendArrowIcon } from "../../../../../assets/icons/sendArrowIcon.svg";
-import RecordedAudioPlayer from "../../RecordedAudioPlayer";
-import AudioRecorder from './audioRecorder';
-import { useAudioRecording } from './audioRecorder';
-import { toast } from "react-toastify";
 const Footer = () => {
 
   const {
