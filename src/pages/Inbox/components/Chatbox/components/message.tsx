@@ -99,11 +99,6 @@ const Message: React.FC<MessageProps> = ({
     is_read = true;
   }
 
-  useEffect(() => {
-    console.log('messages here', message);
-    console.log('message.threadStats', message.threadStats?.replyCount === 1);
-  }, [message.threadStats]);
-
 
   function renderDemoMessage() {
     return (
@@ -173,7 +168,7 @@ const Message: React.FC<MessageProps> = ({
               }}
               className="bg-limeGreen py-3 px-4 w-full text-[#203300] text-sm font-semibold rounded-full"
             >
-              Earn ${transaction?.amount}{" "}
+              Tap to earn ${transaction?.amount}{" "}
               {transaction?.amount > 6 ? "" : "- Tap to Unlock"}
             </button>
           )}

@@ -18,6 +18,7 @@ class APIGatewayManager {
     userId: string
   ) {
     this.websocketUrl = `${websocketUrl}?userId=${userId}`;
+    console.log('websocketUrl', this.websocketUrl);
     this.userId = userId;
     this.initialize();
   }
