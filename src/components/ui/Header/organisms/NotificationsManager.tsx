@@ -88,6 +88,7 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   });
 
   useEffect(() => {
+    if(!refreshRef.current) return;
       observer.observe(refreshRef.current);
     }, [])
 
