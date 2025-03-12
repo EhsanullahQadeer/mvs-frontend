@@ -69,6 +69,7 @@ const Message: React.FC<MessageProps> = ({
   });
 
   React.useEffect(() => {
+    if (!intersectionRef.current) return;
     observer.observe(intersectionRef.current);
   }, [])
 
