@@ -101,39 +101,38 @@ const Message: React.FC<MessageProps> = ({
   function renderDemoMessage() {
     return (
       <>
-        <div className="bg-gunMetal border border-eerieBlack rounded-lg p-3.5 flex flex-col gap-3 w-[282px]">
-          <div className={`${message?.thread?.reply_count > 0 && 
-            "border border-[#57AEFF] bg-[#002C5580] p-3 rounded-lg"}`}
-          >
+        <div className="bg-gunMetal border border-eerieBlack rounded-lg p-3.5 flex flex-col gap-3 w-[294px]">
             <div
-              className={`border overflow-hidden rounded-lg p-2.5 flex gap-3 items-center ${message?.thread?.reply_count >= 0
-                  ? "border-[#57AEFF] bg-[#002C55]"
-                  : "bg-[#202327] border-charcoalGray"
+              className={`overflow-hidden rounded-lg  flex flex-col gap-2.5 ${message?.threadStats?.replyCount == 1 
+                  ? " border border-[#57AEFF] bg-[#002C55] p-3"
+                  : ""
                 }`}
             >
               <div
-                className={`text-coolGray border rounded-lg p-2.5 ${message?.thread?.reply_count >= 0
-                    ? "border-dimGray text-dimGray"
+                className={`flex flex-row w-full text-coolGray border rounded-lg p-3 ${message?.threadStats?.replyCount == 1
+                    ? "border border-[#57AEFF] bg-[#002C55]"
                     : "border-charcoalGray text-coolGray"
                   }`}
               >
-                <AudioFileIcon />
-              </div>
+                <div className={"flex border-dimGray text-dimGray border p-2.5 rounded-lg mr-2"}>
+                  <AudioFileIcon />
+                </div>
 
-              <div>
-                <p className="font-normal text-sm text-silver flex">
-                  <span>"</span>
-                  <span className="line-clamp-1">
-                    {media?.file_name}
-                  </span>
-                  <span>"</span>
-                </p>
+                <div>
+                  <p className="font-normal text-sm text-silver flex">
+                    <span>"</span>
+                    <span className="line-clamp-1">
+                      {media?.file_name}
+                    </span>
+                    <span>"</span>
+                  </p>
 
-                <div className="px-1.5 text-dimGray font-normal text-[10px]">
-                  {details.duration} ({details.size})
+                  <div className="px-1.5 text-dimGray font-normal text-[10px]">
+                    {details.duration} ({details.size})
+                  </div>
                 </div>
               </div>
-            </div>
+
 
             { message?.threadStats?.replyCount === 1 &&
               message?.sender?.id === authUserId && (
@@ -141,22 +140,24 @@ const Message: React.FC<MessageProps> = ({
                 <p className="text-white font-semibold py-2">
                   Feedback received on your demo!
                 </p>
-                {/* <p className="text-coolGray font-normal">
+                <p className="text-coolGray font-normal">
                   Your audio has been reviewed, and the creator has
                   left their comments.
-                </p> */}
-                <button
-                  onClick={() => {
-                    setIsThread(true);
-                    handleLoadThread(message?.id);
-                  }}                  
-                  className="bg-limeGreen py-3 px-4 w-full text-jetBlack text-sm font-semibold rounded-full"
-                >
-                  Review Feedback
-                </button>
+                </p>
               </div>
             )}
           </div>
+          
+          {message?.threadStats?.replyCount === 1 &&
+              message?.sender?.id === authUserId && (
+              <button
+                onClick={() => {
+                  setIsThread(true);
+                  handleLoadThread(message?.id);
+                }}                  
+                className="bg-limeGreen py-3 px-4 w-full text-jetBlack text-sm font-semibold rounded-full mt-3">
+                Review Feedback
+              </button>)}
 
           {!(claimed || isDemoSender) && (
             <button
