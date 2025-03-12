@@ -21,6 +21,9 @@ class APIGatewayManager {
     userId: string,
     private onStatusChange: (status: 'connected' | 'disconnected' | 'error') => void
   ) {
+    console.log('Initializing APIGatewayManager');
+    console.log('websocketUrl:', websocketUrl);
+    console.log('userId:', userId);
     this.websocketUrl = `${websocketUrl}?userId=${userId}`;
     console.log('websocketUrl', this.websocketUrl);
     this.userId = userId;
