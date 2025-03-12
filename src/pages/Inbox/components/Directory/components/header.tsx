@@ -49,12 +49,13 @@ const InboxHeader = () => {
 
   const options = [
     { 
-      id: "archive", 
+      id: "archived", 
       icon: <ArchiveIcon />,
       onClick: () => {
         toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
       },
-      label: "Archive Conversation"
+      label: "Archive Conversation",
+      label2: "Unarchive Conversation"
     },
     {
       id: "spam",
@@ -62,7 +63,8 @@ const InboxHeader = () => {
       onClick: () => {
         toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
       },
-      label: "Mark as Spam"
+      label: "Mark as Spam",
+      label2: "Unmark as Spam"
     },
     {
       id: "delete",
@@ -177,8 +179,8 @@ const InboxHeader = () => {
               />
             </div>
           </div>
-          {options.map(({ id, icon, onClick, label }) => (
-            <Tooltip key={id} text={label}>
+          {options.map(({ id, icon, onClick, label, label2 }) => (
+            <Tooltip key={id} text={selectedMenuItem.toLowerCase() === id ? label2 : label}>
             <div
               key={id}
               onClick={selectedConversations.length > 0 ? onClick : undefined} // Updated to conditionally set onClick
