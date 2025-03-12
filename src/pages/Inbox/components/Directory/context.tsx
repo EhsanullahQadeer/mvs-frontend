@@ -4,7 +4,7 @@ import { useMessenger } from 'api/messenger/context';
 import { IConversation } from 'api/messenger/objects/states.types';
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef, useMemo } from 'react';
 
-type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search';
+type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | '';
 
 interface ConversationContextType {
   // State

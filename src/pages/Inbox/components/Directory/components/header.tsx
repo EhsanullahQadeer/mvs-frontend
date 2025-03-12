@@ -24,6 +24,7 @@ const InboxHeader = () => {
     loadConversations,
     setArchiveSpamFav,
     inboxTab,
+    setInboxTab,
     selectedConversations,
     setSelectedConversations
   } = useConversation();
@@ -119,6 +120,7 @@ const InboxHeader = () => {
         setArchiveSpamFav("favorite");
         setSelectedMenuItem("Favorited");
         setSelectedConversations([]);
+        setInboxTab('');
       },
     },
     {
@@ -128,6 +130,7 @@ const InboxHeader = () => {
         setArchiveSpamFav("archive");
         setSelectedMenuItem("Archived");
         setSelectedConversations([]);
+        setInboxTab('');
       },
     },
     {
@@ -137,15 +140,7 @@ const InboxHeader = () => {
         setArchiveSpamFav("spam");
         setSelectedMenuItem("Spam");
         setSelectedConversations([]);
-      },
-    },
-    {
-      label: "REG",
-      icon: <AlertOctagonIcon />,
-      func: () => {
-        setArchiveSpamFav("");
-        setSelectedMenuItem("Regular");
-        setSelectedConversations([]);
+        setInboxTab('');
       },
     },
   ];
