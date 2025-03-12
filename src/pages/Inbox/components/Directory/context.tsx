@@ -2,9 +2,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { useMessenger } from 'api/messenger/context';
 import { IConversation } from 'api/messenger/objects/states.types';
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef, useMemo } from 'react';
 
-type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search';
+type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | '';
 
 interface ConversationContextType {
   // State
@@ -18,22 +18,20 @@ interface ConversationContextType {
   setActiveConversation: React.Dispatch<React.SetStateAction<IConversation | null>>;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  showArchivedConvos: boolean;
-  setShowArchivedConvos: React.Dispatch<React.SetStateAction<boolean>>;
-  showFavoriteConvos: boolean;
-  setShowFavoriteConvos: React.Dispatch<React.SetStateAction<boolean>>;
-  favoriteConversations: IConversation[];
-  setGetArchived: React.Dispatch<React.SetStateAction<boolean>>;
   selectedMenuItem: string;
   setSelectedMenuItem: React.Dispatch<React.SetStateAction<string>>;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  loadFavoritedConversations: () => Promise<void>;
+
+  archiveSpamFav: string;
+  setArchiveSpamFav: React.Dispatch<React.SetStateAction<string>>;
+
   handleConversationSelect: (conversation: IConversation) => void;
   loadConversations: () => Promise<void>;
   handleSelectAll: (checked: boolean) => void;
   handleCheckboxChange: (conversation: IConversation, checked: boolean) => void;
   handleToggleFavoriteConversation: (conversation: IConversation) => void;
+  handleToggleSpamConversation: (conversationIds: number[]) => void;
   handleArchiveConversations: (conversationIds: number[]) => void;
   handleInboxTabClick: (tab: ConversationTabType) => void;
   handleDeleteConversations: () => void;
@@ -57,6 +55,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   const authUser = useSelector((state: RootState) => state.auth?.user);
   const {
     conversations,
+    setConversations,
     getConversations,
     getConversationMessages,
     getSearchMessages,
@@ -64,7 +63,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
     activeConversation,
     toggleConversationFavorite,
     toggleConversationIsArchived,
-    getFavoritedConversations,
+    toggleConversationsIsSpam,
     deleteConversations
   } = useMessenger();
 
@@ -72,23 +71,19 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   const CONVERSATIONS_PER_PAGE = 20;
   const [inboxTab, setInboxTab] = useState<ConversationTabType>('priority');
   const [selectedConversations, setSelectedConversations] = useState<IConversation[]>([]);
-  const [favoriteConversations, setFavoriteConversations] = useState<IConversation[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [getArchived, setGetArchived] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<string>("General Inbox");
   const [filteredConversations, setFilteredConversations] = useState<IConversation[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showArchivedConvos, setShowArchivedConvos] = useState(false);
-  const [showFavoriteConvos, setShowFavoriteConvos] = useState(false);
+  const [showConvos, setShowConvos] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [archiveSpamFav, setArchiveSpamFav] = useState<string>("");
   let prevtab:ConversationTabType = 'priority';
 
   useEffect(() => {
-    const favConvos = conversations.filter(conv => conv.is_favorite);
-    setFavoriteConversations(favConvos);
-
     //Idk what this does.
     if (!initialized.current && conversations.length > 0) {
+      //setConversations(() => conversations.filter(conv => conv.is_favorite));
       initialized.current = true;
     }
   }, [conversations]);
@@ -117,8 +112,6 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
 
   const handleInboxTabClick = (tab: ConversationTabType) => {
     setInboxTab(tab);
-    setGetArchived(false);
-    setShowArchivedConvos(false);
   }
 
   const handleCheckboxChange = (conversation: IConversation, checked: boolean) => {
@@ -142,30 +135,18 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
     const skip = (currentPage - 1) * CONVERSATIONS_PER_PAGE;
     if (authUser && inboxTab !== 'search') {
       await getConversations({
-        ascending: true,
+        ascending: false,
         skip: skip,
         take: CONVERSATIONS_PER_PAGE,
         sortByTime: false,
-        hasActiveIcebreaker: inboxTab === "icebreaker" ? true : false,
+        hasActiveIcebreaker: inboxTab === "icebreaker",
         conversationType: inboxTab,
-        getArchived: getArchived
+        getArchived: archiveSpamFav === "archive",
+        getSpam: archiveSpamFav === "spam",
+        getFavorited: archiveSpamFav === "favorite",
       });
     }
-  }, [authUser, inboxTab, getConversations, CONVERSATIONS_PER_PAGE, getArchived, currentPage]);
-
-  const loadFavoritedConversations = useCallback(async () => {
-    if (authUser) {
-      try {
-        const response = await getFavoritedConversations({
-          skip: 0,
-          take: CONVERSATIONS_PER_PAGE,
-        });
-        console.log("Favorited conversations response:", response);
-      } catch (error) {
-        console.error("Error loading favorited conversations:", error);
-      }
-    }
-  }, [authUser, getFavoritedConversations, CONVERSATIONS_PER_PAGE]);
+  }, [authUser, inboxTab, getConversations, CONVERSATIONS_PER_PAGE, currentPage, archiveSpamFav]);
 
   const handleSelectAll = useCallback((checked: boolean) => {
     setSelectAll(checked);
@@ -178,56 +159,57 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
 
   const handleToggleFavoriteConversation = useCallback((conversation: IConversation) => {
     toggleConversationFavorite({ conversationId: conversation.conversation_id });
-    
-    setFavoriteConversations(prev => {
-      const isCurrentlyFavorite = prev.some(conv => conv.id === conversation.id);
-      
-      if (isCurrentlyFavorite) {
-        return prev.filter(conv => conv.id !== conversation.id);
-      } else {
-        return [...prev, conversation];
-      }
-    });
   }, [toggleConversationFavorite]);
 
-  const handleArchiveConversations = useCallback((conversationIds: number[]) => {
-    // reloadConversationStats();
-    toggleConversationIsArchived({ conversationIds });
+  const handleToggleSpamConversation = useCallback((conversationIds: number[]) => {
+    toggleConversationsIsSpam({ conversationIds: conversationIds });
     loadConversations();
-  }, [toggleConversationIsArchived, loadConversations]);
+  }, [toggleConversationsIsSpam]);
+
+  const handleArchiveConversations = useCallback((conversationIds: number[]) => {
+    toggleConversationIsArchived({ conversationIds: conversationIds });
+    loadConversations();
+  }, [toggleConversationIsArchived]);
 
   
-  const value: ConversationContextType = {
-    CONVERSATIONS_PER_PAGE,
+  const value: ConversationContextType = useMemo(() => {
+    return {
+      CONVERSATIONS_PER_PAGE,
+      inboxTab,
+      setInboxTab,
+      filteredConversations,
+      selectedConversations,
+      setSelectedConversations,
+      activeConversation,
+      setActiveConversation,
+      currentPage,
+      setCurrentPage,
+      handleConversationSelect,
+      loadConversations,
+      handleSelectAll,
+      handleCheckboxChange,
+      handleToggleFavoriteConversation,
+      handleToggleSpamConversation,
+      handleArchiveConversations,
+      handleInboxTabClick,
+      selectedMenuItem,
+      setSelectedMenuItem,
+      searchTerm,
+      setSearchTerm,
+      handleDeleteConversations,
+      archiveSpamFav,
+      setArchiveSpamFav,
+    };
+  }, [
     inboxTab,
-    setInboxTab,
     filteredConversations,
     selectedConversations,
-    setSelectedConversations,
     activeConversation,
-    setActiveConversation,
     currentPage,
-    setCurrentPage,
-    showArchivedConvos,
-    setShowArchivedConvos,
-    showFavoriteConvos,
-    setShowFavoriteConvos,
-    handleConversationSelect,
-    loadConversations,
-    handleSelectAll,
-    handleCheckboxChange,
-    favoriteConversations,
-    handleToggleFavoriteConversation,
-    handleArchiveConversations,
-    handleInboxTabClick,
-    setGetArchived,
     selectedMenuItem,
-    setSelectedMenuItem,
     searchTerm,
-    setSearchTerm,
-    loadFavoritedConversations,
-    handleDeleteConversations
-  };
+    // Add any other dependencies that affect the value
+  ]);
 
   return (
     <ConversationContext.Provider value={value}>

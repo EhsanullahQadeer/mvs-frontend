@@ -9,13 +9,13 @@
 /* IMPORTS */
 import { useNavigate } from "react-router-dom";
 import { getUserNotifications } from "api/user";
-import React, { useEffect, useState, useRef, useCallback } from "react";
 import { UserData } from "theme/Header/Header.types";
 import HeaderNavMenu from "../molecules/headerNavMenu";
 import ProfileButton from "theme/Sidebar/ProfileButton";
 import { useHeaderHooks } from "theme/Header/Header.hooks";
 import HeaderCreditCount from "../atoms/headerCreditCount";
 import NotificationPopUpWindow from "./NotificationsManager";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 import { TNotificationData } from "../molecules/notifications/Notification";
 import NotificationBellButton from "../atoms/notificationAtoms/notificationBellButton";
@@ -196,7 +196,6 @@ const NavHeader: React.FC<UserData> = () => {
       'VIEW_DEMO',
       'NEW_MESSAGE',
     ], false, 0);
-    console.log('notifications', notifications);
     setNotifications(notifications?.data);
   };
 

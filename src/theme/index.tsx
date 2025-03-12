@@ -7,27 +7,21 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
-import Header from "./Header";
 import Sidebar from "./Sidebar";
-import mvssive_text from "../assets/img/massive_text.svg";
-import mvssive_mini from "../assets/img/M-logo.png";
-import NavHeader from "components/ui/Header/organisms/navHeader";
-import { MessengerProvider } from "api/messenger/context";
 import { useState } from "react";
+import { MessengerProvider } from "api/messenger/context";
+import NavHeader from "components/ui/Header/organisms/navHeader";
 
 interface ThemeProps {
   isOverflowHidden?: boolean;
   children?: React.ReactNode;
-  headerTitle?: string; // Add the `text` prop here to pass to Header
 }
 
 const Theme = (props: ThemeProps) => {
-
   // size in pixels but should be changed to rems/vw once we refactor the design
   const sidebarWidth = "80px"; // when not expanded
   const largeSidebarWidth = "250px";
   const headerHeight = "80px";
-
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -72,8 +66,7 @@ const Theme = (props: ThemeProps) => {
           style={{
             width: isExpanded ? largeSidebarWidth : sidebarWidth,
             transition: 'all 0.15s ease-in-out'
-          }}
-          onClick={() => console.log("largeSidebarWidth", largeSidebarWidth)}>
+          }}>
           <Sidebar
             isExpanded={isExpanded}
             setIsExpanded={setIsExpanded}

@@ -1,7 +1,6 @@
-import { MicrophoneIcon } from '@heroicons/react/20/solid';
-import { CheckIcon, PauseIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/solid';
-import React, { createContext, useState, useContext, useRef, useCallback, useEffect, memo } from 'react';
+import { CheckIcon } from '@heroicons/react/24/solid';
 import { ReactComponent as MicIcon } from '../../../../../assets/icons/micIcon.svg';
+import React, { createContext, useState, useContext, useRef, useCallback, useEffect, memo } from 'react';
 
 const formatDuration = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -32,6 +31,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [recordingDuration, setRecordingDuration] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioStream = useRef<MediaStream | null>(null);
@@ -62,6 +62,37 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
     return '';
   }, []);
 
+  // Pre-initialize the audio system
+  const initializeAudioSystem = useCallback(async () => {
+    try {
+      if (isInitialized) return;
+      
+      //console.log("Pre-initializing audio system...");
+      
+      // Request permissions and get the audio stream
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          channelCount: 1,
+          sampleRate: 44100,
+          echoCancellation: true,
+          noiseSuppression: true
+        } 
+      });
+      
+      // Store the stream for later use
+      audioStream.current = stream;
+      
+      // Stop all tracks to save resources, but keep the stream reference
+      stream.getTracks().forEach(track => track.stop());
+      
+      setIsInitialized(true);
+      //console.log("Audio system pre-initialized");
+    } catch (err) {
+      console.error("Error pre-initializing audio system:", err);
+    }
+  }, [isInitialized]);
+
+  // Modified startRecording to use the pre-initialized system
   const startRecording = useCallback(async () => {
     try {
       // Clear any existing recording

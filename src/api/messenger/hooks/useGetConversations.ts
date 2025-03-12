@@ -11,6 +11,8 @@ export interface IGetConversations {
   hasActiveIcebreaker: boolean;
   conversationType: string;
   getArchived: boolean;
+  getSpam: boolean;
+  getFavorited: boolean;
 }
 
 export const useGetConversations = (
@@ -20,9 +22,6 @@ export const useGetConversations = (
   return useCallback(async (payload: IGetConversations) => {
     try {
       const response = await axiosInstance.get(`messenger/conversations`, { params: payload });
-      console.log("response, ", response);
-      console.log("Length, ", response.data?.conversations.length);
-
       setConversations(response.data?.conversations || []);
       setTotalConversations(response.data?.pagination.total || 0);
     } catch (error) {

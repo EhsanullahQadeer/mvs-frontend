@@ -8,13 +8,12 @@
  *************************************************************************/
 
 /* IMPORTS */
-import RippleContainer from "components/buttons/RippleContainer";
-import * as React from "react";
 import Theme from "theme";
+import RippleContainer from "components/buttons/RippleContainer";
 
 const TermsAndConditions = (props: any) => {
   return (
-    <Theme headerTitle="Terms and Conditions \">
+    <Theme>
       <div className="flex flex-col pb-20 bg-neutral-950">
         <div className="flex flex-col justify-end w-full border-b border-solid bg-zinc-900 border-zinc-700 max-md:max-w-full">
         <RippleContainer></RippleContainer>

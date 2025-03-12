@@ -5,48 +5,43 @@ import { useChatbox } from "./context";
 import Footer from "./components/footer";
 import NotesSection from "../NotesSection";
 import Message from "./components/message";
-
+import InboxDropdownMenu from "../ActionMenu";
 import InfoSection from "./components/infoTab";
 import { useNavigate } from "react-router-dom";
 import { GrShareOption } from "react-icons/gr";
 import { CircularProgress } from "@mui/material";
 import { FiUser, FiUserX } from "react-icons/fi";
-import { useEffect, useRef, useState, useCallback } from "react";
 import { getConversationNotes } from "api/messenger";
 import { useMessenger } from "api/messenger/context";
-import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
-import { LuShieldAlert, LuBellOff } from "react-icons/lu";
-import { useNotification } from "services/WebSocket/useNotification.hook";
-import { useUnreadCount } from "theme/Sidebar/useUnreadCount";
-import InboxDropdownMenu from "../ActionMenu";
-import TipMessage from "../TipMessage";
-import { useConversation } from "../Directory/context";
 import ThreadMessage from "./components/threadMessage";
-import { AudioRecordingProvider } from "./components/audioRecorder";
-import CheckerIcon from "../../../../assets/icons/checker.svg";
+import { useConversation } from "../Directory/context";
+import { LuShieldAlert, LuBellOff } from "react-icons/lu";
+import { useUnreadCount } from "theme/Sidebar/useUnreadCount";
 import { IMessage } from "api/messenger/objects/states.types";
-import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
-
+import CheckerIcon from "../../../../assets/icons/checker.svg";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { AudioRecordingProvider } from "./components/audioRecorder";
+import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
+import { useNotification } from "services/WebSocket/useNotification.hook";
 import messageSound from "../../../../assets/audio/message-notification.mp3";
+import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
 
 const Chatbox = ({ onClose }: { onClose: () => void }) => {
   const {
     getConversationInfo,
     recipient,
-    refreshMessages,
     isThread,
     setIsThread,
-    loading
   } = useChatbox();
+
   const {
     activeConversation,
-    setActiveConversation,
   } = useConversation();
+
   const {
     messages,
     setMessages,
     conversationNotes,
-    getTotalConversationUnread,
     setThreadMessages,
     threadMessages
   } = useMessenger();
@@ -93,7 +88,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
 
   useEffect(() => {
     if (activeConversation) {
-      console.log("activeConversation", activeConversation);
+      //console.log("activeConversation", activeConversation);
       initialize();
     }
   }, [activeConversation]);
@@ -290,7 +285,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
           ) : (
             <div
               ref={messagesRef}
-              className="flex flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden w-full custom-dropdown"
+              className="flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden w-full custom-dropdown"
             >
               {activeTab === "messages" && (
                 <>
