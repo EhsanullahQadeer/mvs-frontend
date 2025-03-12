@@ -92,18 +92,13 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     }
   }, [notes]);
 
-  // const canSendMessage = useCallback((hasText: boolean, tipAmount: number, thereIsDemo: boolean) => {
-  //   if ( hasText && !thereIsDemo ) { return true }
-  //   return false;
-  // }, [activeConversation, authUser]);
-
   const findThreadReplyObj = useCallback((msgId: number) => {
     return Array.isArray(messages) ? 
       messages.filter(msg => msg.thread?.id === msgId) : [];
   }, [messages]);
 
   const refreshMessages = useCallback(() => {
-    console.log('threadMessages', threadMessages);
+    //console.log('threadMessages', threadMessages);
     if (activeConversation) {
       if (!isThread) {
         setChatMessages(null);

@@ -24,10 +24,6 @@ export interface RootState {
   };
 }
 
-export interface HeaderProps {
-  headerTitle?: string;
-}
-
 export function classNames(...classes: string[]): string {
   return classes.filter(Boolean).join(" ");
 }

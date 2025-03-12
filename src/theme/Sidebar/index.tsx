@@ -7,24 +7,19 @@
  *************************************************************************/
 
 /* IMPORTS */
-import * as React from "react";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useHeaderHooks } from "theme/Header/Header.hooks";
-import { useGetTotalConversationUnread } from "api/messenger/hooks/useGetTotalConversationUnread";
-import { useMessenger } from "api/messenger/context";
-import { useNotification } from "services/WebSocket/useNotification.hook";
-import { SidebarProvider, useSidebar } from './Sidebar.context';
 import "./styles/sidebar.css";
+import { useEffect } from "react";
+import { SidebarProvider, useSidebar } from './Sidebar.context';
+import { useNotification } from "services/WebSocket/useNotification.hook";
 
 // Import buttons
-import DashboardButton from "./buttons/dashboard";
-import LinesButton from "./buttons/lines";
-import CollectionsButton from "./buttons/collections";
 import DMButton from "./buttons/dm";
 import HomeButton from "./buttons/home";
+import LinesButton from "./buttons/lines";
 import LibraryButton from "./buttons/library";
 import LicenseButton from "./buttons/license";
+import DashboardButton from "./buttons/dashboard";
+import CollectionsButton from "./buttons/collections";
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -34,24 +29,7 @@ interface SidebarProps {
 }
 
 const SidebarContent = ({ isExpanded, setIsExpanded, sidebarWidth, headerHeight }: SidebarProps) => {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
   /* States and Hooks (copied from Header.tsx) */
-  const {
-    state,
-    contact_us,
-    setContactUs,
-    user_settings,
-    setUserSettings,
-    onboardGuide,
-    LogOut,
-  } = useHeaderHooks();
-
-  const {
-    totalPriorityInboxUnread,
-    totalGeneralInboxUnread,
-    totalIcebreakerInboxUnread,
-  } = useMessenger();
   
   const { unreadCount, refreshUnreadCount } = useSidebar();
   const iconColor = "#666666";
@@ -59,13 +37,9 @@ const SidebarContent = ({ isExpanded, setIsExpanded, sidebarWidth, headerHeight 
   const selectedButtonColor = "#9EFF00";
 
   useEffect(() => {
-    console.log("useEffect in sidebar");
+    //console.log("useEffect in sidebar");
     refreshUnreadCount();
   }, []);
-
-  useEffect(() => {
-    console.log("unreadCount", unreadCount);
-  }, [unreadCount]);
 
   useNotification("NEW_MESSAGE", () => {
     console.log("NEW_MESSAGE from sidebar");

@@ -7,8 +7,8 @@ import { useMessenger } from "api/messenger/context";
 import AlertDialog from "components/util/AlertDialog";
 import Tooltip from "components/ui/Header/atoms/tooltip";
 import { IoChevronForwardOutline } from "react-icons/io5";
-import { ReactComponent as HamburgerIcon } from "../../../../../assets/icons/menuIcon.svg";
 import { ReactComponent as DeleteIcon } from "../../../../../assets/icons/deleteIcon.svg";
+import { ReactComponent as HamburgerIcon } from "../../../../../assets/icons/menuIcon.svg";
 import { ReactComponent as ArchiveIcon } from "../../../../../assets/icons/archieveIcon.svg";
 import { ReactComponent as UnarchiveIcon } from "../../../../../assets/icons/unarchieveIcon.svg";
 import { ReactComponent as AlertOctagonIcon } from "../../../../../assets/icons/alertOctagon.svg";
@@ -78,12 +78,13 @@ const InboxHeader = () => {
       label: "Delete Conversation"
     },
     {
-      id: "folder",
+      id: "priority",
       icon: <FolderInputIcon />,
       onClick: () => {
         toggleConversationsIsPriority({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
       },
-      label: "Move to Folder"
+      label: "Move to Priority",
+      label2: "Move to General"
     },
   ];
 
@@ -183,7 +184,7 @@ const InboxHeader = () => {
             </div>
           </div>
           {options.map(({ id, icon, icon2 , onClick, label, label2 }) => (
-            <Tooltip key={id} text={selectedMenuItem.toLowerCase() === id ? label2 : label}>
+            <Tooltip key={id} text={selectedMenuItem.toLowerCase() === id || inboxTab === id ? label2 : label}>
             <div
               key={id}
               onClick={selectedConversations.length > 0 ? onClick : undefined} // Updated to conditionally set onClick

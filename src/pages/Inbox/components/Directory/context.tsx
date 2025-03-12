@@ -88,10 +88,6 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   }, [conversations]);
 
   useEffect(() => {
-    console.log('Selecting conversations', selectedConversations);
-  }, [selectedConversations]);
-
-  useEffect(() => {
     if(inboxTab !== 'search') return;
     const skip = (currentPage - 1) * CONVERSATIONS_PER_PAGE;
     getSearchMessages({
@@ -136,8 +132,6 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
 
   const loadConversations = useCallback(async () => {
     const skip = (currentPage - 1) * CONVERSATIONS_PER_PAGE;
-    console.log('LOADING CONVERSATIONS...');
-    console.log('ArchivSpamFav: ', archiveSpamFav);
     if (authUser && inboxTab !== 'search') {
       await getConversations({
         ascending: false,
@@ -154,7 +148,6 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   }, [authUser, inboxTab, getConversations, CONVERSATIONS_PER_PAGE, currentPage, archiveSpamFav]);
 
   const handleSelectAll = useCallback((checked: boolean) => {
-    console.log('Selecting all convos');
     setSelectAll(checked);
     if (checked) {
       setSelectedConversations(conversations);

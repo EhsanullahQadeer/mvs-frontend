@@ -24,7 +24,7 @@ export const useUnreadCount = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect in useUnreadCount");
+    //console.log("useEffect in useUnreadCount");
     refreshUnreadCount();
   }, [totalPriorityInboxUnread, totalGeneralInboxUnread, totalIcebreakerInboxUnread]);
 
