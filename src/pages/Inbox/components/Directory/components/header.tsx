@@ -10,6 +10,7 @@ import { IoChevronForwardOutline } from "react-icons/io5";
 import { ReactComponent as HamburgerIcon } from "../../../../../assets/icons/menuIcon.svg";
 import { ReactComponent as DeleteIcon } from "../../../../../assets/icons/deleteIcon.svg";
 import { ReactComponent as ArchiveIcon } from "../../../../../assets/icons/archieveIcon.svg";
+import { ReactComponent as UnarchiveIcon } from "../../../../../assets/icons/unarchieveIcon.svg";
 import { ReactComponent as AlertOctagonIcon } from "../../../../../assets/icons/alertOctagon.svg";
 import { ReactComponent as FolderInputIcon } from "../../../../../assets/icons/folderInputIcon.svg";
 
@@ -51,6 +52,7 @@ const InboxHeader = () => {
     { 
       id: "archived", 
       icon: <ArchiveIcon />,
+      icon2: <UnarchiveIcon />,
       onClick: () => {
         toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
       },
@@ -60,6 +62,7 @@ const InboxHeader = () => {
     {
       id: "spam",
       icon: <AlertOctagonIcon />,
+      icon2: <AlertOctagonIcon />,
       onClick: () => {
         toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
       },
@@ -179,7 +182,7 @@ const InboxHeader = () => {
               />
             </div>
           </div>
-          {options.map(({ id, icon, onClick, label, label2 }) => (
+          {options.map(({ id, icon, icon2 , onClick, label, label2 }) => (
             <Tooltip key={id} text={selectedMenuItem.toLowerCase() === id ? label2 : label}>
             <div
               key={id}
@@ -190,7 +193,7 @@ const InboxHeader = () => {
                     : "bg-eerieBlack text-slateGray-2 cursor-not-allowed"
               }`}
             >
-              {icon}
+              {selectedMenuItem.toLowerCase() === id ? icon2 : icon}
             </div>
             </Tooltip>
           ))}
