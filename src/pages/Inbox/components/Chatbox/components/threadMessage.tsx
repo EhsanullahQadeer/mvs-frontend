@@ -1,6 +1,7 @@
 import moment from "moment";
 import { AudioPlayer } from "react-audio-play";
 import { useState, useEffect, useRef } from "react";
+import { useChatbox } from "../context";
 import { IMessage, MEDIA_TYPE, MESSAGE_TYPES } from "api/messenger/objects/states.types";
 import AudioFileIcon from "@mui/icons-material/AudioFile";
 
@@ -22,17 +23,52 @@ const ThreadMessage = (props: Props) => {
   const intersectionRef = useRef(null);
   
   const { message, index, isDemo, details } = props;
-  const { 
+  const {
+    id, 
     media, 
     sender,
     created_at, 
     content,
     message_type,
-    transaction
+    transaction,
   } = message;
+
+  const { 
+    activeConversation,
+    markMessageAsRead
+  } = useChatbox();
+
+  let is_read = message?.is_read;
 
   const requiresFeedback = message_type === MESSAGE_TYPES.DEMO && 
     transaction?.status !== "completed";
+
+  const onIntersection = (entries, observer) => {
+    for (const { isIntersecting, target } of entries) {
+      if (isIntersecting) {
+        handleMessagedAsRead();
+        observer.unobserve(target);
+      }
+    }
+  };
+  const observer = new IntersectionObserver(onIntersection, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 1
+  });
+
+  useEffect(() => {
+      if (!intersectionRef.current) return;
+      observer.observe(intersectionRef.current);
+    }, [])
+
+    function handleMessagedAsRead(){
+      if (is_read === true || sender.id === activeConversation.user.id) return;
+      markMessageAsRead(id);
+      is_read = true;
+    }
+
+    
 
   useEffect(() => {
     if (!media?.url) return;
