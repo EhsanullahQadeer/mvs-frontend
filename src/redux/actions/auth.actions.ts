@@ -41,10 +41,10 @@ export function login(
             });
           } else {
 
-            const expires = new Date(new Date().getTime() + 60 * 60 * 1000);
+            const expires = new Date(new Date().getTime() + 15 * 60 * 1000); //15 minutes
 
-            cookie.set("token", user.data.results.access_token, { expires });
-
+            cookie.set("token", user.data.results.access_token, { expires: expires });
+            cookie.set("tokenExpiresAt", expires.toISOString(), { expires: expires });
             dispatch({
               type: ActionType.USER_LOGIN_SUCCESS,
               payload: user,
@@ -118,6 +118,25 @@ export function getUserTransactions(params) {
         });
     } catch (error) {
       console.log(error);
+    }
+  };
+}
+
+export function refreshToken() {
+  return async function() {
+    try {
+      const tokenLifetime = 15 * 60 * 1000; // 15 minutes in milliseconds
+      const expires = new Date(new Date().getTime() + tokenLifetime);
+      const userToken = cookie.get("token");
+      cookie.set("token", userToken, { expires });
+      cookie.set("tokenExpiresAt", expires.toISOString(), { expires });
+      return {
+        token: userToken,
+        expiresIn: tokenLifetime
+      };
+    } catch (error) {
+      console.error('Error refreshing token', error);
+      throw error;
     }
   };
 }
