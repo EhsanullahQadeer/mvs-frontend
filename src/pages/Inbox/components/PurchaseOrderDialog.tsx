@@ -10,6 +10,7 @@ import { useMessenger } from "api/messenger/context";
 import { uploadMedia } from "api/sounds";
 import { toast } from "react-toastify";
 import { getConversationMessages } from "api/messenger";
+import { CircularProgress } from "@mui/material";
 
 interface Props {
   openPurchaseOrder: boolean;
@@ -49,6 +50,7 @@ const PurchaseOrderDialog = (props: Props) => {
   const [discountCode, setDiscountCode] = useState<string>("");
   const [openCardInfo, setOpenCardInfo] = useState(false);
   const [formData, setFormData] = useState({});
+  const [isSending,setIsSending] = useState(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -125,6 +127,7 @@ const PurchaseOrderDialog = (props: Props) => {
     setTipAmount(0);
     setInputTipAmount("");
     setOpenPurchaseOrder(false);
+    setIsSending(false);
     clearMessageInputs();
   };
 
@@ -333,13 +336,24 @@ const PurchaseOrderDialog = (props: Props) => {
             >
               Close
             </button>
-            <button
+            {isSending?(
+              <div className="flex items-center">
+                <CircularProgress
+                  sx={{
+                    width: "30px !important",
+                    height: "30px !important",
+                    color: "#9EFF00",
+                  }}
+                />
+              </div>
+              ) 
+                              :(<button
               type="submit"
-              onClick={handleSendDemo}
+              onClick={()=>{setIsSending(true);handleSendDemo();}}
               className="bg-limeGreen text-sm text-jetBlack font-semibold py-[12px] px-5 rounded-full"
             >
               Send Demo
-            </button>
+            </button>)}   
           </div>
         </div>
       </Dialog>
