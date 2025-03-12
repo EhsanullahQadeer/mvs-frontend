@@ -9,7 +9,6 @@ import { capitalizeRegion, convertToCurrencyFormat, formatNumberWithCommas } fro
 import { useMessenger } from "api/messenger/context";
 import { uploadMedia } from "api/sounds";
 import { toast } from "react-toastify";
-import { getConversationMessages } from "api/messenger";
 import { CircularProgress } from "@mui/material";
 
 interface Props {
@@ -38,7 +37,8 @@ const PurchaseOrderDialog = (props: Props) => {
   } = props;
 
   const {
-    sendMessage
+    sendMessage,
+    getConversationMessages
   } = useMessenger();
 
   const recipient = activeConversation?.recipient;
@@ -116,7 +116,7 @@ const PurchaseOrderDialog = (props: Props) => {
     }
     console.log("response.data.media.id", response.data.media.id);
     console.log("totalAmount", totalAmount);
-    sendMessage({
+    await sendMessage({
       conversationId: activeConversation?.conversation_id || '',
       message: messageInputValue,
       creditPaymentAmount: totalAmount,
