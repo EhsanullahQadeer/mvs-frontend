@@ -90,6 +90,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
       toggleMessageIsRead({messageIds:updateMessageReadIds.current});
       updateMessageReadIds.current = [];
     }
+    setIsThread(false);
   }, [activeConversation]);
 
   const getConversationInfo = useCallback(async () => {
