@@ -304,7 +304,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
                     <div className={`flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto ${getAnimationClass()}`}>
                       {isThread ? (
                         <>
-                          <div className="sticky top-0 z-10 bg-[#131313] border-b border-[#242424] px-4 py-2 flex items-center justify-between">
+                          <div className="sticky top-0 bg-[#131313] border-b border-[#242424] px-4 py-2 flex items-center justify-between">
                             <div className="flex items-center">
                               <span className="text-white text-sm font-medium">Thread</span>
                             </div>
