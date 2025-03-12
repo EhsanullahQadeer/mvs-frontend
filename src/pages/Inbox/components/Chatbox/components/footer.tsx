@@ -21,7 +21,8 @@ const Footer = () => {
     getConversationMessages,
     sendMessage,
     replyInThread,
-    threadMessages
+    threadMessages,
+    getThreadMessages
   } = useMessenger();
 
   const { 
@@ -82,8 +83,6 @@ const Footer = () => {
     setIsSubmitting(true);
     try {
       if (uploadedAudioFile) { // Send Demo
-        console.log("uploadedAudioFile", uploadedAudioFile);
-        console.log('sending demo');
         if (isThread) {
           toast.error("You cannot send a demos in a thread");
           return;
@@ -122,6 +121,7 @@ const Footer = () => {
           });
         }
         await getConversationMessages({ conversationId: activeConversation.conversation_id });
+        await getThreadMessages({ parentMessageId: threadMessages[0].id });
         clearMessageInputs();
       } else {
         if (isThread) {
@@ -129,6 +129,7 @@ const Footer = () => {
             replyContent: String(messageInputValue || ''),
             parentMessageId: Number(threadMessages[0]?.id || ''),
           });
+          await getThreadMessages({ parentMessageId: threadMessages[0].id });
         } else {
           if (tipAmount > 0) {
             await sendMessage({
@@ -148,7 +149,7 @@ const Footer = () => {
         await getConversationMessages({ conversationId: activeConversation.conversation_id });
         clearMessageInputs();
       }
-      refreshMessages();
+      // refreshMessages();
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
       toast.error("An error occurred while sending the message");

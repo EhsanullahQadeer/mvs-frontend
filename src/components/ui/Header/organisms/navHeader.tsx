@@ -21,9 +21,8 @@ import { TNotificationData } from "../molecules/notifications/Notification";
 import NotificationBellButton from "../atoms/notificationAtoms/notificationBellButton";
 import { useNotificationAnimation , NotificationAnimationProvider } from "../context/NotificationAnimationContext";
 import { debounce } from "lodash";
-
-const NOTIFICATION_SOUND_URL = process.env.REACT_APP_CDN_URL + '/audio/notification.mp3';
-const MESSAGE_NOTIFICATION_SOUND_URL = process.env.REACT_APP_CDN_URL + '/audio/mvssive-message-notification.mp3';
+import notificationSound from "../../../../assets/audio/notification.mp3";
+import messageSound from "../../../../assets/audio/message-notification.mp3";
 
 const NavHeader: React.FC<UserData> = () => {
   const navigate = useNavigate();
@@ -43,34 +42,18 @@ const NavHeader: React.FC<UserData> = () => {
   useEffect(() => {
     const initAudio = async () => {
       try {
-        // Create and configure notification audio
-        notificationAudioRef.current = new Audio(NOTIFICATION_SOUND_URL);
+        // Initialize notification audio
+        notificationAudioRef.current = new Audio(notificationSound);
         notificationAudioRef.current.crossOrigin = "anonymous";
         notificationAudioRef.current.preload = "auto";
         
-        // Create and configure message audio
-        messageAudioRef.current = new Audio(MESSAGE_NOTIFICATION_SOUND_URL);
+        // Initialize message audio
+        messageAudioRef.current = new Audio(messageSound);
         messageAudioRef.current.crossOrigin = "anonymous";
         messageAudioRef.current.preload = "auto";
 
-        // Wait for both audio files to load
-        await Promise.all([
-          new Promise(resolve => {
-            if (notificationAudioRef.current) {
-              notificationAudioRef.current.addEventListener('canplaythrough', resolve, { once: true });
-              notificationAudioRef.current.load();
-            }
-          }),
-          new Promise(resolve => {
-            if (messageAudioRef.current) {
-              messageAudioRef.current.addEventListener('canplaythrough', resolve, { once: true });
-              messageAudioRef.current.load();
-            }
-          })
-        ]);
-
         audioLoadedRef.current = true;
-        console.log('Audio files loaded successfully');
+        console.log('Audio initialized normally');
 
       } catch (error) {
         console.error('Error initializing audio:', error);
@@ -78,8 +61,7 @@ const NavHeader: React.FC<UserData> = () => {
     };
 
     initAudio();
-
-    // Cleanup
+    
     return () => {
       [notificationAudioRef, messageAudioRef].forEach(ref => {
         if (ref.current) {
@@ -93,28 +75,48 @@ const NavHeader: React.FC<UserData> = () => {
   }, []);
 
   const playSound = useCallback(async (type: string) => {
-    // Don't try to play if audio isn't loaded or tab is focused
-    if (!audioLoadedRef.current || document.hasFocus()) {
-      return;
-    }
-
+    console.log('=== Sound Debug ===');
+    console.log(`Type: ${type}`);
+    console.log(`Audio loaded: ${audioLoadedRef.current}`);
+    console.log(`Audio refs exist:`, {
+      notification: !!notificationAudioRef.current,
+      message: !!messageAudioRef.current
+    });
+    
     const audioRef = type === 'NEW_MESSAGE' ? messageAudioRef : notificationAudioRef;
     
     if (audioRef.current) {
       try {
-        // Stop any current playback
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+        console.log('Attempting to play sound...');
+        console.log('Audio state:', {
+          paused: audioRef.current.paused,
+          currentTime: audioRef.current.currentTime,
+          volume: audioRef.current.volume,
+          readyState: audioRef.current.readyState
+        });
 
-        // Try to play with user interaction check
-        await audioRef.current.play();
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'NotAllowedError') {
-          console.warn('Audio playback requires user interaction first');
-        } else {
-          console.error('Error playing notification sound:', error);
+        audioRef.current.currentTime = 0;
+        audioRef.current.volume = 1.0;
+        
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('Sound played successfully');
+            })
+            .catch(error => {
+              console.error('Detailed play error:', {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+              });
+            });
         }
+      } catch (error) {
+        console.error('Caught error during play:', error);
       }
+    } else {
+      console.error('Audio ref not available');
     }
   }, []);
 
@@ -125,6 +127,7 @@ const NavHeader: React.FC<UserData> = () => {
   );
 
   const handleNotification = useCallback((rawData: any) => {
+    console.log("NEW_MESSAGE from navHeader");
     const formattedNotification: TNotificationData = {
       id: rawData?.id,
       type: rawData?.type,
@@ -257,6 +260,7 @@ const NavHeader: React.FC<UserData> = () => {
   useNotification('DOWNLOAD_FILE', handleNotification);
   useNotification('VIEW_PROFILE', handleNotification);
   useNotification('VIEW_DEMO', handleNotification);
+  useNotification('NEW_MESSAGE', handleNotification);
   
   return (
     <>

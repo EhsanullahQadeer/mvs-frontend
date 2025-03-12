@@ -142,7 +142,7 @@ const ProfileAboutSection = (props: Props) => {
         const payload: ICreateNewConversation = {recipientId:artistData?.id}
         const response = await createNewConversation(payload)
         const conversation = {
-          id: response.data.results?.conversationId, // Add a temporary ID here
+          id: response.data.results?.conversationId,
           thumbnail: artistData.thumbnail,
           displayName: artistData.professional_name,
           sender: user.auth.user.id,

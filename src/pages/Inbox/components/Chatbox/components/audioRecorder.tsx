@@ -31,7 +31,6 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [recordingDuration, setRecordingDuration] = useState(0);
-  const [isInitialized, setIsInitialized] = useState(false);
   
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioStream = useRef<MediaStream | null>(null);
@@ -101,7 +100,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       // Set a flag to indicate we're preparing to record
       setIsRecording(true);
       
-      // Get a fresh audio stream (permissions should already be granted)
+      // Get a fresh audio stream only when starting recording
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           channelCount: 1,
@@ -110,6 +109,8 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
           noiseSuppression: true
         } 
       });
+      
+      audioStream.current = stream;
       
       const mimeType = getMimeType();
       console.log("Selected recording format:", mimeType);
@@ -179,7 +180,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       console.error("Error starting recording:", err);
       setIsRecording(false);
     }
-  }, [formatDuration, getMimeType]);
+  }, [getMimeType]);
 
   const stopRecording = useCallback(() => {
     if (!mediaRecorder.current) return;
@@ -199,11 +200,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
     setRecordingDuration(0);
   }, []);
 
-  // Initialize the audio system when the component mounts
   useEffect(() => {
-    initializeAudioSystem();
-    
-    // Clean up function
     return () => {
       if (timerInterval.current) {
         clearInterval(timerInterval.current);
@@ -213,9 +210,10 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       }
       if (audioStream.current) {
         audioStream.current.getTracks().forEach(track => track.stop());
+        audioStream.current = null;
       }
     };
-  }, [initializeAudioSystem]);
+  }, []);
 
   const value = {
     isRecording,

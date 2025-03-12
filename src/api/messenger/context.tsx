@@ -26,14 +26,13 @@ import {
   IGetConversationMessages,
   IGetConversationNotes,
   IDeleteConversations,
-  IToggleMessageRead,
   ISendMessage,
 } from './objects/api.interfaces';
 
 interface MessengerContextType {
   // State
   activeConversation: IConversation | null;
-  messages: IMessage[];
+  messages: IMessage[] | null;
   loading: boolean;
   error: string | null;
   conversations: IConversation[];

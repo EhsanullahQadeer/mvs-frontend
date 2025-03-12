@@ -1,6 +1,6 @@
 import { getUserNotifications } from 'api/user';
 import { CircularProgress } from "@mui/material";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NotificationList from '../molecules/notifications/NotificationList';
 import NotificationManagerTab from '../molecules/notificationMolecules/notificationTabs';
 import NoNotificationsYetPrompt from '../molecules/notificationMolecules/noNotificationsYet';
@@ -69,8 +69,27 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   let skip = 0;
   const [isToggled, setIsToggled] = useState<boolean>(false);
   const [notifIdForIsRead, setNotifIdForIsRead] = useState<number>();
-  const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
   const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
+  const refreshRef = useRef(null);
+
+  const onIntersection = (entries) => {
+    for (const {isIntersecting} of entries) {
+      if (isIntersecting) {
+        loadMoreNotifications()
+      }
+    }
+  };
+
+  const observer = new IntersectionObserver(onIntersection, {
+    root: null,
+    rootMargin: '0px',
+    threshold: .9
+  });
+
+  useEffect(() => {
+    if(!refreshRef.current) return;
+      observer.observe(refreshRef.current);
+    }, [])
 
   const handleToggle = () => {
     setIsToggled(!isToggled);
@@ -103,12 +122,11 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
       setNotifications(response.data); // Update notifications with the new data
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      // Handle error (e.g., show a notification or set an error state)
     }
   };
 
   const loadMoreNotifications = async () => {
-    if (!allowLoading) return; // Prevent multiple calls if already loading or not allowed
+    if (!allowLoading) return;
     try {
       skip += 10;
       const response = await getUserNotifications(NOTIFICATION_GROUPS[selectedTab], false, skip);
@@ -116,17 +134,6 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
       setNotifications((prev) => [...prev, ...response.data]);
     } catch (error) {
       console.error("Error loading more notifications:", error);
-      // Handle error (e.g., show a notification or set an error state)
-    }
-  };
-
-  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
-    if (scrollTop + clientHeight >= scrollHeight - 50) {
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-      setScrollTimeout(setTimeout(() => {
-        loadMoreNotifications();
-      }, 500)); // Wait for 500ms after scrolling stops
     }
   };
 
@@ -139,12 +146,7 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
     window.isNotificationInCurrentTab = isNotificationInCurrentTab;
   }, [selectedTab]);
 
-  useEffect(() => {
-    if (notifications.length < 3) {
-      setAllowLoading(false);
-    }
-  }, [notifications]);
-
+  
   return (
     <>
       {isOpen && (
@@ -185,9 +187,9 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
           {notifications.length === 0 ? 
             <NoNotificationsYetPrompt/>
             :
-            <div className="flex flex-col overflow-y-auto h-[calc(621px-120px)] scrollbar-hidden" onScroll={handleScroll}>
+            <div className="flex flex-col overflow-y-auto h-[calc(621px-120px)] scrollbar-hidden">
               <NotificationList data={notifications} setNotifIdForIsRead={setNotifIdForIsRead} unreadNotifCount={unreadNotifCount} setUnreadNotifCount={setUnreadNotifCount}/>
-              <div className={`h-[100px] pb-1 ${allowLoading ? "": "hidden"}`}>
+                <div ref={refreshRef} className={`h-[100px] pb-1 ${allowLoading ? "": "hidden"}`}>
                 <div className="w-full flex justify-center items-center bg-black opacity-40 z-[999px] h-[50px]">
                   <CircularProgress
                     sx={{
