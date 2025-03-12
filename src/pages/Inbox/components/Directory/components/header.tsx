@@ -181,13 +181,11 @@ const InboxHeader = () => {
             <Tooltip key={id} text={label}>
             <div
               key={id}
-              onClick={onClick}
-              className={`flex justify-center items-center w-8 h-8 rounded cursor-pointer ${
-                selectedConversations.length
-                  ? id === "read" && selectedConversations.length > 1
-                    ? "bg-eerieBlack text-slateGray-2 pointer-events-none"
-                    : "bg-[#242424] text-white pointer-events-auto"
-                  : "bg-eerieBlack text-slateGray-2 pointer-events-none"
+              onClick={selectedConversations.length > 0 ? onClick : undefined} // Updated to conditionally set onClick
+              className={`flex justify-center items-center w-8 h-8 rounded  ${
+                selectedConversations.length > 0
+                    ? "bg-[#242424] text-white cursor-pointer"
+                    : "bg-eerieBlack text-slateGray-2 cursor-not-allowed"
               }`}
             >
               {icon}
