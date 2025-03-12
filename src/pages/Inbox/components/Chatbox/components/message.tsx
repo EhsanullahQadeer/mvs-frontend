@@ -23,9 +23,6 @@ const Message: React.FC<MessageProps> = ({
   index,
   prevMessageDate,
 }) => {
-
-  console.log('message', message);
-
   const {
     id,
     content,

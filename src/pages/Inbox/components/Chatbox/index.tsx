@@ -164,18 +164,22 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
     }
 
     const message = data.message as IMessage;
-
+    console.log("3. Message:", message);
     if (threadMessages && threadMessages[0]?.id === message.parentMessageId && isThread) {
+      console.log("5. Appending to thread messages");
       setThreadMessages([...threadMessages, message]);
       return;
     }
-    
+    console.log("6. Messages:", messages);
+    console.log("7. Active conversation:", activeConversation);
     if (!messages) {
+      console.log("2. Setting messages");
       setMessages([message]);
     } else if(activeConversation.id == message.conversation.id) {
       console.log("4b. Appending to existing messages");
       setMessages([...messages, message]);
     }
+    console.log("7. Messages:", messages);
 
     playSound();
     refreshUnreadCount();

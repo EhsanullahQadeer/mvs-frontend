@@ -25,6 +25,7 @@ import DMButton from "./buttons/dm";
 import HomeButton from "./buttons/home";
 import LibraryButton from "./buttons/library";
 import LicenseButton from "./buttons/license";
+import ProfileButton from "./buttons/profile";
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -95,6 +96,16 @@ const SidebarContent = ({ isExpanded, setIsExpanded, sidebarWidth, headerHeight 
           />
 
           <HomeButton
+            isExpanded={isExpanded}
+            setIsExpanded={setIsExpanded}
+            sidebarWidth={sidebarWidth} 
+            headerHeight={headerHeight}
+            iconColor={iconColor}
+            textHoverIconColor={textHoverIconColor}
+            selectedButtonColor={selectedButtonColor}
+          />
+
+          <ProfileButton
             isExpanded={isExpanded}
             setIsExpanded={setIsExpanded}
             sidebarWidth={sidebarWidth} 
