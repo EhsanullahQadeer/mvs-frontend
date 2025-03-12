@@ -69,7 +69,6 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   let skip = 0;
   const [isToggled, setIsToggled] = useState<boolean>(false);
   const [notifIdForIsRead, setNotifIdForIsRead] = useState<number>();
-  const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
   const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
   const refreshRef = useRef(null);
 
