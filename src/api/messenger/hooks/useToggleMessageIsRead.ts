@@ -3,7 +3,7 @@ import axiosInstance from "api/axios";
 
 
 export interface IToggleMessageRead {
-  messageId: number[];
+  messageIds: number[];
 }
 
 export const useToggleMessageIsRead = () => {

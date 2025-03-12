@@ -37,7 +37,6 @@ const Message: React.FC<MessageProps> = ({
   } = message;
 
   const {
-    toggleMessageIsRead,
     addReactionMessage,
     deleteReactionMessage,
   } = useMessenger();
@@ -48,6 +47,7 @@ const Message: React.FC<MessageProps> = ({
     isThread,
     setIsThread,
     refreshMessages,
+    markMessageAsRead
   } = useChatbox();
   
   let is_read = message?.is_read;
@@ -56,7 +56,7 @@ const Message: React.FC<MessageProps> = ({
   const onIntersection = (entries, observer) => {
     for (const { isIntersecting, target } of entries) {
       if (isIntersecting) {
-        markMessagedAsRead();
+        handleMessagedAsRead();
         observer.unobserve(target);
       }
     }
@@ -93,10 +93,9 @@ const Message: React.FC<MessageProps> = ({
     return <TipMessage amount={message?.transaction?.amount} message={message?.content} />
   }
   
-  async function markMessagedAsRead(){
+  function handleMessagedAsRead(){
     if (is_read === true || sender.id === activeConversation.user.id) return;
-    await toggleMessageIsRead({messageId:[id]});
-    console.log(`MARKING THIS AS READ Content:${content} and messagedID:${id}`); // TODO : This console.log should stay here until we actually want actually mark them as read
+    markMessageAsRead(id);
     is_read = true;
   }
 

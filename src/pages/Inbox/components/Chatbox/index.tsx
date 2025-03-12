@@ -170,7 +170,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
     if (!messages) {
       console.log("4a. Setting initial messages");
       setMessages([message]);
-    } else {
+    } else if(activeConversation.id == message.conversation.id) {
       console.log("4b. Appending to existing messages");
       setMessages([...messages, message]);
     }
