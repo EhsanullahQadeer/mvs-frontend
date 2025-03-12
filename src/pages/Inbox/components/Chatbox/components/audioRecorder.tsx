@@ -31,6 +31,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [recordingDuration, setRecordingDuration] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioStream = useRef<MediaStream | null>(null);

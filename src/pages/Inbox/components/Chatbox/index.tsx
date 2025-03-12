@@ -23,27 +23,25 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { AudioRecordingProvider } from "./components/audioRecorder";
 import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
 import { useNotification } from "services/WebSocket/useNotification.hook";
+import messageSound from "../../../../assets/audio/message-notification.mp3";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
-import notificationSound from "../../../../assets/audio/mvssive-message-notification.mp3";
 
 const Chatbox = ({ onClose }: { onClose: () => void }) => {
   const {
     getConversationInfo,
     recipient,
-    refreshMessages,
     isThread,
     setIsThread,
-    loading
   } = useChatbox();
+
   const {
     activeConversation,
-    setActiveConversation,
   } = useConversation();
+
   const {
     messages,
     setMessages,
     conversationNotes,
-    getTotalConversationUnread,
     setThreadMessages,
     threadMessages
   } = useMessenger();
@@ -287,7 +285,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
           ) : (
             <div
               ref={messagesRef}
-              className="flex flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden w-full custom-dropdown"
+              className="flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden w-full custom-dropdown"
             >
               {activeTab === "messages" && (
                 <>
