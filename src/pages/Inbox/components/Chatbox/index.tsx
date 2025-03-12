@@ -169,7 +169,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
       console.log("5. Appending to thread messages");
       setThreadMessages([...threadMessages, message]);
       return;
-    } else if (message.parentMessageId === null) {
+    } else if (message.parentMessageId) {
       return;
     }
 
