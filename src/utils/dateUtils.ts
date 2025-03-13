@@ -65,3 +65,10 @@ export const convertToCurrencyFormat = (input: string): string => {
   // Format the number with commas and two decimal places
   return "$" + numericValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
+
+// Function to convert a duration to an audio duration Ex: 5 -> 0:05 or 72 -> 1:12
+export const formatTime = (time: number): string => {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};

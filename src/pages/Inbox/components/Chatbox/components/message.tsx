@@ -1,12 +1,14 @@
 import moment from "moment";
 import { useChatbox } from "../context";
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
+import { formatTime } from "utils/dateUtils";
 import { useMessenger } from "api/messenger/context";
 import MessageReactions from "../../MessageReactions";
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
+import PlayPauseButton from "components/ui/Header/atoms/chatboxPlayPauseButton";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
 
@@ -68,22 +70,25 @@ const Message: React.FC<MessageProps> = ({
     observer.observe(intersectionRef.current);
   }, [])
 
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
   const claimed = transaction?.status === TRANSACTION_STATUS.COMPLETED;
-
   const authUserId = useSelector((state: RootState) => state.auth?.user?.id);
-
   const isDemoSender = authUserId === sender.id;
   const details = formatMediaDetails(
     media?.duration,
     media?.file_size_bytes
   );
-  
   const currentMessageDate = moment(created_at).format("dddd, MMMM D, YYYY");
   const currentDateFormatted = moment(created_at).format("YYYY-MM-DD");
   const prevDateFormatted = prevMessageDate ? moment(prevMessageDate).format("YYYY-MM-DD") : null;
-
   // Only show date if it's the first message or if date is different from previous message
   const shouldShowDate = index === 0 || currentDateFormatted !== prevDateFormatted;
+
+  // Function to toggle the isPlaying state
+  const togglePlayPause = () => {
+    setIsPlaying(prev => !prev);
+  };
 
   function renderTipMessage() {
     return <TipMessage amount={message?.transaction?.amount} message={message?.content} />
@@ -201,6 +206,25 @@ const Message: React.FC<MessageProps> = ({
       </>
     )
   }
+
+  function renderAudioRecordingMessage() {
+    return (
+      <div className="bg-[#242424] h-[56px] w-[234px] border border-[#3D3D3D] box-border rounded-full mt-2">
+        <div className="mx-3 h-full flex justify-between items-center">
+        <PlayPauseButton isPlaying={isPlaying} onClick={togglePlayPause}/>
+        <div>Waveform</div>
+        <div className="items-end">
+        <span className="text-[14px] text-[#848484] min-w-[40px] flex-shrink-0">
+          {formatTime(media?.duration)}
+        </span>
+        </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.54 8.45972C16.4774 9.39736 17.004 10.6689 17.004 11.9947C17.004 13.3205 16.4774 14.5921 15.54 15.5297M19.0701 4.92969C20.9448 6.80496 21.9979 9.34805 21.9979 11.9997C21.9979 14.6513 20.9448 17.1944 19.0701 19.0697M11 4.99976L6 8.99976H2V14.9998H6L11 18.9998V4.99976Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+    </div>
+    )
+  }
   
   // async function emojiPassthrough(id:number, emoji:any){
   //   const userId = user.id;
@@ -277,10 +301,11 @@ const Message: React.FC<MessageProps> = ({
 
           ) : media?.type === MEDIA_TYPE.RECORDING ? (
             <div
-              id="2"
-              className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-2"
+            id="2"
+            className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-2"
             >
-              <audio
+              {renderAudioRecordingMessage()}
+              {/* <audio
                 controls
                 className="h-10 rounded-full bg-[#242424] border border-[#3D3D3D] [&::-webkit-media-controls-panel]{background-color:#242424} [&::-webkit-media-controls-current-time-display]:text-[#9EFF00] [&::-webkit-media-controls-time-remaining-display]:text-[#9EFF00] [&::-webkit-media-controls-timeline]:text-[#9EFF00] [&::-webkit-media-controls-play-button]:text-[#9EFF00] [&::-webkit-media-controls-timeline]{accent-color:#9EFF00}"
                 src={media?.url}
@@ -288,7 +313,7 @@ const Message: React.FC<MessageProps> = ({
               >
                 <source src={media?.url} type={media?.mime_type || 'audio/webm'} />
                 Your browser does not support the audio element.
-              </audio>
+              </audio> */}
             </div>
           ) : null}
           <div className={`text-sm text-[#CACCCD] break-all whitespace-normal overflow-hidden max-w-full w-full ${
