@@ -247,7 +247,7 @@ const Footer = () => {
                       handleSendMessage();
                     }
                   }}
-                  className={`resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16 ${
+                  className={`resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16 custom-dropdown ${
                     isRecording || recordedAudio ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                   placeholder={
