@@ -1,7 +1,6 @@
 import { toast } from "react-toastify";
 import { useChatbox } from "../context";
 import { uploadMedia } from "api/sounds";
-import { AudioPlayer } from "react-audio-play";
 import { CircularProgress } from "@mui/material";
 import { useMessenger } from "api/messenger/context";
 import AudioWaveform from "components/util/AudioWaveform";
@@ -10,6 +9,7 @@ import React, { useState, useEffect, useRef } from "react";
 import PurchaseOrderDialog from "../../PurchaseOrderDialog";
 import RecordedAudioPlayer from "../../RecordedAudioPlayer";
 import AudioRecorder, { useAudioRecording } from './audioRecorder';
+import FooterRecordedAudioPlayer from "./footerRecordedAudioPlayer";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import { ReactComponent as SendArrowIcon } from "../../../../../assets/icons/sendArrowIcon.svg";
 
@@ -282,16 +282,7 @@ const Footer = () => {
                         </svg>
                       </button>
                     </div>
-                    <AudioPlayer
-                      src={URL.createObjectURL(uploadedAudioFile)}
-                      color="#B2B2B2"
-                      sliderColor="#B7B7B7"
-                      style={{
-                        background: "#242424",
-                        borderRadius: "40px",
-                      }}
-                      className="border border-[#3D3D3D] rounded-full [&_.rap-pp-icon_path]:!fill-[#1C1C1C] [&_.rap-volume]:hidden [&_.rap-controls]:!mx-2 [&_.rap-slider]:!mx-2  [&_.rap-slider]:!bg-[#4B4B4B] [&_.rap-slider]:!h-[2px]"
-                    />
+                    <FooterRecordedAudioPlayer src={uploadedAudioFile} />
                   </div>
                 )}
               </div>
