@@ -1,7 +1,6 @@
-import { MicrophoneIcon } from '@heroicons/react/20/solid';
-import { CheckIcon, PauseIcon, PlayIcon, TrashIcon } from '@heroicons/react/24/solid';
-import React, { createContext, useState, useContext, useRef, useCallback, useEffect, memo } from 'react';
+import { CheckIcon } from '@heroicons/react/24/solid';
 import { ReactComponent as MicIcon } from '../../../../../assets/icons/micIcon.svg';
+import React, { createContext, useState, useContext, useRef, useCallback, useEffect, memo } from 'react';
 
 const formatDuration = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -68,7 +67,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
     try {
       if (isInitialized) return;
       
-      console.log("Pre-initializing audio system...");
+      //console.log("Pre-initializing audio system...");
       
       // Request permissions and get the audio stream
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -87,7 +86,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       stream.getTracks().forEach(track => track.stop());
       
       setIsInitialized(true);
-      console.log("Audio system pre-initialized");
+      //console.log("Audio system pre-initialized");
     } catch (err) {
       console.error("Error pre-initializing audio system:", err);
     }
@@ -102,7 +101,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       // Set a flag to indicate we're preparing to record
       setIsRecording(true);
       
-      // Get a fresh audio stream (permissions should already be granted)
+      // Get a fresh audio stream only when starting recording
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           channelCount: 1,
@@ -111,6 +110,8 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
           noiseSuppression: true
         } 
       });
+      
+      audioStream.current = stream;
       
       const mimeType = getMimeType();
       console.log("Selected recording format:", mimeType);
@@ -180,7 +181,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       console.error("Error starting recording:", err);
       setIsRecording(false);
     }
-  }, [formatDuration, getMimeType]);
+  }, [getMimeType]);
 
   const stopRecording = useCallback(() => {
     if (!mediaRecorder.current) return;
@@ -200,11 +201,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
     setRecordingDuration(0);
   }, []);
 
-  // Initialize the audio system when the component mounts
   useEffect(() => {
-    initializeAudioSystem();
-    
-    // Clean up function
     return () => {
       if (timerInterval.current) {
         clearInterval(timerInterval.current);
@@ -214,9 +211,10 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       }
       if (audioStream.current) {
         audioStream.current.getTracks().forEach(track => track.stop());
+        audioStream.current = null;
       }
     };
-  }, [initializeAudioSystem]);
+  }, []);
 
   const value = {
     isRecording,

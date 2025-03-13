@@ -2,10 +2,10 @@
 
 /* IMPORTS */
 import Chatbox from "../Chatbox";
+import React, { useEffect } from "react";
 import { useConversation } from "./context";
 import InboxHeader from "./components/header";
 import { CircularProgress } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import { useMessenger } from "api/messenger/context";
 import { ChatboxProvider } from "../Chatbox/context";
 import { Conversation } from "./components/conversation";
@@ -21,14 +21,10 @@ const InboxDirectory = () => {
     conversations,
     searchMessages,
     setSearchMessages,
-    archivedConversations,
-    favoriteConversations,
-    getConversations,
     getTotalConversationUnread,
     totalPriorityInboxUnread,
     totalGeneralInboxUnread,
     totalIcebreakerInboxUnread,
-    getSearchMessages,
   } = useMessenger();
 
   const {
@@ -38,7 +34,6 @@ const InboxDirectory = () => {
     setActiveConversation,
     handleConversationSelect,
     loadConversations,
-    currentPage,
     searchTerm,
     setSearchTerm,
   } = useConversation();

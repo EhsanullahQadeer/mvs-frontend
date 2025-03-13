@@ -1,10 +1,9 @@
+import { useState } from "react";
 import { useConversation } from "../context";
-import { useNavigate } from "react-router-dom";
-import { lastMsgTimeStamp } from "../../../handlers/mediaUtils";
-import { IConversation, TUser } from "api/messenger/objects/states.types";
 import starIcon from "../../../../../assets/icons/star.svg";
+import { lastMsgTimeStamp } from "../../../handlers/mediaUtils";
 import featuredIcon from "../../../../../assets/icons/featured-icon.svg";
-import { IUserData } from "pages/profile/components/types";
+import { IConversation, TUser } from "api/messenger/objects/states.types";
 
 export const Conversation = ({ conversation, onClick, searchTerm, searchContent, searchCreatedAt, sender }: { 
   searchTerm?:string; 
@@ -27,12 +26,11 @@ export const Conversation = ({ conversation, onClick, searchTerm, searchContent,
     activeConversation,
     selectedConversations,
     handleCheckboxChange,
-    favoriteConversations,
     handleToggleFavoriteConversation,
   } = useConversation();
 
+  const [isFavorite, setIsFavorite] = useState<boolean>(conversation.is_favorite);
   const isChecked = selectedConversations.includes(conversation);
-  const isFavorite = favoriteConversations.includes(conversation);
 
   return (
       <div
@@ -77,6 +75,7 @@ export const Conversation = ({ conversation, onClick, searchTerm, searchContent,
                       onClick={(e) => {
                         e.stopPropagation();
                         handleToggleFavoriteConversation(conversation);
+                        setIsFavorite(!isFavorite);
                       }}
                       className="cursor-pointer"
                     >

@@ -7,7 +7,7 @@
  *************************************************************************/
 
 /* IMPORTS */
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
@@ -22,6 +22,9 @@ import NotFoundPage from "pages/NotFoundPage";
 import publicRoutes from "routes/publicRoutes";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { initializeTokenRefresher, refreshTokenEvery } from "redux/actions/tokenrefresher.actions";
+
+const cleanupActivityRefresh = initializeTokenRefresher();
 
 const renderRoutes = (routes: any[]) => {
   return routes.map((route, index) => (

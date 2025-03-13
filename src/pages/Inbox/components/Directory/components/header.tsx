@@ -5,10 +5,12 @@ import { IoIosArrowBack } from "react-icons/io";
 import InboxDropdownMenu from "../../ActionMenu";
 import { useMessenger } from "api/messenger/context";
 import AlertDialog from "components/util/AlertDialog";
+import Tooltip from "components/ui/Header/atoms/tooltip";
 import { IoChevronForwardOutline } from "react-icons/io5";
-import { ReactComponent as HamburgerIcon } from "../../../../../assets/icons/menuIcon.svg";
 import { ReactComponent as DeleteIcon } from "../../../../../assets/icons/deleteIcon.svg";
+import { ReactComponent as HamburgerIcon } from "../../../../../assets/icons/menuIcon.svg";
 import { ReactComponent as ArchiveIcon } from "../../../../../assets/icons/archieveIcon.svg";
+import { ReactComponent as UnarchiveIcon } from "../../../../../assets/icons/unarchieveIcon.svg";
 import { ReactComponent as AlertOctagonIcon } from "../../../../../assets/icons/alertOctagon.svg";
 import { ReactComponent as FolderInputIcon } from "../../../../../assets/icons/folderInputIcon.svg";
 
@@ -16,16 +18,16 @@ const InboxHeader = () => {
   const {
     currentPage,
     setCurrentPage,
-    setShowArchivedConvos,
-    setShowFavoriteConvos,
-    setActiveConversation,
     CONVERSATIONS_PER_PAGE,
-    setGetArchived,
     selectedMenuItem,
     setSelectedMenuItem,
-    loadFavoritedConversations,
     handleDeleteConversations,
-    loadConversations
+    loadConversations,
+    setArchiveSpamFav,
+    inboxTab,
+    setInboxTab,
+    selectedConversations,
+    setSelectedConversations
   } = useConversation();
 
   const {
@@ -40,6 +42,7 @@ const InboxHeader = () => {
 
   function refreshConversations(){
     loadConversations();
+    setSelectedConversations([]);
     getTotalConversationUnread({
       types: ["priority", "general", "icebreaker"]
     });
@@ -47,46 +50,43 @@ const InboxHeader = () => {
 
   const options = [
     { 
-      id: "archive", 
+      id: "archived", 
       icon: <ArchiveIcon />,
+      icon2: <UnarchiveIcon />,
       onClick: () => {
         toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
-      }
+      },
+      label: "Archive Conversation",
+      label2: "Unarchive Conversation"
     },
     {
       id: "spam",
       icon: <AlertOctagonIcon />,
+      icon2: <AlertOctagonIcon />,
       onClick: () => {
         toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
-      }
+      },
+      label: "Mark as Spam",
+      label2: "Unmark as Spam"
     },
     {
       id: "delete",
       icon: <DeleteIcon />,
       onClick: () => {
         setOpenDeleteDialog(true);
-      }
+      },
+      label: "Delete Conversation"
     },
-    // { 
-    // id: "read", 
-    // icon: <MailOpenIcon />, 
-    // func: handleMarkConvoRead 
-    // },
     {
-      id: "folder",
+      id: "priority",
       icon: <FolderInputIcon />,
       onClick: () => {
         toggleConversationsIsPriority({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
-      }
+      },
+      label: "Move to Priority",
+      label2: "Move to General"
     },
   ];
-
-  const { 
-    inboxTab,
-    setInboxTab,
-    selectedConversations,
-    setSelectedConversations
-  } = useConversation();
 
   const [menuSection, setMenuSection] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -123,19 +123,30 @@ const InboxHeader = () => {
       label: "Favorited",
       icon: <FaRegStar />,
       func: () => {
-        setShowArchivedConvos(false);
-        setShowFavoriteConvos(true);
+        setArchiveSpamFav("favorite");
         setSelectedMenuItem("Favorited");
-        loadFavoritedConversations();
+        setSelectedConversations([]);
+        setInboxTab('');
       },
     },
     {
       label: "Archived",
       icon: <ArchiveIcon />,
       func: () => {
-        setShowFavoriteConvos(false);
-        setGetArchived(true);
+        setArchiveSpamFav("archive");
         setSelectedMenuItem("Archived");
+        setSelectedConversations([]);
+        setInboxTab('');
+      },
+    },
+    {
+      label: "Spam",
+      icon: <AlertOctagonIcon />,
+      func: () => {
+        setArchiveSpamFav("spam");
+        setSelectedMenuItem("Spam");
+        setSelectedConversations([]);
+        setInboxTab('');
       },
     },
   ];
@@ -172,20 +183,20 @@ const InboxHeader = () => {
               />
             </div>
           </div>
-          {options.map(({ id, icon, onClick }) => (
+          {options.map(({ id, icon, icon2 , onClick, label, label2 }) => (
+            <Tooltip key={id} text={selectedMenuItem.toLowerCase() === id || inboxTab === id ? label2 : label}>
             <div
               key={id}
-              onClick={onClick}
-              className={`flex justify-center items-center w-8 h-8 rounded cursor-pointer ${
-                selectedConversations.length
-                  ? id === "read" && selectedConversations.length > 1
-                    ? "bg-eerieBlack text-slateGray-2 pointer-events-none"
-                    : "bg-[#242424] text-white pointer-events-auto"
-                  : "bg-eerieBlack text-slateGray-2 pointer-events-none"
+              onClick={selectedConversations.length > 0 ? onClick : undefined} // Updated to conditionally set onClick
+              className={`flex justify-center items-center w-8 h-8 rounded  ${
+                selectedConversations.length > 0
+                    ? "bg-[#242424] text-white cursor-pointer"
+                    : "bg-eerieBlack text-slateGray-2 cursor-not-allowed"
               }`}
             >
-              {icon}
+              {selectedMenuItem.toLowerCase() === id ? icon2 : icon}
             </div>
+            </Tooltip>
           ))}
           <div
             onClick={handleMenuSection}

@@ -17,9 +17,15 @@ export const useNotification = (
   const { registerHandler, unregisterHandler } = useWebSocket();
 
   useEffect(() => {
-    registerHandler(eventType, handler);
+    // Generate a unique ID for this handler
+    const handlerId = Math.random().toString(36).substr(2, 9);
+    
+    // Register with unique ID
+    registerHandler(eventType, handler, handlerId);
+    
     return () => {
-      unregisterHandler(eventType);
+      // Unregister with the same ID
+      unregisterHandler(eventType, handlerId);
     };
   }, [eventType, handler, registerHandler, unregisterHandler]);
 };

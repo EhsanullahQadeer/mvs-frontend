@@ -16,6 +16,7 @@ export const useGetConversationMessages = (
       const response = await axiosInstance.get(`/messenger/conversation/${payload.conversationId}`, { 
         params: { payload } 
       });
+      console.log('useGetConversationMessages', response);
       setMessages(response.data?.results.messages || []);
     } catch (error) {
       console.error("Error fetching conversation messages:", error);

@@ -1,7 +1,6 @@
 import { toast } from "react-toastify";
 import { useChatbox } from "../context";
 import { uploadMedia } from "api/sounds";
-import { AudioPlayer } from "react-audio-play";
 import { CircularProgress } from "@mui/material";
 import { useMessenger } from "api/messenger/context";
 import AudioWaveform from "components/util/AudioWaveform";
@@ -10,30 +9,29 @@ import React, { useState, useEffect, useRef } from "react";
 import PurchaseOrderDialog from "../../PurchaseOrderDialog";
 import RecordedAudioPlayer from "../../RecordedAudioPlayer";
 import AudioRecorder, { useAudioRecording } from './audioRecorder';
+import FooterRecordedAudioPlayer from "./footerRecordedAudioPlayer";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import { ReactComponent as SendArrowIcon } from "../../../../../assets/icons/sendArrowIcon.svg";
 
 const Footer = () => {
 
   const {
-    messages,
     activeConversation,
     getConversationMessages,
     sendMessage,
     replyInThread,
-    threadMessages
+    threadMessages,
+    getThreadMessages
   } = useMessenger();
 
   const { 
     isThread,
-    refreshMessages
   } = useChatbox()
 
   const {
     isRecording,
     recordedAudio,
     recordingDuration,
-    startRecording,
     stopRecording,
     clearRecording,
   } = useAudioRecording();
@@ -59,6 +57,14 @@ const Footer = () => {
     }
   }, [reloadComponent]);
 
+  useEffect(() => {
+    setShowTipMessage(messageInputValue.trim().length > 0);
+  }, [messageInputValue]);
+
+  useEffect(() => {
+    clearMessageInputs();    
+  }, [activeConversation]);
+
   const handleAudioSelector = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = validateFile(e.target.files?.[0]);
     if (file) {
@@ -66,10 +72,6 @@ const Footer = () => {
     }
     e.target.value = "";
   };
-
-  useEffect(() => {
-    setShowTipMessage(messageInputValue.trim().length > 0);
-  }, [messageInputValue]);
 
   const validateFile = (file: File): File | null =>
     file.type.startsWith("audio/") ? file : null;
@@ -82,8 +84,6 @@ const Footer = () => {
     setIsSubmitting(true);
     try {
       if (uploadedAudioFile) { // Send Demo
-        console.log("uploadedAudioFile", uploadedAudioFile);
-        console.log('sending demo');
         if (isThread) {
           toast.error("You cannot send a demos in a thread");
           return;
@@ -122,6 +122,9 @@ const Footer = () => {
           });
         }
         await getConversationMessages({ conversationId: activeConversation.conversation_id });
+        if (threadMessages && threadMessages.length > 0) {
+          await getThreadMessages({ parentMessageId: threadMessages[0].id });
+        }
         clearMessageInputs();
       } else {
         if (isThread) {
@@ -129,6 +132,9 @@ const Footer = () => {
             replyContent: String(messageInputValue || ''),
             parentMessageId: Number(threadMessages[0]?.id || ''),
           });
+          if (threadMessages && threadMessages.length > 0) {
+            await getThreadMessages({ parentMessageId: threadMessages[0].id });
+          }
         } else {
           if (tipAmount > 0) {
             await sendMessage({
@@ -148,7 +154,7 @@ const Footer = () => {
         await getConversationMessages({ conversationId: activeConversation.conversation_id });
         clearMessageInputs();
       }
-      refreshMessages();
+      // refreshMessages();
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
       toast.error("An error occurred while sending the message");
@@ -185,18 +191,6 @@ const Footer = () => {
     }
   };
 
-  function determineTextColor() {
-    let updatedNumericValue = parseFloat(inputTipAmount.replace("$", "").replace(/,/g, ""));
-    if(updatedNumericValue < 1) {
-      if(updatedNumericValue === 0) {
-        return "text-[#848484]"; // Return gray
-      } else {
-        return "text-[#EF4444]"; // Return red
-      }
-    }
-    return "text-[#848484]"; // Return gray
-  }
-
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     // Prevent arrow keys
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
@@ -209,6 +203,18 @@ const Footer = () => {
     const input = event.target;
     input.setSelectionRange(input.value.length, input.value.length);
   };
+
+  function determineTextColor() {
+    let updatedNumericValue = parseFloat(inputTipAmount.replace("$", "").replace(/,/g, ""));
+    if(updatedNumericValue < 1) {
+      if(updatedNumericValue === 0) {
+        return "text-[#848484]"; // Return gray
+      } else {
+        return "text-[#EF4444]"; // Return red
+      }
+    }
+    return "text-[#848484]"; // Return gray
+  }
 
   return (
     <>
@@ -241,7 +247,7 @@ const Footer = () => {
                       handleSendMessage();
                     }
                   }}
-                  className={`resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16 ${
+                  className={`resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16 custom-dropdown ${
                     isRecording || recordedAudio ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                   placeholder={
@@ -276,16 +282,7 @@ const Footer = () => {
                         </svg>
                       </button>
                     </div>
-                    <AudioPlayer
-                      src={URL.createObjectURL(uploadedAudioFile)}
-                      color="#B2B2B2"
-                      sliderColor="#B7B7B7"
-                      style={{
-                        background: "#242424",
-                        borderRadius: "40px",
-                      }}
-                      className="border border-[#3D3D3D] rounded-full [&_.rap-pp-icon_path]:!fill-[#1C1C1C] [&_.rap-volume]:hidden [&_.rap-controls]:!mx-2 [&_.rap-slider]:!mx-2  [&_.rap-slider]:!bg-[#4B4B4B] [&_.rap-slider]:!h-[2px]"
-                    />
+                    <FooterRecordedAudioPlayer src={uploadedAudioFile} />
                   </div>
                 )}
               </div>

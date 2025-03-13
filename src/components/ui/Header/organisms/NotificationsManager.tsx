@@ -69,15 +69,13 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   let skip = 0;
   const [isToggled, setIsToggled] = useState<boolean>(false);
   const [notifIdForIsRead, setNotifIdForIsRead] = useState<number>();
-  const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
   const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
   const refreshRef = useRef(null);
 
-  const onIntersection = (entries, observer) => {
-    for (const { isIntersecting, target } of entries) {
+  const onIntersection = (entries) => {
+    for (const {isIntersecting} of entries) {
       if (isIntersecting) {
         loadMoreNotifications()
-        observer.unobserve(target);
       }
     }
   };
@@ -89,6 +87,7 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   });
 
   useEffect(() => {
+    if(!refreshRef.current) return;
       observer.observe(refreshRef.current);
     }, [])
 
@@ -123,23 +122,20 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
       setNotifications(response.data); // Update notifications with the new data
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      // Handle error (e.g., show a notification or set an error state)
     }
   };
 
   const loadMoreNotifications = async () => {
-    if (!allowLoading) return; // Prevent multiple calls if already loading or not allowed
+    if (!allowLoading) return;
     try {
       skip += 10;
       const response = await getUserNotifications(NOTIFICATION_GROUPS[selectedTab], false, skip);
-      if (response.data.length < 10) {setAllowLoading(false)}else{observer.observe(refreshRef.current);}
+      if (response.data.length < 10) {setAllowLoading(false)}
       setNotifications((prev) => [...prev, ...response.data]);
     } catch (error) {
       console.error("Error loading more notifications:", error);
-      // Handle error (e.g., show a notification or set an error state)
     }
   };
-
 
   const isNotificationInCurrentTab = (type: string) => {
     if (selectedTab === 'all') return true;

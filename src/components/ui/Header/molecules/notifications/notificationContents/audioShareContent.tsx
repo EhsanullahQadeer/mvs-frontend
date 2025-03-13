@@ -18,7 +18,7 @@ const AudioShareNotifContent = ({ notification }: { notification: TNotificationD
       </p>
       <FileMediaAttachment
           icon={audioIcon}
-          mediaName={truncateFilename(notification.media.name)}
+          mediaName={truncateFilename(notification.media?.name)}
         />
       <div className=" flex items-center gap-2 pt-[4px]">
         <NotificationButton

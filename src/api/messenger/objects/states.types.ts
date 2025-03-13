@@ -179,6 +179,7 @@ export interface IMessage {
   transaction: ITransaction | null;
   reactions: IMsgReaction[];
   threadStats?: ThreadStats | null;
+  parentMessageId?: number | null;
 }
 
 export enum TRANSACTION_STATUS {
