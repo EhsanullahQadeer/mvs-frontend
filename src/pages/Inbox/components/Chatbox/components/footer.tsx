@@ -16,7 +16,6 @@ import { ReactComponent as SendArrowIcon } from "../../../../../assets/icons/sen
 const Footer = () => {
 
   const {
-    messages,
     activeConversation,
     getConversationMessages,
     sendMessage,
@@ -27,14 +26,12 @@ const Footer = () => {
 
   const { 
     isThread,
-    refreshMessages
   } = useChatbox()
 
   const {
     isRecording,
     recordedAudio,
     recordingDuration,
-    startRecording,
     stopRecording,
     clearRecording,
   } = useAudioRecording();
@@ -60,6 +57,14 @@ const Footer = () => {
     }
   }, [reloadComponent]);
 
+  useEffect(() => {
+    setShowTipMessage(messageInputValue.trim().length > 0);
+  }, [messageInputValue]);
+
+  useEffect(() => {
+    clearMessageInputs();    
+  }, [activeConversation]);
+
   const handleAudioSelector = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = validateFile(e.target.files?.[0]);
     if (file) {
@@ -67,10 +72,6 @@ const Footer = () => {
     }
     e.target.value = "";
   };
-
-  useEffect(() => {
-    setShowTipMessage(messageInputValue.trim().length > 0);
-  }, [messageInputValue]);
 
   const validateFile = (file: File): File | null =>
     file.type.startsWith("audio/") ? file : null;
@@ -186,18 +187,6 @@ const Footer = () => {
     }
   };
 
-  function determineTextColor() {
-    let updatedNumericValue = parseFloat(inputTipAmount.replace("$", "").replace(/,/g, ""));
-    if(updatedNumericValue < 1) {
-      if(updatedNumericValue === 0) {
-        return "text-[#848484]"; // Return gray
-      } else {
-        return "text-[#EF4444]"; // Return red
-      }
-    }
-    return "text-[#848484]"; // Return gray
-  }
-
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     // Prevent arrow keys
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
@@ -210,6 +199,18 @@ const Footer = () => {
     const input = event.target;
     input.setSelectionRange(input.value.length, input.value.length);
   };
+
+  function determineTextColor() {
+    let updatedNumericValue = parseFloat(inputTipAmount.replace("$", "").replace(/,/g, ""));
+    if(updatedNumericValue < 1) {
+      if(updatedNumericValue === 0) {
+        return "text-[#848484]"; // Return gray
+      } else {
+        return "text-[#EF4444]"; // Return red
+      }
+    }
+    return "text-[#848484]"; // Return gray
+  }
 
   return (
     <>

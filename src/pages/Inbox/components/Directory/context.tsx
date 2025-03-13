@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { useMessenger } from 'api/messenger/context';
 import { IConversation } from 'api/messenger/objects/states.types';
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef, useMemo } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo } from 'react';
 
 type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | '';
 
@@ -22,10 +22,8 @@ interface ConversationContextType {
   setSelectedMenuItem: React.Dispatch<React.SetStateAction<string>>;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-
   archiveSpamFav: string;
   setArchiveSpamFav: React.Dispatch<React.SetStateAction<string>>;
-
   handleConversationSelect: (conversation: IConversation) => void;
   loadConversations: () => Promise<void>;
   handleSelectAll: (checked: boolean) => void;
@@ -55,7 +53,6 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   const authUser = useSelector((state: RootState) => state.auth?.user);
   const {
     conversations,
-    setConversations,
     getConversations,
     getConversationMessages,
     getSearchMessages,
@@ -67,7 +64,6 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
     deleteConversations
   } = useMessenger();
 
-  const initialized = useRef(false);
   const CONVERSATIONS_PER_PAGE = 20;
   const [inboxTab, setInboxTab] = useState<ConversationTabType>('priority');
   const [selectedConversations, setSelectedConversations] = useState<IConversation[]>([]);
@@ -75,18 +71,9 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   const [selectedMenuItem, setSelectedMenuItem] = useState<string>("General Inbox");
   const [filteredConversations, setFilteredConversations] = useState<IConversation[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showConvos, setShowConvos] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [archiveSpamFav, setArchiveSpamFav] = useState<string>("");
   let prevtab:ConversationTabType = 'priority';
-
-  useEffect(() => {
-    //Idk what this does.
-    if (!initialized.current && conversations.length > 0) {
-      //setConversations(() => conversations.filter(conv => conv.is_favorite));
-      initialized.current = true;
-    }
-  }, [conversations]);
 
   useEffect(() => {
     if(inboxTab !== 'search') return;
