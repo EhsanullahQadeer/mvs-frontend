@@ -48,14 +48,14 @@ const SidebarContent = ({ isExpanded, setIsExpanded, sidebarWidth, headerHeight 
   });
 
   return (
-      <div 
+      <aside 
         className="sidebar py-[12px] px-[12px] bg-[#08090A] overflow-y-auto z-[1000] relative"
         style={{
           height: `calc(100vh - ${headerHeight})`,
           overflowX: 'hidden',
         }}
       >
-        <div className="flex-grow overflow-hidden transition-all duration-300">
+        <div className="flex-grow overflow-hidden transition-all duration-150">
           {/* Main Sidebar Icons */}
           <div className="flex-grow">
 
@@ -144,7 +144,7 @@ const SidebarContent = ({ isExpanded, setIsExpanded, sidebarWidth, headerHeight 
           />
           </div >
         </div>
-      </div>
+      </aside>
   );
 };
 
