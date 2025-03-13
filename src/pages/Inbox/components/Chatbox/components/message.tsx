@@ -270,7 +270,11 @@ const Message: React.FC<MessageProps> = ({
             </div>
           )}
           {message?.message_type === MESSAGE_TYPES.DEMO ? (
-            renderDemoMessage()
+            <div className="flex flex-col gap-2">
+              <div className="text-sm text-[#CACCCD] break-all whitespace-normal max-w-full w-full">{content}</div>
+              {renderDemoMessage()}
+            </div>
+
           ) : media?.type === MEDIA_TYPE.RECORDING ? (
             <div
               id="2"
