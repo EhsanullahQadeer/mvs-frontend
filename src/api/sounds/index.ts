@@ -164,3 +164,13 @@ export async function uploadMedia(payload: any) {
     },
   });
 }
+
+export async function getCheckUserHasSampleType(sampleTypes: string, user_id: number) {
+  return axiosInstance.get('/sounds/check-user-has-sample-types', {
+    params: { 
+      userId: user_id,
+      types: sampleTypes
+      
+    }
+  });
+}
