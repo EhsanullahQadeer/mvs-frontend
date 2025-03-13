@@ -1,7 +1,6 @@
 import { toast } from "react-toastify";
 import { useChatbox } from "../context";
 import { uploadMedia } from "api/sounds";
-import { AudioPlayer } from "react-audio-play";
 import { CircularProgress } from "@mui/material";
 import { useMessenger } from "api/messenger/context";
 import AudioWaveform from "components/util/AudioWaveform";
@@ -10,6 +9,7 @@ import React, { useState, useEffect, useRef } from "react";
 import PurchaseOrderDialog from "../../PurchaseOrderDialog";
 import RecordedAudioPlayer from "../../RecordedAudioPlayer";
 import AudioRecorder, { useAudioRecording } from './audioRecorder';
+import FooterRecordedAudioPlayer from "./footerRecordedAudioPlayer";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import { ReactComponent as SendArrowIcon } from "../../../../../assets/icons/sendArrowIcon.svg";
 
@@ -122,7 +122,9 @@ const Footer = () => {
           });
         }
         await getConversationMessages({ conversationId: activeConversation.conversation_id });
-        await getThreadMessages({ parentMessageId: threadMessages[0].id });
+        if (threadMessages && threadMessages.length > 0) {
+          await getThreadMessages({ parentMessageId: threadMessages[0].id });
+        }
         clearMessageInputs();
       } else {
         if (isThread) {
@@ -130,7 +132,9 @@ const Footer = () => {
             replyContent: String(messageInputValue || ''),
             parentMessageId: Number(threadMessages[0]?.id || ''),
           });
-          await getThreadMessages({ parentMessageId: threadMessages[0].id });
+          if (threadMessages && threadMessages.length > 0) {
+            await getThreadMessages({ parentMessageId: threadMessages[0].id });
+          }
         } else {
           if (tipAmount > 0) {
             await sendMessage({
@@ -243,7 +247,7 @@ const Footer = () => {
                       handleSendMessage();
                     }
                   }}
-                  className={`resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16 ${
+                  className={`resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16 custom-dropdown ${
                     isRecording || recordedAudio ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                   placeholder={
@@ -278,16 +282,7 @@ const Footer = () => {
                         </svg>
                       </button>
                     </div>
-                    <AudioPlayer
-                      src={URL.createObjectURL(uploadedAudioFile)}
-                      color="#B2B2B2"
-                      sliderColor="#B7B7B7"
-                      style={{
-                        background: "#242424",
-                        borderRadius: "40px",
-                      }}
-                      className="border border-[#3D3D3D] rounded-full [&_.rap-pp-icon_path]:!fill-[#1C1C1C] [&_.rap-volume]:hidden [&_.rap-controls]:!mx-2 [&_.rap-slider]:!mx-2  [&_.rap-slider]:!bg-[#4B4B4B] [&_.rap-slider]:!h-[2px]"
-                    />
+                    <FooterRecordedAudioPlayer src={uploadedAudioFile} />
                   </div>
                 )}
               </div>
