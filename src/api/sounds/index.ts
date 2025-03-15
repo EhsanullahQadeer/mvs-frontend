@@ -157,8 +157,19 @@ export async function getSampleCollaborators(sampleId: number) {
   return axiosInstance.get(`/sounds/sample/${sampleId}/collaborators`);
 }
 
-export async function uploadMedia(payload: any) {
-  return axiosInstance.post("/sounds/upload/media", payload ,{
+export interface UploadMediaPayload {
+  file: File;
+  type: 'demo' | 'recording';
+  duration?: number;
+}
+
+export async function uploadMedia(payload: UploadMediaPayload) {
+  const formData = new FormData();
+  formData.append('file', payload.file);
+  formData.append('type', payload.type);
+  formData.append('duration', payload.duration?.toString() || '0');
+  console.log("formData", formData);
+  return axiosInstance.post("/sounds/upload/media", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -172,5 +183,12 @@ export async function getCheckUserHasSampleType(sampleTypes: string, user_id: nu
       types: sampleTypes
       
     }
+  });
+}
+
+export async function handleCollaborationRequest(sampleId: number, action: boolean) {
+  return axiosInstance.post(`/sounds/collaboration/accept`, {
+    sampleId,
+    action
   });
 }

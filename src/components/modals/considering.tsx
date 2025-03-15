@@ -49,7 +49,7 @@ const ConsideringModal: React.FC<ConsideringModalProps> = ({
     }
   }, [considering, sampleId]);
 
-  console.log('Modal props:', { considering, sampleId, loading, consideringList });
+  //console.log('Modal props:', { considering, sampleId, loading, consideringList });
 
   return (
     <Modal

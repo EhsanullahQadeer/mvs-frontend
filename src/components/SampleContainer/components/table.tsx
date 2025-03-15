@@ -394,7 +394,6 @@ const SampleTable = (props: {
           {samples &&
             Object.values(samples).map((sample: any, map_index) => {
               return (
-                <>
                   <tr
                     ref={(el) => (rowRefs.current[map_index] = el)}
                     key={map_index}
@@ -631,7 +630,7 @@ const SampleTable = (props: {
                           />
                         </a>
 
-                        <div className="dropdown-container">
+                        <div className="dropdown-container z-0">
                           <DropDown
                             {...{
                               sample,
@@ -648,7 +647,6 @@ const SampleTable = (props: {
                       </div>
                     </td>
                   </tr>
-                </>
               );
             })}
         </tbody>

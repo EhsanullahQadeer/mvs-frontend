@@ -1,43 +1,54 @@
-import { addNoteApi, deleteNoteApi, updateNoteApi } from "api/messenger";
 import moment from "moment";
 import { useState } from "react";
 import { INotes } from "./types";
-type Props = {
-  notes: INotes[];
-  id: number;
-  getNotes: (id: number) => void;
-  setOverlayLoading: (value: boolean) => void;
-};
+import { useMessenger } from "api/messenger/context";
+import { useChatbox } from "pages/Inbox/components/Chatbox/context";
+import { useAddConversationNote } from "api/messenger/hooks/useAddConversationNote";
+import { useGetConversationNotes } from "api/messenger/hooks/useGetConversationNotes";
+const NotesSection = () => {
 
-const NotesSection = (props: Props) => {
-  const { notes, id, getNotes, setOverlayLoading } = props;
+  const { 
+    activeConversation,
+    conversationNotes,
+    getConversationNotes,
+    addConversationNote,
+    deleteConversationNote,
+    updateConversationNote
+  } = useMessenger();
+
+
   const [noteText, setNoteText] = useState("");
   const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
   const [editedNote, setEditedNote] = useState<string>("");
+
+  const fetchNotes = async () => {
+    await getConversationNotes({ conversationId: activeConversation?.id, ascending: true });
+  };
 
   const addNewNote = async () => {
     if (!noteText.trim()) {
       return;
     }
     const params = {
-      conversationId: id,
+      conversationId: activeConversation.id,
       noteContent: noteText,
     };
-    setOverlayLoading(true);
-    await addNoteApi(params);
+    console.log(params);
+    //setOverlayLoading(true);
+    await addConversationNote(params);
     setNoteText("");
-    await getNotes(id);
-    setOverlayLoading(false);
+    await fetchNotes();
+    //setOverlayLoading(false);
   };
 
   const handleDeleteNote = async (noteId: any) => {
     const params = {
-      noteId,
+      noteId: noteId,
     };
-    setOverlayLoading(true);
-    await deleteNoteApi(params);
-    await getNotes(id);
-    setOverlayLoading(false);
+    //setOverlayLoading(true);
+    await deleteConversationNote(params);
+    await fetchNotes();
+    //setOverlayLoading(false);
   };
 
   const handleEditNote = (noteId: number, currentNote: string) => {
@@ -50,13 +61,14 @@ const NotesSection = (props: Props) => {
       return;
     }
     const params = {
-      noteId,
+      noteId: noteId,
       content: editedNote,
     };
-    setOverlayLoading(true);
-    await updateNoteApi(params);
-    await getNotes(id);
-    setOverlayLoading(false);
+    console.log("params", params);
+    //setOverlayLoading(true);
+    await updateConversationNote(params);
+    await fetchNotes();
+    //setOverlayLoading(false);
     setEditingNoteId(null);
   };
 
@@ -84,9 +96,9 @@ const NotesSection = (props: Props) => {
       </div>
 
       <div className="flex flex-col text-sm w-[100%] mt-5 gap-5">
-        {notes.length ? (
-          notes.map((noteData) => {
-            const { updated_at, note, id } = noteData;
+        {conversationNotes.length ? (
+          conversationNotes.map((noteData) => {
+            const { content, created_at, updated_at, id } = noteData;
             const formattedTime = moment(updated_at).format("h:mm A");
             const formattedDate = moment(updated_at).format("MM/DD/YYYY");
 
@@ -100,7 +112,7 @@ const NotesSection = (props: Props) => {
 
                   <div
                     onClick={() =>
-                      !isEditing ? handleEditNote(id, note) : handleSaveNote(id)
+                      !isEditing ? handleEditNote(id, content) : handleSaveNote(id)
                     }
                     className="font-semibold text-blue-400 whitespace-nowrap cursor-pointer"
                   >
@@ -108,7 +120,9 @@ const NotesSection = (props: Props) => {
                   </div>
 
                   <div
-                    onClick={() => handleDeleteNote(id)}
+                    onClick={() => {
+                      handleDeleteNote(id);
+                    }}
                     className="font-semibold text-darkRed whitespace-nowrap cursor-pointer"
                   >
                     Delete
@@ -116,7 +130,7 @@ const NotesSection = (props: Props) => {
                 </div>
 
                 <input
-                  value={isEditing ? editedNote : note}
+                  value={isEditing ? editedNote : content}
                   onChange={(e) => isEditing && setEditedNote(e.target.value)}
                   readOnly={!isEditing}
                   autoFocus={isEditing}

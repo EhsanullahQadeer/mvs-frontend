@@ -1,0 +1,24 @@
+/* Custom scrollbar styling */
+.sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #1F1F1F #08090A; /* Green with 20% opacity over dark bg */
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+  background: #1F1F1F;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #1F1F1F;
+  border-radius: 2px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #1F1F1F; /* 20% opacity */
+  border-radius: 2px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: #1F1F1F; /* 40% opacity on hover */
+} 

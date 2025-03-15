@@ -9,17 +9,17 @@
 
 /* LOCAL IMPORTS */
 import Theme from "theme";
-import { SearchHeader } from "./components/SearchHeader";
+import { getUsersByTag } from "api/user";
 import Filters from "./components/Filters";
+import { UserFiltersDTO } from "api/user/types";
+import { userTags, userTagsObj } from "utils/usersTags";
+import { SearchHeader } from "./components/SearchHeader";
 import ScrollableComponent from "./components/ScrollableComponent";
 import FilterResultComponent from "./components/FilterResultComponent";
-import { userTags, userTagsObj } from "utils/usersTags";
-import { getUsersByTag } from "api/user";
-import { UserFiltersDTO } from "api/user/types";
 
 /* IMPORTS */
-import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
 import { setBreadcrumbs } from "redux/actions/breadcrumb.actions";
 
 const Home = () => {
@@ -84,18 +84,17 @@ const Home = () => {
   }, [filterValue]);
   // Reset filters when filterValue changes
   useEffect(() => {
-    if (isFilterApplied != "") {
+    if (isFilterApplied !== "") {
       setFilterValue(isFilterApplied);
       setIsFilterApplied("");
     }
   }, [isFilterApplied]);
 
-
   return (
-    <Theme headerTitle="Home \">
+    <Theme>
       <SearchHeader />
       <Filters {...{ filterValue, setFilterValue }} />
-      {filterValue !== "" || isFilterApplied != "" ? (
+      {filterValue !== "" || isFilterApplied !== "" ? (
         <FilterResultComponent 
           filtersData={filtersData} 
           setFilteredData={setFiltersData}

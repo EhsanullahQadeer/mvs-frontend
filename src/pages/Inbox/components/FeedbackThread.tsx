@@ -1,56 +1,101 @@
-import { IoChevronBackOutline } from "react-icons/io5";
-import { FiUser, FiUnlock } from "react-icons/fi";
-import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
-import Footer from "./Footer";
-import { IConversation, ICurrentUser, IMessage, IMessagesData } from "./types";
+import { IMessagesData } from "./types";
+import { useSelector } from "react-redux";
+import { setViewDemo } from "api/notifier";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Footer from "./Chatbox/components/footer";
+import { getThreadMessages } from "api/messenger";
+import { FiUser, FiUnlock } from "react-icons/fi";
+import ThreadMessageItem from "./Chatbox/components/threadMessage";
+import { IoChevronBackOutline } from "react-icons/io5";
 import CheckerIcon from "../../../assets/icons/checker.svg";
 import { formatMediaDetails } from "../handlers/mediaUtils";
-import { useEffect, useState } from "react";
-import ThreadMessageItem from "./ThreadMessageItem";
-import { getThreadMessages } from "api/messenger";
-import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
+import { useNotification } from "services/WebSocket/useNotification.hook";
+import { IConversation, IMessage } from "api/messenger/objects/states.types";
+import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
 
 type Props = {
   conversation: IConversation;
   messages: IMessagesData;
-  currentUserInfo: ICurrentUser;
   getConversationMessages?: (conversation: IConversation) => Promise<void>;
 };
 
 const FeedbackThread = (props: Props) => {
-  const { conversation, messages, currentUserInfo, getConversationMessages } =
+
+  console.log('FeedbackThread props:', props);
+
+
+
+  const { conversation, messages, getConversationMessages } =
     props;
 
   const navigate = useNavigate();
-  const { id, displayName } = conversation || {};
+  const { id, recipient } = conversation || {};
 
   const [msgId, setMsgId] = useState<number | null>(null);
   const [threadReplyObjs, setThreadReplyObjs] = useState<IMessage[]>([]);
 
+  const user = useSelector((state: any) => state.auth.user);
+  const [mediaId, setMediaId] = useState<number | null>(null);
+
+
+  console.log('FeedbackThread user:', user);
+
+  useEffect(() => {
+    console.log('FeedbackThread messages:', messages[0]?.messages[0]);
+    console.log('FeedbackThread useEffect:', {
+      mediaId: mediaId,
+      conversation: conversation,
+      user: user,
+    });
+
+
+    console.log('FeedbackThread recipientId:', conversation.user.id);
+
+
+    if (mediaId) {
+      console.log('FeedbackThread setViewDemo:') 
+      setViewDemo({
+        audioMediaId: mediaId,
+        recipientId: conversation.user.id,
+      });
+    
+    }
+  }, [mediaId]);
+
+
   async function fetchThreadMessages () {
     if (msgId) {
       try {
-        const response = await getThreadMessages(msgId);
+        const response = await getThreadMessages({ 
+          parentMessageId: msgId 
+        });
+        console.log('FeedbackThread fetchThreadMessages response:', response);
         const replies = response.data.filter(msg => msg.id !== msgId);
         setThreadReplyObjs(replies);
+        setMediaId(response.data[0]?.media?.id);
       } catch (error) {
         console.error("Error fetching thread messages:", error);
       }
     }
   }
-
+  console.log('FeedbackThread messages:', messages);
   useEffect(() => {
-    const storedMsgId = localStorage.getItem("msgId");
-    if (storedMsgId) {
-      setMsgId(Number(storedMsgId));
+    if (messages) {
+      console.log('FeedbackThread useEffect messages:', messages);
+      setMsgId(Number(messages[0]));
     }
-  }, []);
+  }, [messages]);
 
   useEffect(() => {
     fetchThreadMessages();
   }, [msgId]);
-  useLambdaEvent("NEW_MESSAGE", (event) => {
+
+
+
+
+
+  useNotification("NEW_MESSAGE", (event) => {
     try {
       const { conversationId, parentMessageId } = event.data;
       
@@ -66,6 +111,15 @@ const FeedbackThread = (props: Props) => {
     }
   });
 
+
+
+
+
+
+
+
+
+
   const safeAccess = <T,>(value: T | null | undefined): T | null =>
     value || null;
 
@@ -73,7 +127,7 @@ const FeedbackThread = (props: Props) => {
     messages[0]?.messages?.find((msg) => msg.id === msgId)
   );
 
-  const demoAudioData = demoMessageObj?.audio_media;
+  const demoAudioData = demoMessageObj?.media;
 
   console.log("demoMessageObj", demoMessageObj);
 
@@ -106,7 +160,7 @@ const FeedbackThread = (props: Props) => {
                   </div>
                   <div className="text-xs flex gap-1 text-silver font-normal">
                     <FiUser />
-                    <div>{displayName}</div>
+                    <div>{recipient?.name}</div>
                   </div>
                 </div>
               </div>
@@ -121,12 +175,23 @@ const FeedbackThread = (props: Props) => {
                 {...{ message: demoMessageObj, isDemo: true, details }}
               />
             )}
-            {demoMessageObj?.claimed ? (
+            {demoMessageObj?.transaction?.status === "completed" ? (
               <>
                 {threadReplyObjs?.map((reply, index) => {
                   return (
                     <>
-                      {index === 1 && (
+                      
+                      <ThreadMessageItem {...{ 
+                        message: reply, 
+                        index, 
+                        isDemo: false, 
+                        details: formatMediaDetails(
+                          reply?.media?.duration,
+                          reply?.media?.file_size_bytes
+                        )
+                      }} />
+                    
+                    {messages.length > 1 && (
                         <div className="my-4 w-full text-charcoalGray flex items-center justify-center">
                         <div className="h-px w-full m-2 bg-charcoalGray"></div>
                         <div className="flex gap-2 text-sm font-medium items-center text-[#CACACA]">
@@ -141,16 +206,7 @@ const FeedbackThread = (props: Props) => {
                         </div>
                         <div className="h-px w-full m-2 bg-charcoalGray"></div>
                       </div>
-                      )}
-                      <ThreadMessageItem {...{ 
-                        message: reply, 
-                        index, 
-                        isDemo: false, 
-                        details: formatMediaDetails(
-                          reply?.audio_media?.duration,
-                          reply?.audio_media?.file_size_bytes
-                        )
-                      }} />
+                    )}
                     </>
                   );
                 })}
@@ -175,17 +231,7 @@ const FeedbackThread = (props: Props) => {
             )}
           </div>
 
-          <Footer
-            {...{
-              conversation,
-              currentUserInfo,
-              messageObj: demoMessageObj,
-              getConversationMessages,
-              isFeedbackSection: true,
-              messageId: String(msgId),
-              reloadData: fetchThreadMessages,
-            }}
-          />
+          <Footer />
         </div>
       </div>
     </>

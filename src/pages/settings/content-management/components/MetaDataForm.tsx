@@ -6,18 +6,16 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import { useEffect, useState } from "react";
-import {
-  getSampleCollaborators,
-  updateFileMetadata,
-  uploadedFileMetadata,
-} from "api/sounds";
+import * as Yup from "yup";
 import { Form, Formik } from "formik";
-import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
-import AlertDialog from "components/util/AlertDialog";
-import ContributersTable from "./ContributersTable";
-import UploadingFileMetaData from "./UploadingFileMetaData";
+import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import { sanitizeInput } from "utils/stringUtils";
+import ContributersTable from "./ContributersTable";
+import AlertDialog from "components/util/AlertDialog";
+import UploadingFileMetaData from "./UploadingFileMetaData";
+import { updateFileMetadata, uploadedFileMetadata } from "api/sounds";
+import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
 
 type Props = {
   fileRedisKey?: string;
@@ -31,6 +29,10 @@ type Props = {
   setUpdateData?: (event: any) => void;
 };
 
+const validationSchema = Yup.object().shape({
+  songName: Yup.string().required('Sample name is required'),
+});
+
 const MetaDataForm = (props: Props) => {
   const {
     fileRedisKey,
@@ -43,10 +45,9 @@ const MetaDataForm = (props: Props) => {
     setUpdateData,
   } = props;
 
-  console.log("MetaDataForm - received composer:", collaborators);
-
   const {
     filename,
+    name,
     bpm,
     key,
     type,
@@ -74,7 +75,7 @@ const MetaDataForm = (props: Props) => {
       },
       contribution: composer.contribution,
       id: composer.id,
-      roles: composer.roles,
+      roles: [],
       isEditable: false,
     }))
   );
@@ -87,7 +88,8 @@ const MetaDataForm = (props: Props) => {
   const [isSaving, setIsSaving] = useState(false);
 
   const initialValues = {
-    songName: filename ? filename : "",
+    filename: filename ? sanitizeInput(filename) : "",
+    songName: name ? name : "",
     songBpm: bpm ? bpm : "",
     songType: type ? type : "sample",
     songTags: tags ? tags : "",
@@ -98,7 +100,7 @@ const MetaDataForm = (props: Props) => {
     setComposerData((prevComposerData) => {
       const updatedComposerData = selectedComposer?.map((composer) => {
         const existingComposer = prevComposerData?.find(
-          (existing) => existing.id === composer.id
+          (existing) => existing.user.id === composer.user.id
         );
 
         const initialCollaborator = collaborators?.find(
@@ -120,7 +122,7 @@ const MetaDataForm = (props: Props) => {
 
         return {
           ...composer,
-          roles: composer.roles || [],
+          roles: [],
           percentValue,
           isEditable: false,
         };
@@ -134,7 +136,13 @@ const MetaDataForm = (props: Props) => {
   const handleSubmit = async (values) => {
     setIsSaving(true);
     try {
-      const { songName, songBpm, sampleKey, songType, songTags } = values;
+      const {
+        songName, 
+        songBpm,
+        sampleKey,
+        songType, 
+        songTags 
+      } = values;
 
       const formattedTags = songTags
         .split(" ")
@@ -169,7 +177,7 @@ const MetaDataForm = (props: Props) => {
         }));
 
       const body = {
-        filename: songName,
+        name: songName,
         bpm: songBpm,
         key: sampleKey,
         type: songType?.value || songType,
@@ -228,7 +236,7 @@ const MetaDataForm = (props: Props) => {
   const handleDeleteComposer = () => {
     if (composerToDelete) {
       const updatedComposerData = composerData.filter(
-        (composer) => composer.id !== composerToDelete.id
+        (composer) => composer.user.id !== composerToDelete.user.id
       );
 
       setSelectedComposer(updatedComposerData);
@@ -252,6 +260,7 @@ const MetaDataForm = (props: Props) => {
 
       <Formik
         initialValues={initialValues}
+        validationSchema={validationSchema}
         onSubmit={(values) => handleSubmit(values)}
       >
         {({ handleSubmit, errors, touched }) => (
@@ -271,6 +280,11 @@ const MetaDataForm = (props: Props) => {
                     sample: sampleToEdit,
                   }}
                 />
+                {errors.songName && touched.songName && (
+                  <div className="text-red-500 text-xs mt-1 ml-4">
+                    {errors.songName}
+                  </div>
+                )}
               </div>
 
               {selectedComposer?.length > 0 && (

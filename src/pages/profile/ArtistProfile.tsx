@@ -140,10 +140,10 @@ const ArtistProfile = () => {
           );
         }
 
-        console.log(
-          "response check connect",
-          response.data.results.connectionDetails
-        );
+        // console.log(
+        //   "response check connect",
+        //   response.data.results.connectionDetails
+        // );
       } catch (error) {
         console.log("error while checking connection", error);
       }
@@ -237,16 +237,11 @@ const ArtistProfile = () => {
             </section>
 
             <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
-              <ProfileAboutSection
-                {...{
-                  artistData,
-                  creditsData,
-                  connectionDetail,
-                  setConnectionDetail,
-                  chatOpen,
-                  setChatOpen,
-                }}
-              />
+              <MessageContextProvider>
+                <ProfileAboutSection
+                  {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
+                />
+              </MessageContextProvider>
             </section>
           </div>{" "}
         </>

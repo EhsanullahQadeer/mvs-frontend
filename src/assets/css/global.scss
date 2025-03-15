@@ -1418,6 +1418,8 @@ input[type="number"]::-webkit-outer-spin-button {
 .rap-pp-button svg {
   width: 16px;
   height: 16px;
+  position: absolute;
+  left: 10px;
 }
 .audio-1 .rap-volume,
 .rap-current-time {
@@ -1494,7 +1496,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .lockImg {
-  z-index: 100;
+  z-index: 10;
   padding: 50px;
 }
 
@@ -1513,6 +1515,56 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 }
 // Terms and Conditions Page Circle Animation - END
+
+
+/* Slider container */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #242424; /* Gray background */
+  transition: 0.4s;
+  border-radius: 50px; /* Make it rounded */
+  width: 100%;  /* Make the container take the full width */
+  height: 100%; /* Make the container take the full height */
+}
+
+/* Circle inside the slider */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 100%; /* Full height of the slider */
+  width: 50%;  /* Circle's width is 50% of the container */
+  border-radius: 50px; /* Fully round */
+  left: 0px;
+  bottom: 0px;
+  background-color: white; /* Circle is white */
+  transition: 0.4s;
+}
+
+/* When checked, background becomes green */
+input:checked + .slider {
+  background-color: #9EFF00; /* Green background */
+}
+
+/* When checked, the circle moves to the right */
+input:checked + .slider:before {
+  transform: translateX(100%); /* Move the circle to the right */
+}
+
+/* Add this CSS to your styles */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+  scrollbar-width: none;  /* For Firefox */
+}
+
 
 @tailwind base;
 @tailwind components;

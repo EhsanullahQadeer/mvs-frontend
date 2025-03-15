@@ -151,8 +151,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
                   <path
                     d="M5.33333 1.83337V4.50004M10.6667 1.83337V4.50004M14 9.16671V4.50004C14 4.14642 13.8595 3.80728 13.6095 3.55723C13.3594 3.30718 13.0203 3.16671 12.6667 3.16671H3.33333C2.97971 3.16671 2.64057 3.30718 2.39052 3.55723C2.14048 3.80728 2 4.14642 2 4.50004V13.8334C2 14.187 2.14048 14.5261 2.39052 14.7762C2.64057 15.0262 2.97971 15.1667 3.33333 15.1667H8.66667M2 7.16671H14M10.6667 13.1667H14.6667M12.6667 11.1667V15.1667"
                     stroke="white"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
                 <span>Join Waitlist</span>

@@ -66,7 +66,7 @@ export const useHeaderHooks = () => {
 
   useEffect(() => {
     setUser(state.auth.user);
-    console.log('users', state);
+    //console.log('users', state);
   }, [state]);
 
   return {

@@ -8,7 +8,7 @@ import { FiEdit3 } from "react-icons/fi";
 import { FiCopy } from "react-icons/fi";
 import { LuDelete } from "react-icons/lu";
 import { LuShieldAlert } from "react-icons/lu";
-import { deleteMessageApi } from "api/messenger";
+import { deleteMessage } from "api/messenger";
 
 type Props = {
   handleEmojiSelect: (id: number, emoji: any) => void;
@@ -150,7 +150,7 @@ const MessageReactions = (props: Props) => {
       {emojis.map((emoji) => (
         <button
           key={emoji}
-          className="py-2 px-1 text-base"
+          className="py-2 px-1 text-base" // THIS NEEDS A HOVER OR SOMETHING IT.. FIX WHEN WE FIX REACTIONS
           onClick={() => handleEmojiSelect(id, emoji)}
         >
           {emoji}
@@ -252,7 +252,7 @@ const MessageReactions = (props: Props) => {
                 onClick={async () => {
                   try {
                     setOverlayLoading?.(true);
-                    await deleteMessageApi(id);
+                    await deleteMessage({ messageId: id });
                     setShowDeleteConfirm(false);
                     onMessageDeleted?.();
                   } catch (error) {

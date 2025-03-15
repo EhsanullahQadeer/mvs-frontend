@@ -254,7 +254,7 @@ const SamplePageChilds = () => {
                 <span className="w-px h-[23px] bg-charcoalGray mx-5"></span>
 
                 {token ? (
-                  <ProfileButton direction="left" />
+                  <ProfileButton/>
                 ) : (
                   <div className="gap-2 flex items-center">
                     <button className="px-4 py-2 bg-limeGreen text-jetBlack w-fit whitespace-nowrap text-xs font-normal rounded-full">

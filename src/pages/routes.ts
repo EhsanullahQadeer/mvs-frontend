@@ -12,7 +12,7 @@ import ThankyouPage from "pages/thankyou";
 import Home from "./home/Home";
 import TermsAndConditions from "pages/terms";
 import SamplesPage from "pages/samples";
-import Library from "pages/library/library"
+import Library from "pages/library/library";
 import MyLikesPage from "pages/library/components/my-likes";
 import MyDownloadsPage from "pages/library/components/my-downloads";
 import InboxPage from "pages/Inbox";
@@ -26,7 +26,7 @@ import ContentManagement from "./settings/content-management/ContentManagement";
 import SettingsLayout from "./settings/SettingsLayout";
 import BillingLayout from "./settings/billing/BillingSettings";
 import OnBoarding from "./onboarding/OnBoarding";
-import SecuritySettings from "./settings/security/SecuritySettings"
+import SecuritySettings from "./settings/security/SecuritySettings";
 import CreatorLogin from "./creator/CreatorLogin";
 import Registeration from "./creator/registeration";
 import ForgetPassword from "./creator/forgetPasword";
@@ -37,6 +37,10 @@ import Monetization from "./settings/monetization/Monetization";
 import Registration from "./creator/registeration";
 import WelcomePage from "./onboarding/components/WelcomePage";
 import EngineerProfile from "./engineerProfile/EngineerProfile";
+import MembershipsConnects from "./settings/memberships-connects/MembershipsConnects";
+import Plans from "./settings/plans/Plans";
+import CreditsHistory from "./settings/credits-history/CreditsHistory";
+import Notification from "components/ui/Header/molecules/notifications/NotificationList"
 
 interface IRoute {
   path: string;
@@ -104,8 +108,7 @@ const routes: IRoute[] = [
     name: "Onboarding",
     component: WelcomePage,
   },
-  // ===================================================================================== 
-
+  // =====================================================================================
 
   {
     path: "/request-info",
@@ -127,7 +130,7 @@ const routes: IRoute[] = [
     name: "Thank you",
     component: ThankyouPage,
   },
-  // Inbox 
+  // Inbox
   {
     path: "/inbox",
     name: "Inbox",
@@ -182,13 +185,13 @@ const routes: IRoute[] = [
         name: "Likes",
         component: MyLikesPage,
       },
-    
+
       {
         path: "my/downloads",
         name: "Downloads",
         component: MyDownloadsPage,
       },
-    ]
+    ],
   },
   {
     path: "/sound/vocals/:id",
@@ -245,7 +248,22 @@ const routes: IRoute[] = [
         name: "Billing",
         component: BillingLayout,
       },
+      {
+        path: "memberships/:id",
+        name: "Memberships & Connects",
+        component: MembershipsConnects,
+      },
     ],
+  },
+  {
+    path: "/settings/plans/:id",
+    name: "Plans",
+    component: Plans,
+  },
+  {
+    path: "/settings/credits-history/:id",
+    name: "CreditsHistory",
+    component: CreditsHistory,
   },
   {
     path: "/onboarding",
@@ -281,12 +299,19 @@ const routes: IRoute[] = [
     path: "creator/new-password-success",
     name: "New Password",
     component: ChangePassword,
-  }, 
+  },
   {
     path: "engineer-profile",
     name: "Engineer Profile",
     component: EngineerProfile,
   },
-]
+  {
+    path: "/notification/:type",
+    name: "Audio Message Notification",
+    component: Notification,
+  },
+
+ 
+];
 
 export default routes;

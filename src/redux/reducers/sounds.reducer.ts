@@ -16,8 +16,8 @@ const initialState = {
 };
 
 const soundsReducer = (state = initialState, action: any): any => {
-  console.log("=== Reducer Sounds ===");
-  console.log(action);
+  //console.log("=== Reducer Sounds ===");
+  //console.log(action);
   switch (action.type) {
     case ActionType.GET_SOUNDS:
       return {

@@ -8,17 +8,22 @@ import playIcon from "../../../assets/img/player/play-circle.svg";
 import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
 import {
-  getConversationsById,
-  getConversationsList,
-  getConversationWithUser,
+  createNewConversation,
+  getConversationMessages,
+  getConversationsWithUser
 } from "api/messenger";
-import MessagesDetail from "pages/Inbox/components/MessagesDetail";
+import Chatbox from "pages/Inbox/components/Chatbox";
 import { requestConncetAPI } from "api/user";
 import avatarImg from "../../../assets/img/avatar.svg";
-import { useLambdaEvent } from "services/WebSocket/useLambdaEvent.hook";
+import { useNotification } from "services/WebSocket/useNotification.hook";
 import { useMessages } from "../../../pages/profile/messageContextProvider";
 import { GoDotFill } from "react-icons/go";
 import { LuCalendar, LuDollarSign } from "react-icons/lu";
+import { ICreateNewConversation, IGetConversationMessages, IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
+import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
+import { useNavigate } from "react-router-dom";
+import { useMessenger } from "api/messenger/context";
+import { ConversationProvider } from "pages/Inbox/components/Directory/context";
 
 type Props = {
   artistData: IArtistProfileData | null;
@@ -35,6 +40,16 @@ type Props = {
 };
 
 const ProfileAboutSection = (props: Props) => {
+
+
+  const { 
+    setActiveConversation,
+    activeConversation,
+    setMessages,
+    messages,
+    getConversationMessages
+  } = useMessenger();
+
   const { artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen } =
     props;
   const [hoveredRow, setHoveredRow] = useState<number | null>(null); // State to track hovered row
@@ -44,10 +59,9 @@ const ProfileAboutSection = (props: Props) => {
   const audioRef = useRef<HTMLAudioElement | null>(null); // Ref for the audio element
   const [showChat, setShowChat] = useState(false);
   const [chatData, setChatData] = useState(null);
-  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: RootState) => state);
-
+  const navigate = useNavigate();
   const isConnectionPending =
     connectionDetail === false ||
     connectionDetail === null ||
@@ -65,39 +79,39 @@ const ProfileAboutSection = (props: Props) => {
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
 
-    useLambdaEvent("NEW_MESSAGE", (event) => {
-      try {
-        const { conversationId, sender, message, timestamp } = event.data;
+    // useNotification("NEW_MESSAGE", (event) => {
+    //   try {
+    //     const { conversationId, sender, message, timestamp } = event.data;
     
-        const timeoutId = setTimeout(async () => {
-          try {
-            if (chatData.id === Number(conversationId)) {
-              // const newMessage = {
-              //   conversation_id: conversationId,
-              //   Timestamp: timestamp || new Date().toISOString(),
-              //   message_content: message,
-              //   sender_id: sender
-              // };
-              // const formatMessages = [
-              //   {
-              //     date: new Date().toISOString().split("T")[0],
-              //     messages: [...messages[0]?.messages || [], newMessage]
-              //   }
-              // ]
-              //setMessages(formatMessages);
-              getConversationMessages(chatData);
-            }
-          } catch (error) {
-            console.error('Error refreshing data:', error);
-          }
-        }, 300);
+    //     const timeoutId = setTimeout(async () => {
+    //       try {
+    //         if (chatData.id === Number(conversationId)) {
+    //           // const newMessage = {
+    //           //   conversation_id: conversationId,
+    //           //   Timestamp: timestamp || new Date().toISOString(),
+    //           //   message_content: message,
+    //           //   sender_id: sender
+    //           // };
+    //           // const formatMessages = [
+    //           //   {
+    //           //     date: new Date().toISOString().split("T")[0],
+    //           //     messages: [...messages[0]?.messages || [], newMessage]
+    //           //   }
+    //           // ]
+    //           //setMessages(formatMessages);
+    //           getConversationMessages(chatData);
+    //         }
+    //       } catch (error) {
+    //         console.error('Error refreshing data:', error);
+    //       }
+    //     }, 300);
     
-        return () => clearTimeout(timeoutId);
+    //     return () => clearTimeout(timeoutId);
     
-      } catch (error) {
-        console.error('Error processing new message event:', error);
-      }
-    });
+    //   } catch (error) {
+    //     console.error('Error processing new message event:', error);
+    //   }
+    // });
 
   const handlePlayClick = (previewUrl: string, index: number) => {
     if (!previewUrl) return;
@@ -121,12 +135,12 @@ const ProfileAboutSection = (props: Props) => {
     try {
       setLoading(true);
 
-      // Pass recipient_id as a query parameter
-      const response = await getConversationWithUser(artistData.id);
-      console.log("conversation with user response:", response);
+      const payload: IGetConversationsWithUser = {userId: artistData?.id};
+      const response = await getConversationsWithUser(payload);
 
+      let conversation;
       if (response.data) {
-        const conversation = {
+        conversation = {
           id: response.data.id,
           thumbnail: artistData.thumbnail,
           displayName: artistData.professional_name,
@@ -134,37 +148,11 @@ const ProfileAboutSection = (props: Props) => {
           recipient_id: artistData.id,
           conversation_id: response.data.id,
         };
-
-        console.log("existing conversation found:", conversation);
-        setChatData(conversation);
-        await getConversationMessages(conversation);
+        setActiveConversation(response.data);
+        getConversationMessages({ conversationId: response.data.conversation_id });
         setChatOpen(true);
-      } else {
-        // For new conversations, use a temporary ID that will be replaced
-        const tempId = `temp_${Date.now()}`;
-        const conversation = {
-          id: tempId, // Add a temporary ID here
-          thumbnail: artistData.thumbnail,
-          displayName: artistData.professional_name,
-          sender: user.auth.user.id,
-          recipient_id: artistData.id,
-          conversation_id: null,
-          messages: [],
-          isNew: true, // Flag to indicate this is a new conversation
-        };
-
-        console.log("creating new conversation:", conversation);
-        setChatData(conversation);
-        setMessages([
-          {
-            date: new Date().toISOString().split("T")[0],
-            messages: [],
-          },
-        ]);
-        setChatOpen(true);
+        setShowChat(true);
       }
-
-      setShowChat(true);
     } catch (error) {
       console.error("Error opening chat:", error);
     } finally {
@@ -185,80 +173,16 @@ const ProfileAboutSection = (props: Props) => {
     }
   };
 
-  const getConversationMessages = async (conversation) => {
-    try {
-      console.log("Getting messages for conversation:", conversation);
-
-      // If this is a new conversation that just got created
-      if (!conversation.id && conversation.conversation_id) {
-        // Update the chatData with the new conversation_id
-        setChatData((prev) => ({
-          ...prev,
-          id: conversation.conversation_id,
-          conversation_id: conversation.conversation_id,
-        }));
-      }
-
-      let conversationId = conversation.id || conversation.conversation_id;
-      if (String(conversationId).startsWith("temp")){
-        const response = await getConversationWithUser(artistData.id);
-
-        if (response.data) {
-          conversationId = response.data.id
-          setChatData({
-            id: response.data.id,
-            thumbnail: artistData.thumbnail,
-            displayName: artistData.professional_name,
-            sender: user.auth.user.id,
-            recipient_id: artistData.id,
-            conversation_id: response.data.id,
-          });
-        }
-      }
-      if (conversationId) {
-        const messagesResponse = await getConversationsById(
-          { limit: 10 },
-          conversationId
-        );
-
-        // Format messages in the expected structure
-        const formattedMessages = [
-          {
-            date: new Date().toISOString().split("T")[0],
-            messages: messagesResponse.data.messages || [],
-          },
-        ];
-
-        console.log("Setting formatted messages:", formattedMessages);
-        setMessages(formattedMessages);
-      } else {
-        // For new conversations, set an empty messages array with the correct structure
-        setMessages([
-          {
-            date: new Date().toISOString().split("T")[0],
-            messages: [],
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-    }
-  };
-
-  if (showChat && chatData) {
+  if (showChat && activeConversation) {
     return (
-      <div className="relative w-full h-[calc(100vh-70px)] bg-richBlack overflow-hidden">
-        <MessagesDetail
-          conversation={chatData}
-          loading={loading}
-          messages={messages}
-          getConversationMessages={getConversationMessages}
-          getNotes={() => {}}
-          notes={[]}
-          currentUserInfo={user.auth.user}
-          onClose={() => {setShowChat(false); setChatOpen(false)}}
-          userInfo={artistData}
-        />
+      <div className="fixed right-0 top-[70px] w-[500px] h-[calc(100vh-70px)] bg-richBlack overflow-hidden z-50">
+        <ConversationProvider>
+          <ChatboxProvider>
+            <Chatbox
+              onClose={() => {setShowChat(false); setChatOpen(false)}}
+            />
+          </ChatboxProvider>
+        </ConversationProvider>
       </div>
     );
   }

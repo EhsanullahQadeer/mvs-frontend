@@ -49,10 +49,65 @@ module.exports = {
         'slide-in': {
           '0%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(0)' }
-        }
+        },
+        "shake": {
+          "0%,to": {
+            transform: "translateX(0%)",
+          },
+          "15%": {
+            transform: "rotate(25deg)"
+          },
+          "30%": {
+            transform: "rotate(-25deg)"
+          },
+          "45%": {
+            transform: "rotate(10deg)"
+          },
+          "60%": {
+            transform: "rotate(-10deg)"
+          },
+          "75%": {
+            transform: "rotate(1.2deg)"
+          },
+          "100%": {
+            transform: "rotate(0deg)"
+          }
+        },
+        messageAppear: {
+          '0%': { 
+            opacity: '0', 
+            transform: 'translateY(20px)' 
+          },
+          '100%': { 
+            opacity: '1', 
+            transform: 'translateY(0)' 
+          },
+        },
+        slideLeft: {
+          '0%': { transform: 'translateX(100%)', opacity: '0.3' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        slideRight: {
+          '0%': { transform: 'translateX(-100%)', opacity: '0.3' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        fadeOut: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
       },
       animation: {
-        'slide-in': 'slide-in 0.2s ease-out'
+        'slide-in': 'slide-in 0.2s ease-out',
+        "shake": "shake 0.8s ease both",
+        'message-appear': 'messageAppear 0.4s ease-out forwards',
+        'slide-left': 'slideLeft 0.3s ease-out forwards',
+        'slide-right': 'slideRight 0.3s ease-out forwards',
+        'fade-out': 'fadeOut 0.15s ease-out forwards',
+        'fade-in': 'fadeIn 0.15s ease-out forwards',
       }
     },
   },

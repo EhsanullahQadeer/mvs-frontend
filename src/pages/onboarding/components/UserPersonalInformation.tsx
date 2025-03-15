@@ -8,6 +8,7 @@
 
 import FormikLabeledField from "components/util/FormikLabeledField";
 import FormikSingleSelectDropdown from "components/util/FormikSingleSelectDropdown";
+import ImageCropModal from "components/modals/ImageCropModal";
 import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { countriesStates } from "../sample-data/countriesStates";
@@ -40,6 +41,8 @@ const UserPersonalInformation = (props: Props) => {
   const [statesArr, setStatesArr] = useState([]);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [isCropModalOpen, setIsCropModalOpen] = useState(false);
+  const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const countries = Object.values(countriesStates).map(
@@ -54,15 +57,6 @@ const UserPersonalInformation = (props: Props) => {
       setStatesArr(provinces);
     }
   }, [selectedCountry]);
-
-  const convertFileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-    });
-  };
 
   const getStatesByCountryName = () => {
     const countryCode = Object.keys(countriesStates).find(
@@ -123,18 +117,23 @@ const UserPersonalInformation = (props: Props) => {
   };
 
   const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
-      try {
-        const base64Thumbnail = await convertFileToBase64(file);
-        setThumbnail(base64Thumbnail);
-        setThumbnailType(file.type);
-        setButtonText("Save Changes");
-      } catch (error) {
-        console.error("Error converting file to base64", error);
-      }
+      const imageUrl = URL.createObjectURL(file);
+      setTempImageUrl(imageUrl);
+      setIsCropModalOpen(true);
     }
     e.target.value = null;
+  };
+
+  const handleCropComplete = (croppedImage: string) => {
+    setThumbnail(croppedImage);
+    setThumbnailType('image/jpeg');
+    setButtonText("Save Changes");
+    if (tempImageUrl) {
+      URL.revokeObjectURL(tempImageUrl);
+      setTempImageUrl(null);
+    }
   };
 
   return (
@@ -197,8 +196,8 @@ const UserPersonalInformation = (props: Props) => {
                           <div
                             className={`mt-1.5 text-[10px] font-normal text-dimGray`}
                           >
-                            What’s your professional name? Let us know so we can
-                            make sure to address you just the way you’d like!
+                            What's your professional name? Let us know so we can
+                            make sure to address you just the way you'd like!
                           </div>
                         </div>
 
@@ -282,8 +281,6 @@ const UserPersonalInformation = (props: Props) => {
                             </div>
                           )}
                         </div>
-
-
                       </div>
 
                       <div className="flex gap-5">
@@ -330,6 +327,19 @@ const UserPersonalInformation = (props: Props) => {
           }}
         </Formik>
       </div>
+
+      <ImageCropModal
+        open={isCropModalOpen}
+        onClose={() => {
+          setIsCropModalOpen(false);
+          if (tempImageUrl) {
+            URL.revokeObjectURL(tempImageUrl);
+            setTempImageUrl(null);
+          }
+        }}
+        imageUrl={tempImageUrl || ''}
+        onSave={handleCropComplete}
+      />
     </div>
   );
 };

@@ -6,25 +6,24 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import React, { useState, useEffect } from "react";
-import FormikLabeledField from "../../../../components/util/FormikLabeledField";
-import FormikSingleSelectDropdown from "../../../../components/util/FormikSingleSelectDropdown";
-import { songType } from "../sample-data/sampleData";
-import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
+import { Field } from 'formik';
+import { useSelector } from "react-redux";
+import { useFormikContext } from "formik";
+import { RootState } from "redux/reducers";
 import ComposerDialog from "./ComposerDialog";
+import getMuiStyles from "styles/getMuiStyles";
+import React, { useState, useEffect } from "react";
+import { songType } from "../sample-data/sampleData";
+import { IUploadingFileMetaDataProps } from "./types";
+import FormikLabeledField from "../../../../components/util/FormikLabeledField";
+import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
+import FormikSingleSelectDropdown from "../../../../components/util/FormikSingleSelectDropdown";
 import {
   FormControl,
   FormControlLabel,
   Radio,
   RadioGroup,
 } from "@mui/material";
-import getMuiStyles from "styles/getMuiStyles";
-import { IUploadingFileMetaDataProps } from "./types";
-import { useFormikContext } from "formik";
-import { Field } from "formik";
-
-import { RootState } from "redux/reducers";
-import { useSelector } from "react-redux";
 
 const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
   const {
@@ -52,12 +51,12 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
           option.value.toLowerCase().trim() ===
           props.sample.type.toLowerCase().trim()
       );
-
-      console.log("Setting field value to:", matchingType || props.sample.type);
-      setFieldValue("songType", matchingType || props.sample.type);
-      setFieldValue("songBpm", props.sample.bpm);
-      setFieldValue("songName", props.sample.filename);
-
+      
+      console.log('Setting field value to:', matchingType || props.sample.type);
+      setFieldValue('songType', matchingType || props.sample.type);
+      setFieldValue('songBpm', props.sample.bpm);
+      setFieldValue('songName', props.sample.name);
+      
       // Format initial tags
       const formattedTags = Array.isArray(props.sample.tags)
         ? props.sample.tags
@@ -111,8 +110,10 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
           is_owner: false,
         },
         contribution: 0,
-        roles: [],
+        roles: composerAdded.roles,
       };
+
+      console.log("Uploading File Metadata - handleAddComposer - new Composer: ", newCollaborator);
 
       return [...prev, newCollaborator];
     });
@@ -153,6 +154,8 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
       setFieldValue("songTags", formattedTags);
     }
   };
+
+ 
 
   return (
     <>
@@ -244,6 +247,14 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
               {selectedComposer?.length ? (
                 selectedComposer?.map((composer, idx) => {
                   const { professional_name } = composer?.user;
+
+                  // Function to remove composer
+                  const removeComposer = (event: React.MouseEvent) => {
+                    event.stopPropagation(); // Prevent parent onClick from firing
+                    setSelectedComposer(prev => 
+                      prev.filter((_, index) => index !== idx)
+                    );
+                  };
                   return (
                     <div
                       key={professional_name + idx}
@@ -252,7 +263,10 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
                       <span className="text-xs text-mediumGray whitespace-nowrap font-normal">
                         {composer?.user?.professional_name}
                       </span>
-                      <div className="w-2.5 h-2.5 cursor-pointer text-mediumGray flex justify-center items-center">
+                      <div 
+                        className="w-3.5 h-3.5 cursor-pointer rounded-full text-mediumGray flex justify-center items-center hover:bg-dimGray hover:text-black" // Change 'gray-600' to your desired color
+                        onClick={removeComposer} // Add onClick to remove composer
+                      >
                         <CancelIcon className="w-2 h-2" />
                       </div>
                     </div>

@@ -1,3 +1,5 @@
+import { IMessage } from "api/messenger/objects/states.types";
+
 type IMessageDateGroup = {
   date: string;
   messages: IMessage[];
@@ -9,7 +11,7 @@ export type INotes = {
   id: number;
   owner_id: number;
   conversation_id: string;
-  note: string;
+  content: string;
   created_at: string;
   updated_at: string;
 };
@@ -134,33 +136,62 @@ export interface IMsgReaction {
   users: { id: number; name: string }[];
 }
 
-export type IMessage = {
+export enum MESSAGE_TYPES {
+  MESSAGE = 'message',
+  TIP = 'tip',
+  DEMO = 'demo',
+  SAMPLE = 'sample',
+}
+
+export type IMedia = {
   id: number;
-  message_content: string;
-  is_read: boolean;
+  url: string;
+  file_name: string;
+  duration: number | null;
+  file_size_bytes: number;
+  mime_type: string;
+  format: string;
+  type: MEDIA_TYPE;
   created_at: string;
-  credit_payment: string | null;
-  claimed: boolean;
-  audio_media: IAudioMedia;
-  message_reply: IMessageReply;
-  thumbnail: string;
-  displayName: string;
-  date: string;
-  sender: MessageSender;
-  total_payments: string;
-  reactions?: IMsgReaction[];
+  updated_at: string;
+} | null;
 
-  conversation_id?: any;
-  recipient_id?: number;
-  UnreadCount?: number;
-  last_message_summary?: string;
-  last_updated_timestamp?: string;
-  audio_recording_url?: string;
-};
+export enum MEDIA_TYPE {
+  RECORDING = 'audio',
+  DEMO = 'demo',
+}
 
-interface IReaction {
-  userId: number;
+export enum TRANSACTION_STATUS {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  CANCELLED = 'cancelled'
+}
+
+export enum TRANSACTION_TYPE {
+  DEMO = 'demo',
+  TIP = 'tip',
+  CONTENT_UNLOCK = 'content_unlock',
+  TRANSFER = 'transfer',
+  REFUND = 'refund',
+}
+
+export interface ITransaction {
+  id: number;
+  sender: User;
+  receiver: User;
+  amount: number;
+  platform_fee: number;
+  stripe_payment_intent_id: string | null;
+  created_at: string;
+  updated_at: string;
+  type: TRANSACTION_TYPE;
+  status: TRANSACTION_STATUS;
+}
+
+export interface IReaction {
   count: number;
+  users: Array<{ id: number }>;
 }
 
 export interface IMessageReactions {
@@ -224,30 +255,23 @@ type User = {
 
 export type IConversation = {
   id: number;
-  last_message_summary: string;
-  last_updated_timestamp: string;
-  unread_count_a: number;
-  unread_count_b: number;
-  has_deleted_a: boolean | null;
-  has_deleted_b: boolean | null;
-  favorite_a: boolean;
-  favorite_b: boolean;
+  conversation_id: string;
+  is_read: boolean;
+  is_favorite: boolean;
   active_icebreaker: boolean;
   is_open: boolean;
   is_archived: boolean;
   is_spam: boolean;
   is_priority: boolean;
+  is_deleted: boolean;
+  deleted_at: string | null;
+  unread_count: number;
+  available_funds: number;
+  total_paid: number;
   created_at: string;
   updated_at: string;
-  current_balance_a: string;
-  current_balance_b: string;
-  total_payments_a: string;
-  total_payments_b: string;
-  user_a: User;
-  user_b: User;
-  displayName: string;
-  recipient_id: number;
-  thumbnail: string;
+  user: User;
+  messages: any[];
 
-  UnreadCount?: number;
+  displayName?: string;
 };

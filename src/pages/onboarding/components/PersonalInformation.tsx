@@ -11,6 +11,7 @@ import FormikSingleSelectDropdown from "components/util/FormikSingleSelectDropdo
 import { Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { countriesStates } from "../sample-data/countriesStates";
+import ImageCropModal from "../../../components/modals/ImageCropModal";
 import {
   FormControl,
   IconButton,
@@ -33,8 +34,16 @@ type Props = {
 };
 
 const validationSchema = Yup.object({
-  username: Yup.string().required("Username is required"),
-  professional_name: Yup.string().required("Professional name is required"),
+  username: Yup.string()
+    .required("Username is required")
+    .matches(
+      /^[@]?[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores"
+    )
+    .max(36, "Username must not exceed 36 characters"),
+  professional_name: Yup.string()
+    .required("Professional name is required")
+    .max(35, "Professional name must not exceed 35 characters"),
   country: Yup.string().required("Country is required"),
   region: Yup.string().required("Region is required"),
   bio: Yup.string()
@@ -57,6 +66,8 @@ const PersonalInformation = (props: Props) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [usernameError, setUsernameError] = useState("");
   const [thumbnailError, setThumbnailError] = useState(false);
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [tempImageUrl, setTempImageUrl] = useState('');
 
   useEffect(() => {
     const countries = Object.values(countriesStates).map((country, index) => ({
@@ -97,13 +108,98 @@ const PersonalInformation = (props: Props) => {
     bio: "",
   };
 
-  const convertFileToBase64 = (file) => {
+  const resizeImage = (file: File): Promise<{ base64: string, type: string }> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
+
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+
+        img.onload = () => {
+          const aspectRatio = img.width / img.height;
+          const MAX_RATIO = 2;
+          
+          let sourceX = 0;
+          let sourceY = 0;
+          let sourceWidth = img.width;
+          let sourceHeight = img.height;
+
+          if (aspectRatio > MAX_RATIO) {
+            sourceWidth = img.height * MAX_RATIO;
+            sourceX = (img.width - sourceWidth) / 2;
+          }
+          else if (aspectRatio < 1/MAX_RATIO) {
+            sourceHeight = img.width * MAX_RATIO;
+            sourceY = (img.height - sourceHeight) / 2;
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = 128;
+          canvas.height = 128;
+          
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Could not get canvas context'));
+            return;
+          }
+
+          ctx.drawImage(
+            img,
+            sourceX, sourceY, sourceWidth, sourceHeight,
+            0, 0, canvas.width, canvas.height
+          );
+          
+          const base64 = canvas.toDataURL('image/jpeg', 0.9);
+
+          console.log('Image transformation:', {
+            original: {
+              width: img.width,
+              height: img.height,
+              aspectRatio: aspectRatio.toFixed(2)
+            },
+            cropped: {
+              width: sourceWidth,
+              height: sourceHeight,
+              aspectRatio: (sourceWidth/sourceHeight).toFixed(2)
+            },
+            final: {
+              width: 128,
+              height: 128,
+              aspectRatio: '1:1'
+            }
+          });
+
+          resolve({
+            base64: base64,
+            type: 'image/jpeg'
+          });
+        };
+
+        img.onerror = () => reject(new Error('Failed to load image'));
+      };
+
+      reader.onerror = () => reject(new Error('Failed to read file'));
     });
+  };
+
+  const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setTempImageUrl(url);
+      setShowCropModal(true);
+    }
+    e.target.value = null;
+  };
+
+  const handleCroppedImage = (croppedImage: string) => {
+    setThumbnail(croppedImage);
+    setThumbnailType('image/jpeg');
+    setButtonText("Save Changes");
+    setThumbnailError(false);
+    URL.revokeObjectURL(tempImageUrl); // Clean up
   };
 
   const handleSubmit = async (values) => {
@@ -129,12 +225,13 @@ const PersonalInformation = (props: Props) => {
       return;
     }
 
-    const sanitizedUsername = values.username.startsWith('@')
-      ? values.username.substring(1)
-      : values.username;
+    const sanitizedValues = {
+      ...values,
+      username: values.username.replace(/^@/, '')
+    };
 
     try {
-      const response = await checkUsernameIsAvailable(sanitizedUsername);
+      const response = await checkUsernameIsAvailable(sanitizedValues.username);
       if (!response.data.available) {
         setUsernameError("Username is already taken. Please choose another.");
         return;
@@ -148,7 +245,7 @@ const PersonalInformation = (props: Props) => {
 
     setFormData({
       ...formData,
-      ...values,
+      ...sanitizedValues,
       password: password,
       thumbnail: thumbnail,
       thumbnail_type: thumbnailType,
@@ -171,22 +268,6 @@ const PersonalInformation = (props: Props) => {
     const hasTwoNumbers = (password.match(/\d/g) || []).length >= 2;
     return hasMinLength && hasTwoNumbers;
   };
-
-  const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files[0];
-    if (file) {
-      try {
-        const base64Thumbnail = await convertFileToBase64(file);
-        setThumbnail(base64Thumbnail);
-        setThumbnailType(file.type);
-        setButtonText("Save Changes");
-        setThumbnailError(false);
-      } catch (error) {
-        console.error("Error converting file to base64", error);
-      }
-    }
-    e.target.value = null;
-  };
   
   return (
     <div>
@@ -203,9 +284,15 @@ const PersonalInformation = (props: Props) => {
 
             const handleUsernameChange = (event: any) => {
               let value = event.target.value;
+              
+              value = value.replace(/\s+/g, '_')
+                          .replace(/[^a-zA-Z0-9_@]/g, '');
+              
               if (value && !value.startsWith("@")) {
                 value = "@" + value;
               }
+
+              value = value.slice(0, 36);
 
               setFieldValue("username", value);
             };
@@ -390,17 +477,15 @@ const PersonalInformation = (props: Props) => {
                             className="hidden"
                             id="thumbnail"
                           />
-                          <label htmlFor="thumbnail" className="cursor-pointer relative">
+                          <label htmlFor="thumbnail" className="cursor-pointer relative group">
                             <img
                               src={thumbnail || avatarImg}
                               alt="thumbnail"
                               className={`w-32 h-32 object-cover rounded-full ${thumbnailError ? 'border-4 border-darkRed' : ''}`}
                             />
-                            {!thumbnail && (
-                              <div className="absolute bottom-0 right-0 bg-limeGreen rounded-full p-1">
-                                <IoAdd className="w-5 h-5 text-jetBlack" />
-                              </div>
-                            )}
+                            <div className="absolute bottom-0 right-0 bg-limeGreen rounded-full p-1">
+                              <IoAdd className="w-5 h-5 text-jetBlack" />
+                            </div>
                           </label>
                           {thumbnailError && (
                             <div className="text-darkRed mt-1 text-xs font-medium">
@@ -480,6 +565,12 @@ const PersonalInformation = (props: Props) => {
           }}
         </Formik>
       </div>
+      <ImageCropModal
+        open={showCropModal}
+        onClose={() => setShowCropModal(false)}
+        imageUrl={tempImageUrl}
+        onSave={handleCroppedImage}
+      />
     </div>
   );
 };

@@ -1,110 +1,132 @@
-import { useState } from "react";
-import { IMessageReactions, IMessagesData } from "../components/types";
-import { addReactionApi, deleteReactionApi } from "api/messenger";
+// import { useState, useEffect } from "react";
+// import { IMessageReactions, IMessagesData } from "../components/types";
+// import { addReaction, deleteReaction } from "api/messenger";
 
-export const useMessageReactions = (
-  messages: IMessagesData,
-  currentUserId: number
-) => {
-  // State for reactions per message
-  const [messageReactions, setMessageReactions] = useState<IMessageReactions>(
-    () =>
-      (messages[0]?.messages || []).reduce((acc, msg) => {
-        acc[msg.id] = {
-          reactionCounts: msg.reactions.reduce((counts, reaction) => {
-            counts[reaction.emoji] = {
-              userId: reaction.users[0]?.id,
-              count: reaction.count,
-            };
-            return counts;
-          }, {}),
-        };
-        return acc;
-      }, {})
-  );
+// export const useMessageReactions = (
+//   messages: IMessagesData,
+//   currentUserId: number
+// ) => {
 
-  const handleEmojiSelect = (messageId, emoji) => {
+//   const [messageReactions, setMessageReactions] = useState<IMessageReactions>(
+//     () =>
+//       (messages[0]?.messages || []).reduce((acc, msg) => {
+//         acc[msg.id] = {
+//           reactionCounts: msg.reactions.reduce((counts, reaction) => {
+//             counts[reaction.emoji] = {
+//               userId: reaction.users[0]?.id,
+//               count: reaction.count,
+//             };
+//             return counts;
+//           }, {}),
+//         };
+//         return acc;
+//       }, {})
+//   );
 
-    setMessageReactions((prevReactions) => {
-      const messageReaction = { ...prevReactions[messageId] };
-      const newReactionCounts = { ...messageReaction.reactionCounts };
+//   const refreshReactions = async () => {
+//     try {
+//       const messagesToUpdate = messages[0]?.messages || [];
+      
+//       // // referesh reactions for all messages in background
+//       // const updatedReactions = await Promise.allSettled(
+//       //   messagesToUpdate.map(msg => 
+//       //     getReactions({messageId: msg.id})
+//       //       .then(response => ({
+//       //         messageId: msg.id,
+//       //         data: response.data
+//       //       }))
+//       //   )
+//       // );
 
-      // Check if the current user has already reacted
-      const currentUserReaction = Object.entries(newReactionCounts || {}).find(
-        ([reactionEmoji, { userId }]) => userId === currentUserId
-      );
+//       updatedReactions.forEach(result => {
+//         if (result.status === 'fulfilled') {
+//           const { messageId, data } = result.value;
+//           const processed = processReactions(data, messageId);
+//           setMessageReactions(prev => ({
+//             ...prev,
+//             [messageId]: processed[messageId]
+//           }));
+//         }
+//       });
+//     } catch (error) {
+//       console.error("Background refresh error:", error.message);
+//     }
+//   };
 
-      if (currentUserReaction) {
-        const [currentEmoji] = currentUserReaction;
 
-        // If the user selects the same emoji, remove the reaction
-        if (currentEmoji === emoji) {
-          try {
-            const body = { emoji: `${emoji}` };
-            deleteReactionApi(messageId, body);
+//   // emojis background refreshing
+//   useEffect(() => {
+//     refreshReactions();
+//   }, [messages]);
 
-            if (newReactionCounts[emoji].count > 1) {
-              newReactionCounts[emoji].count -= 1;
-            } else {
-              delete newReactionCounts[emoji];
-            }
-          } catch (error) {
-            console.log("Error while deleting emoji: ", error);
-          }
-        } else {
-          // If the user selects a different emoji
-          try {
-            const deleteBody = { emoji: `${currentEmoji}` };
-            deleteReactionApi(messageId, deleteBody);
+//   const handleEmojiSelect = async (messageId: number, emoji: string) => {
+//     try {
+//       const reactions = await getReactions({messageId});
+//       const currentReactions = reactions.data.reduce((acc, reaction) => {
+//         if (!acc[reaction.emoji]) {
+//           acc[reaction.emoji] = {
+//             count: 0,
+//             users: []
+//           };
+//         }
+//         acc[reaction.emoji].count += 1;
+//         acc[reaction.emoji].users.push(reaction.user);
+//         return acc;
+//       }, {});
+//       let previousEmoji: string | null = null;
+      
+//       // Find existing user reaction
+//       for (const emojiKey in currentReactions) {
+//         const reaction = currentReactions[emojiKey];
+//         if (reaction.users.some(user => user.id === currentUserId)) {
+//           previousEmoji = emojiKey;
+//           break;
+//         }
+//       }
 
-            if (newReactionCounts[currentEmoji].count > 1) {
-              newReactionCounts[currentEmoji].count -= 1;
-            } else {
-              delete newReactionCounts[currentEmoji];
-            }
+//       // Remove previous reaction if exists
+//       if (previousEmoji) {
+//         await deleteReaction({messageId, emoji: previousEmoji});
+//       }
 
-            const addBody = { emoji: `${emoji}` };
-            addReactionApi(messageId, addBody);
+//       // Add new reaction if it's different from previous
+//       if (previousEmoji !== emoji) {
+//         await addReaction({messageId, emoji: emoji});
+//       }
 
-            if (newReactionCounts[emoji]) {
-              newReactionCounts[emoji].count += 1;
-            } else {
-              newReactionCounts[emoji] = {
-                userId: currentUserId,
-                count: 1,
-              };
-            }
-          } catch (error) {
-            console.log("Error while switching emoji: ", error);
-          }
-        }
-      } else {
-        // If the user has not reacted yet, just add the new emoji
-        try {
-          const addBody = { emoji: `${emoji}` };
-          addReactionApi(messageId, addBody);
+//       // Refresh reactions after update
+//       const response = await getReactions({messageId});
+//       const processedReactions = processReactions(response.data, messageId);
+//       setMessageReactions(prev => ({
+//         ...prev,
+//         [messageId]: processedReactions[messageId]
+//       }));
+//     } catch (error) {
+//       console.error("Error handling emoji select", error.message);
+//     }
+//   };
 
-          if (newReactionCounts[emoji]) {
-            newReactionCounts[emoji].count += 1;
-          } else {
-            newReactionCounts[emoji] = {
-              userId: currentUserId,
-              count: 1,
-            };
-          }
-        } catch (error) {
-          console.log("Error while adding emoji: ", error);
-        }
-      }
+//   const processReactions = (data: Array<{ emoji: string; user: { id: number } }>, messageId: number) => {
+//     return data.reduce((acc, reaction) => { 
+//       if (!acc[messageId]) {
+//         acc[messageId] = { reactionCounts: {} };
+//       }
+//       const emoji = reaction.emoji;
+//       if (!acc[messageId].reactionCounts[emoji]) {
+//         acc[messageId].reactionCounts[emoji] = {
+//           count: 0,
+//           users: [],
+//         };
+//       }
+//       acc[messageId].reactionCounts[emoji].count += 1;
+//       acc[messageId].reactionCounts[emoji].users.push(reaction.user);
+      
+//       console.log("ACC", acc)
+//       return acc;
+//     }, {} as IMessageReactions);
+//   };
 
-      return {
-        ...prevReactions,
-        [messageId]: {
-          reactionCounts: newReactionCounts,
-        },
-      };
-    });
-  };
+//   return { messageReactions, handleEmojiSelect };
+// };
 
-  return { messageReactions, handleEmojiSelect };
-};
+export {}

@@ -20,6 +20,17 @@ import {
   UserFiltersDTO,
 } from "../user/types";
 
+export async function getUserNotifications(types?: string[], isRead?: boolean, skip?: number) {
+  return axiosInstance.get("/users/notifications", {
+    params: {
+      skip: skip,
+      take: 10,
+      type: types,
+      isRead: isRead,
+    },
+  });
+}
+
 export async function requestInvitationCodeWithEmailAPI(body: IRequestInvitation) {
   return axiosInstance.post("/users/request/access", body);
 }
@@ -187,4 +198,34 @@ export const resendInvitationCodeAPI = async (email: string) => {
     console.error('Error resending invitation code:', error);
     throw error;
   }
+};
+
+export const handleConnectionRequest = async (requestId: number, acceptRequest: boolean) => {
+  try {
+    const response = await axiosInstance.post('/users/handle-connection-request', { 
+      requestId,
+      acceptRequest,
+     });
+    return response.data;
+  } catch (error) {
+    console.error('Error resending invitation code:', error);
+    throw error;
+  }
+};
+
+export const handleFollowUsers = async (followUserIds: number[]) => {
+  try {
+    const response = await axiosInstance.post('/users/follow-users', { 
+      followUserIds,
+     });
+    return response.data;
+  } catch (error) {
+    console.error('Error resending invitation code:', error);
+    throw error;
+  }
+};
+
+export async function checkIfFollowing( id: number ) {
+  const respose = axiosInstance.get(`/users/is-following/${id}`);
+  return (await respose).data;
 };
