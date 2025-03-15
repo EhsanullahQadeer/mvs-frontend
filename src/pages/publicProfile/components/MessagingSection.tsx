@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
-import { getConversationsById, getConversationWithUser } from "api/messenger";
-import MessagesDetail from "pages/Inbox/components/MessagesDetail";
+// import { getConversationsById, getConversationWithUser } from "api/messenger";
+// import MessagesDetail from "pages/Inbox/components/MessagesDetail";
 import { ICurrentUser } from "pages/Inbox/components/types";
-
+import { ConversationProvider } from "pages/Inbox/components/Directory/context";
+import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
+import Chatbox from "pages/Inbox/components/Chatbox";
+import { MessengerProvider } from "api/messenger/context";
 interface IProps {
   artistData: any;
 }
@@ -58,129 +61,129 @@ const MessagingSection = (props: IProps) => {
 
   // console.log("user...", user);
 
-  const handleGetMessages = async () => {
-    if (!artistData?.id) return;
+  // const handleGetMessages = async () => {
+  //   if (!artistData?.id) return;
 
-    try {
-      setLoading(true);
+  //   try {
+  //     setLoading(true);
 
-      // Pass recipient_id as a query parameter
-      const response = await getConversationWithUser(artistData.id);
-      console.log("conversation with user response:", response);
+  //     // Pass recipient_id as a query parameter
+  //     const response = await getConversationWithUser(artistData.id);
+  //     console.log("conversation with user response:", response);
 
-      if (response.data) {
-        const conversation = {
-          id: response.data.id,
-          thumbnail: artistData.thumbnail,
-          displayName: artistData.professional_name,
-          // sender: user.auth.user.id,
-          sender: currentUser.id,
-          recipient_id: artistData.id,
-          conversation_id: response.data.id,
-        };
+  //     if (response.data) {
+  //       const conversation = {
+  //         id: response.data.id,
+  //         thumbnail: artistData.thumbnail,
+  //         displayName: artistData.professional_name,
+  //         // sender: user.auth.user.id,
+  //         sender: currentUser.id,
+  //         recipient_id: artistData.id,
+  //         conversation_id: response.data.id,
+  //       };
 
-        console.log("existing conversation found:", conversation);
-        setChatData(conversation);
-        await getConversationMessages(conversation);
-      } else {
-        // For new conversations, use a temporary ID that will be replaced
-        const tempId = `temp_${Date.now()}`;
-        const conversation = {
-          id: tempId, // Add a temporary ID here
-          thumbnail: artistData.thumbnail,
-          displayName: artistData.professional_name,
-          // sender: user.auth.user.id,
-          sender: currentUser.id,
-          recipient_id: artistData.id,
-          conversation_id: null,
-          messages: [],
-          isNew: true, // Flag to indicate this is a new conversation
-        };
+  //       console.log("existing conversation found:", conversation);
+  //       setChatData(conversation);
+  //       await getConversationMessages(conversation);
+  //     } else {
+  //       // For new conversations, use a temporary ID that will be replaced
+  //       const tempId = `temp_${Date.now()}`;
+  //       const conversation = {
+  //         id: tempId, // Add a temporary ID here
+  //         thumbnail: artistData.thumbnail,
+  //         displayName: artistData.professional_name,
+  //         // sender: user.auth.user.id,
+  //         sender: currentUser.id,
+  //         recipient_id: artistData.id,
+  //         conversation_id: null,
+  //         messages: [],
+  //         isNew: true, // Flag to indicate this is a new conversation
+  //       };
 
-        console.log("creating new conversation:", conversation);
-        setChatData(conversation);
-        setMessages([
-          {
-            date: new Date().toISOString().split("T")[0],
-            messages: [],
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Error opening chat:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //       console.log("creating new conversation:", conversation);
+  //       setChatData(conversation);
+  //       setMessages([
+  //         {
+  //           date: new Date().toISOString().split("T")[0],
+  //           messages: [],
+  //         },
+  //       ]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error opening chat:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const getConversationMessages = async (conversation) => {
-    try {
-      console.log("Getting messages for conversation:", conversation);
+  // const getConversationMessages = async (conversation) => {
+  //   try {
+  //     console.log("Getting messages for conversation:", conversation);
 
-      // If this is a new conversation that just got created
-      if (!conversation.id && conversation.conversation_id) {
-        // Update the chatData with the new conversation_id
-        setChatData((prev) => ({
-          ...prev,
-          id: conversation.conversation_id,
-          conversation_id: conversation.conversation_id,
-        }));
-      }
+  //     // If this is a new conversation that just got created
+  //     if (!conversation.id && conversation.conversation_id) {
+  //       // Update the chatData with the new conversation_id
+  //       setChatData((prev) => ({
+  //         ...prev,
+  //         id: conversation.conversation_id,
+  //         conversation_id: conversation.conversation_id,
+  //       }));
+  //     }
 
-      let conversationId = conversation.id || conversation.conversation_id;
-      if (String(conversationId).startsWith("temp")) {
-        const response = await getConversationWithUser(artistData.id);
+  //     let conversationId = conversation.id || conversation.conversation_id;
+  //     if (String(conversationId).startsWith("temp")) {
+  //       const response = await getConversationWithUser(artistData.id);
 
-        if (response.data) {
-          conversationId = response.data.id;
-          setChatData({
-            id: response.data.id,
-            thumbnail: artistData.thumbnail,
-            displayName: artistData.professional_name,
-            // sender: user.auth.user.id,
-            sender: currentUser.id,
-            recipient_id: artistData.id,
-            conversation_id: response.data.id,
-          });
-        }
-      }
-      if (conversationId) {
-        const messagesResponse = await getConversationsById(
-          { limit: 10 },
-          conversationId
-        );
+  //       if (response.data) {
+  //         conversationId = response.data.id;
+  //         setChatData({
+  //           id: response.data.id,
+  //           thumbnail: artistData.thumbnail,
+  //           displayName: artistData.professional_name,
+  //           // sender: user.auth.user.id,
+  //           sender: currentUser.id,
+  //           recipient_id: artistData.id,
+  //           conversation_id: response.data.id,
+  //         });
+  //       }
+  //     }
+  //     if (conversationId) {
+  //       const messagesResponse = await getConversationsById(
+  //         { limit: 10 },
+  //         conversationId
+  //       );
 
-        // Format messages in the expected structure
-        const formattedMessages = [
-          {
-            date: new Date().toISOString().split("T")[0],
-            messages: messagesResponse.data.messages || [],
-          },
-        ];
+  //       // Format messages in the expected structure
+  //       const formattedMessages = [
+  //         {
+  //           date: new Date().toISOString().split("T")[0],
+  //           messages: messagesResponse.data.messages || [],
+  //         },
+  //       ];
 
-        console.log("Setting formatted messages:", formattedMessages);
-        setMessages(formattedMessages);
-      } else {
-        // For new conversations, set an empty messages array with the correct structure
-        setMessages([
-          {
-            date: new Date().toISOString().split("T")[0],
-            messages: [],
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-    }
-  };
+  //       console.log("Setting formatted messages:", formattedMessages);
+  //       setMessages(formattedMessages);
+  //     } else {
+  //       // For new conversations, set an empty messages array with the correct structure
+  //       setMessages([
+  //         {
+  //           date: new Date().toISOString().split("T")[0],
+  //           messages: [],
+  //         },
+  //       ]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching messages:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    handleGetMessages();
-  }, []);
+  // useEffect(() => {
+  //   handleGetMessages();
+  // }, []);
 
   return (
     <div className="flex flex-col">
-      <MessagesDetail
+      {/* <MessagesDetail
         conversation={chatData}
         loading={loading}
         messages={messages}
@@ -192,7 +195,18 @@ const MessagingSection = (props: IProps) => {
         onClose={() => {}}
         userInfo={artistData}
         isPublicProfile={true}
-      />
+      /> */}
+
+      <MessengerProvider>
+        <ConversationProvider>
+          <ChatboxProvider>
+            <Chatbox
+              isPublicProfile={true}
+              onClose={() => { }}
+            />
+          </ChatboxProvider>
+        </ConversationProvider>
+      </MessengerProvider>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMessenger } from "api/messenger/context";
-
+import { currentUserAPI } from "api/auth";
 export const useUnreadCount = () => {
   const { 
     getTotalConversationUnread,
@@ -11,16 +11,24 @@ export const useUnreadCount = () => {
   
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const refreshUnreadCount = () => {
-    getTotalConversationUnread({
-      types: ["priority", "general", "icebreaker"]
-    }).then(() => {
-      setUnreadCount(
-        totalPriorityInboxUnread + 
-        totalGeneralInboxUnread + 
-        totalIcebreakerInboxUnread
-      );
-    });
+  const refreshUnreadCount = async () => {
+    try {
+      const isLoggedIn = await currentUserAPI();
+      console.log("isLoggedIn", isLoggedIn);
+      if (isLoggedIn) {
+        getTotalConversationUnread({
+          types: ["priority", "general", "icebreaker"]
+        }).then(() => {
+          setUnreadCount(
+            totalPriorityInboxUnread +
+            totalGeneralInboxUnread +
+            totalIcebreakerInboxUnread
+          );
+        });
+      }
+    } catch (error) {
+      // not logged in (public profile)
+    }
   };
 
   useEffect(() => {
