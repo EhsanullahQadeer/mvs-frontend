@@ -11,6 +11,7 @@ import { formatMediaDetails } from "../../../handlers/mediaUtils";
 import PlayPauseButton from "components/ui/Header/atoms/chatboxPlayPauseButton";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
+import { AudioTrack, Waveform } from "components/SampleContainer/components/waveform";
 
 interface MessageProps {
   message: IMessage;
@@ -208,11 +209,33 @@ const Message: React.FC<MessageProps> = ({
   }
 
   function renderAudioRecordingMessage() {
+    console.log('Recorded Audio Message: ', message);
+    // Create the AudioTrack object from the media object
+    const audioTrack: AudioTrack = {
+      id: media?.id || 0, // Use media.id or a default value
+      src: media?.url || '', // Use media.url or an empty string
+    };
+
+    console.log('Audio Track: ', audioTrack);
     return (
       <div className="bg-[#242424] h-[56px] w-[234px] border border-[#3D3D3D] box-border rounded-full mt-2">
         <div className="mx-3 h-full flex justify-between items-center">
         <PlayPauseButton isPlaying={isPlaying} onClick={togglePlayPause}/>
-        <div>Waveform</div>
+        <div className="h-[32px]">
+          <Waveform 
+          track={audioTrack}
+          trackDuration={media?.duration}
+          columns={60}
+          hover_cursor={true}
+          options={{
+            colors: {
+              default: 'white'
+            },
+            activeHeight: '0%',
+            radius: '5px',
+          }}
+          />
+        </div>
         <div className="items-end">
         <span className="text-[14px] text-[#848484] min-w-[40px] flex-shrink-0">
           {formatTime(media?.duration)}
