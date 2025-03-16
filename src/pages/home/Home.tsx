@@ -91,29 +91,31 @@ const Home = () => {
   }, [isFilterApplied]);
 
   return (
-    <Theme>
-      <SearchHeader />
-      <Filters {...{ filterValue, setFilterValue }} />
-      {filterValue !== "" || isFilterApplied !== "" ? (
-        <FilterResultComponent 
-          filtersData={filtersData} 
-          setFilteredData={setFiltersData}
-          initialData={filtersData}
-          primaryUserRole={filterValue}
-        />
-      ) : (
-        Object.entries(usersByTag).map(([key, value]) => (
-          <ScrollableComponent
-            key={key}
-            primaryUserRole={key}
-            dataArr={value}
-            title={userTagsObj[key]}
-            setUsersByTag={setUsersByTag}
-            setIsFilterApplied={setIsFilterApplied}
+    <div className="flex">
+      <Theme>
+        <SearchHeader />
+        <Filters {...{ filterValue, setFilterValue }} />
+        {filterValue !== "" || isFilterApplied !== "" ? (
+          <FilterResultComponent
+            filtersData={filtersData}
+            setFilteredData={setFiltersData}
+            initialData={filtersData}
+            primaryUserRole={filterValue}
           />
-        ))
-      )}
-    </Theme>
+        ) : (
+          Object.entries(usersByTag).map(([key, value]) => (
+            <ScrollableComponent
+              key={key}
+              primaryUserRole={key}
+              dataArr={value}
+              title={userTagsObj[key]}
+              setUsersByTag={setUsersByTag}
+              setIsFilterApplied={setIsFilterApplied}
+            />
+          ))
+        )}
+      </Theme>
+    </div>
   );
 };
 
