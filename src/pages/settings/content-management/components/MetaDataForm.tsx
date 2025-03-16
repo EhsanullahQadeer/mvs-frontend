@@ -33,10 +33,7 @@ const validationSchema = Yup.object().shape({
   songName: Yup.string().required('Sample name is required'),
 });
 
-const MetaDataForm = (
-  props: Props
-) => {
-
+const MetaDataForm = (props: Props) => {
   const {
     fileRedisKey,
     handleCancel,
@@ -61,7 +58,6 @@ const MetaDataForm = (
     mime_type,
     length,
   } = sampleToEdit || {};
-
 
   const [selectedComposer, setSelectedComposer] = useState(() => collaborators);
   const [composerToDelete, setComposerToDelete] = useState(null);
@@ -106,12 +102,12 @@ const MetaDataForm = (
         const existingComposer = prevComposerData?.find(
           (existing) => existing.user.id === composer.user.id
         );
-        
-        const initialCollaborator = collaborators?.find( 
-          collab => collab.id === composer.id
+
+        const initialCollaborator = collaborators?.find(
+          (collab) => collab.id === composer.id
         );
 
-        const percentValue = initialCollaborator?.contribution 
+        const percentValue = initialCollaborator?.contribution
           ? initialCollaborator.contribution
           : parseFloat((100 / selectedComposer?.length).toFixed(2));
 
@@ -123,7 +119,7 @@ const MetaDataForm = (
             isEditable: existingComposer.isEditable || false,
           };
         }
-        
+
         return {
           ...composer,
           roles: [],
@@ -149,9 +145,9 @@ const MetaDataForm = (
       } = values;
 
       const formattedTags = songTags
-        .split(' ')
-        .filter(tag => tag.trim())
-        .map(tag => tag.startsWith('#') ? tag.slice(1) : tag)
+        .split(" ")
+        .filter((tag) => tag.trim())
+        .map((tag) => (tag.startsWith("#") ? tag.slice(1) : tag))
         .filter((tag, index, self) => self.indexOf(tag) === index);
 
       const percentSum = composerData.reduce((sum, composer) => {
@@ -196,32 +192,32 @@ const MetaDataForm = (
         }),
       };
 
-      console.log('Attempting save with:', { 
-        isEditSample, 
-        editFileId: sampleToEdit?.id, 
-        fileRedisKey, 
-        body 
+      console.log("Attempting save with:", {
+        isEditSample,
+        editFileId: sampleToEdit?.id,
+        fileRedisKey,
+        body,
       });
-      
+
       if (fileRedisKey) {
         const response = await uploadedFileMetadata(fileRedisKey, body);
-        console.log('Upload response:', response);
+        console.log("Upload response:", response);
         setUpdateData && setUpdateData(Date.now());
         handleCancel?.();
         return;
-      } 
-      
+      }
+
       if (isEditSample && sampleToEdit?.id) {
         const response = await updateFileMetadata(sampleToEdit.id, body);
-        console.log('Update response:', response);
+        console.log("Update response:", response);
         setUpdateData && setUpdateData(Date.now());
         handleClose?.();
         return;
       }
 
-      console.error('No valid file key or sample ID for update');
+      console.error("No valid file key or sample ID for update");
     } catch (error) {
-      console.error('Save error:', error);
+      console.error("Save error:", error);
     } finally {
       setIsSaving(false);
     }
@@ -262,7 +258,7 @@ const MetaDataForm = (
         }}
       />
 
-      <Formik 
+      <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={(values) => handleSubmit(values)}
@@ -328,7 +324,9 @@ const MetaDataForm = (
               </div>
 
               {errors.songType && touched.songType && (
-                <div className="text-red-500 text-xs mt-1">{errors.songType}</div>
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.songType}
+                </div>
               )}
             </>
           </Form>

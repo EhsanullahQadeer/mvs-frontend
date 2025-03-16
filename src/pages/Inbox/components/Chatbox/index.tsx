@@ -26,7 +26,12 @@ import { useNotification } from "services/WebSocket/useNotification.hook";
 import messageSound from "../../../../assets/audio/message-notification.mp3";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
 
-const Chatbox = ({ onClose }: { onClose: () => void }) => {
+interface ChatboxProps {
+  onClose: () => void;
+  isPublicProfile?: boolean;
+}
+
+const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
   const {
     getConversationInfo,
     recipient,
@@ -180,7 +185,9 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
     console.log("7. Messages:", messages);
 
     playSound();
-    refreshUnreadCount();
+    if (!isPublicProfile) {
+      refreshUnreadCount();
+    }
   });
 
   useEffect(() => {
@@ -227,9 +234,11 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className="flex flex-col h-full w-full border-l border-eerieBlack bg-richBlack relative">
       <div className="flex flex-col h-full">
+        {!isPublicProfile && (
         <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
 
-          <div className="flex text-white items-center p-2 border-b border-[#1F1F1F]">
+          <div className={`flex text-white items-center p-2
+               ${!isPublicProfile ? 'border-b border-[#1F1F1F]' : ''}`}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={onClose} className="cursor-pointer transform scale-x-[-1]">
               <path d="M18 7L13 12L18 17M11 7L6 12L11 17" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -271,6 +280,7 @@ const Chatbox = ({ onClose }: { onClose: () => void }) => {
             <ChatboxTabs tab={activeTab} setter={setActiveTab} />
           </div>
         </div>
+        )}
         <div className="flex flex-col flex-1 relative overflow-hidden">
           {messages === null ? (
             <div className="absolute top-0 left-0 bottom-0 right-0 w-full h-full flex justify-center items-center">

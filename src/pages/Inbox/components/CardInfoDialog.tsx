@@ -10,6 +10,7 @@ interface Props {
   openCardInfo: boolean;
   setOpenCardInfo: React.Dispatch<React.SetStateAction<boolean>>;
   formData: any;
+  handleBack: (values: any) => void;
   setFormData: (values: any) => void;
 }
 
@@ -28,7 +29,7 @@ const PaymentSchema = Yup.object().shape({
 });
 
 const CardInfoDialog = (props: Props) => {
-  const { openCardInfo, setOpenCardInfo, formData, setFormData } = props;
+  const { openCardInfo, setOpenCardInfo, formData, setFormData ,handleBack} = props;
 
   const handleClose = () => {
     setOpenCardInfo(false);
@@ -89,7 +90,7 @@ const CardInfoDialog = (props: Props) => {
                     </div>
                   </div>
                   <div
-                    onClick={handleClose}
+                    onClick={handleBack}
                     className="pb-3 pt-2 text-softGray w-max cursor-pointer"
                   >
                     <IoArrowBack className="w-6 h-6" />

@@ -176,6 +176,16 @@ export async function uploadMedia(payload: UploadMediaPayload) {
   });
 }
 
+export async function getCheckUserHasSampleType(sampleTypes: string, user_id: number) {
+  return axiosInstance.get('/sounds/check-user-has-sample-types', {
+    params: { 
+      userId: user_id,
+      types: sampleTypes
+      
+    }
+  });
+}
+
 export async function handleCollaborationRequest(sampleId: number, action: boolean) {
   return axiosInstance.post(`/sounds/collaboration/accept`, {
     sampleId,
