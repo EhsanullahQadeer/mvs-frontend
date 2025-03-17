@@ -22,7 +22,6 @@ const ContentManagement = (props: Props) => {
 
   const handleCancel = async () => {
     const response = await cancelUploadAPI(fileRedisKey);
-    console.log("response", response);
     setUploadProgress(0);
     setUploadingFile(null);
     setFileRedisKey("");
