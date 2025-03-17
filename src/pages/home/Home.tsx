@@ -93,7 +93,9 @@ const Home = () => {
   return (
     <div className="flex">
       <Theme>
-        <SearchHeader />
+        <div>
+          <SearchHeader />
+        </div>        
         <Filters {...{ filterValue, setFilterValue }} />
         {filterValue !== "" || isFilterApplied !== "" ? (
           <FilterResultComponent
