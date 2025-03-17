@@ -26,14 +26,13 @@ import {
 import { getCheckUserHasSampleType } from "api/sounds";
 import { CircularProgress } from "@mui/material";
 import ProfileAboutSection from "./components/ProfileAboutSection";
-import searchIcon from "../../assets/icons/searchIcon.svg";
-import SamplesContainer from "components/SampleContainer/player-container";
 import { MessageContextProvider } from "./messageContextProvider";
 import UploadFileSection from "./components/UploadFileSection";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
 import SampleUploadModel from "./components/SampleUploadModel";
-
+import ProfileLibrary from "./components/ProfileLibrary";
+import ProfileRightSection from "../publicProfile/components/ProfileRightSection";
 // import { getUserSamplesAPI } from "api/sounds";
 
 const ArtistProfile = () => {
@@ -94,7 +93,7 @@ const ArtistProfile = () => {
 
   const [creditsData, setCreditsData] = useState([]);
 
-  
+
 
   const getArtistData = useCallback(async () => {
     try {
@@ -160,91 +159,47 @@ const ArtistProfile = () => {
 
   return (
     <Theme>
-      {!isLoading ? (
-        <>
-          <div className="relative flex overflow-hidden">
-            <section className="flex-1 min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">
-              {isLoginUser && <UploadFileSection {...{ user }} />}
+      {!isLoading ? (<>
+        <div className="relative flex overflow-hidden">
 
-              <div className={`text-coolGray flex flex-col py-3 mb-2 px-4 `}>
-                <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
-                <div className="flex justify-between items-center">
-                  <div className="flex">
-                    {tabs.map((tab) => {
-                      if (!hasSampleType[tab.value]) return null;
+        {isLoginUser?
+          <ProfileRightSection
+            artistData={artistData}
+            currentUserInfo={user}
+            hasSampleType={hasSampleType}
+            selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
+            isConnect={isConnect}
+            isLoginUser={isLoginUser}
+            user={user}
+            tabs={tabs}
+            chatOpen={chatOpen}
+            setChatOpen={setChatOpen}
+          />
+        : 
+        <ProfileLibrary
+            artistData={artistData}
+            hasSampleType={hasSampleType}
+            selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
+            isConnect={isConnect}
+            isLoginUser={isLoginUser}
+            user={user}
+            tabs={tabs}
+            chatOpen={chatOpen}
+            setChatOpen={setChatOpen}
+          />
+        }
 
-                      // Get array of visible tabs
-                      const visibleTabs = tabs.filter(t => hasSampleType[t.value]);
-                      const isFirst = visibleTabs[0].value === tab.value;
-                      const isLast = visibleTabs[visibleTabs.length - 1].value === tab.value;
-
-                      return (
-                        <button
-                          key={tab.value}
-                          onClick={() => setSelectedTab(tab.value)}
-                          className={`py-2 px-3 text-sm flex items-center justify-center border border-eclipseGray ${
-                            selectedTab === tab.value
-                              ? "text-softGray bg-eerieBlack"
-                              : "text-charcoalGray bg-darkGray"
-                          } ${isFirst && "rounded-l-md border-r-0"} ${
-                            isLast && "rounded-r-md border-l-0"
-                          } transition duration-300`}
-                        >
-                          {tab.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <div className="flex items-center pl-4 max-w-full rounded-lg bg-[#1c1c1c] min-h-[33px] w-[149px]">
-                    <div className="flex flex-1 shrink gap-2 items-center self-stretch my-auto w-full basis-0">
-                      <img
-                        loading="lazy"
-                        src={searchIcon}
-                        className="object-contain shrink-0 self-stretch my-auto w-4 aspect-square"
-                        alt="search-icon"
-                      />
-                      <div className="flex-1 shrink gap-2.5 self-stretch my-auto">
-                        <input
-                          style={{ boxShadow: "none" }}
-                          type="text"
-                          className="rounded-full outline-none bg-transparent border-none w-full py-2.5 pl-0 text-xs font-normal text-white"
-                          placeholder="search anything..."
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="relative flex-1 flex flex-col"
-                style={{ filter: !isConnect ? "blur(5px)" : "none" }}
-              >
-                {!isConnect && (
-                  <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
-                )}
-
-                {/* <MusicTable /> */}
-                <div className="relative">
-                  <SamplesContainer
-                    user_id={artistData?.id}
-                    selectedTab={selectedTab}
-                    chatOpen={chatOpen}
-                  />
-                </div>
-              </div>
-            </section>
-
-            <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
-              <MessageContextProvider>
-                <ProfileAboutSection
-                  {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
-                />
-              </MessageContextProvider>
-            </section>
-          </div>{" "}
-        </>
+          <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
+            <MessageContextProvider>
+              <ProfileAboutSection
+                {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
+              />
+            </MessageContextProvider>
+          </section>
+        </div>{" "}
+      </>
       ) : (
         <>
           <div className="absolute top-0 left-0 z-[9999] bg-black opacity-40 w-full h-full"></div>

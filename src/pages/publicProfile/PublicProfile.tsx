@@ -101,7 +101,7 @@ const PublicProfile = () => {
               <ProfileInfo {...{ artistData, creditsData }} />
             </div>
             <div className="flex-[75%] flex">
-              <ProfileRightSection {...{ artistData, currentUserInfo }} />
+              <ProfileRightSection {...{ artistData, currentUserInfo, isLoginUser: false, user: null, tabs: [], hasSampleType: {}, selectedTab: "", setSelectedTab: () => {}, isConnect: false, chatOpen: false, setChatOpen: () => {} }} />
             </div>
           </div>
         </>
