@@ -34,8 +34,8 @@ const ProfileRightSection = (props: IProps) => {
       component: <FanWall {...{ artistData, currentUserInfo }} />,
     },
     {
-      label: "Library",
-      component: <div>Library Content</div>,
+      label: "Gallery",
+      component: <div>Gallery Content</div>,
     },
   ];
 
