@@ -17,16 +17,17 @@ interface IProps {
   isConnect: boolean,
   chatOpen: boolean,
   setChatOpen: (open: boolean) => void,
+  isPublicProfile: boolean,
 }
 
 const ProfileRightSection = (props: IProps) => {
-  const { artistData, currentUserInfo, isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, chatOpen, setChatOpen } = props;
+  const { artistData, currentUserInfo, isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, chatOpen, setChatOpen, isPublicProfile } = props;
   const [activeTab, setActiveTab] = useState("Posts");
 
   const publicTabs = [
     {
       label: "Posts",
-      component: <Posts />,
+      component: <Posts isPublicProfile={isPublicProfile} />,
     },
     {
       label: "Fanwall",
@@ -45,7 +46,7 @@ const ProfileRightSection = (props: IProps) => {
     },
     {
       label: "Posts",
-      component: <Posts />
+      component: <Posts isPublicProfile={isPublicProfile} />
     },
     {
       label: "Gallery",

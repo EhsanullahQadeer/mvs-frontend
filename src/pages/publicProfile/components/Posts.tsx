@@ -52,7 +52,7 @@ const artist = {
 const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
-const Posts = () => {
+const Posts = ({ isPublicProfile }: { isPublicProfile: boolean }) => {
   const [artistData, setArtistData] = useState<any>(artist);
   const [uploadingFile, setUploadingFile] = useState<any>(null);
   const [mediaDetails, setMediaDetails] = useState<any>(null);
@@ -119,10 +119,11 @@ const Posts = () => {
             <EachPost key={index} {...post} />
           ))}
         </div>
-        <div className="flex-[33%] flex flex-col">
-          <div className="p-5 border border-eclipseGray rounded-t-xl border-b-0">
-            <div className="flex gap-2.5 text-lg font-semibold text-white">
-              {uploadingFile ? (
+        {isPublicProfile && (
+          <div className="flex-[33%] flex flex-col">
+            <div className="p-5 border border-eclipseGray rounded-t-xl border-b-0">
+              <div className="flex gap-2.5 text-lg font-semibold text-white">
+                {uploadingFile ? (
                 <p>Demo Preview</p>
               ) : (
                 <>
@@ -223,7 +224,7 @@ const Posts = () => {
           <div className="flex-1">
             <MessagingSection {...{ artistData }} />
           </div>
-        </div>
+        </div>)}
       </div>
     </>
   );
