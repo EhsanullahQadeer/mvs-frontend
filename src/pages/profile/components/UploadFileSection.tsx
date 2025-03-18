@@ -77,7 +77,6 @@ const UploadFileSection = (props) => {
 
   return (
     <div>
-      (
       <div>
         <div className="px-3">
           <DropFilesSection
@@ -105,7 +104,6 @@ const UploadFileSection = (props) => {
           )}
         </div>
       </div>
-      )
     </div>
   );
 };

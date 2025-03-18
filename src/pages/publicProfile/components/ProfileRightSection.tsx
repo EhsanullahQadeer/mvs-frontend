@@ -22,7 +22,7 @@ interface IProps {
 
 const ProfileRightSection = (props: IProps) => {
   const { artistData, currentUserInfo, isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, chatOpen, setChatOpen, isPublicProfile } = props;
-  const [activeTab, setActiveTab] = useState("Posts");
+  const [activeTab, setActiveTab] = useState(isPublicProfile ? "Posts" : "Library");
 
   const publicTabs = [
     {
@@ -51,6 +51,10 @@ const ProfileRightSection = (props: IProps) => {
     {
       label: "Gallery",
       component: <div>Gallery Content</div>
+    },
+    {
+      label: "Fanwall",
+      component: <FanWall {...{ artistData, currentUserInfo }} />
     }
   ];
 
@@ -78,7 +82,6 @@ const ProfileRightSection = (props: IProps) => {
       <div className="flex-1 py-5 flex flex-col overflow-hidden">
         <div className="flex-1 px-5 overflow-y-auto custom-dropdown">
           {topTabs.find((tab) => tab.label === activeTab)?.component}
-          {activeTab === "Library" && <div>Library Content</div>}
         </div>
       </div>
     </div>
