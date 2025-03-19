@@ -5,9 +5,10 @@ import { createFanwallPost, getFanwallPosts } from "api/fanwall";
 import { CircularProgress } from "@mui/material";
 import { IArtistProfileData, ICurrentUser } from "./types";
 import UnlockContentModel from "./UnlockContentModel";
+import { IUserData } from "pages/profile/components/types";
 
 interface IProps {
-  artistData: IArtistProfileData | null;
+  artistData: IArtistProfileData | IUserData | null;
   currentUserInfo: ICurrentUser | null;
 }
 
