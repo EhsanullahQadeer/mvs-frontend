@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
 import { formatTime } from "utils/dateUtils";
-import { useMessenger } from "api/messenger/context";
 import VolumeIcon from '../../../../../assets/img/volume.svg';
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
 import VolumeMuteIcon from '../../../../../assets/img/volume-x.svg';
@@ -32,20 +31,12 @@ const Message: React.FC<MessageProps> = ({
     sender,
     media,
     transaction,
-    reactions
   } = message;
-
-  const {
-    addReactionMessage,
-    deleteReactionMessage,
-  } = useMessenger();
   
   const { 
     handleLoadThread,
     activeConversation,
-    isThread,
     setIsThread,
-    refreshMessages,
     markMessageAsRead
   } = useChatbox();
   
@@ -89,10 +80,6 @@ const Message: React.FC<MessageProps> = ({
   
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [duration, setDuration] = useState<number>(0);
-  const [currentTime, setCurrentTime] = useState<number>(0);
   const [isMuted, setIsMuted] = useState(false);
   const audioUrl = media?.url || null;
 
@@ -110,13 +97,13 @@ const Message: React.FC<MessageProps> = ({
       <>
         <div className="bg-gunMetal border border-eerieBlack rounded-lg p-3.5 flex flex-col gap-3 w-[294px]">
             <div
-              className={`overflow-hidden rounded-lg  flex flex-col gap-2.5 ${message?.threadStats?.replyCount == 1 
+              className={`overflow-hidden rounded-lg  flex flex-col gap-2.5 ${message?.threadStats?.replyCount === 1 
                   ? " border border-[#57AEFF] bg-[#002C55] p-3"
                   : ""
                 }`}
             >
               <div
-                className={`flex flex-row w-full text-coolGray border rounded-lg p-3 ${message?.threadStats?.replyCount == 1
+                className={`flex flex-row w-full text-coolGray border rounded-lg p-3 ${message?.threadStats?.replyCount === 1
                     ? "border border-[#57AEFF] bg-[#002C55]"
                     : "border-charcoalGray text-coolGray"
                   }`}
@@ -236,21 +223,12 @@ const Message: React.FC<MessageProps> = ({
 
     wavesurfer.current = ws;
 
-    ws.on('ready', () => {
-      setDuration(ws.getDuration() || 0);
-    });
-
-    ws.on('audioprocess', (time: number) => {
-      setCurrentTime(time);
-    });
-
     ws.on('pause', () => {
       setIsPlaying(false);
     });
 
     ws.on('finish', () => {
       setIsPlaying(false);
-      setCurrentTime(0);
     });
 
     ws.on('error', (err) => {
@@ -289,33 +267,33 @@ const Message: React.FC<MessageProps> = ({
 
   function renderAudioRecordingMessage() {
     return (
-      <div className="bg-[#242424] h-[56px] w-[234px] border border-[#3D3D3D] box-border rounded-full mt-2">
+      <div className="bg-[#242424] h-[56px] w-[234px] border border-[#3D3D3D] box-border rounded-full">
         <div className="mx-3 h-full flex justify-between items-center">
-        <PlayPauseButton isPlaying={isPlaying} onClick={handlePlayPause}/>
-        <div className="flex-1 mx-4">
-        <div 
-          ref={waveformRef} 
-          className="waveform w-full max-w-full overflow-hidden"
-          style={{ maxWidth: '100%' }}
-        />
+          <PlayPauseButton isPlaying={isPlaying} onClick={handlePlayPause}/>
+          <div className="flex-1 mx-4">
+            <div 
+              ref={waveformRef} 
+              className="waveform w-full max-w-full overflow-hidden"
+              style={{ maxWidth: '100%' }}
+            />
+          </div>
+          <div className="items-end">
+            <span className="text-[14px] text-[#848484] min-w-[40px] flex-shrink-0 mr-3">
+              {formatTime(media?.duration)}
+            </span>
+          </div>
+          <button 
+            onClick={handleMuteToggle}
+            className="w-6 h-6 flex items-center justify-center flex-shrink-0 mr-2 hover:opacity-80"
+          >
+            <img 
+              src={isMuted ? VolumeMuteIcon : VolumeIcon} 
+              alt={isMuted ? "Unmute" : "Mute"} 
+              className="w-6 h-6"
+            />
+          </button>
+        </div>
       </div>
-        <div className="items-end">
-        <span className="text-[14px] text-[#848484] min-w-[40px] flex-shrink-0 mr-3">
-          {formatTime(media?.duration)}
-        </span>
-        </div>
-        <button 
-          onClick={handleMuteToggle}
-          className="w-6 h-6 flex items-center justify-center flex-shrink-0 mr-2 hover:opacity-80"
-        >
-          <img 
-            src={isMuted ? VolumeMuteIcon : VolumeIcon} 
-            alt={isMuted ? "Unmute" : "Mute"} 
-            className="w-6 h-6"
-          />
-        </button>
-        </div>
-    </div>
     )
   }
   
@@ -395,18 +373,9 @@ const Message: React.FC<MessageProps> = ({
           ) : media?.type === MEDIA_TYPE.RECORDING ? (
             <div
             id="2"
-            className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-2"
+            className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-3"
             >
               {renderAudioRecordingMessage()}
-              {/* <audio
-                controls
-                className="h-10 rounded-full bg-[#242424] border border-[#3D3D3D] [&::-webkit-media-controls-panel]{background-color:#242424} [&::-webkit-media-controls-current-time-display]:text-[#9EFF00] [&::-webkit-media-controls-time-remaining-display]:text-[#9EFF00] [&::-webkit-media-controls-timeline]:text-[#9EFF00] [&::-webkit-media-controls-play-button]:text-[#9EFF00] [&::-webkit-media-controls-timeline]{accent-color:#9EFF00}"
-                src={media?.url}
-                preload="metadata"
-              >
-                <source src={media?.url} type={media?.mime_type || 'audio/webm'} />
-                Your browser does not support the audio element.
-              </audio> */}
             </div>
           ) : null}
           <div className={`text-sm text-[#CACCCD] break-all whitespace-normal overflow-hidden max-w-full w-full ${
