@@ -79,15 +79,17 @@ export function SearchHeader() {
   };
 
   return (
-    <div className="search-header-wrap w-full relative">
-      <img src={banner} alt="banner" className="h-full w-full banner" />
-      <div className="serach-wrap  absolute left-1/2 top-0  transform -translate-x-1/2">
+    <div 
+        className="search-header-wrap relative flex justify-center items-center" 
+        style={{backgroundImage: `url(${banner})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
+    >
+      <div className="search-wrap w-[45em]">
         <div className="flex h-full search-box gap-1">
           <div className="flex items-end ">
             <img className="wing-img h-auto" src={leftWing} alt="left-wing" />
           </div>
           <div className="flex-1 flex flex-col  justify-end pb-3 gap-5">
-            <div className="flex justify-center">
+            <div id="title-and-description" className="flex justify-center">
               <div className="relative">
                 <img
                   className="absolute left-[-22px] top-1/2 transform -translate-y-1/2"
@@ -111,7 +113,7 @@ export function SearchHeader() {
                 </div>
               </div>
             </div>
-            <div className="relative">
+            <div id="search-input" className="relative">
               <Autocomplete
                 inputValue={searchInput}
                 freeSolo
