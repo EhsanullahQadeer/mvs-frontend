@@ -44,14 +44,14 @@ const ProfileRightSection = (props: IProps) => {
       label: "Library",
       component: <ProfileLibrary {...{ artistData, currentUserInfo, isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, chatOpen, setChatOpen }} />
     },
-    {
-      label: "Posts",
-      component: <Posts isPublicProfile={isPublicProfile} />
-    },
-    {
-      label: "Gallery",
-      component: <div>Gallery Content</div>
-    },
+    // {
+    //   label: "Posts",
+    //   component: <Posts isPublicProfile={isPublicProfile} />
+    // },
+    // {
+    //   label: "Gallery",
+    //   component: <div>Gallery Content</div>
+    // },
     {
       label: "Fanwall",
       component: <FanWall {...{ artistData, currentUserInfo }} />
