@@ -100,7 +100,7 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = React.memo(({ au
 
   return (
     <div 
-      className="flex items-center w-full bg-[#1C1C1C] rounded-full px-3 py-3 relative group border border-[#3D3D3D]"
+      className="flex items-center w-[500px] bg-[#1C1C1C] rounded-full px-3 py-3 relative group border border-[#3D3D3D]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

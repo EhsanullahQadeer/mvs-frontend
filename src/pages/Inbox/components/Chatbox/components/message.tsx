@@ -1,17 +1,18 @@
 import moment from "moment";
+import WaveSurfer from "wavesurfer.js";
 import { useChatbox } from "../context";
-import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
 import { formatTime } from "utils/dateUtils";
 import { useMessenger } from "api/messenger/context";
-import MessageReactions from "../../MessageReactions";
+import VolumeIcon from '../../../../../assets/img/volume.svg';
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
+import VolumeMuteIcon from '../../../../../assets/img/volume-x.svg';
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import PlayPauseButton from "components/ui/Header/atoms/chatboxPlayPauseButton";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
-import { AudioTrack, Waveform } from "components/SampleContainer/components/waveform";
 
 interface MessageProps {
   message: IMessage;
@@ -85,11 +86,15 @@ const Message: React.FC<MessageProps> = ({
   const prevDateFormatted = prevMessageDate ? moment(prevMessageDate).format("YYYY-MM-DD") : null;
   // Only show date if it's the first message or if date is different from previous message
   const shouldShowDate = index === 0 || currentDateFormatted !== prevDateFormatted;
-
-  // Function to toggle the isPlaying state
-  const togglePlayPause = () => {
-    setIsPlaying(prev => !prev);
-  };
+  
+  const waveformRef = useRef<HTMLDivElement>(null);
+  const wavesurfer = useRef<WaveSurfer | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [duration, setDuration] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioUrl = media?.url || null;
 
   function renderTipMessage() {
     return <TipMessage amount={message?.transaction?.amount} message={message?.content} />
@@ -208,42 +213,107 @@ const Message: React.FC<MessageProps> = ({
     )
   }
 
-  function renderAudioRecordingMessage() {
-    console.log('Recorded Audio Message: ', message);
-    // Create the AudioTrack object from the media object
-    const audioTrack: AudioTrack = {
-      id: media?.id || 0, // Use media.id or a default value
-      src: media?.url || '', // Use media.url or an empty string
-    };
+  useEffect(() => {
+    if (!waveformRef.current || !audioUrl) return;
 
-    console.log('Audio Track: ', audioTrack);
+    const ws = WaveSurfer.create({
+      container: waveformRef.current,
+      waveColor: '#B2B2B2',
+      progressColor: '#9EFF00',
+      cursorColor: '#848484',
+      barWidth: 2,
+      barRadius: 1,
+      cursorWidth: 0,
+      height: 16,
+      barGap: 4,
+      normalize: true,
+      fillParent: true,
+      fetchParams: {
+        cache: 'default',
+        mode: 'cors',
+      }
+    });
+
+    wavesurfer.current = ws;
+
+    ws.on('ready', () => {
+      setDuration(ws.getDuration() || 0);
+    });
+
+    ws.on('audioprocess', (time: number) => {
+      setCurrentTime(time);
+    });
+
+    ws.on('pause', () => {
+      setIsPlaying(false);
+    });
+
+    ws.on('finish', () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    });
+
+    ws.on('error', (err) => {
+      console.error('WaveSurfer error:', err);
+    });
+
+    ws.load(audioUrl);
+
+    return () => {
+      if (wavesurfer.current) {
+        wavesurfer.current.destroy();
+        wavesurfer.current = null;
+      }
+    };
+  }, [audioUrl]);
+
+  const handlePlayPause = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (wavesurfer.current) {
+      if (isPlaying) {
+        wavesurfer.current.pause();
+      } else {
+        wavesurfer.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  }, [isPlaying]);
+
+  const handleMuteToggle = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (wavesurfer.current) {
+      wavesurfer.current.setMuted(!isMuted);
+      setIsMuted(!isMuted);
+    }
+  }, [isMuted]);
+
+  function renderAudioRecordingMessage() {
     return (
       <div className="bg-[#242424] h-[56px] w-[234px] border border-[#3D3D3D] box-border rounded-full mt-2">
         <div className="mx-3 h-full flex justify-between items-center">
-        <PlayPauseButton isPlaying={isPlaying} onClick={togglePlayPause}/>
-        <div className="h-[32px]">
-          <Waveform 
-          track={audioTrack}
-          trackDuration={media?.duration}
-          columns={60}
-          hover_cursor={true}
-          options={{
-            colors: {
-              default: 'white'
-            },
-            activeHeight: '0%',
-            radius: '5px',
-          }}
-          />
-        </div>
+        <PlayPauseButton isPlaying={isPlaying} onClick={handlePlayPause}/>
+        <div className="flex-1 mx-4">
+        <div 
+          ref={waveformRef} 
+          className="waveform w-full max-w-full overflow-hidden"
+          style={{ maxWidth: '100%' }}
+        />
+      </div>
         <div className="items-end">
-        <span className="text-[14px] text-[#848484] min-w-[40px] flex-shrink-0">
+        <span className="text-[14px] text-[#848484] min-w-[40px] flex-shrink-0 mr-3">
           {formatTime(media?.duration)}
         </span>
         </div>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15.54 8.45972C16.4774 9.39736 17.004 10.6689 17.004 11.9947C17.004 13.3205 16.4774 14.5921 15.54 15.5297M19.0701 4.92969C20.9448 6.80496 21.9979 9.34805 21.9979 11.9997C21.9979 14.6513 20.9448 17.1944 19.0701 19.0697M11 4.99976L6 8.99976H2V14.9998H6L11 18.9998V4.99976Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <button 
+          onClick={handleMuteToggle}
+          className="w-6 h-6 flex items-center justify-center flex-shrink-0 mr-2 hover:opacity-80"
+        >
+          <img 
+            src={isMuted ? VolumeMuteIcon : VolumeIcon} 
+            alt={isMuted ? "Unmute" : "Mute"} 
+            className="w-6 h-6"
+          />
+        </button>
         </div>
     </div>
     )
