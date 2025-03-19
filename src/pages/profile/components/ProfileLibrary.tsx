@@ -49,25 +49,6 @@ const ProfileLibrary = (props: Props) => {
               );
             })}
           </div>
-
-          <div className="flex items-center pl-4 max-w-full rounded-lg bg-[#1c1c1c] min-h-[33px] w-[149px]">
-            <div className="flex flex-1 shrink gap-2 items-center self-stretch my-auto w-full basis-0">
-              <img
-                loading="lazy"
-                src={searchIcon}
-                className="object-contain shrink-0 self-stretch my-auto w-4 aspect-square"
-                alt="search-icon"
-              />
-              <div className="flex-1 shrink gap-2.5 self-stretch my-auto">
-                <input
-                  style={{ boxShadow: "none" }}
-                  type="text"
-                  className="rounded-full outline-none bg-transparent border-none w-full py-2.5 pl-0 text-xs font-normal text-white"
-                  placeholder="search anything..."
-                />
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
