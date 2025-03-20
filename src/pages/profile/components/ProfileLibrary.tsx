@@ -3,6 +3,8 @@ import UploadFileSection from "./UploadFileSection";
 import searchIcon from "assets/icons/searchIcon.svg";
 import SamplesContainer from "components/SampleContainer/player-container";
 import ProfileRightSection from "../../publicProfile/components/ProfileRightSection";
+import LockedContent from "./LockedContent";
+
 type Props = {
   isLoginUser: boolean,
   user: any,
@@ -53,23 +55,30 @@ const ProfileLibrary = (props: Props) => {
         </div>
       </div>
 
-      <div
-        className="relative flex-1 flex flex-col"
-        style={{ filter: !isConnect ? "blur(5px)" : "none" }}
-      >
-        {!isConnect && (
-          <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
-        )}
+      <div className="relative flex-1 flex flex-col">
+        <div
+          className="relative flex-1 flex flex-col"
+          style={{ filter: !isConnect ? "blur(3px)" : "none" }}
+        >
 
-        {/* <MusicTable /> */}
-        <div className="relative">
-          <SamplesContainer
-            user_id={artistData?.id}
-            selectedTab={selectedTab}
-            chatOpen={chatOpen}
-            isConnect={isConnect}
-          />
+          {!isConnect && (
+            <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
+          )}
+
+          {/* <MusicTable /> */}
+          <div className="relative">
+            <SamplesContainer
+              user_id={artistData?.id}
+              selectedTab={selectedTab}
+              chatOpen={chatOpen}
+              isConnect={isConnect}
+            />
+          </div>
         </div>
+
+        {!isConnect && (
+          <LockedContent />
+        )}
       </div>
     </section>
   );
