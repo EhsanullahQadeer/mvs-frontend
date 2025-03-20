@@ -86,7 +86,6 @@ const Message: React.FC<MessageProps> = ({
 
   // Progress Bar Vars
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const [playingAudio, setPlayingAudio] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [progress, setProgress] = useState<number>(0);
 
@@ -252,6 +251,13 @@ const Message: React.FC<MessageProps> = ({
     };
   }, [audioUrl]);
 
+  useEffect(() => {
+    // Preload or set up audioRef and progressBarRef if necessary
+    // For example, you might want to load the audio source here
+    // audioRef.current = new Audio('your-audio-source.mp3');
+    audioRef.current = new Audio(audioUrl);
+  }, []);
+
   const handlePlayPause = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
     if (wavesurfer.current) {
@@ -265,31 +271,32 @@ const Message: React.FC<MessageProps> = ({
   }, [isPlaying]);
 
   const handleDemoPlayPause = useCallback((event: React.MouseEvent) => {
-    if (playingAudio === index) {
+    console.log('Current Progress: ', progress);
+    if (isPlaying) {
+      console.log('Pausing...');
+      setIsPlaying(false);
       audioRef.current?.pause();
-      setPlayingAudio(null);
     } else {
-      console.log('Current Progress: ', progress);
-      audioRef.current?.pause();
-      audioRef.current = new Audio(media?.url);
+      console.log('Playing...');
+      setIsPlaying(true);
+      //audioRef.current = new Audio(media?.url);
       audioRef.current.play();
-      setPlayingAudio(index);
-  
+
       audioRef.current.ontimeupdate = () => {
         if (audioRef.current) {
-          console.log('audioRef currentTime: ', audioRef.current.currentTime);
-          const percentage = (audioRef.current.currentTime / media?.duration) * 100;
-          console.log('Percentage: ', percentage);
+          //console.log('audioRef currentTime: ', audioRef.current.currentTime);
+          const percentage = (audioRef.current.currentTime / audioRef.current.duration) * 100;
+          //console.log('Percentage: ', percentage);
           setProgress(percentage);
         }
       };
-  
+
       audioRef.current.onended = () => {
-        setPlayingAudio(null);
+        setIsPlaying(false);
         setProgress(0);
       };
     }
-  }, [playingAudio, progress]); // Add dependencies as needed
+  }, [progress]); // Add dependencies as needed
   
 
   const handleMuteToggle = useCallback((event: React.MouseEvent) => {
@@ -333,12 +340,14 @@ const Message: React.FC<MessageProps> = ({
   }
 
   const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    console.log('Before return');
     if (!audioRef.current || !progressBarRef.current) return;
+    console.log('After return');
 
     const rect = progressBarRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const percentage = (x / rect.width) * 100;
-    const time = (percentage / 100) * media?.duration;
+    const time = (percentage / 100) * audioRef.current.duration;
     
     audioRef.current.currentTime = time;
     console.log('Setting Progress: ', percentage);
