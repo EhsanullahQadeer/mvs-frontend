@@ -271,22 +271,16 @@ const Message: React.FC<MessageProps> = ({
   }, [isPlaying]);
 
   const handleDemoPlayPause = useCallback((event: React.MouseEvent) => {
-    console.log('Current Progress: ', progress);
     if (isPlaying) {
-      console.log('Pausing...');
       setIsPlaying(false);
       audioRef.current?.pause();
     } else {
-      console.log('Playing...');
       setIsPlaying(true);
-      //audioRef.current = new Audio(media?.url);
       audioRef.current.play();
 
       audioRef.current.ontimeupdate = () => {
         if (audioRef.current) {
-          //console.log('audioRef currentTime: ', audioRef.current.currentTime);
           const percentage = (audioRef.current.currentTime / audioRef.current.duration) * 100;
-          //console.log('Percentage: ', percentage);
           setProgress(percentage);
         }
       };
@@ -340,9 +334,7 @@ const Message: React.FC<MessageProps> = ({
   }
 
   const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    console.log('Before return');
     if (!audioRef.current || !progressBarRef.current) return;
-    console.log('After return');
 
     const rect = progressBarRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -350,7 +342,6 @@ const Message: React.FC<MessageProps> = ({
     const time = (percentage / 100) * audioRef.current.duration;
     
     audioRef.current.currentTime = time;
-    console.log('Setting Progress: ', percentage);
     setProgress(percentage);
   };
 
