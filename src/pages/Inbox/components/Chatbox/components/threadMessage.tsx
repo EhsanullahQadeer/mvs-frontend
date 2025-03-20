@@ -1,13 +1,11 @@
 import moment from "moment";
+import { useChatbox } from "../context";
+import { FiUnlock } from "react-icons/fi";
 import { AudioPlayer } from "react-audio-play";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useChatbox } from "../context";
-import { IMessage, MEDIA_TYPE, MESSAGE_TYPES } from "api/messenger/objects/states.types";
-import AudioFileIcon from "@mui/icons-material/AudioFile";
-
-import { FiUnlock } from "react-icons/fi";
 import PlayPauseButton from "components/ui/Header/atoms/chatboxPlayPauseButton";
-import { formatBytes, formatTime, truncateFilename, truncateFilenameByWidth } from "utils/dateUtils";
+import { formatBytes, formatTime, truncateFilenameByWidth } from "utils/dateUtils";
+import { IMessage, MEDIA_TYPE, MESSAGE_TYPES } from "api/messenger/objects/states.types";
 
 type Props = {
   message: IMessage;
@@ -30,7 +28,7 @@ const ThreadMessage = (props: Props) => {
   const [progress, setProgress] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   
-  const { message, index, isDemo, details } = props;
+  const { message } = props;
   const {
     id, 
     media, 
@@ -40,6 +38,7 @@ const ThreadMessage = (props: Props) => {
     message_type,
     transaction,
   } = message;
+  console.log('Media', media);
 
   const { 
     activeConversation,
@@ -162,8 +161,10 @@ const ThreadMessage = (props: Props) => {
             </div>
             <div className="ml-2 w-full flex-start">
               <span className="text-[14px] text-[#848484] min-w-[40px] w-full">
-              "{truncateFilename(media?.file_name)}"
-              {/* "{truncateFilenameByWidth("MMMMMMMMMMMMMMMMMMMMMMMMMMM", 262)}" */}
+              {/* "{truncateFilenameByWidth("MMMMMMMMMMMMMMMMMMMMMMMMMMM", 202)}" */}
+              "{truncateFilenameByWidth(media?.file_name, 202)}"
+              {/* "{truncateFilenameByWidth("message_notification-normasdfadfassdfa", 202)}" */}
+              {/* "{truncateFilenameByWidth("loremvaposiudgqlwneflasjdv;lasjdv;lajsv;lanweoeqwih", 202)}" */}
               
               </span>
               <div className="flex">

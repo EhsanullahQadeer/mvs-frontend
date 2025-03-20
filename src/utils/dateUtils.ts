@@ -37,8 +37,12 @@ export const truncateFilenameByWidth = (filename: string, maxWidth: number): str
 
   // Check the width of the filename
   while (context.measureText(truncatedFilename).width > maxWidth && truncatedFilename.length > 1) {
-    truncatedFilename = truncatedFilename.slice(0, -1) + "..."; // Truncate and add ellipsis
+    truncatedFilename = truncatedFilename.slice(0, -1); // Truncate
+    // Ensure we don't get stuck in an infinite loop
+    if (truncatedFilename.length <= 3) break; // Stop if the filename is too short
   }
+  console.log('Truncated file name: ', truncatedFilename);
+  truncatedFilename = truncatedFilename.slice(0, -1) + "..."; // Truncate last character and add ellipses
 
   return truncatedFilename; // Return the truncated filename
 };
