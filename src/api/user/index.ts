@@ -169,9 +169,7 @@ export async function verifyAndRetrieveInviteCodeDetails(inviteCode: string) {
 }
 // =======================================================================================
 export async function verifyChangePasswordCode(code: string) {
-  return axiosInstance.post('/auth/verify/change-password-code', {
-    invite_code: code,
-  });
+  return axiosInstance.get(`/auth/verify-password-reset-token?code=${code}`);
 }
 export async function validatePasswordAPI(password?: string) {
   return axiosInstance.post(`/users/validate-password`, { password });

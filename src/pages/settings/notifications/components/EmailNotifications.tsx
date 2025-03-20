@@ -24,32 +24,52 @@ const EmailNotifications = (props: Props) => {
 
   const notificationItemArr = [
     {
-      title: "Direct Messages",
-      desc: "Receive emails about direct messages from other users to keep up with your conversations.",
+      title: "Audio Share",
+      desc: "Receive emails when someone shares an audio file with you.",
     },
     {
-      title: "Membership",
-      desc: "Stay updated with emails regarding changes or updates to your memberships.",
+      title: "Connection Request",
+      desc: "Receive an email when someone requests to connect with you.",
     },
     {
-      title: "Performance Updates",
-      desc: "Get emails with updates on your performance metrics to monitor your progress",
+      title: "Connection Response",
+      desc: "Receive an email when someone responds to your connection request.",
     },
     {
-      title: "News about New Products and MVSSIVE Updates",
-      desc: "Receive emails about the latest news, new products, and updates from MVSSIVE",
+      title: "New Collaborator",
+      desc: "Receive an email when someone is added as a collaborator to your project.",
     },
     {
       title: "Collaboration Request",
-      desc: "Stay informed with emails about new collaboration requests from other users.",
+      desc: "Receive an email when someone requests to collaborate with you.",
     },
     {
-      title: "New Bids received",
-      desc: "Get notified via email when you receive new bids on your samples or projects.",
+      title: "Collaboration Accepted",
+      desc: "Receive an email when someone accepts your collaboration request.",
     },
     {
-      title: "Payment Alerts",
-      desc: "Get email alerts about payment activities related to your account.",
+      title: "Demo Payment",
+      desc: "Receive an email when someone pays for a demo.",
+    },
+    {
+      title: "Like",
+      desc: "Receive an email when someone likes your sample.",
+    },
+    {
+      title: "Follow",
+      desc: "Receive an email when someone follows you.",
+    },
+    {
+      title: "Download",
+      desc: "Receive an email when someone downloads your sample.",
+    },
+    {
+      title: "Feedback Provided",
+      desc: "Receive an email when someone provides feedback on your demo.",
+    },
+    {
+      title: "Fanwall Post",
+      desc: "Receive an email when someone posts on your fanwall.",
     },
   ];
 
@@ -60,7 +80,7 @@ const EmailNotifications = (props: Props) => {
           <div className="pt-2.5">
             <div className="flex items-center justify-between mb-2">
               <p className="text-lg text-white font-semibold">
-                Email Notifications
+                Email
               </p>
 
               <div>
@@ -73,7 +93,7 @@ const EmailNotifications = (props: Props) => {
               not on MVSSIVE. You can disable them at any time.
             </p>
           </div>
-          <div>
+          {/* <div>
             <p className="text-sm font-normal text-white mb-2">
               Notification Frequency
             </p>
@@ -132,7 +152,7 @@ const EmailNotifications = (props: Props) => {
                 />
               </RadioGroup>
             </FormControl>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex flex-col gap-[30px]">

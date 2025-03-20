@@ -13,7 +13,7 @@ const Notifications = (props: Props) => {
 
         <div className="flex flex-col gap-[50px]">
           <EmailNotifications />
-          <SmsNotifications />
+          {/* <SmsNotifications /> */}
         </div>
       </div>
     </>
