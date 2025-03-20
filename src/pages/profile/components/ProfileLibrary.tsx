@@ -11,7 +11,7 @@ type Props = {
   connectionDetail: any,
   selectedTab: string,
   setSelectedTab: (tab: string) => void,
-  isConnect: boolean,
+  isConnect: boolean | undefined,
   artistData: any,
   chatOpen: boolean,
   setChatOpen: (open: boolean) => void,
@@ -23,7 +23,7 @@ const ProfileLibrary = (props: Props) => {
     <section className="flex-1 min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">
       {isLoginUser && <UploadFileSection {...{ user }} />}
 
-      <div className={`text-coolGray flex flex-col py-3 mb-2 px-4 `}>
+      <div className={`text-coolGray flex flex-col py-3 mb-2 p-4 `}>
         <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
         <div className="flex justify-between items-center">
           <div className="flex">
@@ -67,6 +67,7 @@ const ProfileLibrary = (props: Props) => {
             user_id={artistData?.id}
             selectedTab={selectedTab}
             chatOpen={chatOpen}
+            isConnect={isConnect}
           />
         </div>
       </div>
