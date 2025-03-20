@@ -3,10 +3,10 @@ import React from 'react';
 
 interface PlayPauseButtonProps {
     isPlaying: boolean; // New prop to determine play or pause state
-    onClick?: (event: React.MouseEvent) => void; // Accept event parameter
+    onClick?: ((event: React.MouseEvent) => void)
 }
 
-const PlayPauseButton: React.FC<PlayPauseButtonProps> = ({ isPlaying, onClick }) => {
+const PlayPauseButton: React.FC<PlayPauseButtonProps> = ({ isPlaying, onClick }) => {  
   return (
     <button
     onClick={onClick}

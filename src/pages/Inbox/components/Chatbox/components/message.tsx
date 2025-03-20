@@ -78,10 +78,17 @@ const Message: React.FC<MessageProps> = ({
   // Only show date if it's the first message or if date is different from previous message
   const shouldShowDate = index === 0 || currentDateFormatted !== prevDateFormatted;
   
+  // WaveSurfer vars
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const audioUrl = media?.url || null;
+
+  // Progress Bar Vars
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const [playingAudio, setPlayingAudio] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [progress, setProgress] = useState<number>(0);
 
   function renderTipMessage() {
     return <TipMessage amount={message?.transaction?.amount} message={message?.content} />
@@ -257,6 +264,34 @@ const Message: React.FC<MessageProps> = ({
     }
   }, [isPlaying]);
 
+  const handleDemoPlayPause = useCallback((event: React.MouseEvent) => {
+    if (playingAudio === index) {
+      audioRef.current?.pause();
+      setPlayingAudio(null);
+    } else {
+      console.log('Current Progress: ', progress);
+      audioRef.current?.pause();
+      audioRef.current = new Audio(media?.url);
+      audioRef.current.play();
+      setPlayingAudio(index);
+  
+      audioRef.current.ontimeupdate = () => {
+        if (audioRef.current) {
+          console.log('audioRef currentTime: ', audioRef.current.currentTime);
+          const percentage = (audioRef.current.currentTime / media?.duration) * 100;
+          console.log('Percentage: ', percentage);
+          setProgress(percentage);
+        }
+      };
+  
+      audioRef.current.onended = () => {
+        setPlayingAudio(null);
+        setProgress(0);
+      };
+    }
+  }, [playingAudio, progress]); // Add dependencies as needed
+  
+
   const handleMuteToggle = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
     if (wavesurfer.current) {
@@ -292,6 +327,79 @@ const Message: React.FC<MessageProps> = ({
               className="w-6 h-6"
             />
           </button>
+        </div>
+      </div>
+    )
+  }
+
+  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current || !progressBarRef.current) return;
+
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = (x / rect.width) * 100;
+    const time = (percentage / 100) * media?.duration;
+    
+    audioRef.current.currentTime = time;
+    console.log('Setting Progress: ', percentage);
+    setProgress(percentage);
+  };
+
+  function renderDemoInFeebackThreadMessage() {
+    return (
+      <div className="bg-[#181A1D] h-[105px] w-[282px] border border-[#1C1C1C] box-border rounded-[8px] flex items-center justify-center">
+        <div className="flex-col bg-[#202327] h-[85px] w-[262px] border border-[#3D3D3D] box-border rounded-[8px]">
+
+          <div className="flex bg-[#202327] w-auto mx-[10px] mt-[10px] rounded-[8px]">
+            <div className="flex">
+              <PlayPauseButton isPlaying={isPlaying} onClick={handleDemoPlayPause}/>
+            </div>
+            <div className="ml-2 w-full flex-start">
+              <span className="text-[14px] text-[#848484] min-w-[40px] w-full">
+                "Soundboyz - Bidi Bam"
+              </span>
+              <div className="flex">
+                <span className="text-[10px] text-[#666666] mx-[6px]">
+                    {formatTime(media?.duration)}
+                </span>
+                <span className="text-[10px] text-[#666666]">
+                    (20 MB)
+                </span>
+              </div>
+            </div>
+            {/* Inner content can go here */}
+          </div>
+
+          <div className="flex items-center mt-[11px]">
+            <div 
+              ref={progressBarRef}
+              className="flex relative justify-center w-full  ml-[30px] cursor-pointer"
+              onClick={(e) => handleProgressBarClick(e)}
+            >
+              <div className="w-full h-[2px] bg-zinc-700">
+                <div 
+                  className="h-full bg-lime-400 transition-all duration-100"
+                  style={{ 
+                    width: `${progress}%` 
+                  }}
+                />
+              </div>
+              <div 
+                className="flex absolute top-2/4 z-0 w-2.5 h-2.5 rounded-full -translate-y-2/4 bg-lime-400 min-h-[10px]"
+                style={{ 
+                  left: `${progress}%` ,
+                  transform: `translateX(-50%) translateY(-50%)`
+                }}
+              />
+            </div>
+            <div className="flex">
+                <span className="text-[10px] text-[#666666] mr-[20px] ml-[10px]">
+                    {formatTime(media?.duration)}
+                </span>
+            </div>
+          </div>
+
+
         </div>
       </div>
     )
@@ -375,7 +483,7 @@ const Message: React.FC<MessageProps> = ({
             id="2"
             className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-3"
             >
-              {renderAudioRecordingMessage()}
+              {renderDemoInFeebackThreadMessage()}
             </div>
           ) : null}
           <div className={`text-sm text-[#CACCCD] break-all whitespace-normal overflow-hidden max-w-full w-full ${
