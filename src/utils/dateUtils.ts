@@ -23,6 +23,26 @@ export const truncateFilename = (filename: string, maxLength: number = 20) => {
   return `${start}[...]${end}`; // Concatenate with ellipsis
 };
 
+// Function to truncate the filename based on pixel width
+export const truncateFilenameByWidth = (filename: string, maxWidth: number): string => {
+  if (filename === undefined) return "";
+  
+  // Create a temporary canvas to measure text width
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  if (!context) return filename; // Return original if context is not available
+
+  context.font = "16px Arial"; // Set the font style to match your UI
+  let truncatedFilename = filename;
+
+  // Check the width of the filename
+  while (context.measureText(truncatedFilename).width > maxWidth && truncatedFilename.length > 1) {
+    truncatedFilename = truncatedFilename.slice(0, -1) + "..."; // Truncate and add ellipsis
+  }
+
+  return truncatedFilename; // Return the truncated filename
+};
+
 // Function to capitalize the first letter of each word in a string
 export const capitalizeRegion = (str: string) => {
   if (!str) return ""; // Return empty string if input is empty
@@ -71,4 +91,15 @@ export const formatTime = (time: number): string => {
   const minutes = Math.floor(time / 60);
   const seconds = Math.floor(time % 60);
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
+
+// Function to convert bytes to a human-readable format (KB, MB, GB)
+export const formatBytes = (bytes: number): string => {
+  if (bytes < 1024) return `${bytes} B`; // Return bytes if less than 1 KB
+  const kB = bytes / 1024;
+  if (kB < 1024) return `${kB.toFixed(1)} KB`; // Return KB if less than 1 MB
+  const MB = kB / 1024;
+  if (MB < 1024) return `${MB.toFixed(1)} MB`; // Return MB if less than 1 GB
+  const GB = MB / 1024;
+  return `${GB.toFixed(1)} GB`; // Return GB
 };
