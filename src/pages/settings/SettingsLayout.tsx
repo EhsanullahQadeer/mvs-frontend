@@ -19,8 +19,8 @@ const SettingsLayout = () => {
     { name: "Notifications", path: "notifications/1" },
     { name: "Security", path: "security/1" },
     { name: "Billing", path: "billing/1" },
-    { name: "Privacy", path: "privacy/1" },
-    { name: "Monetization", path: "monetization/1" },
+    // { name: "Privacy", path: "privacy/1" },
+    // { name: "Monetization", path: "monetization/1" },
     { name: "Memberships & Connects", path: "memberships/1" },
   ];
 
