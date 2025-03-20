@@ -14,3 +14,7 @@ export async function setViewDemo(params: IViewDemoEventParams) {
 export async function toggleNotificationAsRead(id?: number) {
   return axiosInstance.post(`/notifier/toggle-read/${id}`);
 }
+
+export async function toggleMuteNotification() {
+  return axiosInstance.post("/users/toggle-mute-notifications");
+}
