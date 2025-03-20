@@ -158,7 +158,7 @@ const ArtistProfile = () => {
   }, [artistData]);
 
   useEffect(() => {
-    setIsConnect(connectionDetail !== undefined || isLoginUser);
+    setIsConnect(isLoginUser || connectionDetail);
   }, [connectionDetail, isLoginUser]);
 
   return (
