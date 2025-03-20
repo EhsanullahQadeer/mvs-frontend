@@ -162,11 +162,11 @@ const ArtistProfile = () => {
       {!isLoading ? (<>
         <div className="relative flex overflow-hidden">
 
-          {isLoginUser?
             <ProfileRightSection
               artistData={artistData}
               currentUserInfo={user}
               hasSampleType={hasSampleType}
+              connectionDetail={connectionDetail}
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
               isConnect={isConnect}
@@ -177,20 +177,6 @@ const ArtistProfile = () => {
               setChatOpen={setChatOpen}
               isPublicProfile={false}
             />
-          : 
-          <ProfileLibrary
-              artistData={artistData}
-              hasSampleType={hasSampleType}
-              selectedTab={selectedTab}
-              setSelectedTab={setSelectedTab}
-              isConnect={isConnect}
-              isLoginUser={isLoginUser}
-              user={user}
-              tabs={libraryTabs}
-              chatOpen={chatOpen}
-              setChatOpen={setChatOpen}
-            />
-          }
 
           <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
             <MessageContextProvider>

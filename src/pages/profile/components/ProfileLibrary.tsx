@@ -8,6 +8,7 @@ type Props = {
   user: any,
   tabs: any[],
   hasSampleType: any,
+  connectionDetail: any,
   selectedTab: string,
   setSelectedTab: (tab: string) => void,
   isConnect: boolean,
@@ -16,7 +17,7 @@ type Props = {
   setChatOpen: (open: boolean) => void,
 };
 const ProfileLibrary = (props: Props) => {
-  const { isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, artistData, chatOpen, setChatOpen } = props;
+  const { isLoginUser, user, tabs, hasSampleType, connectionDetail, selectedTab, setSelectedTab, isConnect, artistData, chatOpen, setChatOpen } = props;
 
   return (
     <section className="flex-1 min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">

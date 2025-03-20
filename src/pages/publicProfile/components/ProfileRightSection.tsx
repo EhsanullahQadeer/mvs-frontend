@@ -12,6 +12,7 @@ interface IProps {
   user: any,
   tabs: any[],
   hasSampleType: any,
+  connectionDetail?: any,
   selectedTab: string,
   setSelectedTab: (tab: string) => void,
   isConnect: boolean,
@@ -21,7 +22,21 @@ interface IProps {
 }
 
 const ProfileRightSection = (props: IProps) => {
-  const { artistData, currentUserInfo, isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, chatOpen, setChatOpen, isPublicProfile } = props;
+  const 
+  { artistData,
+    currentUserInfo,
+    isLoginUser,
+    user,
+    tabs,
+    hasSampleType,
+    connectionDetail,
+    selectedTab,
+    setSelectedTab,
+    isConnect,
+    chatOpen,
+    setChatOpen,
+    isPublicProfile,
+  } = props;
   const [activeTab, setActiveTab] = useState(isPublicProfile ? "Posts" : "Library");
 
   const publicTabs = [
@@ -42,7 +57,7 @@ const ProfileRightSection = (props: IProps) => {
   const normalTabs = [
     {
       label: "Library",
-      component: <ProfileLibrary {...{ artistData, currentUserInfo, isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, chatOpen, setChatOpen }} />
+      component: <ProfileLibrary {...{ artistData, currentUserInfo, isLoginUser, user, tabs, hasSampleType, connectionDetail, selectedTab, setSelectedTab, isConnect, chatOpen, setChatOpen }} />
     },
     // {
     //   label: "Posts",
@@ -58,7 +73,7 @@ const ProfileRightSection = (props: IProps) => {
     }
   ];
 
-  const topTabs = isLoginUser ? normalTabs : publicTabs;
+  const topTabs = isPublicProfile ? publicTabs : normalTabs;
 
   return (
     <div className="flex-1 flex flex-col">
