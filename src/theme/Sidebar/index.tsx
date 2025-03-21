@@ -49,7 +49,7 @@ const SidebarContent = ({ isExpanded, setIsExpanded, sidebarWidth, headerHeight 
 
   return (
       <aside 
-        className="sidebar py-[12px] px-[12px] bg-[#08090A] overflow-y-auto z-[1000] relative"
+        className="sidebarscroll py-[12px] px-[12px] bg-[#08090A] overflow-y-auto z-[1000] relative"
         style={{
           height: `calc(100vh - ${headerHeight})`,
           overflowX: 'hidden',
