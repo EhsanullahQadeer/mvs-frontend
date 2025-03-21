@@ -66,8 +66,10 @@ const Footer = () => {
   }, [activeConversation]);
 
   const handleAudioSelector = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Audio File look: ', e.target.files?.[0]);
     const file = validateFile(e.target.files?.[0]);
     if (file) {
+      console.log('File: ', file);
       setUploadedAudioFile(file);
     }
     e.target.value = "";

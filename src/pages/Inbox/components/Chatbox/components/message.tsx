@@ -1,13 +1,13 @@
 import moment from "moment";
+import WaveSurfer from "wavesurfer.js";
 import { useChatbox } from "../context";
-import React from "react";
 import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
-import { useMessenger } from "api/messenger/context";
-import MessageReactions from "../../MessageReactions";
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
+import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
 
 interface MessageProps {
@@ -28,20 +28,12 @@ const Message: React.FC<MessageProps> = ({
     sender,
     media,
     transaction,
-    reactions
   } = message;
-
-  const {
-    addReactionMessage,
-    deleteReactionMessage,
-  } = useMessenger();
   
   const { 
     handleLoadThread,
     activeConversation,
-    isThread,
     setIsThread,
-    refreshMessages,
     markMessageAsRead
   } = useChatbox();
   
@@ -68,26 +60,26 @@ const Message: React.FC<MessageProps> = ({
     observer.observe(intersectionRef.current);
   }, [])
 
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
   const claimed = transaction?.status === TRANSACTION_STATUS.COMPLETED;
-
   const authUserId = useSelector((state: RootState) => state.auth?.user?.id);
-
   const isDemoSender = authUserId === sender.id;
   const details = formatMediaDetails(
     media?.duration,
     media?.file_size_bytes
   );
-  
   const currentMessageDate = moment(created_at).format("dddd, MMMM D, YYYY");
   const currentDateFormatted = moment(created_at).format("YYYY-MM-DD");
   const prevDateFormatted = prevMessageDate ? moment(prevMessageDate).format("YYYY-MM-DD") : null;
-
   // Only show date if it's the first message or if date is different from previous message
   const shouldShowDate = index === 0 || currentDateFormatted !== prevDateFormatted;
-
-  function renderTipMessage() {
-    return <TipMessage amount={message?.transaction?.amount} message={message?.content} />
-  }
+  
+  // WaveSurfer vars
+  const waveformRef = useRef<HTMLDivElement>(null);
+  const wavesurfer = useRef<WaveSurfer | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioUrl = media?.url || null;
   
   function handleMessagedAsRead(){
     if (is_read === true || sender.id === activeConversation.user.id) return;
@@ -99,13 +91,13 @@ const Message: React.FC<MessageProps> = ({
       <>
         <div className="bg-gunMetal border border-eerieBlack rounded-lg p-3.5 flex flex-col gap-3 w-[294px]">
             <div
-              className={`overflow-hidden rounded-lg  flex flex-col gap-2.5 ${message?.threadStats?.replyCount == 1 
+              className={`overflow-hidden rounded-lg  flex flex-col gap-2.5 ${message?.threadStats?.replyCount === 1 
                   ? " border border-[#57AEFF] bg-[#002C55] p-3"
                   : ""
                 }`}
             >
               <div
-                className={`flex flex-row w-full text-coolGray border rounded-lg p-3 ${message?.threadStats?.replyCount == 1
+                className={`flex flex-row w-full text-coolGray border rounded-lg p-3 ${message?.threadStats?.replyCount === 1
                     ? "border border-[#57AEFF] bg-[#002C55]"
                     : "border-charcoalGray text-coolGray"
                   }`}
@@ -201,6 +193,70 @@ const Message: React.FC<MessageProps> = ({
       </>
     )
   }
+
+  useEffect(() => {
+    if (!waveformRef.current || !audioUrl) return;
+
+    const ws = WaveSurfer.create({
+      container: waveformRef.current,
+      waveColor: '#B2B2B2',
+      progressColor: '#9EFF00',
+      cursorColor: '#848484',
+      barWidth: 2,
+      barRadius: 1,
+      cursorWidth: 0,
+      height: 16,
+      barGap: 4,
+      normalize: true,
+      fillParent: true,
+      fetchParams: {
+        cache: 'default',
+        mode: 'cors',
+      }
+    });
+
+    wavesurfer.current = ws;
+
+    ws.on('pause', () => {
+      setIsPlaying(false);
+    });
+
+    ws.on('finish', () => {
+      setIsPlaying(false);
+    });
+
+    ws.on('error', (err) => {
+      console.error('WaveSurfer error:', err);
+    });
+
+    ws.load(audioUrl);
+
+    return () => {
+      if (wavesurfer.current) {
+        wavesurfer.current.destroy();
+        wavesurfer.current = null;
+      }
+    };
+  }, [audioUrl]);
+
+  const handlePlayPauseClick = useCallback(() => {
+    if (wavesurfer.current) {
+      if (isPlaying) {
+        wavesurfer.current.pause();
+      } else {
+        wavesurfer.current.play();
+      }
+      setIsPlaying(prev => !prev);
+    }
+  }, []);
+
+  const handleMuteToggleClick = useCallback(() => {
+    if (wavesurfer.current) {
+      wavesurfer.current.setMuted(!isMuted);
+      setIsMuted(prev => !prev);
+    }
+  }, []);
+
   
   // async function emojiPassthrough(id:number, emoji:any){
   //   const userId = user.id;
@@ -265,7 +321,7 @@ const Message: React.FC<MessageProps> = ({
 
           {message?.transaction?.type === TRANSACTION_TYPE.TIP && (
             <div className="flex flex-col gap-2">
-              {renderTipMessage()}
+              <TipMessage amount={message?.transaction?.amount} message={message?.content}/>
               <div className="text-sm text-[#CACCCD] break-all whitespace-normal max-w-full w-full">{content}</div>
             </div>
           )}
@@ -276,19 +332,8 @@ const Message: React.FC<MessageProps> = ({
             </div>
 
           ) : media?.type === MEDIA_TYPE.RECORDING ? (
-            <div
-              id="2"
-              className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-2"
-            >
-              <audio
-                controls
-                className="h-10 rounded-full bg-[#242424] border border-[#3D3D3D] [&::-webkit-media-controls-panel]{background-color:#242424} [&::-webkit-media-controls-current-time-display]:text-[#9EFF00] [&::-webkit-media-controls-time-remaining-display]:text-[#9EFF00] [&::-webkit-media-controls-timeline]:text-[#9EFF00] [&::-webkit-media-controls-play-button]:text-[#9EFF00] [&::-webkit-media-controls-timeline]{accent-color:#9EFF00}"
-                src={media?.url}
-                preload="metadata"
-              >
-                <source src={media?.url} type={media?.mime_type || 'audio/webm'} />
-                Your browser does not support the audio element.
-              </audio>
+            <div id="2" className="flex mt-3">
+              <RecordedAudioMessagePlayer isMuted={isMuted} waveformRef={waveformRef} isPlaying={isPlaying} duration={media?.duration} handleMuteToggle={handleMuteToggleClick} handlePlayPause={handlePlayPauseClick}/>
             </div>
           ) : null}
           <div className={`text-sm text-[#CACCCD] break-all whitespace-normal overflow-hidden max-w-full w-full ${
