@@ -19,7 +19,9 @@ import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
 
 type Props = {
   fileRedisKey?: string;
+  setUploadingFile?: (file: File) => void;
   handleCancel?: () => void;
+  uploadProgress?: number;
   isEditSample?: boolean;
   handleClose?: () => void;
   sampleOwner?: IUserProfile;
@@ -37,6 +39,8 @@ const MetaDataForm = (props: Props) => {
   const {
     fileRedisKey,
     handleCancel,
+    setUploadingFile,
+    uploadProgress,
     isEditSample,
     handleClose,
     sampleToEdit,
@@ -203,7 +207,7 @@ const MetaDataForm = (props: Props) => {
         const response = await uploadedFileMetadata(fileRedisKey, body);
         console.log("Upload response:", response);
         setUpdateData && setUpdateData(Date.now());
-        handleClose?.();
+        setUploadingFile && setUploadingFile(null);
         return;
       }
 
@@ -211,7 +215,7 @@ const MetaDataForm = (props: Props) => {
         const response = await updateFileMetadata(sampleToEdit.id, body);
         console.log("Update response:", response);
         setUpdateData && setUpdateData(Date.now());
-        handleClose?.();
+        setUploadingFile && setUploadingFile(null);
         return;
       }
 
@@ -316,10 +320,10 @@ const MetaDataForm = (props: Props) => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSaving}
+                  disabled={uploadProgress < 100}
                   className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"
                 >
-                  {isSaving ? "Saving..." : "Save Changes"}
+                  {isSaving || uploadProgress < 100 ? "Saving..." : "Save Changes"}
                 </button>
               </div>
 

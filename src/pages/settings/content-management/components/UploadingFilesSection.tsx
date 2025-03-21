@@ -19,6 +19,7 @@ const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 type Props = {
   uploadingFile: File;
+  setUploadingFile?: (file: File) => void;
   fileRedisKey: string;
   uploadProgress: number;
   handleCancel: () => void;
@@ -31,6 +32,7 @@ type Props = {
 const UploadingFilesSection = (props: Props) => {
   const {
     uploadingFile,
+    setUploadingFile,
     fileRedisKey,
     uploadProgress,
     setUploadingFile,

@@ -136,6 +136,7 @@ const ContentManagement = (props: Props) => {
             <UploadingFilesSection
               {...{
                 uploadingFile,
+                setUploadingFile,
                 fileRedisKey,
                 uploadProgress,
                 handleCancel,
