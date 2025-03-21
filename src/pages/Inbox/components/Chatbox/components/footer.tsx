@@ -169,6 +169,7 @@ const Footer = () => {
     setAudioMediaId(null);
     setTipAmount(0);
     setInputTipAmount("$0.00")
+    clearRecording();
   }
 
   const handleTipAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
