@@ -6,7 +6,7 @@ import AudioPlayer from "./player";
 import { useCallback, useEffect, useRef, useState } from "react";
 import musicBeam from "../../../assets/icons/musicBeam.svg";
 import playIcon from "../../../assets/icons/playIcon.svg";
-import musicIcon from "../../../assets/icons/musicIcon.svg";
+import {ReactComponent as MusicIcon} from "../../../assets/icons/musicIcon.svg";
 import { AudioTrackType } from "../player-container";
 import { AudioTrack, useWaveform } from "./waveform";
 import { AnimatedWaveGraphic } from "./wave-graphic";
@@ -416,8 +416,8 @@ const SampleTable = (props: {
                     {/* Thumbnail */}
                     <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm playable-td">
                       <div className="flex items-center gap-5">
-                        <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-gunMetal">
-                          <img src={musicIcon} alt="musicIcon" />
+                        <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-gunMetal text-charcoalGray">
+                          <MusicIcon />
                         </div>
                         <div className="relative w-4 h-4 cursor-pointer group">
                           {/* Play icon - shown on hover */}

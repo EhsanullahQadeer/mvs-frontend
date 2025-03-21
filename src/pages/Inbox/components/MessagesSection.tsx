@@ -1,18 +1,20 @@
 import { useState } from "react";
 import moment from "moment";
-import { ICurrentUser, IMessagesData } from "./types";
+import { ICurrentUser, IMessagesData, MEDIA_TYPE, TRANSACTION_STATUS } from "./types";
 import { ReactComponent as AudioFileIcon } from "../../../assets/icons/audioFile.svg";
 import MessageReactions from "./MessageReactions";
 import { formatMediaDetails, lastMsgTimeStamp } from "../handlers/mediaUtils";
-import { useMessageReactions } from "../hooks/useMessageReactions";
+// import { useMessageReactions } from "../hooks/useMessageReactions";
 import { AudioPlayer } from "react-audio-play";
+import TipMessage from "./TipMessage";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/reducers";
 
 type Props = {
   messages: IMessagesData;
   handleDemoBtn: (id: number) => void;
   handleReviewBtn: (id: number) => void;
   handleThreadReply: (id: number) => void;
-  currentUserInfo?: ICurrentUser;
   refreshMessages: () => void;
 };
 
@@ -24,22 +26,23 @@ const MessagesSection = (props: Props) => {
     handleDemoBtn,
     handleReviewBtn,
     handleThreadReply,
-    currentUserInfo,
     refreshMessages,
   } = props;
 
-  const { messageReactions, handleEmojiSelect } = useMessageReactions(
-    messages,
-    currentUserInfo.id
-  );
+  const authUser = useSelector((state: RootState) => state.auth?.user);
+
+  // const { messageReactions, handleEmojiSelect } = useMessageReactions(
+  //   messages,
+  //   authUser?.id
+  // );
 
   const chatMessages = messages[0]?.messages?.filter(
-    (msg) => msg.message_reply === null
+    (msg) => msg.thread === null
   );
 
   const findThreadReplyObj = (msgId: number) => {
     return messages[0]?.messages?.filter(
-      (msg) => msg.message_reply?.id === msgId
+      (msg) => msg.thread?.id === msgId
     );
   };
 
@@ -48,21 +51,19 @@ const MessagesSection = (props: Props) => {
       {chatMessages?.map((msg, index) => {
         const {
           id,
-          thumbnail,
-          displayName,
-          message_content,
+          content,
           created_at,
-          credit_payment,
           sender,
-          claimed,
           is_read,
-          audio_media,
+          media,
+          transaction,
         } = msg;
+        const claimed = transaction?.status === TRANSACTION_STATUS.COMPLETED;
 
-        const isDemoSender = currentUserInfo.id === sender.id;
+        const isDemoSender = authUser?.id === sender.id;
         const details = formatMediaDetails(
-          audio_media?.duration,
-          audio_media?.file_size_bytes
+          media?.duration,
+          media?.file_size_bytes
         );
 
         const firstFeedbackOnDemo = !is_read && isDemoSender && claimed;
@@ -83,9 +84,9 @@ const MessagesSection = (props: Props) => {
           moment(chatMessages[index - 1].created_at).format("YYYY-MM-DD") !== 
           moment(created_at).format("YYYY-MM-DD");
 
-        const totalReactions = Object.values(
-          messageReactions[id]?.reactionCounts || {}
-        ).reduce((total, { count }) => total + count, 0);
+        // const totalReactions = Object.values(
+        //   messageReactions[id]?.reactionCounts || {}
+        // ).reduce((total, { count }) => total + count, 0);
 
         return (
           <div key={id}>
@@ -105,15 +106,15 @@ const MessagesSection = (props: Props) => {
 
             <div className="flex flex-wrap gap-2 px-4 py-2 w-full relative group hover:bg-gunMetal">
               <div className="absolute -top-8 left-28 mt-2 mr-2 hidden group-hover:flex transition-opacity duration-200">
-                <MessageReactions
+                {/* <MessageReactions
                   {...{
                     handleEmojiSelect,
                     id,
                     isDemoSender,
-                    isOwner: currentUserInfo.id === sender.id,
+                    isOwner: authUser?.id === sender.id,
                     onMessageDeleted: refreshMessages,
                   }}
-                />
+                /> */}
               </div>
 
               <div
@@ -127,7 +128,7 @@ const MessagesSection = (props: Props) => {
               >
                 <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
                   <div
-                    style={{ backgroundImage: `url("${thumbnail}")` }}
+                    style={{ backgroundImage: `url("${sender.thumbnail}")` }}
                     className="w-full h-full rounded-full bg-cover bg-center"
                   ></div>
                 </div>
@@ -135,13 +136,21 @@ const MessagesSection = (props: Props) => {
               <div className="flex flex-col flex-1">
                 <div className="flex gap-4 items-start">
                   <div className="font-semibold text-sm text-white">
-                    {displayName}
+                    {sender.professional_name}
                   </div>
                   <div className="text-grayBlue text-sm">{moment(created_at).format("h:mm A")}</div>
-                </div>
-                <div className="text-sm text-[#CACCCD]">{message_content}</div>
+                </div>                
+                {/* TODO: Add tipping message */}
+                <TipMessage amount={10} message="Thanks for the demo!" />
+                {content === 'tipped' && (
+                  <div className="flex flex-col gap-2">
+                    <TipMessage amount={10} message="Thanks for the demo!" />
+                    <div className="font-semibold text-sm text-[#0185FF]">{"send you a tip"}</div>
+                  </div>
+                )}
+                <div className="text-sm text-[#CACCCD]">{content}</div>
 
-                {audio_media?.is_demo ? (
+                {media?.type === MEDIA_TYPE.DEMO ? (
                   <>
                     <div className="bg-gunMetal border border-eerieBlack rounded-lg p-3.5 flex flex-col gap-3 w-[282px]">
                       <div
@@ -171,7 +180,7 @@ const MessagesSection = (props: Props) => {
                             <p className="font-normal text-sm text-silver flex">
                               <span>"</span>
                               <span className="line-clamp-1">
-                                {audio_media?.file_name}
+                                {media?.file_name}
                               </span>
                               <span>"</span>
                             </p>
@@ -200,8 +209,8 @@ const MessagesSection = (props: Props) => {
                           onClick={() => handleDemoBtn(id)}
                           className="bg-limeGreen py-3 px-4 w-full text-[#203300] text-sm font-semibold rounded-full"
                         >
-                          Earn ${credit_payment}{" "}
-                          {credit_payment.length > 6 ? "" : "- Tap to Unlock"}
+                          Earn ${transaction?.amount}{" "}
+                          {transaction?.amount > 6 ? "" : "- Tap to Unlock"}
                         </button>
                       )}
 
@@ -255,13 +264,13 @@ const MessagesSection = (props: Props) => {
                       </div>
                     )}
                   </>
-                ) : audio_media ? (
+                ) : media?.type === MEDIA_TYPE.RECORDING ? (
                   <div
                     id="2"
                     className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-2"
                   >
                     <AudioPlayer
-                      src={audio_media?.url}
+                      src={media?.url}
                       color="#1C1C1C"
                       sliderColor="#4B4B4B"
                       style={{
@@ -272,7 +281,7 @@ const MessagesSection = (props: Props) => {
                     />
                   </div>
                 ) : null}
-
+{/* 
                 {Object.entries(
                   messageReactions[id]?.reactionCounts || {}
                 ).some(([, { count }]) => count > 0) && (
@@ -290,7 +299,7 @@ const MessagesSection = (props: Props) => {
                         </span>
                       ))}
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           </div>

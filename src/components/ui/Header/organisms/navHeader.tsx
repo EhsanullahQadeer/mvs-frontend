@@ -9,18 +9,20 @@
 /* IMPORTS */
 import { useNavigate } from "react-router-dom";
 import { getUserNotifications } from "api/user";
-import React, { useEffect, useState } from "react";
 import { UserData } from "theme/Header/Header.types";
 import HeaderNavMenu from "../molecules/headerNavMenu";
 import ProfileButton from "theme/Sidebar/ProfileButton";
 import { useHeaderHooks } from "theme/Header/Header.hooks";
 import HeaderCreditCount from "../atoms/headerCreditCount";
 import NotificationPopUpWindow from "./NotificationsManager";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNotification } from "services/WebSocket/useNotification.hook";
-import notificationSound from "../../../../assets/audio/notification.mp3";
 import { TNotificationData } from "../molecules/notifications/Notification";
 import NotificationBellButton from "../atoms/notificationAtoms/notificationBellButton";
 import { useNotificationAnimation , NotificationAnimationProvider } from "../context/NotificationAnimationContext";
+import { debounce } from "lodash";
+import notificationSound from "../../../../assets/audio/notification.mp3";
+import messageSound from "../../../../assets/audio/message-notification.mp3";
 
 const NavHeader: React.FC<UserData> = () => {
   const navigate = useNavigate();
@@ -32,33 +34,100 @@ const NavHeader: React.FC<UserData> = () => {
   const [unreadNotifCount, setUnreadNotifCount] = useState<number>(0);
   const [allowLoading, setAllowLoading] = useState<boolean>(true);
 
-  const fetchNotifications = async () => {
-    const notifications = await getUserNotifications([
-      'CONNECTION_REQUEST',
-      'CONNECTION_RESPONSE',
-      'COLLABORATION_REQUEST',
-      'COLLABORATION_ACCEPT',
-      'FEEDBACK_PROVIDED',
-      'NEW_COLLABORATOR',
-      'AUDIO_SHARE',
-      'FOLLOW',
-      'LIKE',
-      'AUDIO_UPDATE',
-      'DOWNLOAD_FILE',
-      'VIEW_PROFILE',
-      'VIEW_DEMO',
-    ], false, 0);
-    console.log('notifications', notifications);
-    setNotifications(notifications?.data);
-  };
+  const notificationAudioRef = useRef<HTMLAudioElement | null>(null);
+  const messageAudioRef = useRef<HTMLAudioElement | null>(null);
+  const audioLoadedRef = useRef<boolean>(false);
 
-  const handleNotifClick = () => {
-    fetchNotifications();
-    setAllowLoading(true);
-    setIsPopUpVisible((prev) => !prev);
-  };
+  // Initialize audio refs with better loading handling
+  useEffect(() => {
+    const initAudio = async () => {
+      try {
+        // Initialize notification audio
+        notificationAudioRef.current = new Audio(notificationSound);
+        notificationAudioRef.current.crossOrigin = "anonymous";
+        notificationAudioRef.current.preload = "auto";
+        
+        // Initialize message audio
+        messageAudioRef.current = new Audio(messageSound);
+        messageAudioRef.current.crossOrigin = "anonymous";
+        messageAudioRef.current.preload = "auto";
 
-  const handleNotification = (rawData: any) => {
+        audioLoadedRef.current = true;
+        console.log('Audio initialized normally');
+
+      } catch (error) {
+        console.error('Error initializing audio:', error);
+      }
+    };
+
+    initAudio();
+    
+    return () => {
+      [notificationAudioRef, messageAudioRef].forEach(ref => {
+        if (ref.current) {
+          ref.current.pause();
+          ref.current.src = '';
+          ref.current = null;
+        }
+      });
+      audioLoadedRef.current = false;
+    };
+  }, []);
+
+  const playSound = useCallback(async (type: string) => {
+    console.log('=== Sound Debug ===');
+    console.log(`Type: ${type}`);
+    console.log(`Audio loaded: ${audioLoadedRef.current}`);
+    console.log(`Audio refs exist:`, {
+      notification: !!notificationAudioRef.current,
+      message: !!messageAudioRef.current
+    });
+    
+    const audioRef = type === 'NEW_MESSAGE' ? messageAudioRef : notificationAudioRef;
+    
+    if (audioRef.current) {
+      try {
+        console.log('Attempting to play sound...');
+        console.log('Audio state:', {
+          paused: audioRef.current.paused,
+          currentTime: audioRef.current.currentTime,
+          volume: audioRef.current.volume,
+          readyState: audioRef.current.readyState
+        });
+
+        audioRef.current.currentTime = 0;
+        audioRef.current.volume = 1.0;
+        
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('Sound played successfully');
+            })
+            .catch(error => {
+              console.error('Detailed play error:', {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+              });
+            });
+        }
+      } catch (error) {
+        console.error('Caught error during play:', error);
+      }
+    } else {
+      console.error('Audio ref not available');
+    }
+  }, []);
+
+  // Create a debounced version of playSound to prevent rapid-fire sounds
+  const debouncedPlaySound = useCallback(
+    debounce((type: string) => playSound(type), 1000, { leading: true, trailing: false }),
+    [playSound]
+  );
+
+  const handleNotification = useCallback((rawData: any) => {
+    console.log("NEW_MESSAGE from navHeader");
     const formattedNotification: TNotificationData = {
       id: rawData?.id,
       type: rawData?.type,
@@ -102,16 +171,38 @@ const NavHeader: React.FC<UserData> = () => {
       }
       return prev;
     });
-    playSound();
+
+    // Use debounced play sound
+    debouncedPlaySound(formattedNotification.type);
+    
     triggerAnimation();
     setUnreadNotifCount(unreadNotifCount + 1);
+  }, [debouncedPlaySound, triggerAnimation, unreadNotifCount]);
+
+  const fetchNotifications = async () => {
+    const notifications = await getUserNotifications([
+      'CONNECTION_REQUEST',
+      'CONNECTION_RESPONSE',
+      'COLLABORATION_REQUEST',
+      'COLLABORATION_ACCEPT',
+      'FEEDBACK_PROVIDED',
+      'NEW_COLLABORATOR',
+      'AUDIO_SHARE',
+      'FOLLOW',
+      'LIKE',
+      'AUDIO_UPDATE',
+      'DOWNLOAD_FILE',
+      'VIEW_PROFILE',
+      'VIEW_DEMO',
+      'NEW_MESSAGE',
+    ], false, 0);
+    setNotifications(notifications?.data);
   };
 
-  const playSound = () => {
-    const audio = new Audio(notificationSound);
-    audio.play().catch(err => {
-      console.warn('Could not play notification sound:', err);
-    });
+  const handleNotifClick = () => {
+    fetchNotifications();
+    setAllowLoading(true);
+    setIsPopUpVisible((prev) => !prev);
   };
 
   const menuItems = [
@@ -169,10 +260,11 @@ const NavHeader: React.FC<UserData> = () => {
   useNotification('DOWNLOAD_FILE', handleNotification);
   useNotification('VIEW_PROFILE', handleNotification);
   useNotification('VIEW_DEMO', handleNotification);
+  useNotification('NEW_MESSAGE', handleNotification);
   
   return (
     <>
-      <HeaderNavMenu menuItems={menuItems}></HeaderNavMenu>
+      <HeaderNavMenu menuItems={menuItems}/>
       <NotificationBellButton 
         onClick={handleNotifClick} 
         unreadNotifications={unreadNotifCount > 0}

@@ -11,11 +11,12 @@
 import Theme from "theme";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import MessagesList from "./components/MessagesList";
+import InboxDirectory from "./components/Directory";
+import { MessengerProvider } from "api/messenger/context";
 import { setBreadcrumbs } from "redux/actions/breadcrumb.actions";
+import { ConversationProvider } from "./components/Directory/context";
 
 const InboxPage = () => {
-  // Set breadcrumbs (nav bar) for inbox page
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,11 +24,16 @@ const InboxPage = () => {
       { name: 'DMs', path: '/inbox' },
     ]));
   }, [dispatch]);
+
   return (
     <Theme isOverflowHidden={true}>
-      <div className="flex overflow-hidden">
-        <MessagesList />
-      </div>
+      <MessengerProvider>
+        <ConversationProvider>
+          <div className="flex h-full w-full overflow-hidden">
+            <InboxDirectory />
+          </div>
+        </ConversationProvider>
+      </MessengerProvider>
     </Theme>
   );
 };

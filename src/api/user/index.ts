@@ -7,6 +7,7 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
+import axiosPublic from "api/axiosPublic";
 import axiosInstance from "../axios";
 import {
   IAddNewUser,
@@ -85,6 +86,10 @@ export async function artistProfileAPI(username: string) {
   return axiosInstance.get(`/users/username/${username}`);
 }
 
+export async function artistPublicProfileAPI(username: string) {
+  return axiosPublic.get(`/users/username/${username}`);
+}
+
 export async function userArtistSearch(params: IUsersSearchParams) {
   return axiosInstance.get("/users/search-users", { params });
 }
@@ -132,6 +137,13 @@ export async function getSpotifyArtistTopTracks(params: IGetArtistCreditsParams)
     params,
   });
 }
+
+export async function getPublicSpotifyArtistTopTracks(params: IGetArtistCreditsParams) {
+  return axiosPublic.get(`/spotify/artist-top-tracks`, {
+    params,
+  });
+}
+
 export async function getArtistInfo(params: IgetArtistInfoParams) {
   return axiosInstance.get(`/users/get-artist-info`, {
     params,

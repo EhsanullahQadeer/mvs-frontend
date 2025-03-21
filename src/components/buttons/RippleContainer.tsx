@@ -1,9 +1,7 @@
-import React from 'react';
-
 const RippleContainer = () => {
 
   return (
-      <div className="rippleContainer">
+    <div className="rippleContainer">
       <div className='lockImg'><img
         loading="lazy"
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/b6ca8adfa02099dfca96938cae1c05379065d8a380bb70750f820a315c3bedec?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
@@ -27,9 +25,8 @@ const RippleContainer = () => {
         the full License Agreement here to learn what you can and can't do
         with this platform
       </div>
-      </div>
+    </div>
   );
-
 };
 
 export default RippleContainer;

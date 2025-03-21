@@ -11,6 +11,11 @@ import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIco
 import { FaCircleCheck } from "react-icons/fa6";
 import MetaDataForm from "./MetaDataForm";
 import { ICurrentUser } from "./types";
+import { useState } from "react";
+import SampleUploadModel from "pages/profile/components/SampleUploadModel";
+
+const MAX_FILE_SIZE_MB = 50;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 type Props = {
   uploadingFile: File;
@@ -18,8 +23,10 @@ type Props = {
   fileRedisKey: string;
   uploadProgress: number;
   handleCancel: () => void;
+  setUploadingFile?: (event: any) => void;
   currentUserInfo: ICurrentUser;
   setUpdateData?: (event: number) => void;
+  isLoginProfile?: boolean;
 };
 
 const UploadingFilesSection = (props: Props) => {
@@ -28,15 +35,39 @@ const UploadingFilesSection = (props: Props) => {
     setUploadingFile,
     fileRedisKey,
     uploadProgress,
+    setUploadingFile,
     handleCancel,
     currentUserInfo,
     setUpdateData,
+    isLoginProfile,
   } = props;
 
   function formatFileSize(sizeInBytes: number): string {
     const sizeInMB = sizeInBytes / (1024 * 1024);
     return `${sizeInMB.toFixed(0)} Mb`;
   }
+  const [isModalOpen, setIsModalOpen] = useState(true);
+    const validateFile = (file: File) => {
+
+      if (!file.type.startsWith("audio/")) {
+        return null;
+      }
+
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+      return null;
+    }
+
+    return file;
+  };
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+    const validFile = selectedFile ? validateFile(selectedFile) : null;
+    if (validFile) {
+      setUploadingFile(validFile);
+      setIsModalOpen(true);
+    }
+    e.target.value = "";
+  };
 
   return (
     <>
@@ -114,14 +145,46 @@ const UploadingFilesSection = (props: Props) => {
                 </span>
               </div>
 
-              <span className="text-silver text-xs font-normal underline cursor-pointer">
-                Replace File
-              </span>
+              <div className="flex gap-4">
+                <span className="text-silver text-xs font-normal underline cursor-pointer">
+                  <label htmlFor="replace-file-upload" className="cursor-pointer">Replace File</label>
+                  <input
+                    id="replace-file-upload"
+                    type="file"
+                    accept="audio/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </span>
+                
+                <span 
+                  onClick={() => setIsModalOpen(true)} 
+                  className="text-silver text-xs font-normal underline cursor-pointer"
+                >
+                  Continue Uploading
+                </span>
+              </div>
             </div>
           )}
         </div>
-
-        <MetaDataForm {...{ fileRedisKey, handleCancel, currentUserInfo, uploadProgress,setUpdateData, setUploadingFile }} />
+        {!isLoginProfile && (
+          <MetaDataForm
+            {...{ fileRedisKey, handleCancel, currentUserInfo, setUpdateData }}
+          />
+        )}
+        {isLoginProfile && (
+          <SampleUploadModel
+            open={isModalOpen}
+            handleClose={() => setIsModalOpen(false)}
+            fileRedisKey={fileRedisKey}
+            handleCancel={handleCancel}
+            currentUserInfo={currentUserInfo}
+            setUpdateData={setUpdateData}
+            isEditSample={false}
+            sampleToEdit={null}
+            collaborators={[]}
+          />
+        )}
       </div>
     </>
   );
