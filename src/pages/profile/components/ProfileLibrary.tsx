@@ -3,26 +3,29 @@ import UploadFileSection from "./UploadFileSection";
 import searchIcon from "assets/icons/searchIcon.svg";
 import SamplesContainer from "components/SampleContainer/player-container";
 import ProfileRightSection from "../../publicProfile/components/ProfileRightSection";
+import LockedContent from "./LockedContent";
+
 type Props = {
   isLoginUser: boolean,
   user: any,
   tabs: any[],
   hasSampleType: any,
+  connectionDetail: any,
   selectedTab: string,
   setSelectedTab: (tab: string) => void,
-  isConnect: boolean,
+  isConnect: boolean | undefined,
   artistData: any,
   chatOpen: boolean,
   setChatOpen: (open: boolean) => void,
 };
 const ProfileLibrary = (props: Props) => {
-  const { isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, artistData, chatOpen, setChatOpen } = props;
+  const { isLoginUser, user, tabs, hasSampleType, connectionDetail, selectedTab, setSelectedTab, isConnect, artistData, chatOpen, setChatOpen } = props;
 
   return (
     <section className="flex-1 min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">
       {isLoginUser && <UploadFileSection {...{ user }} />}
 
-      <div className={`text-coolGray flex flex-col py-3 mb-2 px-4 `}>
+      <div className={`text-coolGray flex flex-col py-3 mb-2 p-4 `}>
         <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
         <div className="flex justify-between items-center">
           <div className="flex">
@@ -52,22 +55,30 @@ const ProfileLibrary = (props: Props) => {
         </div>
       </div>
 
-      <div
-        className="relative flex-1 flex flex-col"
-        style={{ filter: !isConnect ? "blur(5px)" : "none" }}
-      >
-        {!isConnect && (
-          <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
-        )}
+      <div className="relative flex-1 flex flex-col">
+        <div
+          className="relative flex-1 flex flex-col"
+          style={{ filter: !isConnect ? "blur(3px)" : "none" }}
+        >
 
-        {/* <MusicTable /> */}
-        <div className="relative">
-          <SamplesContainer
-            user_id={artistData?.id}
-            selectedTab={selectedTab}
-            chatOpen={chatOpen}
-          />
+          {!isConnect && (
+            <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
+          )}
+
+          {/* <MusicTable /> */}
+          <div className="relative">
+            <SamplesContainer
+              user_id={artistData?.id}
+              selectedTab={selectedTab}
+              chatOpen={chatOpen}
+              isConnect={isConnect}
+            />
+          </div>
         </div>
+
+        {!isConnect && (
+          <LockedContent />
+        )}
       </div>
     </section>
   );

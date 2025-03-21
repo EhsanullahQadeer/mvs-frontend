@@ -28,8 +28,9 @@ const SampleTable = (props: {
   likedSamples?: Record<number, boolean>;
   setLikedSamples?: (likes: Record<number, boolean>) => void;
   chatOpen?: boolean;
+  isConnect?: boolean;
 }) => {
-  const { samples, setSamples, fetchAllUserSamples, likedSamples = {}, setLikedSamples, chatOpen } = props;
+  const { samples, setSamples, fetchAllUserSamples, likedSamples = {}, setLikedSamples, chatOpen, isConnect } = props;
   const [consideringData, setConsideringData] = useState<Record<number, any[]>>({});
   const [considering, setConsidering] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState<number | null>(null);
@@ -290,6 +291,7 @@ const SampleTable = (props: {
 
   const handleDownload = async (e: React.MouseEvent, sample: any) => {
     e.preventDefault();
+    if (!isConnect) return;
     e.stopPropagation();
     
     try {
@@ -309,6 +311,7 @@ const SampleTable = (props: {
 
   const handleLike = async (e: React.MouseEvent, sample: any) => {
     e.preventDefault();
+    if (!isConnect) return;
     try {
       await sampleLikeAPI(sample.id);
       
@@ -395,6 +398,7 @@ const SampleTable = (props: {
             Object.values(samples).map((sample: any, map_index) => {
               return (
                   <tr
+                    id="play-button"
                     ref={(el) => (rowRefs.current[map_index] = el)}
                     key={map_index}
                     style={{ height: '52px' }}
@@ -402,15 +406,17 @@ const SampleTable = (props: {
                       currPlayingId === sample.id ? "bg-[#1F1F1F]" : ""
                     }`}
                     onClick={(e) => {
-                      const target =
-                        e.target instanceof Element ? e.target : null;
-                      const clickedTd = target?.closest("td");
-                      if (
-                        clickedTd &&
-                        clickedTd.classList.contains("playable-td")
-                      ) {
-                        handleMusicRowClick(e, sample, map_index);
-                      }
+                      if (isConnect){
+                        const target =
+                          e.target instanceof Element ? e.target : null;
+                        const clickedTd = target?.closest("td");
+                        if (
+                          clickedTd &&
+                          clickedTd.classList.contains("playable-td")
+                        ) {
+                          handleMusicRowClick(e, sample, map_index);
+                        }
+                    }
                     }}
                   >
                     {/* Thumbnail */}
@@ -601,7 +607,11 @@ const SampleTable = (props: {
                             strokeLinejoin="round"/>
                         </svg>
                       </a> */}
-                        <span onClick={(e) => handleLike(e, sample)}>
+                        <span 
+                          onClick={(e) => handleLike(e, sample)}
+                          className={`${!isConnect ? 'opacity-40 pointer-events-none' : ''}`}
+                          title={!isConnect ? "Connect wallet to like" : ""}
+                        >
                           {localLikedStatus[sample.id] ? (
                             <IoMdHeart
                               className={`text-[16px] cursor-pointer ${
@@ -620,7 +630,12 @@ const SampleTable = (props: {
                             />
                           )}
                         </span>
-                        <a href={sample.s3_key} onClick={(e) => handleDownload(e, sample)}>
+                        <a 
+                          href={sample.s3_key} 
+                          onClick={(e) => handleDownload(e, sample)}
+                          className={`${!isConnect ? 'opacity-40 pointer-events-none' : ''}`}
+                          title={!isConnect ? "Connect wallet to download" : ""}
+                        >
                           <FiDownload
                             className={`text-[16px] cursor-pointer  ${
                               currPlayingId === sample.id
@@ -630,7 +645,7 @@ const SampleTable = (props: {
                           />
                         </a>
 
-                        <div className="dropdown-container z-0">
+                        <div className={`dropdown-container z-0 ${!isConnect ? 'opacity-40 pointer-events-none' : ''}`}>
                           <DropDown
                             {...{
                               sample,
@@ -641,6 +656,7 @@ const SampleTable = (props: {
                               is_owner: sample?.userInfo?.isOwner,
                               // page={current_page}
                               // sound={sound}
+                              disabled: !isConnect
                             }}
                           />
                         </div>
