@@ -6,17 +6,17 @@ import { MdVerified } from "react-icons/md";
 import { IArtistProfileData } from "./types";
 import { requestConncetAPI } from "api/user";
 import { LuDollarSign } from "react-icons/lu";
-import { LiaEllipsisHSolid } from "react-icons/lia";
 import { useMessenger } from "api/messenger/context";
 import Chatbox from "pages/Inbox/components/Chatbox";
 import avatarImg from "../../../assets/img/avatar.svg";
 import { getConversationsWithUser } from "api/messenger";
 import playIcon from "../../../assets/img/player/play-circle.svg";
 import pauseIcon from "../../../assets/img/player/pause-circle.svg";
-import { FiInfo, FiSend, FiUpload, FiUserPlus } from "react-icons/fi";
+import { FiInfo } from "react-icons/fi";
 import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
 import { ConversationProvider } from "pages/Inbox/components/Directory/context";
 import { IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
+import ProfileSectionButton from "components/ui/Header/atoms/profileAboutSectionAtoms/profileSectionButton";
 
 type Props = {
   artistData: IArtistProfileData | null;
@@ -185,81 +185,56 @@ const ProfileAboutSection = (props: Props) => {
             }
           </div>
 
+          <div className="my-3 flex items-center gap-2 text-silver text-xs flex-wrap">
+            <span className="font-semibold">2 followers</span>
+            <span className="font-semibold">
+              <GoDotFill className="w-1.5 h-1.5" />
+            </span>
+            <span className="font-semibold text-[#0185FF]">
+              500+ connections
+            </span>
+          </div>
+
           {/* Only show buttons row if not viewing own profile */}
           {user.auth.user.id !== artistData?.id && (
-            <div className="mt-3 mb-2 flex justify-between flex-wrap gap-2">
-              <div className="gap-2 flex items-center flex-wrap">
-                {connectionDetail === true ? (
-                  <></>
-                ) : (
-                  <button
-                    onClick={handleConnectFunction}
-                    className={`flex items-center bg-transparent text-dimGray border border-dimGray text-sm rounded-full transition py-2 px-4 font-normal ${
-                      isConnectionPending
-                        ? "cursor-default pointer-events-none"
-                        : "cursor-pointer pointer-events-auto"
-                    }`}
-                  >
-                    {isConnectionPending ? (
-                      <span>Connection Pending</span>
-                    ) : (
-                      <div className="flex gap-2 items-center">
-                        <FiUserPlus className="w-4 h-4" />
-                        <span>Connect</span>
-                      </div>
-                    )}
-                  </button>
-                )}
+            <div className="flex gap-1">
+              <ProfileSectionButton tabName="Message" icon={<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.1673 1.83301L10.5007 15.1663L7.83398 9.16634M15.1673 1.83301L1.83398 6.49967L7.83398 9.16634M15.1673 1.83301L7.83398 9.16634" stroke="#B2B2B2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                } onClick={handleMessageClick}/>
 
-                <button
-                  onClick={handleMessageClick}
-                  style={{
-                    width: "unset",
-                  }}
-                  className="flex font-normal items-center text-jetBlack text-sm rounded-full transition py-2 px-4 bg-limeGreen cursor-pointer"
-                >
-                  <div className="flex gap-2 items-center">
-                    <FiSend className="w-4 h-4" />
-                    <span>Message</span>
-                  </div>
-                </button>
-              </div>
+                <ProfileSectionButton tabName="Connect" icon={<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5" fill="white"/>
+                <path d="M6.50065 7.83333C7.97341 7.83333 9.16732 6.63943 9.16732 5.16667C9.16732 3.69391 7.97341 2.5 6.50065 2.5C5.02789 2.5 3.83398 3.69391 3.83398 5.16667C3.83398 6.63943 5.02789 7.83333 6.50065 7.83333Z" fill="white"/>
+                <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5M13.1673 5.83333V9.83333M15.1673 7.83333H11.1673M9.16732 5.16667C9.16732 6.63943 7.97341 7.83333 6.50065 7.83333C5.02789 7.83333 3.83398 6.63943 3.83398 5.16667C3.83398 3.69391 5.02789 2.5 6.50065 2.5C7.97341 2.5 9.16732 3.69391 9.16732 5.16667Z" stroke="#CCCCCC" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                } onClick={handleMessageClick}/>
 
-              <div>
-                <button className="bg-eerieBlack text-coolGray p-2 rounded-lg hover:bg-gray-700 transition border border-eerieBlack">
-                  <LiaEllipsisHSolid className="w-4 h-4" />
-                </button>
-              </div>
+                <ProfileSectionButton tabName="Share" icon={<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.16602 8.49967V13.833C3.16602 14.1866 3.30649 14.5258 3.55654 14.7758C3.80659 15.0259 4.14573 15.1663 4.49935 15.1663H12.4993C12.853 15.1663 13.1921 15.0259 13.4422 14.7758C13.6922 14.5258 13.8327 14.1866 13.8327 13.833V8.49967M11.166 4.49967L8.49935 1.83301M8.49935 1.83301L5.83268 4.49967M8.49935 1.83301V10.4997" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                } onClick={handleMessageClick}/>
+
+                <ProfileSectionButton width="w-[112px]" icon={<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.99935 11.333C10.4596 11.333 10.8327 10.9599 10.8327 10.4997C10.8327 10.0394 10.4596 9.66634 9.99935 9.66634C9.53911 9.66634 9.16602 10.0394 9.16602 10.4997C9.16602 10.9599 9.53911 11.333 9.99935 11.333Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9.99935 5.49967C10.4596 5.49967 10.8327 5.12658 10.8327 4.66634C10.8327 4.2061 10.4596 3.83301 9.99935 3.83301C9.53911 3.83301 9.16602 4.2061 9.16602 4.66634C9.16602 5.12658 9.53911 5.49967 9.99935 5.49967Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9.99935 17.1663C10.4596 17.1663 10.8327 16.7932 10.8327 16.333C10.8327 15.8728 10.4596 15.4997 9.99935 15.4997C9.53911 15.4997 9.16602 15.8728 9.16602 16.333C9.16602 16.7932 9.53911 17.1663 9.99935 17.1663Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                } onClick={handleMessageClick}/>
+
             </div>
           )}
+          <div className="w-full h-[41px] hover:text-white rounded-md text-xs font-semibold flex items-center justify-center cursor-pointer text-jetBlack hover:bg-transparent bg-limeGreen transition-all duration-200 my-2">
+          <span className='mr-1'>
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5.83333 1.83301V4.49967M11.1667 1.83301V4.49967M2.5 7.16634H14.5M3.83333 3.16634H13.1667C13.903 3.16634 14.5 3.76329 14.5 4.49967V13.833C14.5 14.5694 13.903 15.1663 13.1667 15.1663H3.83333C3.09695 15.1663 2.5 14.5694 2.5 13.833V4.49967C2.5 3.76329 3.09695 3.16634 3.83333 3.16634Z" stroke="#0F0F0F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg></span>
+            Book a Meeting
+          </div>
         </div>
       </div>
 
-      <div className=" border-b border-eclipseGray px-2.5 py-2">
-        
-                  <div className="mb-3.5 flex items-center gap-2 text-silver text-xs flex-wrap">
-                    <span className="font-semibold">2 followers</span>
-                    <span className="font-semibold">
-                      <GoDotFill className="w-1.5 h-1.5" />
-                    </span>
-                    <span className="font-semibold text-[#0185FF]">
-                      500+ connections
-                    </span>
-                  </div>
-        
-                  <div className="flex flex-col items-center gap-2 mb-2">
-                    <div className="flex-1 w-full px-3 py-2 bg-transparent text-white rounded-md text-xs font-semibold flex items-center justify-center gap-1 border border-dimGray cursor-pointer hover:text-jetBlack hover:bg-limeGreen transition-all duration-200">
-                      <FiUpload />
-                      Share
-                    </div>
-        
-                    <div className="flex-1 w-full px-3 py-2 hover:text-white rounded-md text-xs font-semibold flex items-center justify-center gap-1 border border-dimGray cursor-pointer text-jetBlack hover:bg-transparent bg-limeGreen transition-all duration-200">
-                      Make  a post
-                    </div>
-                  </div>
-        
-                </div>
-                <div className="px-5 py-3 pb-5 border-t border-eclipseGray">
+        <div className="px-5 py-3 pb-5 border-t border-eclipseGray">
         <h3 className="text-base text-platinum font-semibold mb-1">About</h3>
         <p className="mb-2 text-sm text-mediumGray font-normal">
           {truncatedBio}
