@@ -1,29 +1,22 @@
-import { IArtistProfileData } from "./types";
-import { MdVerified } from "react-icons/md";
-import { FiInfo, FiSend, FiUpload, FiUserPlus } from "react-icons/fi";
-import { LiaEllipsisHSolid } from "react-icons/lia";
 import { useRef, useState } from "react";
-import pauseIcon from "../../../assets/img/player/pause-circle.svg";
-import playIcon from "../../../assets/img/player/play-circle.svg";
-import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
-import {
-  createNewConversation,
-  getConversationMessages,
-  getConversationsWithUser
-} from "api/messenger";
-import Chatbox from "pages/Inbox/components/Chatbox";
-import { requestConncetAPI } from "api/user";
-import avatarImg from "../../../assets/img/avatar.svg";
-import { useNotification } from "services/WebSocket/useNotification.hook";
-import { useMessages } from "../../../pages/profile/messageContextProvider";
 import { GoDotFill } from "react-icons/go";
-import { LuCalendar, LuDollarSign } from "react-icons/lu";
-import { ICreateNewConversation, IGetConversationMessages, IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
-import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
-import { useNavigate } from "react-router-dom";
+import { RootState } from "redux/reducers";
+import { MdVerified } from "react-icons/md";
+import { IArtistProfileData } from "./types";
+import { requestConncetAPI } from "api/user";
+import { LuDollarSign } from "react-icons/lu";
+import { LiaEllipsisHSolid } from "react-icons/lia";
 import { useMessenger } from "api/messenger/context";
+import Chatbox from "pages/Inbox/components/Chatbox";
+import avatarImg from "../../../assets/img/avatar.svg";
+import { getConversationsWithUser } from "api/messenger";
+import playIcon from "../../../assets/img/player/play-circle.svg";
+import pauseIcon from "../../../assets/img/player/pause-circle.svg";
+import { FiInfo, FiSend, FiUpload, FiUserPlus } from "react-icons/fi";
+import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
 import { ConversationProvider } from "pages/Inbox/components/Directory/context";
+import { IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
 
 type Props = {
   artistData: IArtistProfileData | null;
@@ -40,17 +33,13 @@ type Props = {
 };
 
 const ProfileAboutSection = (props: Props) => {
-
-
   const { 
     setActiveConversation,
     activeConversation,
-    setMessages,
-    messages,
     getConversationMessages
   } = useMessenger();
 
-  const { artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen } =
+  const { artistData, creditsData, connectionDetail, setConnectionDetail, setChatOpen } =
     props;
   const [hoveredRow, setHoveredRow] = useState<number | null>(null); // State to track hovered row
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
@@ -58,10 +47,8 @@ const ProfileAboutSection = (props: Props) => {
   ); // Track the currently playing index
   const audioRef = useRef<HTMLAudioElement | null>(null); // Ref for the audio element
   const [showChat, setShowChat] = useState(false);
-  const [chatData, setChatData] = useState(null);
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: RootState) => state);
-  const navigate = useNavigate();
   const isConnectionPending =
     connectionDetail === false ||
     connectionDetail === null ||
@@ -73,45 +60,14 @@ const ProfileAboutSection = (props: Props) => {
     thumbnail,
     professional_name,
     bio,
-    primary_label,
-    sub_label,
+    country,
+    region,
+    primary_role,
+    secondary_role,
   } = artistData?.available ?? artistData ?? {};
+  console.log('Artist Data: ', artistData);
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
-
-    // useNotification("NEW_MESSAGE", (event) => {
-    //   try {
-    //     const { conversationId, sender, message, timestamp } = event.data;
-    
-    //     const timeoutId = setTimeout(async () => {
-    //       try {
-    //         if (chatData.id === Number(conversationId)) {
-    //           // const newMessage = {
-    //           //   conversation_id: conversationId,
-    //           //   Timestamp: timestamp || new Date().toISOString(),
-    //           //   message_content: message,
-    //           //   sender_id: sender
-    //           // };
-    //           // const formatMessages = [
-    //           //   {
-    //           //     date: new Date().toISOString().split("T")[0],
-    //           //     messages: [...messages[0]?.messages || [], newMessage]
-    //           //   }
-    //           // ]
-    //           //setMessages(formatMessages);
-    //           getConversationMessages(chatData);
-    //         }
-    //       } catch (error) {
-    //         console.error('Error refreshing data:', error);
-    //       }
-    //     }, 300);
-    
-    //     return () => clearTimeout(timeoutId);
-    
-    //   } catch (error) {
-    //     console.error('Error processing new message event:', error);
-    //   }
-    // });
 
   const handlePlayClick = (previewUrl: string, index: number) => {
     if (!previewUrl) return;
@@ -200,30 +156,38 @@ const ProfileAboutSection = (props: Props) => {
         </div>
 
         <div className="text-white flex flex-col -mt-10">
-          <div className="flex flex-col gap-2 mb-3">
+          <div className="flex flex-col gap-2">
             <h1 className={`text-lg flex items-center gap-1 font-semibold`}>
               {professional_name}
               <MdVerified className="text-[#9EFF00]" />
             </h1>
-
-            <span className="text-base font-normal text-coolGray">
-              @{username}
-            </span>
+            <div className="flex">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.6673 8.33366C16.6673 13.3337 10.0007 18.3337 10.0007 18.3337C10.0007 18.3337 3.33398 13.3337 3.33398 8.33366C3.33398 6.56555 4.03636 4.86986 5.28661 3.61961C6.53685 2.36937 8.23254 1.66699 10.0007 1.66699C11.7688 1.66699 13.4645 2.36937 14.7147 3.61961C15.9649 4.86986 16.6673 6.56555 16.6673 8.33366Z" stroke="#B2B2B2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10.0007 10.8337C11.3814 10.8337 12.5007 9.71437 12.5007 8.33366C12.5007 6.95295 11.3814 5.83366 10.0007 5.83366C8.61994 5.83366 7.50065 6.95295 7.50065 8.33366C7.50065 9.71437 8.61994 10.8337 10.0007 10.8337Z" stroke="#B2B2B2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span className="text-base font-normal text-coolGray ml-1">
+                {region}, {country}
+              </span>
+            </div>
           </div>
 
-          <div className="flex gap-1">
-            <div className="bg-eclipseGray text-dimGray rounded-md px-2 py-1 text-sm font-normal">
-              {primary_label}
-            </div>
-
-            <div className="bg-eclipseGray text-dimGray rounded-md px-2 py-1 text-sm font-normal">
-              {sub_label}
-            </div>
+          <div className="flex gap-1 mt-3">
+            {primary_role &&
+              <div className="bg-eclipseGray text-dimGray rounded-md px-2 py-1 text-sm font-normal">
+                {primary_role}
+              </div>
+            }
+            {secondary_role &&
+              <div className="bg-eclipseGray text-dimGray rounded-md px-2 py-1 text-sm font-normal">
+                {secondary_role}
+              </div>
+            }
           </div>
 
           {/* Only show buttons row if not viewing own profile */}
           {user.auth.user.id !== artistData?.id && (
-            <div className="mt-[22px] mb-2 flex justify-between flex-wrap gap-2">
+            <div className="mt-3 mb-2 flex justify-between flex-wrap gap-2">
               <div className="gap-2 flex items-center flex-wrap">
                 {connectionDetail === true ? (
                   <></>
