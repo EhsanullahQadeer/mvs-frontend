@@ -41,6 +41,7 @@ import MembershipsConnects from "./settings/memberships-connects/MembershipsConn
 import Plans from "./settings/plans/Plans";
 import CreditsHistory from "./settings/credits-history/CreditsHistory";
 import Notification from "components/ui/Header/molecules/notifications/NotificationList"
+import ForgotPassword from "./creator/forgetPasword";
 
 interface IRoute {
   path: string;
@@ -140,12 +141,6 @@ const routes: IRoute[] = [
   // {
   //   path: "/forgot-password",
   //   name: "Forgot Password",
-  //   component: ForgotPasswordPage,
-  // },
-
-  // {
-  //   path: "/new-password",
-  //   name: "New Password",
   //   component: ForgotPasswordPage,
   // },
 
