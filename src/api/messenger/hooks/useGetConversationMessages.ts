@@ -14,10 +14,10 @@ export const useGetConversationMessages = (
   return useCallback(async (payload: IGetConversationMessages): Promise<void> => {
     try {
       const response = await axiosInstance.get(`/messenger/conversation/${payload.conversationId}`, { 
-        params: { payload } 
+        params: { limit: payload.limit, cursor: payload.cursor } 
       });
       console.log('useGetConversationMessages', response);
-      setMessages(response.data?.results.messages || []);
+      setMessages(response.data?.results.messages.reverse() || []);
     } catch (error) {
       console.error("Error fetching conversation messages:", error);
       throw error;
