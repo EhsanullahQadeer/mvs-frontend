@@ -24,13 +24,13 @@ const HomeButton = (props: {
     <div className="onboard-2">
       {/* Home button */}
       <div
-        className={`w-[100%] pt-[6px] pb-[6px] flex flex-row ${isExpanded ? 'items-center pl-[12px] justify-start' : 'items-center justify-center'}`}
+        className={`w-[100%] pt-[6px] pb-[6px] pl-[8px] flex flex-row ${isExpanded ? 'items-center pl-[12px] justify-start' : 'items-center'}`}
       >
         <button
         onClick={() => {
           navigate(destination);
         }}
-          className={`cursor-pointer rounded-[8px] ${isExpanded ? 'w-[100%] gap-[8px]' : 'h-[40px] w-[40px]'} p-[8px] flex 
+          className={`cursor-pointer rounded-[8px] ${isExpanded ? 'w-[100%] gap-[8px]' : 'h-[40px] w-[40px]'} p-[8px] flex  
                 ${pathname === destination
               ? `bg-[${selectedButtonColor}] text-[#000]`
               : `hover:bg-[#B4FF15] text-[#FFFFFF] hover:text-[#000]`

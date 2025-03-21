@@ -39,7 +39,7 @@ const LibraryButton = (props: {
       {/* Library button with dropdown */}
       <div className="relative">
         <div
-          className={`w-[100%] pt-[6px] pb-[6px] flex flex-row ${isExpanded ? 'items-center pl-[12px] justify-start' : 'items-center justify-center'}`}
+            className={`w-[100%] pt-[6px] pb-[6px] pl-[8px] flex flex-row ${isExpanded ? 'items-center pl-[12px] justify-start' : 'items-center'}`}
         >
           <button
           onClick={() => {

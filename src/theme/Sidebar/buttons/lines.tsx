@@ -26,7 +26,7 @@ const LinesButton = (props: {
         onClick={() => {
           setIsExpanded(!isExpanded);
         }}
-        className={`cursor-pointer w-[100%] h-[76px] pb-[6px] flex flex-row ${isExpanded ? 'items-center pl-[12px] justify-start' : 'items-center justify-center'}`}
+        className={`cursor-pointer w-[100%] h-[76px] pb-[6px] pl-[8px] flex flex-row ${isExpanded ? 'items-center pl-[12px] justify-start' : 'items-center'}`}
       >
         <div
           id="sidebar-toggle"
