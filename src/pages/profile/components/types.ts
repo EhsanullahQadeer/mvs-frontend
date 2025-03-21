@@ -23,9 +23,11 @@ export interface IUserData {
   phone: string | null;
   popularity_rank: number;
   primary_label: string;
+  primary_role: string | null;
   referral_code: string | null;
   referral_completed_at: string | null; // ISO date string or null
   referred_by_id: number | null;
+  secondary_role: string | null;
   spotify_artist_id: string;
   sub_label: string;
   text_message_price: number;
