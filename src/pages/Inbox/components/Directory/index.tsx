@@ -11,7 +11,7 @@ import { ChatboxProvider } from "../Chatbox/context";
 import { Conversation } from "./components/conversation";
 import searchIcon from "../../../../assets/icons/searchIcon.svg";
 import { IConversation } from "api/messenger/objects/states.types";
-import useGetMessagesNotes from "pages/Inbox/hooks/useGetMessagesNotes";
+
 import InboxTabs from "pages/Inbox/components/Directory/components/tabs";
 import NoMessagesYet from "pages/Inbox/components/Directory/templates/noMessagesYet";
 
@@ -48,17 +48,6 @@ const InboxDirectory = () => {
   useEffect(() => {
     initialize();
   }, [inboxTab, loadConversations]);
-
-  const {
-    localMessages,
-    notes,
-    loading,
-    getConvMessages,
-    getNotes,
-    getMessagesNotes,
-    setLocalMessages,
-  } = useGetMessagesNotes(setActiveConversation);
-
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

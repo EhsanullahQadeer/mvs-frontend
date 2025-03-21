@@ -2,7 +2,7 @@ import { useSendMessage } from './hooks/useSendMessage';
 import { useDeleteConversations } from './hooks/useDeleteConversations';
 import { useGetConversationNotes } from './hooks/useGetConversationNotes';
 import { IReplyInThread, useReplyInThread } from './hooks/useReplyInThread';
-import { useGetConversationMessages } from './hooks/useGetConversationMessages';
+import { IGetConversationMessages, useGetConversationMessages } from './hooks/useGetConversationMessages';
 import { useToggleConversationIsSpam } from './hooks/useToggleConversationIsSpam';
 import { IAddReaction, useAddReactionMessage } from './hooks/useAddReactionMessage';
 import { IGetConversations, useGetConversations } from './hooks/useGetConversations';
@@ -23,7 +23,6 @@ import {
   IToggleConversationIsArchived, 
   IToggleConversationIsPriority, 
   IToggleConversationIsSpam,
-  IGetConversationMessages,
   IGetConversationNotes,
   IDeleteConversations,
   ISendMessage,
@@ -65,6 +64,9 @@ interface MessengerContextType {
   deleteConversations: (payload: IDeleteConversations) => Promise<void>;
   getSearchMessages: (payload: ISearchMessagesParams) => Promise<void>;
   getThreadMessages: (payload: IGetThreadMessages) => Promise<void>;
+  setTotalPriorityInboxUnread: (payload: number) => void;
+  setTotalGeneralInboxUnread: (payload: number) => void;
+  setTotalIcebreakerInboxUnread: (payload: number) => void;
   threadMessages: IMessage[] | null;
   setThreadMessages: (messages: IMessage[]) => void;
   setMessages: (messages: IMessage[]) => void;
@@ -145,7 +147,6 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
   const getSearchMessagesFunc = 
     useGetSearchMessages(setSearchMessages,setTotalSearchMessages);
 
-  // Your state and functions here
   const value: MessengerContextType = useMemo(() => {
     return {
       activeConversation,
@@ -162,6 +163,9 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
       totalPriorityInboxUnread,
       totalGeneralInboxUnread,
       totalIcebreakerInboxUnread,
+      setTotalPriorityInboxUnread,
+      setTotalGeneralInboxUnread,
+      setTotalIcebreakerInboxUnread,
       totalSearchMessages,
       conversationNotes,
       getConversations: getConversationsFunc,
@@ -202,6 +206,9 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
     totalPriorityInboxUnread,
     totalGeneralInboxUnread,
     totalIcebreakerInboxUnread,
+    setTotalPriorityInboxUnread,
+    setTotalGeneralInboxUnread,
+    setTotalIcebreakerInboxUnread,
     totalSearchMessages,
     conversationNotes,
     getConversationsFunc,

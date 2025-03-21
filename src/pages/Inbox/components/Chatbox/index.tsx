@@ -23,7 +23,6 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { AudioRecordingProvider } from "./components/audioRecorder";
 import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
 import { useNotification } from "services/WebSocket/useNotification.hook";
-import messageSound from "../../../../assets/audio/message-notification.mp3";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
 
 interface ChatboxProps {
@@ -41,6 +40,8 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
   const {
     activeConversation,
+    CONVERSATIONS_PER_PAGE,
+    inboxTab
   } = useConversation();
 
   const {
@@ -48,7 +49,9 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     setMessages,
     conversationNotes,
     setThreadMessages,
-    threadMessages
+    threadMessages,
+    conversations,
+    setConversations,
   } = useMessenger();
 
   const [menuSection, setMenuSection] = useState(false);
@@ -58,7 +61,6 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (prevIsThread !== isThread) {
@@ -67,15 +69,15 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
         setIsAnimating(false);
         setPrevIsThread(isThread);
       }, 300);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isThread, prevIsThread]);
-  
+
   // Determine animation classes based on transition state
   const getAnimationClass = () => {
     if (!isAnimating) return '';
-    
+
     if (isThread) {
       return 'animate-slide-left';
     } else {
@@ -93,98 +95,32 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
   useEffect(() => {
     if (activeConversation) {
-      //console.log("activeConversation", activeConversation);
       initialize();
     }
   }, [activeConversation]);
 
   const { refreshUnreadCount } = useUnreadCount();
 
-  // Add useEffect for audio initialization
-  useEffect(() => {
-    const initAudio = async () => {
-      try {
-        audioRef.current = new Audio(messageSound);
-        audioRef.current.crossOrigin = "anonymous";
-        audioRef.current.preload = "auto";
-
-        // Wait for audio to load
-        await new Promise(resolve => {
-          if (audioRef.current) {
-            audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
-            audioRef.current.load();
-          }
-        });
-
-        console.log('Message sound loaded successfully');
-      } catch (error) {
-        console.error('Error initializing message sound:', error);
-      }
-    };
-
-    initAudio();
-
-    // Cleanup
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
-        audioRef.current = null;
-      }
-    };
-  }, []);
-
-  const playSound = useCallback(() => {
-    console.log('Attempting to play message sound');
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            console.log('Message sound played successfully');
-          })
-          .catch(err => {
-            console.warn('Could not play message sound:', err);
-          });
-      }
-    } else {
-      console.log("Audio not loaded, skipping playback");
-    }
-  }, []);
-
-
   useNotification("NEW_MESSAGE", (data) => {
-    console.log("1. Data received:", data);
-    
     if (!data || !data.message) {
-      console.log("No data or message");
       return;
     }
 
     const message = data.message as IMessage;
-    console.log("3. Message:", message);
     if (threadMessages && threadMessages[0]?.id === message.parentMessageId && isThread) {
-      console.log("5. Appending to thread messages");
       setThreadMessages([...threadMessages, message]);
       return;
     } else if (message.parentMessageId) {
       return;
     }
 
-    console.log("6. Messages:", messages);
-    console.log("7. Active conversation:", activeConversation);
     if (!messages) {
-      console.log("2. Setting messages");
       setMessages([message]);
-    } else if(activeConversation.id == message.conversation.id) {
-      console.log("4b. Appending to existing messages");
+    } else if (activeConversation.id == message.conversation.id) {
       setMessages([...messages, message]);
     }
-    console.log("7. Messages:", messages);
 
-    playSound();
+    // playSound();
     if (!isPublicProfile) {
       refreshUnreadCount();
     }
@@ -207,7 +143,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     {
       label: "Go to Profile",
       icon: <FiUser />,
-      func: () => {navigate(`/profile/${activeConversation?.recipient?.username}`)},
+      func: () => { navigate(`/profile/${activeConversation?.recipient?.username}`) },
     },
     {
       label: "Share Profile",
@@ -235,51 +171,51 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     <div className="flex flex-col h-full w-full border-l border-eerieBlack bg-richBlack relative">
       <div className="flex flex-col h-full">
         {!isPublicProfile && (
-        <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
+          <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
 
-          <div className={`flex text-white items-center p-2
+            <div className={`flex text-white items-center p-2
                ${!isPublicProfile ? 'border-b border-[#1F1F1F]' : ''}`}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={onClose} className="cursor-pointer transform scale-x-[-1]">
-              <path d="M18 7L13 12L18 17M11 7L6 12L11 17" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={onClose} className="cursor-pointer transform scale-x-[-1]">
+                <path d="M18 7L13 12L18 17M11 7L6 12L11 17" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
 
-          <div className="flex flex-wrap gap-5 justify-between items-center p-4 w-full">
-            <div className="flex gap-2 items-center">
-              <div className="flex rounded-full p-0.5 w-12 h-12 aspect-square">
-                <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
-                  <div
-                    style={{ backgroundImage: `url("${recipient?.thumbnail}")` }}
-                    className="w-full h-full rounded-full bg-cover bg-center"
-                  ></div>
+            <div className="flex flex-wrap gap-5 justify-between items-center p-4 w-full">
+              <div className="flex gap-2 items-center">
+                <div className="flex rounded-full p-0.5 w-12 h-12 aspect-square">
+                  <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
+                    <div
+                      style={{ backgroundImage: `url("${recipient?.thumbnail}")` }}
+                      className="w-full h-full rounded-full bg-cover bg-center"
+                    ></div>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <div className="text-sm font-semibold text-white">
+                    {recipient?.name}
+                  </div>
+                  <div className="text-xs text-silver font-normal">
+                    {recipient?.country}, {recipient?.region}
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-0.5">
-                <div className="text-sm font-semibold text-white">
-                  {recipient?.name}
-                </div>
-                <div className="text-xs text-silver font-normal">
-                  {recipient?.country}, {recipient?.region}
+              <div className="flex items-center gap-2">
+                <div
+                  onClick={handleMenuSection}
+                  className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver relative"
+                >
+                  <MenuIcon className="w-5 h-5" />
+
+                  {menuSection && (
+                    <InboxDropdownMenu {...{ setMenuSection, dropdownMenuOptions }} />
+                  )}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div
-                onClick={handleMenuSection}
-                className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver relative"
-              >
-                <MenuIcon className="w-5 h-5" />
-
-                {menuSection && (
-                  <InboxDropdownMenu {...{ setMenuSection, dropdownMenuOptions}} />
-                )}
-              </div>
+            <div className="flex px-4 py-2 w-full">
+              <ChatboxTabs tab={activeTab} setter={setActiveTab} />
             </div>
           </div>
-          <div className="flex px-4 py-2 w-full">
-            <ChatboxTabs tab={activeTab} setter={setActiveTab} />
-          </div>
-        </div>
         )}
         <div className="flex flex-col flex-1 relative overflow-hidden">
           {messages === null ? (
@@ -316,7 +252,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                             <div className="flex items-center">
                               <span className="text-white text-sm font-medium">Thread</span>
                             </div>
-                            <button 
+                            <button
                               onClick={() => {
                                 setIsThread(false);
                                 setThreadMessages(null);
@@ -324,8 +260,8 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                               className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-[#242424] transition-colors"
                             >
                               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13 1L1 13" stroke="#9EFF00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M1 1L13 13" stroke="#9EFF00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M13 1L1 13" stroke="#9EFF00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M1 1L13 13" stroke="#9EFF00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                             </button>
                           </div>
@@ -337,7 +273,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                                     key={message.id}
                                     ref={index === threadMessages.length - 1 ? (el) => {
                                       if (el) {
-                                        el.scrollIntoView({ 
+                                        el.scrollIntoView({
                                           behavior: 'smooth',
                                           block: 'end'
                                         });
@@ -389,7 +325,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                               key={message?.id || index}
                               ref={index === messages.length - 1 ? (el) => {
                                 if (el) {
-                                  el.scrollIntoView({ 
+                                  el.scrollIntoView({
                                     behavior: 'smooth',
                                     block: 'end'
                                   });

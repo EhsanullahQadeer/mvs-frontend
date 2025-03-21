@@ -4,8 +4,8 @@ import axiosInstance from "api/axios";
 
 export interface IGetConversationMessages {
   conversationId: string;
-  skip?: number | null;
-  take?: number | null;
+  limit: number;
+  cursor: number;
 }
 
 export const useGetConversationMessages = (

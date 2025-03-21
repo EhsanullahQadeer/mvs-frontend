@@ -9,7 +9,6 @@ import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
 import {
   createNewConversation,
-  getConversationMessages,
   getConversationsWithUser
 } from "api/messenger";
 import Chatbox from "pages/Inbox/components/Chatbox";
@@ -19,7 +18,7 @@ import { useNotification } from "services/WebSocket/useNotification.hook";
 import { useMessages } from "../../../pages/profile/messageContextProvider";
 import { GoDotFill } from "react-icons/go";
 import { LuCalendar, LuDollarSign } from "react-icons/lu";
-import { ICreateNewConversation, IGetConversationMessages, IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
+import { ICreateNewConversation, IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
 import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
 import { useNavigate } from "react-router-dom";
 import { useMessenger } from "api/messenger/context";
@@ -149,7 +148,7 @@ const ProfileAboutSection = (props: Props) => {
           conversation_id: response.data.id,
         };
         setActiveConversation(response.data);
-        getConversationMessages({ conversationId: response.data.conversation_id });
+        getConversationMessages({ conversationId: response.data.conversation_id, limit: 10, cursor: 0 });
         setChatOpen(true);
         setShowChat(true);
       }
