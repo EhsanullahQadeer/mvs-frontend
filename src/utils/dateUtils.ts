@@ -23,30 +23,6 @@ export const truncateFilename = (filename: string, maxLength: number = 20) => {
   return `${start}[...]${end}`; // Concatenate with ellipsis
 };
 
-// Function to truncate the filename based on pixel width
-export const truncateFilenameByWidth = (filename: string, maxWidth: number): string => {
-  if (filename === undefined) return "";
-  
-  // Create a temporary canvas to measure text width
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
-  if (!context) return filename; // Return original if context is not available
-
-  context.font = "16px Arial"; // Set the font style to match your UI
-  let truncatedFilename = filename;
-
-  // Check the width of the filename
-  while (context.measureText(truncatedFilename).width > maxWidth && truncatedFilename.length > 1) {
-    truncatedFilename = truncatedFilename.slice(0, -1); // Truncate
-    // Ensure we don't get stuck in an infinite loop
-    if (truncatedFilename.length <= 3) break; // Stop if the filename is too short
-  }
-  console.log('Truncated file name: ', truncatedFilename);
-  truncatedFilename = truncatedFilename.slice(0, -1) + "..."; // Truncate last character and add ellipses
-
-  return truncatedFilename; // Return the truncated filename
-};
-
 // Function to capitalize the first letter of each word in a string
 export const capitalizeRegion = (str: string) => {
   if (!str) return ""; // Return empty string if input is empty

@@ -4,13 +4,10 @@ import { useChatbox } from "../context";
 import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
-import { formatTime } from "utils/dateUtils";
-import VolumeIcon from '../../../../../assets/img/volume.svg';
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
-import VolumeMuteIcon from '../../../../../assets/img/volume-x.svg';
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import PlayPauseButton from "components/ui/Header/atoms/chatboxPlayPauseButton";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
+import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
 
 interface MessageProps {
@@ -83,10 +80,6 @@ const Message: React.FC<MessageProps> = ({
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const audioUrl = media?.url || null;
-
-  function renderTipMessage() {
-    return <TipMessage amount={message?.transaction?.amount} message={message?.content} />
-  }
   
   function handleMessagedAsRead(){
     if (is_read === true || sender.id === activeConversation.user.id) return;
@@ -246,57 +239,24 @@ const Message: React.FC<MessageProps> = ({
     };
   }, [audioUrl]);
 
-  const handlePlayPause = useCallback((event: React.MouseEvent) => {
-    event.stopPropagation();
+  const handlePlayPauseClick = useCallback(() => {
     if (wavesurfer.current) {
       if (isPlaying) {
         wavesurfer.current.pause();
       } else {
         wavesurfer.current.play();
       }
-      setIsPlaying(!isPlaying);
+      setIsPlaying(prev => !prev);
     }
-  }, [isPlaying]);  
+  }, []);
 
-  const handleMuteToggle = useCallback((event: React.MouseEvent) => {
-    event.stopPropagation();
+  const handleMuteToggleClick = useCallback(() => {
     if (wavesurfer.current) {
       wavesurfer.current.setMuted(!isMuted);
-      setIsMuted(!isMuted);
+      setIsMuted(prev => !prev);
     }
-  }, [isMuted]);
+  }, []);
 
-  function renderAudioRecordingMessage() {
-    return (
-      <div className="bg-[#242424] h-[56px] w-[234px] border border-[#3D3D3D] box-border rounded-full">
-        <div className="mx-3 h-full flex justify-between items-center">
-          <PlayPauseButton isPlaying={isPlaying} onClick={handlePlayPause}/>
-          <div className="flex-1 mx-4">
-            <div 
-              ref={waveformRef} 
-              className="waveform w-full max-w-full overflow-hidden"
-              style={{ maxWidth: '100%' }}
-            />
-          </div>
-          <div className="items-end">
-            <span className="text-[14px] text-[#848484] min-w-[40px] flex-shrink-0 mr-3">
-              {formatTime(media?.duration)}
-            </span>
-          </div>
-          <button 
-            onClick={handleMuteToggle}
-            className="w-6 h-6 flex items-center justify-center flex-shrink-0 mr-2 hover:opacity-80"
-          >
-            <img 
-              src={isMuted ? VolumeMuteIcon : VolumeIcon} 
-              alt={isMuted ? "Unmute" : "Mute"} 
-              className="w-6 h-6"
-            />
-          </button>
-        </div>
-      </div>
-    )
-  }
   
   // async function emojiPassthrough(id:number, emoji:any){
   //   const userId = user.id;
@@ -361,7 +321,7 @@ const Message: React.FC<MessageProps> = ({
 
           {message?.transaction?.type === TRANSACTION_TYPE.TIP && (
             <div className="flex flex-col gap-2">
-              {renderTipMessage()}
+              <TipMessage amount={message?.transaction?.amount} message={message?.content}/>
               <div className="text-sm text-[#CACCCD] break-all whitespace-normal max-w-full w-full">{content}</div>
             </div>
           )}
@@ -372,11 +332,8 @@ const Message: React.FC<MessageProps> = ({
             </div>
 
           ) : media?.type === MEDIA_TYPE.RECORDING ? (
-            <div
-            id="2"
-            className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-3"
-            >
-              {renderAudioRecordingMessage()}
+            <div id="2" className="flex mt-3">
+              <RecordedAudioMessagePlayer isMuted={isMuted} waveformRef={waveformRef} isPlaying={isPlaying} duration={media?.duration} handleMuteToggle={handleMuteToggleClick} handlePlayPause={handlePlayPauseClick}/>
             </div>
           ) : null}
           <div className={`text-sm text-[#CACCCD] break-all whitespace-normal overflow-hidden max-w-full w-full ${
