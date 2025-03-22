@@ -34,14 +34,14 @@ function DemoStripe() {
     }
     // TODO: Send confirmationToken to backend
     // TODO: Handle server-side response if there's an error with the payment intent creation
-    
+    // TODO: Set a state to stop showing this component
   }
 
   return (
     <form onSubmit={handleSubmit}>
-        <PaymentElement />
-        <button type="submit" disabled={!stripe || isLoading}>Pay</button>
-      </form>
+      <PaymentElement />
+      <button type="submit" disabled={!stripe || isLoading}>Pay</button>
+    </form>
   );
 }
 
