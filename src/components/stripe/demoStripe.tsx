@@ -1,6 +1,8 @@
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useState } from "react";
 
+import axios from '../../api/axios';
+
 function DemoStripe() {
   const stripe = useStripe();
   const elements = useElements();
@@ -32,7 +34,7 @@ function DemoStripe() {
       handleError(error);
       return;
     }
-    // TODO: Send confirmationToken to backend
+    const paymentIntent = await axios.post('stripe/payment-intent-for-demo',{tokenId: confirmationToken.id,tip:10,recipientId: '351'});
     // TODO: Handle server-side response if there's an error with the payment intent creation
     // TODO: Set a state to stop showing this component
   }
