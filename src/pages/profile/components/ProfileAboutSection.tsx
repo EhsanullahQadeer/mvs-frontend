@@ -12,7 +12,7 @@ import avatarImg from "../../../assets/img/avatar.svg";
 import { getConversationsWithUser } from "api/messenger";
 import playIcon from "../../../assets/img/player/play-circle.svg";
 import pauseIcon from "../../../assets/img/player/pause-circle.svg";
-import { FiInfo } from "react-icons/fi";
+import { FiInfo, FiUserPlus } from "react-icons/fi";
 import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
 import { ConversationProvider } from "pages/Inbox/components/Directory/context";
 import { IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
@@ -203,15 +203,24 @@ const ProfileAboutSection = (props: Props) => {
                 </svg>
                 } onClick={handleMessageClick}/>
 
-                <ProfileSectionButton tabName="Connect" icon={<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5" fill="white"/>
-                <path d="M6.50065 7.83333C7.97341 7.83333 9.16732 6.63943 9.16732 5.16667C9.16732 3.69391 7.97341 2.5 6.50065 2.5C5.02789 2.5 3.83398 3.69391 3.83398 5.16667C3.83398 6.63943 5.02789 7.83333 6.50065 7.83333Z" fill="white"/>
-                <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5M13.1673 5.83333V9.83333M15.1673 7.83333H11.1673M9.16732 5.16667C9.16732 6.63943 7.97341 7.83333 6.50065 7.83333C5.02789 7.83333 3.83398 6.63943 3.83398 5.16667C3.83398 3.69391 5.02789 2.5 6.50065 2.5C7.97341 2.5 9.16732 3.69391 9.16732 5.16667Z" stroke="#CCCCCC" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                } onClick={handleMessageClick}/>
+                {connectionDetail === true ? (
+                  <ProfileSectionButton tabName="Connected" icon={<svg width="17" height="17" viewBox="0 0 24 24"  xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                    <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd" />
+                  </svg>} onClick={handleConnectFunction} disabled={true}/>
+                ) : (
+                  <ProfileSectionButton tabName={`${isConnectionPending ? "Pending" : "Connect"}`} icon={isConnectionPending ? <svg width="17" height="17" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                   : <svg width="17" height="17" viewBox="0 0 17 17" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5" fill="white"/>
+                    <path d="M6.50065 7.83333C7.97341 7.83333 9.16732 6.63943 9.16732 5.16667C9.16732 3.69391 7.97341 2.5 6.50065 2.5C5.02789 2.5 3.83398 3.69391 3.83398 5.16667C3.83398 6.63943 5.02789 7.83333 6.50065 7.83333Z" fill="white"/>
+                    <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5M13.1673 5.83333V9.83333M15.1673 7.83333H11.1673M9.16732 5.16667C9.16732 6.63943 7.97341 7.83333 6.50065 7.83333C5.02789 7.83333 3.83398 6.63943 3.83398 5.16667C3.83398 3.69391 5.02789 2.5 6.50065 2.5C7.97341 2.5 9.16732 3.69391 9.16732 5.16667Z" stroke="#CCCCCC" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    } onClick={handleConnectFunction}/>
+                )}
 
                 <ProfileSectionButton tabName="Share" icon={<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3.16602 8.49967V13.833C3.16602 14.1866 3.30649 14.5258 3.55654 14.7758C3.80659 15.0259 4.14573 15.1663 4.49935 15.1663H12.4993C12.853 15.1663 13.1921 15.0259 13.4422 14.7758C13.6922 14.5258 13.8327 14.1866 13.8327 13.833V8.49967M11.166 4.49967L8.49935 1.83301M8.49935 1.83301L5.83268 4.49967M8.49935 1.83301V10.4997" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3.16602 8.49967V13.833C3.16602 14.1866 3.30649 14.5258 3.55654 14.7758C3.80659 15.0259 4.14573 15.1663 4.49935 15.1663H12.4993C12.853 15.1663 13.1921 15.0259 13.4422 14.7758C13.6922 14.5258 13.8327 14.1866 13.8327 13.833V8.49967M11.166 4.49967L8.49935 1.83301M8.49935 1.83301L5.83268 4.49967M8.49935 1.83301V10.4997" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 } onClick={handleMessageClick}/>
 
