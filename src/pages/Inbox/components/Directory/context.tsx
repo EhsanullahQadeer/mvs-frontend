@@ -4,7 +4,7 @@ import { useMessenger } from 'api/messenger/context';
 import { IConversation } from 'api/messenger/objects/states.types';
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo } from 'react';
 
-type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | '';
+type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | 'connections' | '';
 
 interface ConversationContextType {
   // State
@@ -131,6 +131,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         getArchived: archiveSpamFav === "archive",
         getSpam: archiveSpamFav === "spam",
         getFavorited: archiveSpamFav === "favorite",
+        getConnected: inboxTab === "connections"
       });
     }
   }, [authUser, inboxTab, getConversations, CONVERSATIONS_PER_PAGE, currentPage, archiveSpamFav]);
