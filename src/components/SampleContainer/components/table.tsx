@@ -107,7 +107,7 @@ const SampleTable = (props: {
   useEffect(() => {
     const trackSources = Object.values(samples).map((sample: any) => ({
       id: sample.id,
-      src: sample.s3_key,
+      src: sample.mp3_s3_key ? sample.mp3_s3_key : sample.s3_key,
       duration: sample.duration,
     }));
     loadTracks(trackSources, { reset: true });
@@ -119,7 +119,7 @@ const SampleTable = (props: {
   ) => {
     const audio_track: AudioTrack = {
       id: sample.id, // Set the id from currentSample
-      src: sample.s3_key, // Set the src from currentSample
+      src: sample.mp3_s3_key ? sample.mp3_s3_key : sample.s3_key, // Set the src from currentSample
     };
     if (!current || current.id !== sample.id) {
       // If no track is currently playing, or a new track is selected
@@ -147,7 +147,7 @@ const SampleTable = (props: {
       const prevSample = Object.values(samples)[prevIndex] as AudioTrackType;
       const audio_track: AudioTrack = {
         id: prevSample.id,
-        src: prevSample.s3_key,
+        src: prevSample.mp3_s3_key ? prevSample.mp3_s3_key : prevSample.s3_key,
       };
 
       setCurrentPlaying(prevSample.id); // Set the previous track as the current one
@@ -165,7 +165,7 @@ const SampleTable = (props: {
       const nextSample = Object.values(samples)[nextIndex] as AudioTrackType;
       const audio_track: AudioTrack = {
         id: nextSample.id,
-        src: nextSample.s3_key,
+        src: nextSample.mp3_s3_key ? nextSample.mp3_s3_key : nextSample.s3_key,
       };
 
       setCurrentPlaying(nextSample.id); // Set the next track as the current one
@@ -182,7 +182,7 @@ const SampleTable = (props: {
       const handleTrackSwitch = (sample: AudioTrackType, index: number) => {
         const audio_track: AudioTrack = {
           id: sample.id, // Set the id from currentSample
-          src: sample.s3_key, // Set the src from currentSample
+          src: sample.mp3_s3_key ? sample.mp3_s3_key : sample.s3_key, // Set the src from currentSample
         };
         setCurrentPlaying(sample.id); // Set the current playing track ID
         setCurrentPlayingIndex(index); // Update the playing index
@@ -251,7 +251,7 @@ const SampleTable = (props: {
           ] as AudioTrackType;
           const audio_track: AudioTrack = {
             id: currentSample.id,
-            src: currentSample.s3_key,
+            src: currentSample.mp3_s3_key ? currentSample.mp3_s3_key : currentSample.s3_key,
           };
           if (isPlaying) {
             pauseTrack();
