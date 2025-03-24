@@ -15,7 +15,6 @@ import InboxDirectory from "./components/Directory";
 import { MessengerProvider } from "api/messenger/context";
 import { setBreadcrumbs } from "redux/actions/breadcrumb.actions";
 import { ConversationProvider } from "./components/Directory/context";
-import StripeElements from "components/stripe/stripeElements";
 const InboxPage = () => {
   const dispatch = useDispatch();
 
@@ -31,9 +30,6 @@ const InboxPage = () => {
         <ConversationProvider>
           <div className="flex h-full w-full overflow-hidden">
             <InboxDirectory />
-          </div>
-          <div className="w-full h-full">
-            <StripeElements />
           </div>
         </ConversationProvider>
       </MessengerProvider>
