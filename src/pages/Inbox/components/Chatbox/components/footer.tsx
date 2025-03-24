@@ -21,7 +21,7 @@ const Footer = () => {
     sendMessage,
     replyInThread,
     threadMessages,
-    getThreadMessages
+    getThreadMessages,
   } = useMessenger();
 
   const { 
@@ -66,8 +66,10 @@ const Footer = () => {
   }, [activeConversation]);
 
   const handleAudioSelector = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('Audio File look: ', e.target.files?.[0]);
     const file = validateFile(e.target.files?.[0]);
     if (file) {
+      console.log('File: ', file);
       setUploadedAudioFile(file);
     }
     e.target.value = "";
@@ -114,18 +116,22 @@ const Footer = () => {
             audioMediaId: mediaId,
             messageType: "recording",
           });
+          // await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 });
+          if (threadMessages && threadMessages.length > 0) {
+            await getThreadMessages({ parentMessageId: threadMessages[0].id });
+          }
+          clearMessageInputs();
         } else {
           await replyInThread({
             replyContent: String(messageInputValue || ''),
             parentMessageId: Number(threadMessages[0]?.id || ''),
             audioMediaId: mediaId,
           });
+          if (threadMessages && threadMessages.length > 0) {
+            await getThreadMessages({ parentMessageId: threadMessages[0].id });
+          }
+          clearMessageInputs();
         }
-        await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 });
-        if (threadMessages && threadMessages.length > 0) {
-          await getThreadMessages({ parentMessageId: threadMessages[0].id });
-        }
-        clearMessageInputs();
       } else {
         if (isThread) {
           await replyInThread({
@@ -137,24 +143,22 @@ const Footer = () => {
           }
         } else {
           if (tipAmount > 0) {
-            await sendMessage({
+            const response = await sendMessage({
               message: String(messageInputValue || ''),
               conversationId: String(activeConversation?.conversation_id || ''),
               messageType: "tip",
               creditPaymentAmount: tipAmount,
             });
           } else {
-            await sendMessage({
+            const response = await sendMessage({
               message: String(messageInputValue || ''),
               conversationId: String(activeConversation?.conversation_id || ''),
               messageType: "message",
             });
           }
         }
-        await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 });
         clearMessageInputs();
       }
-      // refreshMessages();
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
       toast.error("An error occurred while sending the message");

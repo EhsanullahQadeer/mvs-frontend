@@ -24,6 +24,7 @@ import { AudioRecordingProvider } from "./components/audioRecorder";
 import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
+import axiosInstance from "api/axios";
 
 interface ChatboxProps {
   onClose: () => void;
@@ -52,12 +53,15 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     threadMessages,
     conversations,
     setConversations,
+    getConversationMessages
   } = useMessenger();
 
   const [menuSection, setMenuSection] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("messages");
   const [prevIsThread, setPrevIsThread] = useState(isThread);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -101,12 +105,23 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
   const { refreshUnreadCount } = useUnreadCount();
 
+  // Add this helper function
+  const isNearBottom = (element: HTMLElement, threshold = 0.2) => {
+    const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+    return distanceFromBottom <= element.clientHeight * threshold;
+  };
+
+  // Modify the NEW_MESSAGE notification handler
   useNotification("NEW_MESSAGE", (data) => {
-    if (!data || !data.message) {
+    if (!data || !data.message) return;
+
+    const message = data.message as IMessage;
+    const messageContainer = messagesRef.current;
+
+    if (messages?.some(m => m.id === message.id)) {
       return;
     }
 
-    const message = data.message as IMessage;
     if (threadMessages && threadMessages[0]?.id === message.parentMessageId && isThread) {
       setThreadMessages([...threadMessages, message]);
       return;
@@ -118,22 +133,35 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
       setMessages([message]);
     } else if (activeConversation.id == message.conversation.id) {
       setMessages([...messages, message]);
+      // Only scroll to bottom if we're already near the bottom
+      if (messageContainer && isNearBottom(messageContainer)) {
+        setTimeout(() => {
+          messageContainer.scrollTop = messageContainer.scrollHeight;
+        });
+      }
     }
 
-    // playSound();
     if (!isPublicProfile) {
       refreshUnreadCount();
     }
   });
 
+  // Remove or modify the useEffect that was forcing scroll to bottom
   useEffect(() => {
-    setTimeout(() => {
-      const messageContainer = messagesRef.current;
-      if (messageContainer) {
+    // Only scroll on new messages if we're near the bottom
+    const messageContainer = messagesRef.current;
+    if (messageContainer && isNearBottom(messageContainer)) {
+      setTimeout(() => {
         messageContainer.scrollTop = messageContainer.scrollHeight;
-      }
-    });
+      });
+    }
   }, [messages, conversationNotes]);
+
+  useEffect(() => {
+    if (messages === null) {
+      setHasMore(true);
+    }
+  }, [messages]);
 
   const handleMenuSection = () => {
     setMenuSection(!menuSection);
@@ -167,6 +195,47 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     },
   ];
 
+  // Add scroll handler
+  const handleScroll = useCallback(async (e: React.UIEvent<HTMLDivElement>) => {
+    const element = e.target as HTMLDivElement;
+    
+    // Check if we're at the top and not already loading
+    if (element.scrollTop === 0 && !isLoadingMore && hasMore && messages?.length > 0) {
+      setIsLoadingMore(true);
+      
+      try {
+        // Get the oldest message's ID to use as cursor
+        
+        const response = await axiosInstance.get(`/messenger/conversation/${activeConversation.conversation_id}`, { 
+          params: { limit: 10, cursor: messages.length - 1 }
+        });
+        console.log('response', response);
+        const newMessages = response.data?.results.messages.reverse() || [];
+        
+        // If we got fewer messages than requested, there are no more to load
+        if (newMessages.length < 10) {
+          setHasMore(false);
+        }
+
+        // Preserve scroll position
+        const prevHeight = element.scrollHeight;
+        
+        // Merge new messages with existing ones
+        const mergedMessages = [...newMessages, ...(messages || [])] as IMessage[];
+        setMessages(mergedMessages);
+        
+        // Restore scroll position after new messages are added
+        setTimeout(() => {
+          element.scrollTop = element.scrollHeight - prevHeight;
+        }, 0);
+      } catch (error) {
+        console.error('Error loading more messages:', error);
+      } finally {
+        setIsLoadingMore(false);
+      }
+    }
+  }, [activeConversation, messages, isLoadingMore, hasMore, getConversationMessages]);
+
   return (
     <div className="flex flex-col h-full w-full border-l border-eerieBlack bg-richBlack relative">
       <div className="flex flex-col h-full">
@@ -174,7 +243,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
           <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
 
             <div className={`flex text-white items-center p-2
-               ${!isPublicProfile ? 'border-b border-[#1F1F1F]' : ''}`}>
+                ${!isPublicProfile ? 'border-b border-[#1F1F1F]' : ''}`}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={onClose} className="cursor-pointer transform scale-x-[-1]">
                 <path d="M18 7L13 12L18 17M11 7L6 12L11 17" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -232,7 +301,19 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
             <div
               ref={messagesRef}
               className="flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden w-full custom-dropdown"
+              onScroll={handleScroll}
             >
+              {isLoadingMore && (
+                <div className="flex justify-center py-2">
+                  <CircularProgress
+                    sx={{
+                      width: "24px !important",
+                      height: "24px !important",
+                      color: "#9EFF00",
+                    }}
+                  />
+                </div>
+              )}
               {activeTab === "messages" && (
                 <>
                   {messages?.length === 0 ? (
@@ -323,14 +404,6 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                           {messages && Array.isArray(messages) ? messages.map((message: IMessage, index) => (
                             <div
                               key={message?.id || index}
-                              ref={index === messages.length - 1 ? (el) => {
-                                if (el) {
-                                  el.scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'end'
-                                  });
-                                }
-                              } : undefined}
                             >
                               <Message
                                 message={message}

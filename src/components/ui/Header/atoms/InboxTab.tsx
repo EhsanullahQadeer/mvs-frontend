@@ -23,7 +23,9 @@ const InboxTab: React.FC<InboxTabProps> = ({ tabName, icon, currentTab, tabValue
     onClick={onClick}>
       {icon && <span className="mr-2">{icon}</span>} {/* Render icon if provided */}
       <span>{tabName}</span>
-      <MessageCountBubble unreadMessages={unreadMessageCount} color={color} isSelected={isActive}/>
+      {unreadMessageCount > 0 && (
+        <MessageCountBubble unreadMessages={unreadMessageCount} color={color} isSelected={isActive}/>
+      )}
     </div>
   );
 };

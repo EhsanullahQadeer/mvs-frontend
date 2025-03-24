@@ -65,3 +65,21 @@ export const convertToCurrencyFormat = (input: string): string => {
   // Format the number with commas and two decimal places
   return "$" + numericValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
+
+// Function to convert a duration to an audio duration Ex: 5 -> 0:05 or 72 -> 1:12
+export const formatTime = (time: number): string => {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
+
+// Function to convert bytes to a human-readable format (KB, MB, GB)
+export const formatBytes = (bytes: number): string => {
+  if (bytes < 1024) return `${bytes} B`; // Return bytes if less than 1 KB
+  const kB = bytes / 1024;
+  if (kB < 1024) return `${kB.toFixed(1)} KB`; // Return KB if less than 1 MB
+  const MB = kB / 1024;
+  if (MB < 1024) return `${MB.toFixed(1)} MB`; // Return MB if less than 1 GB
+  const GB = MB / 1024;
+  return `${GB.toFixed(1)} GB`; // Return GB
+};

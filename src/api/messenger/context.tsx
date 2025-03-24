@@ -142,7 +142,7 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
   const getThreadMessagesFunc = useGetThreadMessages(setThreadMessages);
   const addReactionMessageFunc = useAddReactionMessage();
   const deleteReactionMessageFunc = useDeleteReactionMessage();
-  const sendMessageFunc = useSendMessage();
+  const sendMessageFunc = useSendMessage(setMessages, messages);
   const replyInThreadFunc = useReplyInThread();
   const getSearchMessagesFunc = 
     useGetSearchMessages(setSearchMessages,setTotalSearchMessages);

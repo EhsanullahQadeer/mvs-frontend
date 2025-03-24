@@ -7,7 +7,7 @@ import { useNotification } from 'services/WebSocket/useNotification.hook';
 import message from '../Chatbox/components/message';
 import messageSound from "../../../../assets/audio/message-notification.mp3";
 
-type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | '';
+type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | 'connections' | '';
 
 interface ConversationContextType {
   // State
@@ -71,7 +71,9 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
     setTotalIcebreakerInboxUnread,
     totalPriorityInboxUnread,
     totalGeneralInboxUnread,
-    totalIcebreakerInboxUnread
+    totalIcebreakerInboxUnread,
+    setMessages,
+    messages
   } = useMessenger();
 
   const CONVERSATIONS_PER_PAGE = 20;
@@ -252,6 +254,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   
   const handleConversationSelect = (conversation: IConversation) => {
     setActiveConversation(conversation);
+    setMessages(null);
     getConversationMessages({ conversationId: conversation.conversation_id, limit: 10, cursor: 0 });
   }
 
@@ -289,6 +292,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         getArchived: archiveSpamFav === "archive",
         getSpam: archiveSpamFav === "spam",
         getFavorited: archiveSpamFav === "favorite",
+        getConnected: inboxTab === "connections"
       });
     }
   }, [authUser, inboxTab, getConversations, CONVERSATIONS_PER_PAGE, currentPage, archiveSpamFav]);
