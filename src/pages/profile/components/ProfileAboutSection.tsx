@@ -1,12 +1,13 @@
-import { FiInfo } from "react-icons/fi";
-import { useRef, useState } from "react";
+import { toast } from "react-toastify";
+import { FiInfo} from "react-icons/fi";
+import { Menu } from "@headlessui/react";
 import { useSelector } from "react-redux";
 import { GoDotFill } from "react-icons/go";
 import { RootState } from "redux/reducers";
 import { MdVerified } from "react-icons/md";
 import { IArtistProfileData } from "./types";
-import { requestConncetAPI } from "api/user";
 import { LuDollarSign } from "react-icons/lu";
+import { useEffect, useRef, useState } from "react";
 import { useMessenger } from "api/messenger/context";
 import Chatbox from "pages/Inbox/components/Chatbox";
 import avatarImg from "../../../assets/img/avatar.svg";
@@ -17,6 +18,7 @@ import pauseIcon from "../../../assets/img/player/pause-circle.svg";
 import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
 import { ConversationProvider } from "pages/Inbox/components/Directory/context";
 import { IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
+import { checkIfFollowing, handleFollowUsers, requestConncetAPI } from "api/user";
 import ProfileSectionButton from "components/ui/Header/atoms/profileAboutSectionAtoms/profileSectionButton";
 
 type Props = {
@@ -42,7 +44,6 @@ const ProfileAboutSection = (props: Props) => {
 
   const { artistData, creditsData, connectionDetail, setConnectionDetail, setChatOpen } =
     props;
-    console.log('Connection Detail: ', connectionDetail);
   const [hoveredRow, setHoveredRow] = useState<number | null>(null); // State to track hovered row
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
     null
@@ -51,15 +52,15 @@ const ProfileAboutSection = (props: Props) => {
   const [showChat, setShowChat] = useState(false);
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: RootState) => state);
+  const [menuSection, setMenuSection] = useState<boolean>(false);
+
   const isConnectionPending =
     connectionDetail === false ||
     connectionDetail === null ||
     connectionDetail === "pending";
-    console.log('Connection Pending, ', isConnectionPending);
 
   const {
     id,
-    username,
     thumbnail,
     professional_name,
     bio,
@@ -68,9 +69,18 @@ const ProfileAboutSection = (props: Props) => {
     primary_role,
     secondary_role,
   } = artistData?.available ?? artistData ?? {};
-  console.log('Artist Data: ', artistData);
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
+
+  useEffect(() => {
+    const fetchFollowingStatus = async () => {
+      const isFollowing = await checkIfFollowing(artistData.id); // Await the API call
+      setIsFollowing(isFollowing); // Set the state with the result
+    };
+
+    fetchFollowingStatus(); // Call the async function
+  }, []);
 
   const handlePlayClick = (previewUrl: string, index: number) => {
     if (!previewUrl) return;
@@ -130,6 +140,31 @@ const ProfileAboutSection = (props: Props) => {
     } catch (error) {
       console.log("error while connecting with the user ", error);
     }
+  };
+
+  const handleShareClick = async () => {
+    const urlToShare = window.location.href; // Get the current URL
+    try {
+      await navigator.clipboard.writeText(urlToShare); // Copy the URL to clipboard
+      console.log("URL Copied to Clipboard");
+      toast.success("URL Copied to Clipboard");
+    } catch (error) {
+      console.error("Failed to copy URL:", error);
+      toast.error("Error deleting conversations");
+    }
+  };
+
+  const handleMenuSection = () => {
+    setMenuSection(!menuSection);
+  };
+
+  const handleFollowUnfollow = () => {
+    if(isFollowing) {
+      setIsFollowing(false);
+    } else {
+      setIsFollowing(true);
+    }
+    handleFollowUsers([artistData.id]);
   };
 
   if (showChat && activeConversation) {
@@ -205,39 +240,70 @@ const ProfileAboutSection = (props: Props) => {
                 <path d="M15.1673 1.83301L10.5007 15.1663L7.83398 9.16634M15.1673 1.83301L1.83398 6.49967L7.83398 9.16634M15.1673 1.83301L7.83398 9.16634" stroke="#B2B2B2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 } onClick={handleMessageClick}/>
-
-                {connectionDetail === true ? (
-                  <ProfileSectionButton tabName="Connected" icon={<svg width="17" height="17" viewBox="0 0 24 24"  xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                    <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd" />
-                  </svg>} onClick={handleConnectFunction} disabled={true}/>
-                ) : (
-                  <div className="relative w-full">
-                  <Tooltip disappear={false} text={isConnectionPending ? "Connection" : ""}>
-                  <ProfileSectionButton tabName={`${isConnectionPending ? "Pending" : "Connect"}`} icon={isConnectionPending ? <svg width="17" height="17" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              {connectionDetail === true ? (
+                <ProfileSectionButton tabName="Connected" icon={<svg width="17" height="17" viewBox="0 0 24 24"  xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                  <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd" />
+                </svg>} onClick={handleConnectFunction} disabled={true}/>
+              ) : (
+                <div className="relative w-full">
+                <Tooltip disappear={false} text={isConnectionPending ? "Connection" : ""}>
+                <ProfileSectionButton tabName={`${isConnectionPending ? "Pending" : "Connect"}`} icon={isConnectionPending ? <svg width="17" height="17" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                  : <svg width="17" height="17" viewBox="0 0 17 17" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5" fill="white"/>
+                  <path d="M6.50065 7.83333C7.97341 7.83333 9.16732 6.63943 9.16732 5.16667C9.16732 3.69391 7.97341 2.5 6.50065 2.5C5.02789 2.5 3.83398 3.69391 3.83398 5.16667C3.83398 6.63943 5.02789 7.83333 6.50065 7.83333Z" fill="white"/>
+                  <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5M13.1673 5.83333V9.83333M15.1673 7.83333H11.1673M9.16732 5.16667C9.16732 6.63943 7.97341 7.83333 6.50065 7.83333C5.02789 7.83333 3.83398 6.63943 3.83398 5.16667C3.83398 3.69391 5.02789 2.5 6.50065 2.5C7.97341 2.5 9.16732 3.69391 9.16732 5.16667Z" stroke="#CCCCCC" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
-                   : <svg width="17" height="17" viewBox="0 0 17 17" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5" fill="white"/>
-                    <path d="M6.50065 7.83333C7.97341 7.83333 9.16732 6.63943 9.16732 5.16667C9.16732 3.69391 7.97341 2.5 6.50065 2.5C5.02789 2.5 3.83398 3.69391 3.83398 5.16667C3.83398 6.63943 5.02789 7.83333 6.50065 7.83333Z" fill="white"/>
-                    <path d="M11.1673 14.5V13.1667C11.1673 12.4594 10.8864 11.7811 10.3863 11.281C9.88617 10.781 9.2079 10.5 8.50065 10.5H4.50065C3.79341 10.5 3.11513 10.781 2.61503 11.281C2.11494 11.7811 1.83398 12.4594 1.83398 13.1667V14.5M13.1673 5.83333V9.83333M15.1673 7.83333H11.1673M9.16732 5.16667C9.16732 6.63943 7.97341 7.83333 6.50065 7.83333C5.02789 7.83333 3.83398 6.63943 3.83398 5.16667C3.83398 3.69391 5.02789 2.5 6.50065 2.5C7.97341 2.5 9.16732 3.69391 9.16732 5.16667Z" stroke="#CCCCCC" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    } onClick={handleConnectFunction}/>
-                    </Tooltip>
-                    </div>
-                )}
+                  } onClick={handleConnectFunction}/>
+                  </Tooltip>
+                  </div>
+              )}
+              <ProfileSectionButton tabName="Share" icon={<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3.16602 8.49967V13.833C3.16602 14.1866 3.30649 14.5258 3.55654 14.7758C3.80659 15.0259 4.14573 15.1663 4.49935 15.1663H12.4993C12.853 15.1663 13.1921 15.0259 13.4422 14.7758C13.6922 14.5258 13.8327 14.1866 13.8327 13.833V8.49967M11.166 4.49967L8.49935 1.83301M8.49935 1.83301L5.83268 4.49967M8.49935 1.83301V10.4997" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              } onClick={handleShareClick}/>
 
-                <ProfileSectionButton tabName="Share" icon={<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3.16602 8.49967V13.833C3.16602 14.1866 3.30649 14.5258 3.55654 14.7758C3.80659 15.0259 4.14573 15.1663 4.49935 15.1663H12.4993C12.853 15.1663 13.1921 15.0259 13.4422 14.7758C13.6922 14.5258 13.8327 14.1866 13.8327 13.833V8.49967M11.166 4.49967L8.49935 1.83301M8.49935 1.83301L5.83268 4.49967M8.49935 1.83301V10.4997" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                }/>
-
-                <ProfileSectionButton width="w-[112px]" icon={<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9.99935 11.333C10.4596 11.333 10.8327 10.9599 10.8327 10.4997C10.8327 10.0394 10.4596 9.66634 9.99935 9.66634C9.53911 9.66634 9.16602 10.0394 9.16602 10.4997C9.16602 10.9599 9.53911 11.333 9.99935 11.333Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9.99935 5.49967C10.4596 5.49967 10.8327 5.12658 10.8327 4.66634C10.8327 4.2061 10.4596 3.83301 9.99935 3.83301C9.53911 3.83301 9.16602 4.2061 9.16602 4.66634C9.16602 5.12658 9.53911 5.49967 9.99935 5.49967Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9.99935 17.1663C10.4596 17.1663 10.8327 16.7932 10.8327 16.333C10.8327 15.8728 10.4596 15.4997 9.99935 15.4997C9.53911 15.4997 9.16602 15.8728 9.16602 16.333C9.16602 16.7932 9.53911 17.1663 9.99935 17.1663Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                } />
-
+              <Menu as="div" className="user">
+                <Menu.Button>
+                  <ProfileSectionButton width="w-[32px]" icon={<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9.99935 11.333C10.4596 11.333 10.8327 10.9599 10.8327 10.4997C10.8327 10.0394 10.4596 9.66634 9.99935 9.66634C9.53911 9.66634 9.16602 10.0394 9.16602 10.4997C9.16602 10.9599 9.53911 11.333 9.99935 11.333Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.99935 5.49967C10.4596 5.49967 10.8327 5.12658 10.8327 4.66634C10.8327 4.2061 10.4596 3.83301 9.99935 3.83301C9.53911 3.83301 9.16602 4.2061 9.16602 4.66634C9.16602 5.12658 9.53911 5.49967 9.99935 5.49967Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.99935 17.1663C10.4596 17.1663 10.8327 16.7932 10.8327 16.333C10.8327 15.8728 10.4596 15.4997 9.99935 15.4997C9.53911 15.4997 9.16602 15.8728 9.16602 16.333C9.16602 16.7932 9.53911 17.1663 9.99935 17.1663Z" stroke="#B2B2B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg> } onClick={handleMenuSection}/>
+                </Menu.Button>
+                <Menu.Items 
+                  className="zindex fixed mt-2 right-4 w-[130px] bg-[#1C1C1C] border border-[#3D3D3D] rounded-[8px] p-[10px]"
+                  onMouseDown={(event) => event.stopPropagation()}
+                >
+                  {/* Menu Items */}
+    
+                  {/* Follow Unfollow */}
+                  <Menu.Item>
+                    {({ active }) => (
+                      <div
+                      className={`flex items-center px-[12px] py-[8px] rounded-[8px] cursor-pointer ${active ? "bg-[#242424] text-white" : "text-[#b2b2b2]"}`}
+                      onClick={(event) => {
+                        event.stopPropagation(); // Prevent menu from closing
+                        handleFollowUnfollow();
+                      }}>
+                        {isFollowing ? 
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                          </svg>                            
+                          :
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                          </svg>
+                        }
+                        <p className=" font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                          {isFollowing ? "Unfollow" : "Follow"}
+                        </p>
+                      </div>
+                    )}
+                  </Menu.Item>
+                </Menu.Items>
+              </Menu>
             </div>
           )}
           <div className="w-full h-[41px] rounded-md text-xs font-semibold flex items-center justify-center cursor-pointer text-jetBlack hover:bg-transparent hover:text-white bg-limeGreen transition-all duration-200 my-2">
@@ -250,7 +316,7 @@ const ProfileAboutSection = (props: Props) => {
         </div>
       </div>
 
-        <div className="px-5 py-3 pb-5 border-t border-eclipseGray">
+      <div className="px-5 py-3 pb-5 border-t border-eclipseGray">
         <h3 className="text-base text-platinum font-semibold mb-1">About</h3>
         <p className="mb-2 text-sm text-mediumGray font-normal">
           {truncatedBio}
@@ -270,31 +336,31 @@ const ProfileAboutSection = (props: Props) => {
           </div>
         </div>
       </div>
-        <div className="px-5 py-4 pb-20 border-t border-eclipseGray text-silver text-sm flex flex-col gap-5">
-              <div className="flex items-center justify-between max-lg:flex-wrap gap-1">
-                <div className="flex items-center gap-1">
-                  <LuDollarSign />
-                  <span className="font-normal leading-[18px]">
-                    Demo submission starting at
-                  </span>
-                </div>
-      
-                <span className="font-semibold border border-mediumGray rounded-full px-2 py-0.5">
-                  $25
-                </span>
-              </div>
-             
-              <div className="flex items-center justify-between max-lg:flex-wrap gap-1">
-                <div className="flex items-center gap-1">
-                  <FiInfo />
-                  <span className="font-normal leading-[18px]">
-                    Cancellation policy
-                  </span>
-                </div>
-      
-                <span className="font-semibold text-[#7ECC00]">Flexible</span>
-              </div>
-            </div>
+      <div className="px-5 py-4 pb-20 border-t border-eclipseGray text-silver text-sm flex flex-col gap-5">
+        <div className="flex items-center justify-between max-lg:flex-wrap gap-1">
+          <div className="flex items-center gap-1">
+            <LuDollarSign />
+            <span className="font-normal leading-[18px]">
+              Demo submission starting at
+            </span>
+          </div>
+
+          <span className="font-semibold border border-mediumGray rounded-full px-2 py-0.5">
+            $25
+          </span>
+        </div>
+        
+        <div className="flex items-center justify-between max-lg:flex-wrap gap-1">
+          <div className="flex items-center gap-1">
+            <FiInfo />
+            <span className="font-normal leading-[18px]">
+              Cancellation policy
+            </span>
+          </div>
+
+          <span className="font-semibold text-[#7ECC00]">Flexible</span>
+        </div>
+      </div>
 
       {creditsData && creditsData.length > 0 && (
         <div className={`px-3 py-3`}>

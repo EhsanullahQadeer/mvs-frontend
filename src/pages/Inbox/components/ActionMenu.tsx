@@ -1,10 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { LuBellOff } from "react-icons/lu";
-import { FiUser, FiUserX } from "react-icons/fi";
-import { GrShareOption } from "react-icons/gr";
-import { LuShieldAlert } from "react-icons/lu";
-import { useMessenger } from "api/messenger/context";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
+
 type Props = {
   dropdownMenuOptions: {
     label: string;
@@ -24,13 +19,7 @@ const InboxDropdownMenu = ({
   selectedMenuItem,
   onItemClick
 }: Props) => {
-  const {
-    activeConversation
-  } = useMessenger();
   
-  const navigate = useNavigate();
-  const [selectedMenuItemState, setSelectedMenuItemState] = useState<string | null>(null);
-
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleCloseMenu = () => {
@@ -51,7 +40,6 @@ const InboxDropdownMenu = ({
   }, []);
 
   return (
-    <>
       <div
         ref={menuRef}
         className={`absolute z-[9999] ${
@@ -110,7 +98,6 @@ const InboxDropdownMenu = ({
           })}
         </div>
       </div>
-    </>
   );
 };
 
