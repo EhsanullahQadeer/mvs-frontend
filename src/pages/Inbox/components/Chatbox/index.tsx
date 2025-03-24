@@ -62,6 +62,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -160,6 +161,15 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
   useEffect(() => {
     if (messages === null) {
       setHasMore(true);
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (messages === null) {
+      setIsInitialLoad(true);
+    } else if (isInitialLoad && messages && messages.length > 0 && messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      setIsInitialLoad(false);
     }
   }, [messages]);
 
