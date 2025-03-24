@@ -217,3 +217,6 @@ export async function checkIfFollowing( id: number ) {
   const respose = axiosInstance.get(`/users/is-following/${id}`);
   return (await respose).data;
 };
+export async function updateUserProfileAPI(data: any) {
+  return axiosInstance.put('/users/me', data);
+}
