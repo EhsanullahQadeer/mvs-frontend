@@ -74,9 +74,9 @@ const ProfileLibrary = (props: Props) => {
             />
           </div>
         </div>
-        {isConnect !== true && (
+        {/* {isConnect !== true && (
           <LockedContent />
-        )}
+        )} */}
       </div>
     </section>
   );
