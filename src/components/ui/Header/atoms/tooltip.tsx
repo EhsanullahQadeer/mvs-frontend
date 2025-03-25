@@ -1,7 +1,7 @@
 // src/components/Tooltip.tsx
 import React, { useState } from 'react';
 
-const Tooltip = ({ children, text }: { children: React.ReactNode; text: string }) => {
+const Tooltip = ({ children, text, disappear = false }: { children: React.ReactNode; text: string; disappear?: boolean }) => {
   const [visible, setVisible] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
 
@@ -9,18 +9,20 @@ const Tooltip = ({ children, text }: { children: React.ReactNode; text: string }
   const handleMouseEnter = () => {
     setVisible(true);
     setFadeOut(false); // Reset fade out state
-    // Set a timer to hide the tooltip after 2 seconds
-    const timer = setTimeout(() => {
-      setFadeOut(true); // Start fade out
-      // Set another timer to hide the tooltip after fade out
-      const hideTimer = setTimeout(() => {
-        setVisible(false);
-      }, 300); // Match this duration with the CSS transition duration
+    // Set a timer to hide the tooltip after 1.5 seconds
+    if (disappear) {
+      const timer = setTimeout(() => {
+        setFadeOut(true); // Start fade out
+        // Set another timer to hide the tooltip after fade out
+        const hideTimer = setTimeout(() => {
+          setVisible(false);
+        }, 300); // Match this duration with the CSS transition duration
 
-      return () => clearTimeout(hideTimer);
-    }, 1500); // Show for 2 seconds
-
-    return () => clearTimeout(timer);
+        return () => clearTimeout(hideTimer);
+      }, 1500); // Show for 2 seconds
+      
+      return () => clearTimeout(timer);
+    }
   };
 
   // Show the tooltip when the children are hovered
@@ -29,7 +31,7 @@ const Tooltip = ({ children, text }: { children: React.ReactNode; text: string }
   };
 
   return (
-    <div className="relative group" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div className='relative group' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       {children}
       {visible && (
         <div

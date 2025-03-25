@@ -1,9 +1,7 @@
 // Local Imports
-import UploadFileSection from "./UploadFileSection";
-import searchIcon from "assets/icons/searchIcon.svg";
-import SamplesContainer from "components/SampleContainer/player-container";
-import ProfileRightSection from "../../publicProfile/components/ProfileRightSection";
 import LockedContent from "./LockedContent";
+import UploadFileSection from "./UploadFileSection";
+import SamplesContainer from "components/SampleContainer/player-container";
 
 type Props = {
   isLoginUser: boolean,
@@ -13,14 +11,15 @@ type Props = {
   connectionDetail: any,
   selectedTab: string,
   setSelectedTab: (tab: string) => void,
-  isConnect: boolean | undefined,
+  isConnect: boolean | undefined | "pending",
   artistData: any,
   chatOpen: boolean,
   setChatOpen: (open: boolean) => void,
 };
 const ProfileLibrary = (props: Props) => {
-  const { isLoginUser, user, tabs, hasSampleType, connectionDetail, selectedTab, setSelectedTab, isConnect, artistData, chatOpen, setChatOpen } = props;
+  const { isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, artistData, chatOpen } = props;
 
+  console.log('IsConnect var: ', isConnect);
   return (
     <section className="flex-1 min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">
       {isLoginUser && <UploadFileSection {...{ user }} />}
@@ -58,10 +57,10 @@ const ProfileLibrary = (props: Props) => {
       <div className="relative flex-1 flex flex-col">
         <div
           className="relative flex-1 flex flex-col"
-          style={{ filter: !isConnect ? "blur(3px)" : "none" }}
+          style={{ filter: isConnect !== true ? "blur(3px)" : "none" }}
         >
 
-          {!isConnect && (
+          {isConnect !== true && (
             <div className="absolute w-full h-full z-10 bg-[#101010] opacity-30"></div>
           )}
 
@@ -75,6 +74,9 @@ const ProfileLibrary = (props: Props) => {
             />
           </div>
         </div>
+        {isConnect !== true && (
+          <LockedContent />
+        )}
       </div>
     </section>
   );
