@@ -105,7 +105,7 @@ const ProfileAboutSection = (props: Props) => {
           conversation_id: response.data.id,
         };
         setActiveConversation(response.data);
-        getConversationMessages({ conversationId: response.data.conversation_id });
+        getConversationMessages({ conversationId: response.data.conversation_id, limit: 10, cursor: 0 });
         setChatOpen(true);
         setShowChat(true);
       }

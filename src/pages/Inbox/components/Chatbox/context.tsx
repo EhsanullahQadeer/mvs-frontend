@@ -122,7 +122,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
       setLoading(true);
       if (!isThread) {
         setChatMessages(null);
-        getConversationMessages({ conversationId: activeConversation.conversation_id })
+        getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 })
           .finally(() => {
             setLoading(false);
           });
