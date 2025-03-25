@@ -1,11 +1,10 @@
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { useMessenger } from 'api/messenger/context';
-import { IConversation, IMessage } from 'api/messenger/objects/states.types';
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNotification } from 'services/WebSocket/useNotification.hook';
-import message from '../Chatbox/components/message';
+import { IConversation, IMessage } from 'api/messenger/objects/states.types';
 import messageSound from "../../../../assets/audio/message-notification.mp3";
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 
 type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | 'connections' | '';
 
