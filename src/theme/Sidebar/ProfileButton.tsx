@@ -33,7 +33,7 @@ const ProfileButton = () => {
 
   return (
     <Fragment>
-      <div className="flex items-center justify-center relative" ref={buttonRef}>
+      <div className="flex items-center justify-center relative z-100" ref={buttonRef}>
         <Menu as="div" className="user">
           <Menu.Button>
             {state?.auth?.user?.thumbnail ? (
