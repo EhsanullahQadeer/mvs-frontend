@@ -40,7 +40,8 @@ function DemoStripe(props: DemoStripeProps) {
       handleError(error);
       return;
     }
-    const paymentIntent = await axios.post('stripe/payment-intent-for-demo',{tokenId: confirmationToken.id,amount: props.amount,recipientId: props.recipientId});
+    const paymentIntent = await axios.post('stripe/payment-intent-for-demo',{
+      tokenId: confirmationToken.id,amount: props.amount,recipientId: props.recipientId});
     if (paymentIntent.data.paymentIntent.status === 'requires_action') {
       await stripe.handleNextAction({
         clientSecret: paymentIntent.data.paymentIntent.clientSecret

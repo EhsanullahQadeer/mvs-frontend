@@ -127,7 +127,11 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
             setLoading(false);
           });
       } else if (threadMessages?.[0]?.id) {
-        getThreadMessages({ parentMessageId: threadMessages[0].id })
+        getThreadMessages({ 
+          parentMessageId: threadMessages[0].id,
+          limit: 10,
+          cursor: undefined,
+        })
           .finally(() => {
             setLoading(false);
           });

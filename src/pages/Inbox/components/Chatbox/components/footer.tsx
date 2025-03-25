@@ -125,7 +125,11 @@ const Footer = () => {
         }
         await getConversationMessages({ conversationId: activeConversation.conversation_id });
         if (threadMessages && threadMessages.length > 0) {
-          await getThreadMessages({ parentMessageId: threadMessages[0].id });
+          await getThreadMessages({ 
+            parentMessageId: threadMessages[0].id,
+            limit: 10,
+            cursor: threadMessages[threadMessages.length - 1].id
+          });
         }
         clearMessageInputs();
       } else {
@@ -135,7 +139,11 @@ const Footer = () => {
             parentMessageId: Number(threadMessages[0]?.id || ''),
           });
           if (threadMessages && threadMessages.length > 0) {
-            await getThreadMessages({ parentMessageId: threadMessages[0].id });
+            await getThreadMessages({ 
+              parentMessageId: threadMessages[0].id,
+              limit: 10,
+              cursor: threadMessages[threadMessages.length - 1].id
+            });
           }
         } else {
           if (tipAmount > 0) {

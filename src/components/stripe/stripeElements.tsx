@@ -32,6 +32,7 @@ function StripeElements(props: StripeElementsProps) {
         <Elements stripe={stripePromise} options={{
           mode: 'payment' as const,
           currency: 'usd',
+          capture_method: 'manual',
           amount: Number(props.amount.toFixed(2))*100,
           customerSessionClientSecret: customerSession?.clientSecret,
           appearance: {
@@ -39,7 +40,12 @@ function StripeElements(props: StripeElementsProps) {
             labels: 'floating'
           },
         }}>
-          <DemoStripe onPaymentComplete={props.onPaymentComplete} amount={Number(props.amount.toFixed(2))*100} recipientId={props.recipientId} onClose={props.onClose} />
+          <DemoStripe 
+            onPaymentComplete={props.onPaymentComplete} 
+            amount={Number(props.amount.toFixed(2))*100} 
+            recipientId={props.recipientId} 
+            onClose={props.onClose} 
+          />
         </Elements>
       ) : (
         <div className="flex items-center">

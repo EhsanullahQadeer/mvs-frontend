@@ -8,7 +8,7 @@ import { IAddReaction, useAddReactionMessage } from './hooks/useAddReactionMessa
 import { IGetConversations, useGetConversations } from './hooks/useGetConversations';
 import { IConversation, IMessage, INotes  } from 'api/messenger/objects/states.types';
 import React, { createContext, useContext, useState, ReactNode, useMemo } from 'react';
-import { IGetThreadMessages, useGetThreadMessages } from './hooks/useGetThreadMessages';
+import { IGetThreadMessages, ThreadMessagesResponse, useGetThreadMessages } from './hooks/useGetThreadMessages';
 import { useToggleConversationIsArchive } from './hooks/useToggleConversationIsArchive';
 import { useGetSearchMessages, ISearchMessagesParams } from './hooks/useGetSearchMessage';
 import { useToggleConversationIsPriority } from './hooks/useToggleConversationIsPriority';
@@ -64,7 +64,7 @@ interface MessengerContextType {
   toggleConversationFavorite: (payload: IToggleConversationFavorite) => Promise<void>;
   deleteConversations: (payload: IDeleteConversations) => Promise<void>;
   getSearchMessages: (payload: ISearchMessagesParams) => Promise<void>;
-  getThreadMessages: (payload: IGetThreadMessages) => Promise<void>;
+  getThreadMessages: (payload: IGetThreadMessages) => Promise<ThreadMessagesResponse>;
   threadMessages: IMessage[] | null;
   setThreadMessages: (messages: IMessage[]) => void;
   setMessages: (messages: IMessage[]) => void;
