@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
 import WaveSurfer from 'wavesurfer.js';
-import PauseDefault from '../../../assets/img/PauseD.svg';
+import { formatTime } from 'utils/dateUtils';
+import VolumeIcon from '../../../assets/img/volume.svg';
 import PlayDefault from '../../../assets/img/PlayD.svg';
+import PauseDefault from '../../../assets/img/PauseD.svg';
 import PlayHover from '../../../assets/img/PlayHover.svg';
 import PauseHover from '../../../assets/img/PauseHover.svg';
-import VolumeIcon from '../../../assets/img/volume.svg';
 import VolumeMuteIcon from '../../../assets/img/volume-x.svg';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 interface RecordedAudioPlayerProps {
   audioUrl: string;
@@ -97,15 +98,9 @@ const RecordedAudioPlayer: React.FC<RecordedAudioPlayerProps> = React.memo(({ au
     }
   }, [isMuted]);
 
-  const formatTime = (time: number): string => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
   return (
     <div 
-      className="flex items-center w-full bg-[#1C1C1C] rounded-full px-3 py-3 relative group border border-[#3D3D3D]"
+      className="flex items-center w-[500px] bg-[#1C1C1C] rounded-full px-3 py-3 relative group border border-[#3D3D3D]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

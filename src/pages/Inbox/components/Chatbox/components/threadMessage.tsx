@@ -1,11 +1,11 @@
 import moment from "moment";
-import { AudioPlayer } from "react-audio-play";
-import { useState, useEffect, useRef } from "react";
+import WaveSurfer from "wavesurfer.js";
 import { useChatbox } from "../context";
-import { IMessage, MEDIA_TYPE, MESSAGE_TYPES } from "api/messenger/objects/states.types";
-import AudioFileIcon from "@mui/icons-material/AudioFile";
-
 import { FiUnlock } from "react-icons/fi";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { IMessage, MEDIA_TYPE, MESSAGE_TYPES } from "api/messenger/objects/states.types";
+import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
+import DemoPlayerFeedbackThread from "components/ui/Header/molecules/chatboxMolecules/audioDemoPlayerFeedbackThread";
 
 type Props = {
   message: IMessage;
@@ -21,8 +21,19 @@ const ThreadMessage = (props: Props) => {
   const [needsConversion, setNeedsConversion] = useState(false);
   const [convertedUrl, setConvertedUrl] = useState<string | null>(null);
   const intersectionRef = useRef(null);
+
+  // Progress Bar Vars
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [progress, setProgress] = useState<number>(0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  // WaveSurfer vars
+  const waveformRef = useRef<HTMLDivElement>(null);
+  const wavesurfer = useRef<WaveSurfer | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
   
-  const { message, index, isDemo, details } = props;
+  const { message } = props;
   const {
     id, 
     media, 
@@ -39,7 +50,7 @@ const ThreadMessage = (props: Props) => {
   } = useChatbox();
 
   let is_read = message?.is_read;
-
+  const audioUrl = media?.url || null;
   const requiresFeedback = message_type === MESSAGE_TYPES.DEMO && 
     transaction?.status !== "completed";
 
@@ -58,17 +69,62 @@ const ThreadMessage = (props: Props) => {
   });
 
   useEffect(() => {
-      if (!intersectionRef.current) return;
-      observer.observe(intersectionRef.current);
-    }, [])
+    audioRef.current = new Audio(audioUrl);
+    audioRef.current.currentTime = 0;
+    if (!intersectionRef.current) return;
+    observer.observe(intersectionRef.current);
+  }, [])
 
-    function handleMessagedAsRead(){
-      if (is_read === true || sender.id === activeConversation.user.id) return;
-      markMessageAsRead(id);
-      is_read = true;
-    }
+  useEffect(() => {
+    if (!waveformRef.current || !audioUrl) return;
 
-    
+    const ws = WaveSurfer.create({
+      container: waveformRef.current,
+      waveColor: '#B2B2B2',
+      progressColor: '#9EFF00',
+      cursorColor: '#848484',
+      barWidth: 2,
+      barRadius: 1,
+      cursorWidth: 0,
+      height: 16,
+      barGap: 4,
+      normalize: true,
+      fillParent: true,
+      fetchParams: {
+        cache: 'default',
+        mode: 'cors',
+      }
+    });
+
+    wavesurfer.current = ws;
+
+    ws.on('pause', () => {
+      setIsPlaying(false);
+    });
+
+    ws.on('finish', () => {
+      setIsPlaying(false);
+    });
+
+    ws.on('error', (err) => {
+      console.error('WaveSurfer error:', err);
+    });
+
+    ws.load(audioUrl);
+
+    return () => {
+      if (wavesurfer.current) {
+        wavesurfer.current.destroy();
+        wavesurfer.current = null;
+      }
+    };
+  }, [audioUrl]);
+
+  function handleMessagedAsRead(){
+    if (is_read === true || sender.id === activeConversation.user.id) return;
+    markMessageAsRead(id);
+    is_read = true;
+  }    
 
   useEffect(() => {
     if (!media?.url) return;
@@ -108,6 +164,59 @@ const ThreadMessage = (props: Props) => {
     }
   }, [media?.url, convertedUrl]);
 
+  const handleDemoPlayPause = useCallback(() => {
+    if (isPlaying) {
+      setIsPlaying(false);
+      audioRef.current?.pause();
+    } else {
+      setIsPlaying(true);
+      audioRef.current.play();
+
+      audioRef.current.ontimeupdate = () => {
+        if (audioRef.current) {
+          const percentage = (audioRef.current.currentTime / audioRef.current.duration) * 100;
+          setProgress(percentage);
+        }
+      };
+
+      audioRef.current.onended = () => {
+        setIsPlaying(false);
+        setProgress(0);
+        audioRef.current.currentTime = 0;
+      };
+    }
+  }, []); // Add dependencies as needed
+
+  const handleRecordedAudioPlayPause = useCallback(() => {
+    if (wavesurfer.current) {
+      if (isPlaying) {
+        wavesurfer.current.pause();
+      } else {
+        wavesurfer.current.play();
+      }
+      setIsPlaying(prev => !prev);
+    }
+  }, []);
+
+  const handleRecordedAudioMuteToggle = useCallback(() => {
+    if (wavesurfer.current) {
+      wavesurfer.current.setMuted(!isMuted);
+      setIsMuted(prev => !prev);
+    }
+  }, []);
+
+  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current || !progressBarRef.current) return;
+
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = (x / rect.width) * 100;
+    const time = (percentage / 100) * audioRef.current.duration;
+    
+    audioRef.current.currentTime = time;
+    setProgress(percentage);
+  };
+
   function renderActionRequired() {
     return (
       <div className="flex justify-center w-full mt-3">
@@ -115,11 +224,9 @@ const ThreadMessage = (props: Props) => {
           <div className="w-8 h-8 text-white flex justify-center items-center">
             <FiUnlock className="w-7 h-7" />
           </div>
-
           <div className="text-white text-base font-semibold">
             Action Required
           </div>
-
           <div className="text-coolGray text-sm font-normal w-64">
             To receive your payment, please provide your feedback on the demo.
           </div>
@@ -139,7 +246,6 @@ const ThreadMessage = (props: Props) => {
             ></div>
           </div>
         </div>
-        
         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
           <div className="flex justify-between w-full items-start">
             <div className="font-semibold text-sm text-white truncate max-w-[70%]">
@@ -149,43 +255,21 @@ const ThreadMessage = (props: Props) => {
               {moment(created_at).format("h:mm A")}
             </div>
           </div>
-          
           {content && (
             <div className="text-sm text-[#CACCCD] break-words whitespace-pre-wrap overflow-hidden w-full">
               {content}
             </div>
           )}
-
           {message_type === MESSAGE_TYPES.DEMO ? (
             <>
               <div className="mt-2">
-                <AudioPlayer
-                  src={needsConversion ? convertedUrl || media?.url : media?.url}
-                  color="#1C1C1C"
-                  sliderColor="#9EFF00"
-                  style={{
-                    background: "#242424",
-                    borderRadius: "40px",
-                  }}
-                  className="border border-[#3D3D3D] rounded-full"
-                />
+                <DemoPlayerFeedbackThread isPlaying={isPlaying} duration={media?.duration} fileName={media?.file_name} fileSizeBytes={media?.file_size_bytes} handlePlayPause={handleDemoPlayPause} progressBarRef={progressBarRef} handleProgressBarClick={handleProgressBarClick} progress={progress} currentTime={audioRef.current?.currentTime}/>
               </div>
               {requiresFeedback && renderActionRequired()}
             </>
           ) : media?.type === MEDIA_TYPE.RECORDING ? (
-            <div
-              className="flex relative gap-1 items-center self-start rounded-2xl h-full w-auto audio-2 mt-2"
-            >
-              <AudioPlayer
-                src={needsConversion ? convertedUrl || media.url : media.url}
-                color="#1C1C1C"
-                sliderColor="#9EFF00"
-                style={{
-                  background: "#242424",
-                  borderRadius: "40px",
-                }}
-                className="border border-[#3D3D3D] rounded-full"
-              />
+            <div className="flex mt-2">
+              <RecordedAudioMessagePlayer isMuted={isMuted} waveformRef={waveformRef} isPlaying={isPlaying} duration={media?.duration} handleMuteToggle={handleRecordedAudioMuteToggle} handlePlayPause={handleRecordedAudioPlayPause}/>
             </div>
           ) : null}
         </div>

@@ -13,6 +13,7 @@ export interface IGetConversations {
   getArchived: boolean;
   getSpam: boolean;
   getFavorited: boolean;
+  getConnected: boolean;
 }
 
 export const useGetConversations = (

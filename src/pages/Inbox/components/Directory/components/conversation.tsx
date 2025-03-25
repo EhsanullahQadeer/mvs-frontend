@@ -23,6 +23,7 @@ export const Conversation = ({ conversation, onClick, searchTerm, searchContent,
   } = conversation;
 
   const {
+    inboxTab,
     activeConversation,
     selectedConversations,
     handleCheckboxChange,
@@ -108,14 +109,16 @@ export const Conversation = ({ conversation, onClick, searchTerm, searchContent,
                       >
                         {searchTerm ? sender?.professional_name : recipient?.name}
                       </div>
-                      <div className={`self-start px-1 py-0.5 mt-1 text-xs tracking-wide leading-tight whitespace-nowrap rounded border border-solid min-h-[16px] ${
-                        Number(available_funds) === 0 
+                      {inboxTab !== 'connections' && (
+                        <div className={`self-start px-1 py-0.5 mt-1 text-xs tracking-wide leading-tight whitespace-nowrap rounded border border-solid min-h-[16px] ${
+                          Number(available_funds) === 0 
                           ? "text-zinc-300 bg-zinc-800 border-zinc-500" 
                           : "text-lime-400 bg-lime-800 border-lime-400"
                       }`}>
                         <span className={Number(available_funds) === 0 ? "text-zinc-300" : "text-lime-400"}>$</span>
                         <span className={"text-lime-400"}>{Number(available_funds) > 0 ? available_funds : ''}</span>
                       </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -31,6 +31,7 @@ export interface AudioTrackType {
   thumbnail?: string;
   bpm?: number;
   key?: string;
+  mp3_s3_key?: string;
   s3_key?: string;
   filename?: string;
   userInfo?: {
@@ -149,7 +150,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen, isConnect }) => 
         type: selectedTab,
         includeUserInfo: true,
       });
-      //console.log('response here', _sound?.data?.results);
+      console.log('response here', _sound?.data?.results);
       const samplesArray = Object.values(_sound?.data?.results?.samples || {}) as AudioTrackType[];
       
       setSamples(samplesArray);

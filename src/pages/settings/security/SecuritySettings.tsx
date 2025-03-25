@@ -37,7 +37,7 @@ const SecuritySettings: React.FC = () => {
       </h2>
       <EmailSecurityComponent/>
       <PasswordSecurityComponent/>
-      <DeactivateSecrurityComponent/>
+      {/* <DeactivateSecrurityComponent/> */}
       {/* <CurrentSessionSecurityComponent/> */}
     </>
   );

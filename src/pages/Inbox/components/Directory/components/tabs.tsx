@@ -18,6 +18,19 @@ const InboxTabs: React.FC<InboxMessageTabListProps> = ({ unreadMessageCount }) =
   return (
     <div className="flex items-center w-full border-b border-eerieBlack">
       <InboxTab 
+        tabName="Connections" 
+        currentTab={inboxTab} 
+        tabValue="connections" 
+        unreadMessageCount={unreadMessageCount[0]} 
+        color="bg-[#FF3B40]"
+        onClick={() => {
+          handleInboxTabClick("connections");
+          setArchiveSpamFav("");
+          setSelectedConversations([]);
+          setSelectedMenuItem("")
+        }}
+      />      
+      <InboxTab 
         tabName="Priority" 
         currentTab={inboxTab} 
         tabValue="priority" 
