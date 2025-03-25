@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Comment from "./Comment";
 import icon from "../../../assets/img/icon.svg";
 import { createFanwallPost, getFanwallPosts } from "api/fanwall";
@@ -12,6 +12,8 @@ interface IProps {
   currentUserInfo: ICurrentUser | null;
 }
 
+const LIMIT = 10;
+
 const FanWall = (props: IProps) => {
   const { artistData, currentUserInfo } = props;
   const { id } = artistData || {};
@@ -22,21 +24,48 @@ const FanWall = (props: IProps) => {
   const [openUnlockModal, setOpenUnlockModal] = useState(false);
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const observer = useRef<IntersectionObserver | null>(null);
 
-  const getFanwallPostsData = async () => {
+  const lastPostElementRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isLoading || isLoadingMore) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if ((entries[0].isIntersecting || entries[0].intersectionRatio > 0) && hasMore) {
+          setIsLoadingMore(true);
+          getFanwallPostsData(fanwallPostsData.length);
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, isLoadingMore, hasMore, fanwallPostsData.length]
+  );
+
+  const getFanwallPostsData = async (skip: number = 0) => {
     try {
-      setLoading(true);
+      if (skip === 0) {
+        setLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
       const params = {
         fanwall_owner: id,
-        skip: 0,
-        take: 10,
+        skip: skip,
+        take: LIMIT,
       };
       const response = await getFanwallPosts(params);
-      setFanwallPostsData(response.data);
+      console.log("response", response);
+      setFanwallPostsData(prev => [...prev, ...response.data.results.posts]);
+      setHasMore(response.data.results.hasMore);
     } catch (error) {
       console.log("error", error);
     } finally {
       setLoading(false);
+      setIsLoadingMore(false);
     }
   };
 
@@ -142,22 +171,25 @@ const FanWall = (props: IProps) => {
           </div>
         </div>
         <div>
-          {!isLoading &&
-            fanwallPostsData.map((fanwallPost, index) => (
-              <div key={index}>
-                <Comment
-                  {...{
-                    fanwallPost,
-                    replyingTo,
-                    setReplyingTo,
-                    replyText,
-                    setReplyText,
-                    handleSendReply: handleSend,
-                    rootCommentId: fanwallPost.id,
-                  }}
-                />
-              </div>
-            ))}
+          {fanwallPostsData.map((fanwallPost, index) => (
+            <div
+              key={index}
+              ref={index === fanwallPostsData.length - 1 ? lastPostElementRef : null}
+            >
+              <Comment
+                {...{
+                  fanwallPost,
+                  replyingTo,
+                  setReplyingTo,
+                  replyText,
+                  setReplyText,
+                  handleSendReply: handleSend,
+                  rootCommentId: fanwallPost.id,
+                }}
+              />
+            </div>
+          ))}
+
         </div>
 
         <UnlockContentModel
@@ -165,6 +197,16 @@ const FanWall = (props: IProps) => {
           onClose={() => setOpenUnlockModal(false)}
         />
       </div>
+      {isLoadingMore && (
+        <div className="flex justify-center my-4">
+          <CircularProgress
+            size={40}
+            sx={{
+              color: "#9EFF00",
+            }}
+          />
+        </div>
+      )}
     </>
   );
 };
