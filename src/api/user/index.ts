@@ -233,3 +233,8 @@ export async function updateUserProfileAPI(data: any) {
 export async function updateUserUsernameAPI(username: string) {
   return axiosInstance.put(`/users/username?username=${username}`);
 }
+
+
+export async function sendUserFeedbackAPI(data: any) {
+  return axiosInstance.post('/users/feedback', data);
+}
