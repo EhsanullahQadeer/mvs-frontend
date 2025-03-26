@@ -1,5 +1,7 @@
 import { useCallback } from "react";
 import axiosInstance from "api/axios";
+import { useMessenger } from "../context";
+import { IMessage } from "../objects/states.types";
 
 export interface ISendMessage {
   conversationId: string;
@@ -10,16 +12,22 @@ export interface ISendMessage {
   stripePaymentIntentId?: string | null;
 }
 
-export const useSendMessage = () => {
+export const useSendMessage = (
+  setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>,
+  messages: IMessage[]
+) => {
   return useCallback(async (payload: ISendMessage): Promise<void> => {
     try {
       console.log("useSendMessage payload", payload);
       const response = await axiosInstance.post('/messenger/message', payload);
       console.log("useSendMessage response", response);
-      return response.data;
+      console.log("useSendMessage messages", messages);
+      if (response.data?.results?.message) {
+        setMessages(prevMessages => [...(prevMessages || []), response.data.results.message]);
+      }
     } catch (error) {
       console.error("Error sending message:", error);
       throw error;
     }
-  }, []);
+  }, [setMessages]);
 };

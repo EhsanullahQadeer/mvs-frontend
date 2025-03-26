@@ -18,6 +18,7 @@
     "flowbite": "^3.1.2",
     "formik": "^2.4.6",
     "js-cookie": "^3.0.1",
+    "libphonenumber-js": "^1.12.6",
     "moment": "^2.29.4",
     "react": "^18.1.0",
     "react-audio-play": "^1.0.2",

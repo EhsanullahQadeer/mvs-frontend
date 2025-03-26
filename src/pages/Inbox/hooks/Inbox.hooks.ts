@@ -15,7 +15,6 @@ import { useSelector } from 'react-redux';
 
 /* LOCAL IMPORTS */
 import { RootState } from "../../../redux/reducers";
-import { getConversationMessages, getConversations } from "api/messenger";
 import { useChatbox } from '../components/Chatbox/context';
 
 export const useInboxHooks = () => {

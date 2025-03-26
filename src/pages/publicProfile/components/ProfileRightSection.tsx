@@ -4,6 +4,7 @@ import FanWall from "./FanWall";
 import { IArtistProfileData, ICurrentUser } from "./types";
 import { IUserData } from "pages/profile/components/types";
 import ProfileLibrary from "pages/profile/components/ProfileLibrary";
+import LockedContent from "pages/profile/components/LockedContent";
 
 interface IProps {
   artistData: IArtistProfileData | IUserData | null;
@@ -22,21 +23,21 @@ interface IProps {
 }
 
 const ProfileRightSection = (props: IProps) => {
-  const 
-  { artistData,
-    currentUserInfo,
-    isLoginUser,
-    user,
-    tabs,
-    hasSampleType,
-    connectionDetail,
-    selectedTab,
-    setSelectedTab,
-    isConnect,
-    chatOpen,
-    setChatOpen,
-    isPublicProfile,
-  } = props;
+  const
+    { artistData,
+      currentUserInfo,
+      isLoginUser,
+      user,
+      tabs,
+      hasSampleType,
+      connectionDetail,
+      selectedTab,
+      setSelectedTab,
+      isConnect,
+      chatOpen,
+      setChatOpen,
+      isPublicProfile,
+    } = props;
   const [activeTab, setActiveTab] = useState(isPublicProfile ? "Posts" : "Library");
 
   const publicTabs = [
@@ -76,16 +77,15 @@ const ProfileRightSection = (props: IProps) => {
   const topTabs = isPublicProfile ? publicTabs : normalTabs;
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div id="profile-right-section" className="flex-1 flex flex-col relative">
       <div className="flex w-full items-center">
         {topTabs.map((tab) => (
           <span
             key={tab.label}
-            className={`cursor-pointer text-white flex items-center justify-center flex-1 py-5 ${
-              activeTab === tab.label
+            className={`cursor-pointer text-white flex items-center justify-center flex-1 py-5 ${activeTab === tab.label
                 ? "font-semibold border-b-2 border-charcoalGray"
                 : "border-b border-eerieBlack"
-            }`}
+              }`}
             onClick={() => setActiveTab(tab.label)}
           >
             {tab.label}
@@ -99,6 +99,10 @@ const ProfileRightSection = (props: IProps) => {
           {topTabs.find((tab) => tab.label === activeTab)?.component}
         </div>
       </div>
+
+      {!isConnect && !isLoginUser && activeTab === "Library" && (
+        <div><LockedContent /></div>
+      )}
     </div>
   );
 };

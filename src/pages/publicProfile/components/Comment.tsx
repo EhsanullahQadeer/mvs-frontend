@@ -18,6 +18,7 @@ interface IProps {
     likes_count: number;
     replies_count: number;
     first_reply?: any;
+    is_liked?: boolean;
   };
   replyingTo: number | null;
   setReplyingTo: (id: number | null) => void;
@@ -60,12 +61,14 @@ const Comment: React.FC<IProps> = ({
     likes_count,
     replies_count,
     first_reply,
+    is_liked,
   } = fanwallPost;
   const { professional_name, thumbnail } = author;
   const [showReplies, setShowReplies] = useState(false);
   const [totalLikes, setTotalLikes] = useState(likes_count);
   const [fanwallRepliesData, setFanwallRepliesData] = useState([]);
   const [isTextareaFocused, setIsTextareaFocused] = useState(false);
+  const [isLiked, setIsLiked] = useState(is_liked);
 
   const handleFanwallPostLike = async (e) => {
     e.stopPropagation();
@@ -75,6 +78,7 @@ const Comment: React.FC<IProps> = ({
       };
       const response = await toggleFanwallPostLike(body);
       setTotalLikes(response.data.likes_count);
+      setIsLiked(!isLiked);
     } catch (error) {
       console.log("Error toggling like:", error);
     }
@@ -148,7 +152,15 @@ const Comment: React.FC<IProps> = ({
         <div className="flex items-center gap-4 mt-3">
           <div className="text-mediumGray flex gap-0.5 items-center">
             <div onClick={handleFanwallPostLike} className="cursor-pointer">
-              <img src={likeIcon} alt="Like" className="w-5 h-5" />
+              {isLiked ? (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 18.25C9.86739 18.2501 9.73779 18.2122 9.625 18.14C6.58 16.47 4.292 14.588 2.813 12.574C1.076 10.21 0.75 8.056 0.75 6.5C0.750744 5.11915 1.30316 3.79459 2.28441 2.81334C3.26566 1.83209 4.59022 1.27967 5.97107 1.27893C7.60961 1.27799 9.15073 2.04642 10 3.33893C10.8493 2.04642 12.3904 1.27799 14.0289 1.27893C15.4098 1.27967 16.7343 1.83209 17.7156 2.81334C18.6968 3.79459 19.2493 5.11915 19.25 6.5C19.25 8.056 18.924 10.21 17.188 12.574C15.708 14.588 13.42 16.47 10.375 18.14C10.2622 18.2122 10.1326 18.2501 10 18.25Z" fill="#9EFF00"/>
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 18.25C9.86739 18.2501 9.73779 18.2122 9.625 18.14C6.58 16.47 4.292 14.588 2.813 12.574C1.076 10.21 0.75 8.056 0.75 6.5C0.750744 5.11915 1.30316 3.79459 2.28441 2.81334C3.26566 1.83209 4.59022 1.27967 5.97107 1.27893C7.60961 1.27799 9.15073 2.04642 10 3.33893C10.8493 2.04642 12.3904 1.27799 14.0289 1.27893C15.4098 1.27967 16.7343 1.83209 17.7156 2.81334C18.6968 3.79459 19.2493 5.11915 19.25 6.5C19.25 8.056 18.924 10.21 17.188 12.574C15.708 14.588 13.42 16.47 10.375 18.14C10.2622 18.2122 10.1326 18.2501 10 18.25ZM5.97107 2.52893C4.93861 2.52976 3.94877 2.94022 3.21387 3.67512C2.47897 4.41002 2.06851 5.39986 2.06768 6.43232C2.06768 7.77332 2.34068 9.61032 3.88168 11.709C5.24068 13.559 7.35368 15.302 10.001 16.846C12.649 15.302 14.761 13.559 16.12 11.709C17.661 9.61032 17.934 7.77332 17.934 6.43232C17.9332 5.39986 17.5227 4.41002 16.7878 3.67512C16.0529 2.94022 15.0631 2.52976 14.0306 2.52893C12.7579 2.52851 11.5602 3.11697 10.813 4.13032C10.7187 4.25862 10.5905 4.35961 10.4427 4.42312C10.2948 4.48664 10.1328 4.51033 9.97268 4.49165C9.81257 4.47297 9.66089 4.41268 9.53501 4.31697C9.40912 4.22126 9.31395 4.09366 9.25868 3.94832C8.51138 2.93497 7.31372 2.34651 6.04107 2.34693L5.97107 2.52893Z" fill="#848484"/>
+                </svg>
+              )}
             </div>
             <span>{totalLikes}</span>
           </div>

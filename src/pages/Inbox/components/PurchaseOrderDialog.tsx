@@ -133,7 +133,7 @@ const PurchaseOrderDialog = (props: Props) => {
     setInputTipAmount("");
     setOpenPurchaseOrder(false);
     setIsSending(false);
-    await getConversationMessages({ conversationId: activeConversation.conversation_id });
+    await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 });
     clearMessageInputs();
   };
 

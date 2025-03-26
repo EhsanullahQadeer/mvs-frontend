@@ -9,11 +9,11 @@ import { CircularProgress } from "@mui/material";
 import { useMessenger } from "api/messenger/context";
 import { ChatboxProvider } from "../Chatbox/context";
 import { Conversation } from "./components/conversation";
+import InboxTab from "components/ui/Header/atoms/InboxTab";
 import searchIcon from "../../../../assets/icons/searchIcon.svg";
 import { IConversation } from "api/messenger/objects/states.types";
-import useGetMessagesNotes from "pages/Inbox/hooks/useGetMessagesNotes";
-import InboxTabs from "pages/Inbox/components/Directory/components/tabs";
 import NoMessagesYet from "pages/Inbox/components/Directory/templates/noMessagesYet";
+import { ReactComponent as SnowflakeIcon } from "../../../../assets/icons/snowflakeIcon.svg";
 
 const InboxDirectory = () => {
   const {
@@ -36,6 +36,10 @@ const InboxDirectory = () => {
     loadConversations,
     searchTerm,
     setSearchTerm,
+    handleInboxTabClick,
+    setArchiveSpamFav,
+    setSelectedConversations,
+    setSelectedMenuItem,
   } = useConversation();
 
   const initialize = () => {
@@ -48,17 +52,6 @@ const InboxDirectory = () => {
   useEffect(() => {
     initialize();
   }, [inboxTab, loadConversations]);
-
-  const {
-    localMessages,
-    notes,
-    loading,
-    getConvMessages,
-    getNotes,
-    getMessagesNotes,
-    setLocalMessages,
-  } = useGetMessagesNotes(setActiveConversation);
-
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -190,13 +183,32 @@ const InboxDirectory = () => {
         <div className="scrollbar-hidden flex-1 overflow-y-auto">
           <div className="bg-[#08090a] sticky top-0">
             {!searchTerm && (
-              <InboxTabs 
-                unreadMessageCount={[
-                  totalPriorityInboxUnread, 
-                  totalGeneralInboxUnread, 
-                  totalIcebreakerInboxUnread
-                ]}
-              />
+              <div className="flex items-center w-full border-b border-eerieBlack">
+                <InboxTab tabName="Connections" currentTab={inboxTab} tabValue="connections" onClick={() => {
+                  handleInboxTabClick("connections");
+                  setArchiveSpamFav("");
+                  setSelectedConversations([]);
+                  setSelectedMenuItem("")
+                }} unreadMessageCount={totalPriorityInboxUnread} color="bg-[#FF3B40]" classname="w-[200px]"/>
+                <InboxTab tabName="Priority" currentTab={inboxTab} tabValue="priority" onClick={() => {
+                  handleInboxTabClick("priority");
+                  setArchiveSpamFav("");
+                  setSelectedConversations([]);
+                  setSelectedMenuItem("")
+                }} unreadMessageCount={totalPriorityInboxUnread} color="bg-[#FF3B40]" classname="w-[200px]"/>
+                <InboxTab tabName="General" currentTab={inboxTab} tabValue="general" onClick={() => {
+                  handleInboxTabClick("general");
+                  setArchiveSpamFav("");
+                  setSelectedConversations([]);
+                  setSelectedMenuItem("")
+                }} unreadMessageCount={totalGeneralInboxUnread} color="bg-[#242424]" classname="w-[200px]"/>
+                <InboxTab tabName="Ice Breaker" currentTab={inboxTab} tabValue="icebreaker" onClick={() => {
+                  handleInboxTabClick("icebreaker");
+                  setArchiveSpamFav("");
+                  setSelectedConversations([]);
+                  setSelectedMenuItem("")
+                }} unreadMessageCount={totalIcebreakerInboxUnread} color="bg-[#0185FF]" icon={<SnowflakeIcon/>} classname="w-[200px]"/>
+              </div>
             )}
             {inboxTab === "search" && searchTerm ? (
               <div className={`bg-[#08090a] cursor-pointer h-[59px] w-[200px] flex items-center justify-center text-white border-b-2 border-[#3D3D3D]`}>

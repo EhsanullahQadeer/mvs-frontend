@@ -1,10 +1,12 @@
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { useMessenger } from 'api/messenger/context';
-import { IConversation } from 'api/messenger/objects/states.types';
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { useNotification } from 'services/WebSocket/useNotification.hook';
+import { IConversation, IMessage } from 'api/messenger/objects/states.types';
+import messageSound from "../../../../assets/audio/message-notification.mp3";
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 
-type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | '';
+type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | 'connections' | '';
 
 interface ConversationContextType {
   // State
@@ -61,7 +63,16 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
     toggleConversationFavorite,
     toggleConversationIsArchived,
     toggleConversationsIsSpam,
-    deleteConversations
+    deleteConversations,
+    setConversations,
+    setTotalPriorityInboxUnread,
+    setTotalGeneralInboxUnread,
+    setTotalIcebreakerInboxUnread,
+    totalPriorityInboxUnread,
+    totalGeneralInboxUnread,
+    totalIcebreakerInboxUnread,
+    setMessages,
+    messages
   } = useMessenger();
 
   const CONVERSATIONS_PER_PAGE = 20;
@@ -74,6 +85,154 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   const [searchTerm, setSearchTerm] = useState("");
   const [archiveSpamFav, setArchiveSpamFav] = useState<string>("");
   let prevtab:ConversationTabType = 'priority';
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const initAudio = async () => {
+      try {
+        audioRef.current = new Audio(messageSound);
+        audioRef.current.crossOrigin = "anonymous";
+        audioRef.current.preload = "auto";
+
+        // Wait for audio to load
+        await new Promise(resolve => {
+          if (audioRef.current) {
+            audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
+            audioRef.current.load();
+          }
+        });
+
+        console.log('Message sound loaded successfully');
+      } catch (error) {
+        console.error('Error initializing message sound:', error);
+      }
+    };
+
+    initAudio();
+
+    // Cleanup
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const playSound = useCallback(() => {
+    console.log('Attempting to play message sound');
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log('Message sound played successfully');
+          })
+          .catch(err => {
+            console.warn('Could not play message sound:', err);
+          });
+      }
+    } else {
+      console.log("Audio not loaded, skipping playback");
+    }
+  }, []);
+
+
+
+  useNotification("NEW_MESSAGE", (data) => {
+    const message = data.message as IMessage;
+      const shouldUpdateConversation = 
+        (message.conversation.is_priority && inboxTab === "priority") ||
+        (!message.conversation.is_priority && inboxTab === "general") ||
+        (message.conversation.active_icebreaker && inboxTab === "icebreaker");
+
+
+
+      if (shouldUpdateConversation) {
+        if (conversations.some(conv => conv.conversation_id === String(message.conversation.conversation_id))) {
+          const conversationArray = [...conversations];
+          const filteredConversations = conversationArray.filter(conv =>
+            conv.conversation_id !== String(message.conversation.conversation_id)
+          );
+
+          setConversations([
+            {
+              ...message.conversation,
+              conversation_id: String(message.conversation.conversation_id),
+              unread_count: message.conversation.unread_count,
+              available_funds: message.conversation.available_funds,
+              total_paid: message.conversation.total_paid,
+              lastMessageSummary: message.content,
+              user: message.conversation.user,
+              recipient: {
+                ...message.sender,
+                name: message.sender.professional_name,
+                thumbnail: message.sender.thumbnail
+              },
+              messages: [message]
+            },
+            ...filteredConversations
+          ]); 
+        } else {
+          const conversationArray = [...conversations];
+          if (conversationArray.length >= CONVERSATIONS_PER_PAGE) {
+            setConversations([
+              {
+                ...message.conversation,
+                unread_count: message.conversation.unread_count,
+                available_funds: message.conversation.available_funds,
+                total_paid: message.conversation.total_paid,
+                lastMessageSummary: message.content,
+                user: message.conversation.user,
+                recipient: {
+                  ...message.sender,
+                  name: message.sender.professional_name,
+                  thumbnail: message.sender.thumbnail
+                },
+                messages: [message]
+              },
+              ...conversationArray.slice(0, -1)
+            ]);
+          } else {
+            setConversations([
+              {
+                ...message.conversation,
+                unread_count: 1,
+                available_funds: 0,
+                total_paid: 0,
+                lastMessageSummary: message.content,
+                user: message.conversation.user,
+                recipient: {
+                  ...message.sender,
+                  name: message.sender.professional_name,
+                  thumbnail: message.sender.thumbnail
+                },
+                messages: [message]
+              },
+              ...conversationArray
+            ]);
+          }
+        }
+      }
+
+      console.log('got here at leats');
+      if (message.conversation.is_priority) {
+        console.log("totalPriorityInboxUnread", totalPriorityInboxUnread);
+        setTotalPriorityInboxUnread(totalPriorityInboxUnread + 1);
+      } else if (message.conversation.active_icebreaker) {
+        console.log("totalIcebreakerInboxUnread", totalIcebreakerInboxUnread);
+        setTotalIcebreakerInboxUnread(totalIcebreakerInboxUnread + 1);
+      } else {
+        console.log("totalGeneralInboxUnread", totalGeneralInboxUnread);
+        setTotalGeneralInboxUnread(totalGeneralInboxUnread + 1);
+      }
+
+    playSound();
+  });
+
 
   useEffect(() => {
     if(inboxTab !== 'search') return;
@@ -94,7 +253,8 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   
   const handleConversationSelect = (conversation: IConversation) => {
     setActiveConversation(conversation);
-    getConversationMessages({ conversationId: conversation.conversation_id });
+    setMessages(null);
+    getConversationMessages({ conversationId: conversation.conversation_id, limit: 10, cursor: 0 });
   }
 
   const handleInboxTabClick = (tab: ConversationTabType) => {
@@ -131,6 +291,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         getArchived: archiveSpamFav === "archive",
         getSpam: archiveSpamFav === "spam",
         getFavorited: archiveSpamFav === "favorite",
+        getConnected: inboxTab === "connections"
       });
     }
   }, [authUser, inboxTab, getConversations, CONVERSATIONS_PER_PAGE, currentPage, archiveSpamFav]);
@@ -195,7 +356,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
     currentPage,
     selectedMenuItem,
     searchTerm,
-    // Add any other dependencies that affect the value
+    CONVERSATIONS_PER_PAGE
   ]);
 
   return (
