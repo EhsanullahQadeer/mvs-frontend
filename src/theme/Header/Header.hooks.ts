@@ -25,6 +25,7 @@ export const useHeaderHooks = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const [contact_us, setContactUs] = useState(false);
   const [user_settings, setUserSettings] = useState(false);
+  const [feedback_modal, setFeedbackModal] = useState(false);
   const dispatch = useDispatch();
   const token = cookie.get('token');
 
@@ -79,5 +80,7 @@ export const useHeaderHooks = () => {
     setUserSettings,
     onboardGuide,
     LogOut,
+    feedback_modal,
+    setFeedbackModal,
   };
 };
