@@ -1,4 +1,4 @@
-import { useSendMessage } from './hooks/useSendMessage';
+import { ISendMessage, useSendMessage } from './hooks/useSendMessage';
 import { useDeleteConversations } from './hooks/useDeleteConversations';
 import { useGetConversationNotes } from './hooks/useGetConversationNotes';
 import { IReplyInThread, useReplyInThread } from './hooks/useReplyInThread';
@@ -25,7 +25,6 @@ import {
   IToggleConversationIsSpam,
   IGetConversationNotes,
   IDeleteConversations,
-  ISendMessage,
 } from './objects/api.interfaces';
 
 interface MessengerContextType {
@@ -142,8 +141,8 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
   const getThreadMessagesFunc = useGetThreadMessages(setThreadMessages);
   const addReactionMessageFunc = useAddReactionMessage();
   const deleteReactionMessageFunc = useDeleteReactionMessage();
-  const sendMessageFunc = useSendMessage(setMessages, messages);
-  const replyInThreadFunc = useReplyInThread();
+  const sendMessageFunc = useSendMessage(setMessages);
+  const replyInThreadFunc = useReplyInThread(setThreadMessages);
   const getSearchMessagesFunc = 
     useGetSearchMessages(setSearchMessages,setTotalSearchMessages);
 

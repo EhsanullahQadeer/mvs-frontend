@@ -39,7 +39,8 @@ const PurchaseOrderDialog = (props: Props) => {
   } = props;
 
   const {
-    LIMIT_MESSAGES
+    LIMIT_MESSAGES,
+    isThread
   } = useChatbox();
 
   const {
@@ -132,7 +133,7 @@ const PurchaseOrderDialog = (props: Props) => {
       creditPaymentAmount: totalAmount,
       messageType: 'demo',
       audioMediaId: response.data.media.id,
-      stripePaymentIntentId: paymentIntentId
+      stripePaymentIntentId: paymentIntentId,
     });
     setTipAmount(0);
     setInputTipAmount("");
