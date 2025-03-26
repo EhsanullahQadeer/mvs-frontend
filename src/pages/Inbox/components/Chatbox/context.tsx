@@ -3,6 +3,7 @@ import { RootState } from 'redux/reducers';
 import { useMessenger } from 'api/messenger/context';
 import { IConversation, IMessage, INotes, TUser } from 'api/messenger/objects/states.types';
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
+import { checkUserHasStripeConnectedAccount } from 'api/user';
 // import { useMessageReactions } from '../../hooks/useMessageReactions';
 
 type ChatTabType = 'messages' | 'info' | 'notes';
@@ -33,6 +34,7 @@ interface ChatboxContextType {
   setIsThread: (isThread: boolean) => void;
   markMessageAsRead: (id:number)=> void;
   LIMIT_MESSAGES: number;
+  isSendDemoAvailable: boolean;
 }
 
 const ChatboxContext = createContext<ChatboxContextType | undefined>(undefined);
@@ -73,11 +75,32 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const [totalPaid, setTotalPaid] = useState<number>(activeConversation?.total_paid || 0);
   const [notes, setNotes] = useState<INotes[]>(conversationNotes);
   const [isThread, setIsThread] = useState<boolean>(false);
+  const [isSendDemoAvailable, setIsSendDemoAvailable] = useState<boolean>(false);
   const LIMIT_MESSAGES = 100;
 
   let onMessageReadTimeout;
   const updateMessageReadIds = useRef<number[]>([]);
 
+  useEffect(() => {
+    if (recipient) {
+      checkUserHasStripeConnectedAccount(recipient.id)
+        .then((res) => {
+          console.log('res', res);
+          setIsSendDemoAvailable(res.data || false);
+        })
+        .catch((error) => {
+          console.error('Error checking Stripe account:', error);
+          setIsSendDemoAvailable(false);
+        });
+    } else {
+      setIsSendDemoAvailable(false);
+    }
+  }, [recipient]);
+
+
+  useEffect(() => {
+    console.log('isSendDemoAvailable', isSendDemoAvailable);
+  }, [isSendDemoAvailable]);
 
   async function markMessageAsRead(id:number){
     clearTimeout(onMessageReadTimeout);
@@ -86,7 +109,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
       if (updateMessageReadIds.current.length === 0) return;
       toggleMessageIsRead({messageIds:updateMessageReadIds.current});
       updateMessageReadIds.current = [];
-    },5000);
+    }, 5000);
   }
 
   useEffect(() => {
@@ -203,7 +226,8 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     isThread,
     setIsThread,
     markMessageAsRead,
-    LIMIT_MESSAGES
+    LIMIT_MESSAGES,
+    isSendDemoAvailable
   };
 
   return (

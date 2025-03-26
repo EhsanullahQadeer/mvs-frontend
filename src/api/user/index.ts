@@ -179,6 +179,10 @@ export async function checkUsernameIsAvailable(username: string) {
   return axiosInstance.get(`/users/check-username-is-available?username=${username}`);
 }
 // =======================================================================================
+export async function checkUserHasStripeConnectedAccount(userId: number) {
+  return axiosInstance.get(`/users/has-stripe-connect-account?targetUserId=${userId}`);
+}
+// =======================================================================================
 export async function getTopPopularUsers(paginationDto: {skip, take}) {
   return axiosInstance.get(`/users/get-top-popular`, {
     params: {
