@@ -14,13 +14,12 @@ import { FiCamera } from "react-icons/fi";
 import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import { ReactComponent as EditIcon } from "../../../../assets/icons/editPencilIcon.svg";
 import ImageCrop from "components/modals/ImageCropModal";
+import { updateUserProfileAPI, updateUserUsernameAPI } from "api/user";
 
 // THIRD PARTY IMPORTS
 import { useState } from "react";
 import { Form, Formik } from "formik";
 import FormikField from "components/util/FormikField";
-import { updateUserProfileAPI } from "api/user";
-
 
 interface UserProfile {
   username: string;
@@ -102,7 +101,7 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
     if (user) {
       Object.entries(values).forEach(([key, value]) => {
         const typedKey = key as keyof UserProfile;
-        if (value !== user[typedKey]) {
+        if (value !== user[typedKey] && key !== 'banner_image') {
           changedValues[typedKey] = value;
           if (typedKey === 'thumbnail') {
             changedValues.image_type = 'profile';
@@ -112,9 +111,13 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
       
       if (Object.keys(changedValues).length > 0) {
         try {
-          const response = await updateUserProfileAPI(changedValues);
-          if (response && setUser) {
-            setUser({ ...user, ...changedValues });
+          await updateUserProfileAPI(changedValues);
+          console.log("changedValues", changedValues);
+          setUser({ ...user, ...changedValues });
+          if (changedValues.username) {
+           const response = await updateUserUsernameAPI(changedValues.username);
+           console.log("response", response);
+           setUser({ ...user, ...changedValues });
           }
         } catch (error) {
           console.error("Failed to update profile:", error);

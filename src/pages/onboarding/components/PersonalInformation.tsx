@@ -74,7 +74,6 @@ const PersonalInformation = (props: Props) => {
       label: country.name,
       value: country.name
     }));
-    console.log('Countries formatted:', countries);
     setCountriesArr(countries);
   }, []);
 

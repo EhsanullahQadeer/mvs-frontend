@@ -230,3 +230,6 @@ export async function checkIfFollowing( id: number ) {
 export async function updateUserProfileAPI(data: any) {
   return axiosInstance.put('/users/me', data);
 }
+export async function updateUserUsernameAPI(username: string) {
+  return axiosInstance.put(`/users/username?username=${username}`);
+}
