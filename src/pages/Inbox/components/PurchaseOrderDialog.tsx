@@ -323,7 +323,7 @@ const PurchaseOrderDialog = (props: Props) => {
                 className="hover:border-charcoalGray flex-1 mb-2 focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm text-center p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
               />
               <div className="my-2">
-                <StripeElements onPaymentComplete={(intentId)=>{setIsSending(true);handleSendDemo(intentId)}} amount={Number(totalAmount)} recipientId={recipient?.id} onClose={handleClose}/>
+                <StripeElements demoStripeProps={{onPaymentComplete: (intentId)=>{setIsSending(true);handleSendDemo(intentId)}, amount: Number(totalAmount), recipientId: recipient?.id, onClose: handleClose}}/>
               </div>
             </div>
           </div>
