@@ -184,11 +184,9 @@ const ProfileAboutSection = (props: Props) => {
     return (
       <div className="fixed right-0 top-[70px] w-[500px] h-[calc(100vh-70px)] bg-richBlack overflow-hidden z-50">
         <ConversationProvider>
-          <ChatboxProvider>
-            <Chatbox
-              onClose={() => {setShowChat(false); setChatOpen(false)}}
-            />
-          </ChatboxProvider>
+          <Chatbox
+            onClose={() => {setShowChat(false); setChatOpen(false)}}
+          />
         </ConversationProvider>
       </div>
     );

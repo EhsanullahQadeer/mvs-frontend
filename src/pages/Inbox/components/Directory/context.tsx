@@ -5,7 +5,6 @@ import { useNotification } from 'services/WebSocket/useNotification.hook';
 import { IConversation, IMessage } from 'api/messenger/objects/states.types';
 import messageSound from "../../../../assets/audio/message-notification.mp3";
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
-import { useChatbox } from '../Chatbox/context';
 
 type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | 'connections' | '';
 

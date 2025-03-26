@@ -33,6 +33,7 @@ import { RootState } from "redux/reducers";
 import SampleUploadModel from "./components/SampleUploadModel";
 import ProfileLibrary from "./components/ProfileLibrary";
 import ProfileRightSection from "../publicProfile/components/ProfileRightSection";
+import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
 // import { getUserSamplesAPI } from "api/sounds";
 
 const ArtistProfile = () => {
@@ -184,9 +185,11 @@ const ArtistProfile = () => {
 
           <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
             <MessageContextProvider>
-              <ProfileAboutSection
-                {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
-              />
+              <ChatboxProvider>
+                <ProfileAboutSection
+                  {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
+                />
+              </ChatboxProvider>
             </MessageContextProvider>
           </section>
         </div>{" "}
