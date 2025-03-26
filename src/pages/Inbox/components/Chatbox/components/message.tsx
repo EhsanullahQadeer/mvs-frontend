@@ -138,7 +138,7 @@ const Message: React.FC<MessageProps> = ({
           </div>
           
           {message?.threadStats?.replyCount === 1 &&
-              message?.sender?.id === authUserId && (
+              message?.sender?.id === authUserId && message.threadStats.hasUnreadMessage && (
               <button
                 onClick={() => {
                   setIsThread(true);
@@ -161,7 +161,7 @@ const Message: React.FC<MessageProps> = ({
             </button>
           )}
         </div>
-        { (message.threadStats?.replyCount > 1 || (message.threadStats?.replyCount === 1 && message.sender.id !== authUserId)) && (
+        { (message.threadStats?.replyCount >= 1) && (
           <div className="flex gap-2.5 items-center pt-2">
             <div
               className="flex gap-1.5 items-center cursor-pointer w-max"
