@@ -198,6 +198,25 @@ export const resendInvitationCodeAPI = async (email: string) => {
   }
 };
 
+export const getUserFollowers = async (
+  userId: number,
+  limit: number = 100,
+  cursor: number | null = null
+) => {
+  return axiosInstance.get(
+    `/users/followers/?userId=${userId}&limit=${limit}&cursor=${cursor}`
+  );
+}
+
+export const getMutualConnections = async (userId: number, limit: number = 10, cursor: number | null = null) => {
+  return axiosInstance.get(`/users/mutual-connections/${userId}`, {
+    params: {
+      limit,
+      cursor,
+    },
+  });
+}
+
 export const handleConnectionRequest = async (requestId: number, acceptRequest: boolean) => {
   try {
     const response = await axiosInstance.post('/users/handle-connection-request', { 
