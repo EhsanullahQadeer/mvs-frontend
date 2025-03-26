@@ -40,6 +40,8 @@ const ProfileRightSection = (props: IProps) => {
     } = props;
   const [activeTab, setActiveTab] = useState(isPublicProfile ? "Posts" : "Library");
 
+  const fanwallKey = `fanwall-${JSON.stringify(artistData?.id)}`;
+
   const publicTabs = [
     {
       label: "Posts",
@@ -47,7 +49,7 @@ const ProfileRightSection = (props: IProps) => {
     },
     {
       label: "Fanwall",
-      component: <FanWall {...{ artistData, currentUserInfo }} />,
+      component: <FanWall key={fanwallKey} {...{ artistData, currentUserInfo }} />,
     },
     {
       label: "Gallery",
@@ -70,7 +72,7 @@ const ProfileRightSection = (props: IProps) => {
     // },
     {
       label: "Fanwall",
-      component: <FanWall {...{ artistData, currentUserInfo }} />
+      component: <FanWall key={fanwallKey} {...{ artistData, currentUserInfo }} />
     }
   ];
 
