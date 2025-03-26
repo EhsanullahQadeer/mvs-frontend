@@ -18,6 +18,7 @@ import { IUploadingFileMetaDataProps } from "./types";
 import FormikLabeledField from "../../../../components/util/FormikLabeledField";
 import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import FormikSingleSelectDropdown from "../../../../components/util/FormikSingleSelectDropdown";
+import avatarImg from "../../../../assets/img/avatar.svg";
 import {
   FormControl,
   FormControlLabel,
@@ -92,31 +93,59 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
   };
 
   const handleAddComposer = (composerAdded) => {
-    setSelectedComposer((prev) => {
-      const isComposerAlreadySelected = prev.some(
-        (composer) => composer?.user?.id === composerAdded?.id
-      );
 
-      if (isComposerAlreadySelected) {
-        console.log("Composer already exists");
-        return prev;
-      }
+    if(composerAdded.isEmailValue){
+      setSelectedComposer((prev) => {
+        const isComposerAlreadySelected = prev.some(
+          (composer) => composer?.user?.email === composerAdded?.email
+        );
 
-      const newCollaborator = {
-        user: {
-          id: composerAdded.id,
-          thumbnail: composerAdded.thumbnail,
-          professional_name: composerAdded.professional_name,
-          is_owner: false,
-        },
-        contribution: 0,
-        roles: composerAdded.roles,
-      };
+        if(isComposerAlreadySelected){
+          console.log("Composer already exists");
+          return prev;
+        }
 
-      console.log("Uploading File Metadata - handleAddComposer - new Composer: ", newCollaborator);
+        const newCollaborator = {
+          user: {
+            id: null,
+            thumbnail: avatarImg,
+            professional_name: composerAdded.email,
+            is_owner: false,
+          },
+          contribution: 0,
+          roles: [],
+        };
 
-      return [...prev, newCollaborator];
-    });
+        return [...prev, newCollaborator];
+      });
+    }
+    else{
+      setSelectedComposer((prev) => {
+        const isComposerAlreadySelected = prev.some(
+          (composer) => composer?.user?.id === composerAdded?.id
+        );
+
+        if (isComposerAlreadySelected) {
+          console.log("Composer already exists");
+          return prev;
+        }
+
+        const newCollaborator = {
+          user: {
+            id: composerAdded.id,
+            thumbnail: composerAdded.thumbnail,
+            professional_name: composerAdded.professional_name,
+            is_owner: false,
+          },
+          contribution: 0,
+          roles: composerAdded.roles,
+        };
+
+        console.log("Uploading File Metadata - handleAddComposer - new Composer: ", newCollaborator);
+
+        return [...prev, newCollaborator];
+      });
+    }
   };
 
   const handlePrivacyChange = (event: React.ChangeEvent<HTMLInputElement>) => {

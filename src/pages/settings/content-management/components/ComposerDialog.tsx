@@ -14,6 +14,8 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { userProfessionalNameSearch } from "api/user";
 import React, { useState, useEffect, useRef } from "react";
+import { referUserByEmail } from "api/user";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -49,11 +51,26 @@ function ComposerDialog(props: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isInvite, setIsInvite] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selected,setSelected] = useState(null);
+  const [selected, setSelected] = useState(null);
+  // Feedback message states
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(true);
   // Debounce the search value
   const debouncedSearchValue = useDebounce(searchTerm, 300);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchResults, setSearchResults] = useState([]);
+
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Check if input is an email
+  useEffect(() => {
+    setIsInvite(emailRegex.test(searchTerm));
+    // Clear feedback message when input changes
+    if (feedbackMessage) {
+      setFeedbackMessage("");
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
     if (openComposerDialog) { // Check if dialog is open
@@ -104,14 +121,47 @@ function ComposerDialog(props: Props) {
 
   const handleButtonClick = () => {
     if (selected) {
-      handleAddComposer(selected)
-      setSelected(null)
+      handleAddComposer(selected);
+      setSelected(null);
       setSearchTerm("");
     }
     if (isInvite) {
-      console.log("search term", searchTerm);
+      handleInviteByEmail(searchTerm);
     }
   };
+
+  // Function to handle email invitation
+  const handleInviteByEmail = (email: string) => {
+    // Validate email again just to be sure
+    if (!emailRegex.test(email)) {
+      setFeedbackMessage("Invalid email address");
+      setIsSuccess(false);
+      return;
+    }
+
+    setLoading(true);
+    console.log("Inviting collaborator by email:", email);
+    
+    referUserByEmail(email)
+      .then(response => {
+        setLoading(false);
+        setFeedbackMessage("Invite sent");
+        setIsSuccess(true);
+        setSearchTerm("");
+        handleAddComposer({ email, isEmailValue: true });
+      })
+      .catch(error => {
+        setLoading(false);
+        setFeedbackMessage("Failed to send invite");
+        setIsSuccess(false);
+      });
+  };
+
+  // Add a useEffect to monitor the feedback message state
+  useEffect(() => {
+    console.log("Feedback message changed:", feedbackMessage);
+    console.log("Is success:", isSuccess);
+  }, [feedbackMessage, isSuccess]);
 
   const isSelected = (selectedComposer) => {
     for (const a of contributors) {
@@ -149,21 +199,36 @@ function ComposerDialog(props: Props) {
         },
       }}
     >
-      <div className="flex justify-between items-center gap-2 pb-2.5">
-        <span className="text-sm font-normal">
-          Invite collaborators by name or email
-        </span>
-        <IconButton
-          aria-label="close"
-          onClick={handleClose}
-          sx={{
-            color: "#848484",
-            width: "16px",
-            height: "16px",
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
+      <DialogTitle>
+        <div className="flex justify-between items-center gap-2 pb-2.5">
+          <span className="text-sm font-normal">
+            Invite collaborators by name or email
+          </span>
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={{
+              color: "#848484",
+              width: "16px",
+              height: "16px",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+      </DialogTitle>
+      
+      {/* Dedicated feedback message container */}
+      <div className="px-6 -mt-2 mb-2">
+        {feedbackMessage && (
+          <div 
+            className={`${
+              isSuccess ? "bg-green-100 border-green-500 text-green-700" : "bg-red-100 border-red-500 text-red-700"
+            } border-l-4 p-2 rounded font-medium text-sm`}
+          >
+            {feedbackMessage}
+          </div>
+        )}
       </div>
 
       <div className="py-4 border-t border-b border-eclipseGray flex flex-col gap-3 w-full items-stretch relative">
@@ -172,7 +237,7 @@ function ComposerDialog(props: Props) {
             <input
               ref={inputRef}
               type="text"
-              placeholder="Search collaborators"
+              placeholder="Search collaborators or enter email"
               className="px-4 relative py-3 text-sm font-normal text-coolGray w-full bg-jetBlack rounded-lg border border-eclipseGray hover:border-secondaryBlue focus:border-transparent focus:outline-secondaryBlue focus:outline-2 focus:outline-offset-0"
               value={searchTerm}
               onChange={handleSearchChange}
@@ -186,7 +251,7 @@ function ComposerDialog(props: Props) {
 
           <div
             className={`${
-              selected
+              selected || isInvite
                 ? "bg-[#059669] text-softGray cursor-pointer"
                 : "bg-eclipseGray text-dimGray pointer-events-none"
             } rounded-lg text-sm font-semibold w-[69px] flex justify-center items-center`}

@@ -233,3 +233,7 @@ export async function updateUserProfileAPI(data: any) {
 export async function updateUserUsernameAPI(username: string) {
   return axiosInstance.put(`/users/username?username=${username}`);
 }
+
+export async function referUserByEmail(email: string) {
+  return axiosInstance.post(`/users/refer-user`, { email });
+}
