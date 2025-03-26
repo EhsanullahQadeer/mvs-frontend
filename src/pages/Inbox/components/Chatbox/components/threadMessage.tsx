@@ -166,11 +166,13 @@ const ThreadMessage = (props: Props) => {
 
   const handleDemoPlayPause = useCallback(() => {
     if (isPlaying) {
+      console.log('Pausing...');
       setIsPlaying(false);
       audioRef.current?.pause();
     } else {
+      console.log('Playing...');
       setIsPlaying(true);
-      audioRef.current.play();
+      audioRef.current?.play();
 
       audioRef.current.ontimeupdate = () => {
         if (audioRef.current) {
@@ -185,7 +187,7 @@ const ThreadMessage = (props: Props) => {
         audioRef.current.currentTime = 0;
       };
     }
-  }, []); // Add dependencies as needed
+  }, [isPlaying]); // Add dependencies as needed
 
   const handleRecordedAudioPlayPause = useCallback(() => {
     if (wavesurfer.current) {
