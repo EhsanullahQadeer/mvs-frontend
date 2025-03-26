@@ -60,10 +60,6 @@ export async function viewDemo(payload: IViewDemo) {
   return await axios.post('messenger/event/viewed-demo', payload);
 }
 
-export async function sendMessage(payload: ISendMessage) {
-  return await axios.post('messenger/message', payload);
-}
-
 export async function toggleMessageRead(payload: IToggleMessageRead) {
   return await axios.post('messenger/message/toggle-read', payload);
 }

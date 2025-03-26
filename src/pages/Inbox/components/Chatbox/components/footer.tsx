@@ -119,9 +119,9 @@ const Footer = () => {
             messageType: "recording",
           });
           // await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
-          if (threadMessages && threadMessages.length > 0) {
-            await getThreadMessages({ parentMessageId: threadMessages[0].id });
-          }
+          // if (threadMessages && threadMessages.length > 0) {
+          //   await getThreadMessages({ parentMessageId: threadMessages[0].id });
+          // }
           clearMessageInputs();
         } else {
           await replyInThread({
@@ -129,19 +129,19 @@ const Footer = () => {
             parentMessageId: Number(threadMessages[0]?.id || ''),
             audioMediaId: mediaId,
           });
-          if (threadMessages && threadMessages.length > 0) {
-            await getThreadMessages({ parentMessageId: threadMessages[0].id });
-          }
+          // if (threadMessages && threadMessages.length > 0) {
+          //   await getThreadMessages({ parentMessageId: threadMessages[0].id });
+          // }
           clearMessageInputs();
         }
-        await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
-        if (threadMessages && threadMessages.length > 0) {
-          await getThreadMessages({ 
-            parentMessageId: threadMessages[0].id,
-            limit: LIMIT_MESSAGES,
-            cursor: threadMessages[threadMessages.length - 1].id
-          });
-        }
+        // await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
+        // if (threadMessages && threadMessages.length > 0) {
+        //   await getThreadMessages({ 
+        //     parentMessageId: threadMessages[0].id,
+        //     limit: LIMIT_MESSAGES,
+        //     cursor: threadMessages[threadMessages.length - 1].id
+        //   });
+        // }
         clearMessageInputs();
       } else {
         if (isThread) {
@@ -149,13 +149,13 @@ const Footer = () => {
             replyContent: String(messageInputValue || ''),
             parentMessageId: Number(threadMessages[0]?.id || ''),
           });
-          if (threadMessages && threadMessages.length > 0) {
-            await getThreadMessages({ 
-              parentMessageId: threadMessages[0].id,
-              limit: LIMIT_MESSAGES,
-              cursor: threadMessages[threadMessages.length - 1].id
-            });
-          }
+          // if (threadMessages && threadMessages.length > 0) {
+          //   await getThreadMessages({ 
+          //     parentMessageId: threadMessages[0].id,
+          //     limit: LIMIT_MESSAGES,
+          //     cursor: threadMessages[threadMessages.length - 1].id
+          //   });
+          // }
         } else {
           if (tipAmount > 0) {
             const response = await sendMessage({
