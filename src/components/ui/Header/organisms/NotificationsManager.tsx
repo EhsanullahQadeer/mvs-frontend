@@ -150,10 +150,10 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-[8]" onClick={() => setIsOpen(false)} /> // Overlay
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[51]" onClick={() => setIsOpen(false)} /> // Overlay (Chatbox is at 50, set overlay to 51 and Notification Manager to 52)
       )}
       {isOpen && (
-        <div className='fixed w-[418px] h-[621px] top-[80px] right-[320px] shadow-lg rounded-[12px] z-[10] bg-[#131313] overflow-hidden border border-[#3D3D3D]'>
+        <div className='fixed w-[418px] h-[621px] top-[80px] right-[320px] shadow-lg rounded-[12px] z-[52] bg-[#131313] overflow-hidden border border-[#3D3D3D]'>
           <div className="pt-[10px] px-5">
             <div className="flex justify-between items-center pb-[21px]">
               <h2 className="text-[18px] font-semibold text-white pt-5">Notifications</h2>
