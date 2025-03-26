@@ -23,7 +23,6 @@ interface DemoStripeProps {
 }
 
 interface PaymentMethodComponentProps {
-  userStripeId: string;
 }
 
 function StripeElements(props: StripeElementsProps) {
