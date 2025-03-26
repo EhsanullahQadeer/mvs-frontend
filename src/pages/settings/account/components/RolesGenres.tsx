@@ -15,16 +15,29 @@ import { Form, Formik } from "formik";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 import { genresArr, publishersArr, rolesArr } from "./data";
 import { updateUserProfileAPI } from "api/user";
+import * as Yup from 'yup';
+
+// Add validation schema
+const validationSchema = Yup.object({
+  primary_role: Yup.string().required('Primary role is required'),
+  secondary_role: Yup.string().required('Secondary role is required'),
+  main_genre: Yup.string().required('Main genre is required'),
+  sub_genre: Yup.string().required('Sub genre is required'),
+  publisher: Yup.string().required('Publisher is required'),
+});
 
 const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) => { 
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showValidationError, setShowValidationError] = useState(false);
   
   // Initialize state with user's existing values
-  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);
-  
+  const [selectedPrimaryRole, setSelectedPrimaryRole] = useState<string>(user.primary_role || "");
+  const [selectedSecondaryRole, setSelectedSecondaryRole] = useState<string>(user.secondary_role || "");
+  const [selectedMainGenre, setSelectedMainGenre] = useState<string>(user.main_genre || "");
+  const [selectedSubGenre, setSelectedSubGenre] = useState<string>(user.sub_genre || "");
+  const [selectedPublisher, setSelectedPublisher] = useState<string>(user.publisher || "");
+
   // Store original values to reset on cancel
   const [originalValues, setOriginalValues] = useState({
     roles: [] as string[],
@@ -48,9 +61,11 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
     
     const publishers = user.publisher ? [user.publisher] : [];
     
-    setSelectedRoles(roles);
-    setSelectedGenres(genres);
-    setSelectedPublishers(publishers);
+    setSelectedPrimaryRole(roles[0] || "");
+    setSelectedSecondaryRole(roles[1] || "");
+    setSelectedMainGenre(genres[0] || "");
+    setSelectedSubGenre(genres[1] || "");
+    setSelectedPublisher(publishers[0] || "");
     
     setOriginalValues({
       roles: [...roles],
@@ -60,15 +75,22 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
   }, [user]);
 
   const handleFormSubmit = async () => {
+    // Check if all fields are filled
+    if (!selectedPrimaryRole || !selectedSecondaryRole || !selectedMainGenre || 
+        !selectedSubGenre || !selectedPublisher) {
+      setShowValidationError(true);
+      return;
+    }
+    
     try {
       setIsSubmitting(true);
       
       const payload = {
-        primary_role: selectedRoles[0] || "",
-        secondary_role: selectedRoles[1] || "",
-        main_genre: selectedGenres[0] || "",
-        sub_genre: selectedGenres[1] || "",
-        publisher: selectedPublishers[0] || ""
+        primary_role: selectedPrimaryRole || "",
+        secondary_role: selectedSecondaryRole || "",
+        main_genre: selectedMainGenre || "",
+        sub_genre: selectedSubGenre || "",
+        publisher: selectedPublisher || ""
       };
       
       const response = await updateUserProfileAPI(payload);
@@ -80,11 +102,12 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
         });
         
         setOriginalValues({
-          roles: [...selectedRoles],
-          genres: [...selectedGenres],
-          publishers: [...selectedPublishers]
+          roles: [selectedPrimaryRole, selectedSecondaryRole].filter(Boolean),
+          genres: [selectedMainGenre, selectedSubGenre].filter(Boolean),
+          publishers: [selectedPublisher].filter(Boolean)
         });
         
+        setShowValidationError(false);
         setIsEditable(false);
       }
     } catch (error) {
@@ -95,9 +118,12 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
   };
   
   const handleCancel = () => {
-    setSelectedRoles([...originalValues.roles]);
-    setSelectedGenres([...originalValues.genres]);
-    setSelectedPublishers([...originalValues.publishers]);
+    setSelectedPrimaryRole(originalValues.roles[0] || "");
+    setSelectedSecondaryRole(originalValues.roles[1] || "");
+    setSelectedMainGenre(originalValues.genres[0] || "");
+    setSelectedSubGenre(originalValues.genres[1] || "");
+    setSelectedPublisher(originalValues.publishers[0] || "");
+    setShowValidationError(false);
     setIsEditable(false);
   };
 
@@ -106,10 +132,19 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
       handleFormSubmit();
     } else {
       setIsEditable(true);
+      setShowValidationError(false);
       setOriginalValues({
-        roles: [...selectedRoles],
-        genres: [...selectedGenres],
-        publishers: [...selectedPublishers]
+        roles: [
+          selectedPrimaryRole || "",
+          selectedSecondaryRole || ""
+        ],
+        genres: [
+          selectedMainGenre || "",
+          selectedSubGenre || ""
+        ],
+        publishers: [
+          selectedPublisher || ""
+        ]
       });
     }
   };
@@ -151,35 +186,111 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
           )}
         </div>
       </div>
-      <div className="flex gap-3 w-full mt-2">
-        <MultiSelectDropdown
-          dataArr={rolesArr}
-          selectedSkills={selectedRoles}
-          setSelectedSkills={setSelectedRoles}
-          label="Roles"
-          isEditable={isEditable}
-          name="roles"
-          maxSelections={2}
-        />
-        <MultiSelectDropdown
-          dataArr={genresArr}
-          selectedSkills={selectedGenres}
-          setSelectedSkills={setSelectedGenres}
-          label="Genres"
-          isEditable={isEditable}
-          name="genres"
-          maxSelections={2}
-        />
-        <MultiSelectDropdown
-          dataArr={publishersArr}
-          selectedSkills={selectedPublishers}
-          setSelectedSkills={setSelectedPublishers}
-          label="Publisher"
-          isEditable={isEditable}
-          name="publishers"
-          maxSelections={1}
-        />
-      </div>
+      
+      {/* Only show validation error when showValidationError is true */}
+      {showValidationError && (
+        <div className="bg-red-900/30 border border-red-500 text-red-300 p-2 rounded mt-2 mb-2">
+          Please fill out all fields before saving
+        </div>
+      )}
+      
+      <Formik
+        initialValues={{
+          primary_role: selectedPrimaryRole || "",
+          secondary_role: selectedSecondaryRole || "",
+          main_genre: selectedMainGenre || "",
+          sub_genre: selectedSubGenre || "",
+          publisher: selectedPublisher || ""
+        }}
+        validationSchema={validationSchema}
+        enableReinitialize
+        onSubmit={handleFormSubmit}
+      >
+        {({ errors, touched, isValid }) => (
+          <Form className="w-full">
+            <div className="flex gap-3 w-full mt-2">
+              <div className="flex flex-col w-full">
+                {touched.primary_role && errors.primary_role && (
+                  <div className="text-red-500 text-xs mb-1">{errors.primary_role}</div>
+                )}
+                <MultiSelectDropdown
+                  dataArr={rolesArr}
+                  selectedSkills={selectedPrimaryRole}
+                  setSelectedSkills={setSelectedPrimaryRole}
+                  label="Primary Role"
+                  isEditable={isEditable}
+                  name="primary_role"
+                  maxSelections={1}
+                  unselectableSkill={selectedSecondaryRole}
+                />
+              </div>
+              
+              <div className="flex flex-col w-full">
+                {touched.secondary_role && errors.secondary_role && (
+                  <div className="text-red-500 text-xs mb-1">{errors.secondary_role}</div>
+                )}
+                <MultiSelectDropdown
+                  dataArr={rolesArr}
+                  selectedSkills={selectedSecondaryRole}
+                  setSelectedSkills={setSelectedSecondaryRole}
+                  label="Secondary Role"
+                  isEditable={isEditable}
+                  name="secondary_role"
+                  maxSelections={1}
+                  unselectableSkill={selectedPrimaryRole}
+                />
+              </div>
+              
+              <div className="flex flex-col w-full">
+                {touched.main_genre && errors.main_genre && (
+                  <div className="text-red-500 text-xs mb-1">{errors.main_genre}</div>
+                )}
+                <MultiSelectDropdown
+                  dataArr={genresArr}
+                  selectedSkills={selectedMainGenre}
+                  setSelectedSkills={setSelectedMainGenre}
+                  label="Main Genre"
+                  isEditable={isEditable}
+                  name="main_genre"
+                  maxSelections={1}
+                  unselectableSkill={selectedSubGenre}
+                />
+              </div>
+              
+              <div className="flex flex-col w-full">
+                {touched.sub_genre && errors.sub_genre && (
+                  <div className="text-red-500 text-xs mb-1">{errors.sub_genre}</div>
+                )}
+                <MultiSelectDropdown
+                  dataArr={genresArr}
+                  selectedSkills={selectedSubGenre}
+                  setSelectedSkills={setSelectedSubGenre}
+                  label="Sub Genre"
+                  isEditable={isEditable}
+                  name="sub_genre"
+                  maxSelections={1}
+                  unselectableSkill={selectedMainGenre}
+                />
+              </div>
+              
+              <div className="flex flex-col w-full">
+                {touched.publisher && errors.publisher && (
+                  <div className="text-red-500 text-xs mb-1">{errors.publisher}</div>
+                )}
+                <MultiSelectDropdown
+                  dataArr={publishersArr}
+                  selectedSkills={selectedPublisher}
+                  setSelectedSkills={setSelectedPublisher}
+                  label="Publisher"
+                  isEditable={isEditable}
+                  name="publisher"
+                  maxSelections={1}
+                />
+              </div>
+            </div>
+          </Form>
+        )}
+      </Formik>
     </section>
   );
 };

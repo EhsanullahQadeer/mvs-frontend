@@ -7,8 +7,8 @@ import getMuiStyles from "styles/getMuiStyles";
 
 interface Props {
   dataArr: string[];
-  selectedSkills: string[];
-  setSelectedSkills: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedSkills: string;
+  setSelectedSkills: React.Dispatch<React.SetStateAction<string>>;
   label: string;
   isEditable?: boolean;
   name: string;
@@ -16,6 +16,7 @@ interface Props {
   labelColor?: string;
   screen?: string;
   maxSelections?: number;
+  unselectableSkill?: string;
 }
 
 const MultiSelectDropdown = (props: Props) => {
@@ -30,6 +31,7 @@ const MultiSelectDropdown = (props: Props) => {
     labelColor,
     screen,
     maxSelections = 2,
+    unselectableSkill,
   } = props;
 
   // hook for mui styles
@@ -47,9 +49,9 @@ const MultiSelectDropdown = (props: Props) => {
     if (selectedValues.length > maxSelections) {
       // Only keep the most recent selections up to maxSelections
       const newSelections = selectedValues.slice(-maxSelections);
-      setSelectedSkills(newSelections);
+      setSelectedSkills(newSelections[0] || "");
     } else {
-      setSelectedSkills(selectedValues);
+      setSelectedSkills(selectedValues[0] || "");
     }
   };
 
@@ -85,13 +87,11 @@ const MultiSelectDropdown = (props: Props) => {
             minHeight: "48px"
           }}
         >
-          {selectedSkills.map((skill, idx) => (
-            <Chip
-              key={skill + idx}
-              label={skill}
-              sx={chipStyle}
-            />
-          ))}
+          <Chip
+            key={selectedSkills}
+            label={selectedSkills}
+            sx={chipStyle}
+          />
         </div>
       </div>
     );
@@ -112,17 +112,15 @@ const MultiSelectDropdown = (props: Props) => {
           name={name}
           id={name}
           multiple
-          value={selectedSkills}
+          value={[selectedSkills]}
           onChange={handleChange}
           renderValue={(selected) => (
             <div className="flex flex-wrap gap-2">
-              {selectedSkills.map((skill, idx) => (
-                <Chip
-                  key={skill + idx}
-                  label={skill}
-                  sx={chipStyle}
-                />
-              ))}
+              <Chip
+                key={selectedSkills}
+                label={selectedSkills}
+                sx={chipStyle}
+              />
             </div>
           )}
           sx={{
@@ -149,6 +147,14 @@ const MultiSelectDropdown = (props: Props) => {
                 },
               },
             },
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'left',
+            },
+            transformOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left',
+            },
           }}
         >
           {dataArr.map((skill) => (
@@ -156,7 +162,7 @@ const MultiSelectDropdown = (props: Props) => {
               key={skill}
               value={skill}
               disabled={
-                selectedSkills.length >= maxSelections && !selectedSkills.includes(skill)
+                (selectedSkills.length >= maxSelections && !selectedSkills.includes(skill)) || skill === unselectableSkill
               }
               sx={muiStyles.selectDropdownMenuItem}
             >
