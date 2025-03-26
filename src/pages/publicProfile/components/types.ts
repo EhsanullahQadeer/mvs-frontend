@@ -23,6 +23,7 @@ export interface IArtistProfileData {
   phone: string | null;
   popularity_rank: number;
   primary_role: string;
+  publisher: string | null;
   referral_code: string | null;
   referral_completed_at: string | null; // ISO date string or null
   referred_by_id: number | null;

@@ -1,10 +1,10 @@
-import { useState } from "react";
 import Posts from "./Posts";
 import FanWall from "./FanWall";
+import { useState } from "react";
 import { IArtistProfileData, ICurrentUser } from "./types";
 import { IUserData } from "pages/profile/components/types";
-import ProfileLibrary from "pages/profile/components/ProfileLibrary";
 import LockedContent from "pages/profile/components/LockedContent";
+import ProfileLibrary from "pages/profile/components/ProfileLibrary";
 
 interface IProps {
   artistData: IArtistProfileData | IUserData | null;
@@ -96,14 +96,14 @@ const ProfileRightSection = (props: IProps) => {
       </div>
 
       {/* Tab Content */}
-      <div className="flex-1 py-5 flex flex-col overflow-hidden">
+      <div className="flex-1 pt-5 flex flex-col overflow-hidden">
         <div className="flex-1 px-5 overflow-y-auto custom-dropdown">
           {topTabs.find((tab) => tab.label === activeTab)?.component}
         </div>
       </div>
 
       {!isConnect && !isLoginUser && activeTab === "Library" && (
-        <div><LockedContent /></div>
+        <div><LockedContent/></div>
       )}
     </div>
   );
