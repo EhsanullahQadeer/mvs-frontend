@@ -15,7 +15,7 @@ import { getConversationsWithUser } from "api/messenger";
 import Tooltip from "components/ui/Header/atoms/tooltip";
 import playIcon from "../../../assets/img/player/play-circle.svg";
 import pauseIcon from "../../../assets/img/player/pause-circle.svg";
-import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
+import { ChatboxProvider, useChatbox } from "pages/Inbox/components/Chatbox/context";
 import { ReactComponent as MapPinIcon } from "../../../assets/icons/mapPin.svg";
 import { ConversationProvider } from "pages/Inbox/components/Directory/context";
 import { IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
@@ -50,6 +50,10 @@ const ProfileAboutSection = (props: Props) => {
     activeConversation,
     getConversationMessages
   } = useMessenger();
+
+  const {
+    LIMIT_MESSAGES
+  } = useChatbox();
 
   const { artistData, creditsData, connectionDetail, setConnectionDetail, setChatOpen } =
     props;
@@ -127,7 +131,7 @@ const ProfileAboutSection = (props: Props) => {
           conversation_id: response.data.id,
         };
         setActiveConversation(response.data);
-        getConversationMessages({ conversationId: response.data.conversation_id, limit: 10, cursor: 0 });
+        getConversationMessages({ conversationId: response.data.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
         setChatOpen(true);
         setShowChat(true);
       }

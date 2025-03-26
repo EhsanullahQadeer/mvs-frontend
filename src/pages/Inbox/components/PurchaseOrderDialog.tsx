@@ -11,6 +11,7 @@ import { uploadMedia } from "api/sounds";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 import StripeElements from "components/stripe/stripeElements";
+import { useChatbox } from "./Chatbox/context";
 
 interface Props {
   openPurchaseOrder: boolean;
@@ -36,6 +37,10 @@ const PurchaseOrderDialog = (props: Props) => {
     messageInputValue,
     clearMessageInputs
   } = props;
+
+  const {
+    LIMIT_MESSAGES
+  } = useChatbox();
 
   const {
     sendMessage,
@@ -133,7 +138,7 @@ const PurchaseOrderDialog = (props: Props) => {
     setInputTipAmount("");
     setOpenPurchaseOrder(false);
     setIsSending(false);
-    await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 });
+    await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
     clearMessageInputs();
   };
 

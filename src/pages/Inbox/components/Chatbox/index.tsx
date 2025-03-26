@@ -37,6 +37,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     recipient,
     isThread,
     setIsThread,
+    LIMIT_MESSAGES
   } = useChatbox();
 
   const {
@@ -207,6 +208,9 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
   // Add scroll handler
   const handleScroll = useCallback(async (e: React.UIEvent<HTMLDivElement>) => {
+    // Add this check at the top - don't handle scrolling if we're in thread view
+    if (isThread) return;
+    
     const element = e.target as HTMLDivElement;
     
     // Check if we're at the top and not already loading
@@ -214,27 +218,25 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
       setIsLoadingMore(true);
       
       try {
-        // Get the oldest message's ID to use as cursor
-        
         const response = await axiosInstance.get(`/messenger/conversation/${activeConversation.conversation_id}`, { 
-          params: { limit: 10, cursor: messages.length - 1 }
+          params: { limit: LIMIT_MESSAGES, cursor: messages.length - 1 }
         });
-        console.log('response', response);
+        
         const newMessages = response.data?.results.messages.reverse() || [];
         
-        // If we got fewer messages than requested, there are no more to load
+        // Check for duplicates before merging
+        const uniqueNewMessages = newMessages.filter(
+          newMsg => !messages.some(existingMsg => existingMsg.id === newMsg.id)
+        );
+        
         if (newMessages.length < 10) {
           setHasMore(false);
         }
 
-        // Preserve scroll position
         const prevHeight = element.scrollHeight;
-        
-        // Merge new messages with existing ones
-        const mergedMessages = [...newMessages, ...(messages || [])] as IMessage[];
+        const mergedMessages = [...uniqueNewMessages, ...(messages || [])] as IMessage[];
         setMessages(mergedMessages);
         
-        // Restore scroll position after new messages are added
         setTimeout(() => {
           element.scrollTop = element.scrollHeight - prevHeight;
         }, 0);
@@ -244,7 +246,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
         setIsLoadingMore(false);
       }
     }
-  }, [activeConversation, messages, isLoadingMore, hasMore, getConversationMessages]);
+  }, [activeConversation, messages, isLoadingMore, hasMore, getConversationMessages, isThread]); // Add isThread to dependencies
 
   return (
     <div className="flex flex-col h-full w-full border-l border-eerieBlack bg-richBlack relative">
@@ -338,7 +340,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                   ) : (
                     <div className={`flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto ${getAnimationClass()}`}>
                       {isThread ? (
-                        <>
+                        <div className="w-full flex flex-col">
                           <div className="sticky top-0 bg-[#131313] border-b border-[#242424] px-4 py-2 flex items-center justify-between">
                             <div className="flex items-center">
                               <span className="text-white text-sm font-medium">Thread</span>
@@ -408,7 +410,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                               </div>
                             </div>
                           )}
-                        </>
+                        </div>
                       ) : (
                         <div className="w-full overflow-x-hidden">
                           {messages && Array.isArray(messages) ? messages.map((message: IMessage, index) => (

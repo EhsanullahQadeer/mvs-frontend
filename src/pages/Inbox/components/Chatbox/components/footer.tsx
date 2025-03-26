@@ -26,6 +26,7 @@ const Footer = () => {
 
   const { 
     isThread,
+    LIMIT_MESSAGES
   } = useChatbox()
 
   const {
@@ -116,7 +117,7 @@ const Footer = () => {
             audioMediaId: mediaId,
             messageType: "recording",
           });
-          // await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 });
+          // await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
           if (threadMessages && threadMessages.length > 0) {
             await getThreadMessages({ parentMessageId: threadMessages[0].id });
           }
@@ -132,11 +133,11 @@ const Footer = () => {
           }
           clearMessageInputs();
         }
-        await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 });
+        await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
         if (threadMessages && threadMessages.length > 0) {
           await getThreadMessages({ 
             parentMessageId: threadMessages[0].id,
-            limit: 10,
+            limit: LIMIT_MESSAGES,
             cursor: threadMessages[threadMessages.length - 1].id
           });
         }
@@ -150,7 +151,7 @@ const Footer = () => {
           if (threadMessages && threadMessages.length > 0) {
             await getThreadMessages({ 
               parentMessageId: threadMessages[0].id,
-              limit: 10,
+              limit: LIMIT_MESSAGES,
               cursor: threadMessages[threadMessages.length - 1].id
             });
           }

@@ -32,6 +32,7 @@ interface ChatboxContextType {
   isThread: boolean;
   setIsThread: (isThread: boolean) => void;
   markMessageAsRead: (id:number)=> void;
+  LIMIT_MESSAGES: number;
 }
 
 const ChatboxContext = createContext<ChatboxContextType | undefined>(undefined);
@@ -59,7 +60,9 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     getConversationNotes,
     threadMessages,
     activeConversation,
-    toggleMessageIsRead
+    setThreadMessages,
+    toggleMessageIsRead,
+    setMessages
   } = useMessenger();
 
   const [activeTab, setActiveTab] = useState<ChatTabType>('messages');
@@ -70,6 +73,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const [totalPaid, setTotalPaid] = useState<number>(activeConversation?.total_paid || 0);
   const [notes, setNotes] = useState<INotes[]>(conversationNotes);
   const [isThread, setIsThread] = useState<boolean>(false);
+  const LIMIT_MESSAGES = 100;
 
   let onMessageReadTimeout;
   const updateMessageReadIds = useRef<number[]>([]);
@@ -122,14 +126,15 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
       setLoading(true);
       if (!isThread) {
         setChatMessages(null);
-        getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 })
+        getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 })
           .finally(() => {
             setLoading(false);
           });
-      } else if (threadMessages?.[0]?.id) {
+      } else if (threadMessages?.[0]?.id && messages === null) {
+        setThreadMessages(null);
         getThreadMessages({ 
           parentMessageId: threadMessages[0].id,
-          limit: 10,
+          limit: LIMIT_MESSAGES,
           cursor: undefined,
         })
           .finally(() => {
@@ -140,7 +145,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [
     activeConversation, 
     getConversationMessages, 
-    getThreadMessages, 
+    getThreadMessages,
     isThread
   ]);
 
@@ -150,19 +155,18 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [refreshMessages]);
 
   const getNotes = useCallback(async () => {
-    // Implementation for fetching notes
-    //console.log('Fetching notes for activeConversation:', activeConversation?.conversation_id);
     const fetchedNotes = await getConversationNotes({ conversationId: activeConversation?.id, ascending: true });
-    //console.log("fetchedNotes", fetchedNotes);
-    // setNotes(fetchedNotes);
   }, [activeConversation]);
 
   const handleLoadThread = useCallback((parentMessageId: number) => {
-    console.log('feedbackthread parentMessageId', parentMessageId);
+    setThreadMessages(null);
+    setIsThread(true);
     getThreadMessages({
-      parentMessageId
+      parentMessageId,
+      limit: LIMIT_MESSAGES,
+      cursor: undefined,
     });
-  }, [getThreadMessages]);
+  }, [getThreadMessages, setMessages, setIsThread]);
   
   // useEffect(() => {
   //   if (activeConversation) {
@@ -198,7 +202,8 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     handleLoadThread,
     isThread,
     setIsThread,
-    markMessageAsRead
+    markMessageAsRead,
+    LIMIT_MESSAGES
   };
 
   return (

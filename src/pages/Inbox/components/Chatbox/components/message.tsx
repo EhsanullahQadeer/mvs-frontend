@@ -86,6 +86,7 @@ const Message: React.FC<MessageProps> = ({
     markMessageAsRead(id);
     is_read = true;
   }
+  
   function renderDemoMessage() {
     return (
       <>
