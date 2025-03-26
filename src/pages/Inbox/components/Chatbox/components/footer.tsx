@@ -132,7 +132,7 @@ const Footer = () => {
           }
           clearMessageInputs();
         }
-        await getConversationMessages({ conversationId: activeConversation.conversation_id });
+        await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: 10, cursor: 0 });
         if (threadMessages && threadMessages.length > 0) {
           await getThreadMessages({ 
             parentMessageId: threadMessages[0].id,
