@@ -26,7 +26,8 @@ const Footer = () => {
 
   const { 
     isThread,
-    LIMIT_MESSAGES
+    LIMIT_MESSAGES,
+    isSendDemoAvailable
   } = useChatbox()
 
   const {
@@ -92,7 +93,7 @@ const Footer = () => {
           return;
         }
         setOpenPurchaseOrder(true);
-      } else if (!uploadedAudioFile && recordedAudio) { // Send Recording
+      } else if (!uploadedAudioFile && recordedAudio) {
         const file = new File([recordedAudio], `recording.${recordedAudio.type.split('/')[1]}`, { 
           type: recordedAudio.type 
         });
@@ -358,13 +359,24 @@ const Footer = () => {
                       accept="audio/*"
                       ref={fileInputRef}
                       onChange={handleAudioSelector}
-                      style={{ display: "none" }} // Hide the input
+                      style={{ display: "none" }}
                     />
                     <button
-                      onClick={handleButtonClick} // Call the button click handler
-                      className="text-dimGray cursor-pointer p-2 rounded-lg hover:bg-[#202327]"
+                      onClick={handleButtonClick}
+                      className={`text-dimGray cursor-${isSendDemoAvailable ? 'pointer' : 'not-allowed'} p-2 rounded-lg ${
+                        isSendDemoAvailable ? 'hover:bg-[#202327]' : ''
+                      }`}
+                      disabled={!isSendDemoAvailable}
+                      title={!isSendDemoAvailable ? "User currently is not accepting demos" : ""}
                     >
-                      <AudioFileIcon />
+                      <div className="relative">
+                        <AudioFileIcon />
+                        {!isSendDemoAvailable && (
+                          <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'scale(1.8)' }}>
+                            <div className="w-full h-0.5 bg-dimGray rotate-45 transform origin-center"/>
+                          </div>
+                        )}
+                      </div>
                     </button>
                   </div>
 
