@@ -10,6 +10,7 @@ import { useMessenger } from "api/messenger/context";
 import { uploadMedia } from "api/sounds";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
+import StripeElements from "components/stripe/stripeElements";
 
 interface Props {
   openPurchaseOrder: boolean;
@@ -105,7 +106,7 @@ const PurchaseOrderDialog = (props: Props) => {
     setOpenCardInfo(true);
   };
 
-  const handleSendDemo = async () => {
+  const handleSendDemo = async (paymentIntentId: string) => {
     console.log("handleSendDemo", demoFile, messageInputValue);
     const response = await uploadMedia({
       file: demoFile,
@@ -126,7 +127,7 @@ const PurchaseOrderDialog = (props: Props) => {
       creditPaymentAmount: totalAmount,
       messageType: 'demo',
       audioMediaId: response.data.media.id,
-      // stripePaymentIntentId: 'pi_3QJKTeFHUzsY35bv0TtvIhG7'
+      stripePaymentIntentId: paymentIntentId
     });
     setTipAmount(0);
     setInputTipAmount("");
@@ -305,20 +306,6 @@ const PurchaseOrderDialog = (props: Props) => {
               </div>
             </div>
             <div>
-              <h2 className="text-[18px] font-semibold pb-2 pt-3 text-softGray">
-                Payment Method
-              </h2>
-              <div onClick={handleOpenCardInfo} className="relative">
-                <span className="absolute inset-y-0 right-3 flex items-center text-dimGray">
-                  <IoIosArrowDown />
-                </span>
-                <input
-                  name="none"
-                  type="name"
-                  placeholder="MVSSIVE Beta - Testing Card"
-                  className=" focus:border-transparent flex-1 focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
-                />
-              </div>
             </div>
 
             <div>
@@ -330,46 +317,13 @@ const PurchaseOrderDialog = (props: Props) => {
                 onChange={(e) => setDiscountCode(e.target.value)}
                 className="hover:border-charcoalGray flex-1 mb-2 focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm text-center p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
               />
-            </div>
-          </div>
-
-          <div className="flex bottom-0 sticky bg-darkGray justify-end pb-6 pt-1 gap-2">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="border border-charcoalGray bg-jetBlack text-sm text-white font-semibold py-[12px] w-[86px] flex justify-center items-center rounded-full"
-            >
-              Close
-            </button>
-            {isSending?(
-              <div className="flex items-center">
-                <CircularProgress
-                  sx={{
-                    width: "30px !important",
-                    height: "30px !important",
-                    color: "#9EFF00",
-                  }}
-                />
+              <div className="my-2">
+                <StripeElements onPaymentComplete={(intentId)=>{setIsSending(true);handleSendDemo(intentId)}} amount={Number(totalAmount)} recipientId={recipient?.id} onClose={handleClose}/>
               </div>
-              ) 
-              :(<button
-              type="submit"
-              onClick={()=>{setIsSending(true);handleSendDemo();}}
-              className="bg-limeGreen text-sm text-jetBlack font-semibold py-[12px] px-5 rounded-full"
-            >
-              Send Demo
-            </button>)}   
+            </div>
           </div>
         </div>
       </Dialog>
-
-      <CardInfoDialog
-        openCardInfo={openCardInfo}
-        setOpenCardInfo={setOpenCardInfo}
-        formData={setFormData}
-        handleBack={handleBack}
-        setFormData={setFormData}
-      />
     </div>
   );
 };

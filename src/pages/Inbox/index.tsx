@@ -15,7 +15,6 @@ import InboxDirectory from "./components/Directory";
 import { MessengerProvider } from "api/messenger/context";
 import { setBreadcrumbs } from "redux/actions/breadcrumb.actions";
 import { ConversationProvider } from "./components/Directory/context";
-
 const InboxPage = () => {
   const dispatch = useDispatch();
 
