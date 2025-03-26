@@ -150,11 +150,11 @@ const Comment: React.FC<IProps> = ({
 
         <div className="mt-2 text-[16px] text-[#ccc]">{comment}</div>
         <div className="flex items-center gap-4 mt-3">
-          <div className="text-mediumGray flex gap-0.5 items-center">
+          <div className="text-mediumGray flex gap-1 items-center">
             <div onClick={handleFanwallPostLike} className="cursor-pointer">
               {isLiked ? (
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M10 18.25C9.86739 18.2501 9.73779 18.2122 9.625 18.14C6.58 16.47 4.292 14.588 2.813 12.574C1.076 10.21 0.75 8.056 0.75 6.5C0.750744 5.11915 1.30316 3.79459 2.28441 2.81334C3.26566 1.83209 4.59022 1.27967 5.97107 1.27893C7.60961 1.27799 9.15073 2.04642 10 3.33893C10.8493 2.04642 12.3904 1.27799 14.0289 1.27893C15.4098 1.27967 16.7343 1.83209 17.7156 2.81334C18.6968 3.79459 19.2493 5.11915 19.25 6.5C19.25 8.056 18.924 10.21 17.188 12.574C15.708 14.588 13.42 16.47 10.375 18.14C10.2622 18.2122 10.1326 18.2501 10 18.25Z" fill="#9EFF00"/>
+                  <path d="M10 18.25C9.86739 18.2501 9.73779 18.2122 9.625 18.14C6.58 16.47 4.292 14.588 2.813 12.574C1.076 10.21 0.75 8.056 0.75 6.5C0.750744 5.11915 1.30316 3.79459 2.28441 2.81334C3.26566 1.83209 4.59022 1.27967 5.97107 1.27893C7.60961 1.27799 9.15073 2.04642 10 3.33893C10.8493 2.04642 12.3904 1.27799 14.0289 1.27893C15.4098 1.27967 16.7343 1.83209 17.7156 2.81334C18.6968 3.79459 19.2493 5.11915 19.25 6.5C19.25 8.056 18.924 10.21 17.188 12.574C15.708 14.588 13.42 16.47 10.375 18.14C10.2622 18.2122 10.1326 18.2501 10 18.25Z" fill="#FF4033"/>
                 </svg>
               ) : (
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -164,7 +164,7 @@ const Comment: React.FC<IProps> = ({
             </div>
             <span>{totalLikes}</span>
           </div>
-          <div className="text-mediumGray flex gap-0.5 items-center">
+          <div className="text-mediumGray flex gap-1 items-center">
             <img src={commentIcon} alt="Comment" className="w-5 h-5" />
             <span>{fanwallRepliesData.length}</span>
           </div>
