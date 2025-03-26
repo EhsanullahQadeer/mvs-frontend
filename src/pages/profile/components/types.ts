@@ -7,7 +7,7 @@ export interface IUserData {
   cognito_id: string;
   country: string;
   created_at: string; // ISO date string
-  demo_message_price: number;
+  demo_fee: number;
   email: string;
   email_verified: boolean;
   first_name: string;
@@ -24,6 +24,7 @@ export interface IUserData {
   popularity_rank: number;
   primary_label: string;
   primary_role: string | null;
+  publisher: string | null;
   referral_code: string | null;
   referral_completed_at: string | null; // ISO date string or null
   referred_by_id: number | null;

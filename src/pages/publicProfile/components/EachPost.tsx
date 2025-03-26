@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { IoEllipsisHorizontal } from "react-icons/io5";
-import { MdVerified } from "react-icons/md";
 import { SlLock } from "react-icons/sl";
+import { MdVerified } from "react-icons/md";
 import like from "../../../assets/img/heart.svg";
-import comment from "../../../assets/img/comment.svg";
-import download from "../../../assets/img/downloadicon.svg";
-import UnlockContentModel from "./UnlockContentModel";
 import SendMessageModel from "./SendMessageModel";
+import comment from "../../../assets/img/comment.svg";
+import UnlockContentModel from "./UnlockContentModel";
+import { IoEllipsisHorizontal } from "react-icons/io5";
+import download from "../../../assets/img/downloadicon.svg";
 
 interface PostProps {
   username: string;
@@ -81,7 +81,7 @@ const EachPost: React.FC<PostProps> = ({
 
         <div className="relative w-full mt-5">
           {locked && (
-            <div className="absolute top-2 left-2 p-[12px] bg-[#242424CC] rounded-lg flex gap-2 items-center justify-center z-10">
+            <div className="absolute top-2 left-2 p-[12px] bg-[#242424CC] rounded-lg flex gap-2 items-center justify-center">
               <SlLock className="text-white " />
               <button
                 className="text-white text-[14px] rounded-md font-semibold bg-[#242424CC]"
