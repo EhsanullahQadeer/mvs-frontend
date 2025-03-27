@@ -48,7 +48,7 @@ type Props = {
   setChatOpen: (chatOpen: boolean) => void;
 };
 
-interface Connection {
+export interface Connection {
   id: number;
   thumbnail: string;
   professional_name: string;
@@ -58,7 +58,7 @@ interface Connection {
   connectedAt: string;
 }
 
-interface MutualConnection {
+export interface MutualConnection {
   connections: Connection[];
   cursor: number | null;
   totalCount: number;
@@ -110,21 +110,20 @@ const ProfileAboutSection = (props: Props) => {
     demo_fee,
     publisher,
   } = artistData?.available ?? artistData ?? {};
-  console.log('Artist Data: ', artistData);
+
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
+
+  const fetchConnections = async () => {
+    const connections = await getMutualConnections(artistData.id);
+    setMutualConnections(connections.data?.results);
+  };
 
   useEffect(() => {
     const fetchFollowingStatus = async () => {
       const isFollowing = await checkIfFollowing(artistData.id);
       setIsFollowing(isFollowing);
-    };
-
-    const fetchConnections = async () => {
-      const connections = await getMutualConnections(artistData.id);
-      console.log("connections",connections);
-      setMutualConnections(connections.data?.results);
     };
 
     fetchFollowingStatus();
@@ -135,11 +134,9 @@ const ProfileAboutSection = (props: Props) => {
     if (!previewUrl) return;
     if (audioRef.current) {
       if (currentPlayingIndex === index) {
-        // If the clicked track is already playing, pause it
         audioRef.current.pause();
         setCurrentPlayingIndex(null);
       } else {
-        // Play the new track
         audioRef.current.src = previewUrl;
         audioRef.current.play();
         setCurrentPlayingIndex(index);
@@ -215,8 +212,7 @@ const ProfileAboutSection = (props: Props) => {
     }
     handleFollowUsers([artistData.id]);
   };
-
-  // Destructure the connections data
+  
   const connectionsList = mutualConnections?.connections;
   const totalConnections = mutualConnections?.totalCount;
 
@@ -461,6 +457,8 @@ const ProfileAboutSection = (props: Props) => {
           open={showConnectionsModal} 
           handleClose={() => setShowConnectionsModal(false)} 
           userId={artistData?.id}
+          mutualConnections={mutualConnections}
+          fetchConnections={fetchConnections}
         />
       )}
     </div>
