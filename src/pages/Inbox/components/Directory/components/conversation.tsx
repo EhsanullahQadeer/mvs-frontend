@@ -109,7 +109,7 @@ export const Conversation = ({ conversation, onClick, searchTerm, searchContent,
                       >
                         {searchTerm ? sender?.professional_name : recipient?.name}
                       </div>
-                      {inboxTab !== 'connections' && (
+                      {inboxTab !== 'network' && (
                         <div className={`self-start px-1 py-0.5 mt-1 text-xs tracking-wide leading-tight whitespace-nowrap rounded border border-solid min-h-[16px] ${
                           Number(available_funds) === 0 
                           ? "text-zinc-300 bg-zinc-800 border-zinc-500" 
