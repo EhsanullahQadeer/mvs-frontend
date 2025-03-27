@@ -7,49 +7,29 @@ import { useNavigate } from "react-router-dom";
 interface ConnectionsModalProps {
   open: boolean;
   handleClose: () => void;
+  fetchConnections: (cursor: number | null) => void;
   userId: number;
+  mutualConnections: any;
 }
 
-const ConnectionsModal = ({ open, handleClose, userId }: ConnectionsModalProps) => {
-  const [connections, setConnections] = useState<any[]>([]);
-  const [cursor, setCursor] = useState<number | null>(null);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [loading, setLoading] = useState<boolean>(false);
+const ConnectionsModal = ({ open, handleClose, userId, mutualConnections, fetchConnections }: ConnectionsModalProps) => {
   const navigate = useNavigate();
 
-  const fetchConnections = async (currentCursor: number | null) => {
-    if (!hasMore || loading) return;
-    
-    setLoading(true);
-    try {
-      const res = await getMutualConnections(userId, 10, undefined);
-      console.log('fetchConnections', res);
-      const newConnections = res.data?.results?.connections || [];
-      setCursor(res.data?.results?.cursor);
-      setHasMore(res.data?.results?.hasMore || false);
-      setConnections(prev => [...prev, ...newConnections]);
-    } catch (error) {
-      console.error('Error fetching connections:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (open) {
-      setConnections([]);
-      setCursor(null);
-      setHasMore(true);
-      fetchConnections(null);
-    }
-  }, [open]);
+  // Use the mutualConnections data directly instead of maintaining separate state
+  const connections = mutualConnections?.connections || [];
+  const hasMore = mutualConnections?.hasMore || false;
+  const cursor = mutualConnections?.cursor;
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const element = e.target as HTMLDivElement;
     const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
     const isNearBottom = distanceFromBottom < 50;
+    
     if (isNearBottom && hasMore && !loading && cursor !== null) {
-      fetchConnections(cursor);
+      setLoading(true);
+      fetchConnections(cursor)
+      setLoading(false);
     }
   };
 
