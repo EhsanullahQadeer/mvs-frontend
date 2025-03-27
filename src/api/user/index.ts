@@ -10,7 +10,6 @@
 import axiosPublic from "api/axiosPublic";
 import axiosInstance from "../axios";
 import {
-  IAddNewUser,
   IcreateWikiProfileBody,
   IGetArtistCreditsParams,
   IgetArtistInfoParams,
@@ -258,7 +257,6 @@ export async function updateUserUsernameAPI(username: string) {
   return axiosInstance.put(`/users/username?username=${username}`);
 }
 
-
 export async function sendUserFeedbackAPI(data: any) {
   return axiosInstance.post('/users/feedback', data);
 }
@@ -269,4 +267,8 @@ export async function getUserNotificationSettings() {
 
 export async function setUserNotificationSettings(body: IUserNotificationSettings) {
   return axiosInstance.post('/users/email-notification-settings', body);
+}
+
+export async function toggleMuteNotifications() {
+  return axiosInstance.post('users/toggle-mute-notifications');
 }

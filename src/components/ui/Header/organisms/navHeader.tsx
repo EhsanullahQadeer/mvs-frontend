@@ -7,8 +7,8 @@
  *************************************************************************/
 
 /* IMPORTS */
+import { debounce } from "lodash";
 import { useNavigate } from "react-router-dom";
-import { getUserNotifications } from "api/user";
 import { UserData } from "theme/Header/Header.types";
 import HeaderNavMenu from "../molecules/headerNavMenu";
 import ProfileButton from "theme/Sidebar/ProfileButton";
@@ -16,30 +16,31 @@ import { useHeaderHooks } from "theme/Header/Header.hooks";
 import HeaderCreditCount from "../atoms/headerCreditCount";
 import NotificationPopUpWindow from "./NotificationsManager";
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { getUserNotifications, toggleMuteNotifications } from "api/user";
 import { useNotification } from "services/WebSocket/useNotification.hook";
+import notificationSound from "../../../../assets/audio/notification.mp3";
 import { TNotificationData } from "../molecules/notifications/Notification";
+import messageSound from "../../../../assets/audio/message-notification.mp3";
 import NotificationBellButton from "../atoms/notificationAtoms/notificationBellButton";
 import { useNotificationAnimation , NotificationAnimationProvider } from "../context/NotificationAnimationContext";
-import { debounce } from "lodash";
-import notificationSound from "../../../../assets/audio/notification.mp3";
-import messageSound from "../../../../assets/audio/message-notification.mp3";
 
 const NavHeader: React.FC<UserData> = () => {
   const navigate = useNavigate();
   const { state } = useHeaderHooks();
   const [credits, setCredits] = useState<number>(0);
   const [notifications, setNotifications] = useState([]);
+  const [muteNotifications, setMuteNotifications] = useState<boolean>(false);
   const { triggerAnimation } = useNotificationAnimation();
   const [isPopUpVisible, setIsPopUpVisible] = useState(false);
   const [unreadNotifCount, setUnreadNotifCount] = useState<number>(0);
   const [allowLoading, setAllowLoading] = useState<boolean>(true);
-
   const notificationAudioRef = useRef<HTMLAudioElement | null>(null);
   const messageAudioRef = useRef<HTMLAudioElement | null>(null);
   const audioLoadedRef = useRef<boolean>(false);
 
   // Initialize audio refs with better loading handling
   useEffect(() => {
+    setMuteNotifications(state?.auth?.user?.settings.mute_notifications);
     const initAudio = async () => {
       try {
         // Initialize notification audio
@@ -127,7 +128,6 @@ const NavHeader: React.FC<UserData> = () => {
   );
 
   const handleNotification = useCallback((rawData: any) => {
-    console.log("NEW_MESSAGE from navHeader");
     const formattedNotification: TNotificationData = {
       id: rawData?.id,
       type: rawData?.type,
@@ -173,7 +173,9 @@ const NavHeader: React.FC<UserData> = () => {
     });
 
     // Use debounced play sound
-    debouncedPlaySound(formattedNotification.type);
+    if (muteNotifications) {
+      debouncedPlaySound(formattedNotification.type);
+    }
     
     triggerAnimation();
     setUnreadNotifCount(unreadNotifCount + 1);
@@ -203,6 +205,11 @@ const NavHeader: React.FC<UserData> = () => {
     fetchNotifications();
     setAllowLoading(true);
     setIsPopUpVisible((prev) => !prev);
+  };
+
+  const toggleMuteNotifs = async () => {
+    setMuteNotifications((prev) => !prev);
+    await toggleMuteNotifications();
   };
 
   const menuItems = [
@@ -236,15 +243,12 @@ const NavHeader: React.FC<UserData> = () => {
 
   useEffect(() => {
     setCredits(state?.auth?.user?.credits);
+    console.log('User Object', state?.auth?.user);
   }, [state?.auth?.user?.credits]);  
 
   useEffect(() => {
     fetchNotifications();
   }, []);
-
-  useEffect(() => {
-    console.log("notifications ", notifications);
-  }, [notifications]);
 
   // Register each notification type individually
   useNotification('CONNECTION_REQUEST', handleNotification);
@@ -282,6 +286,8 @@ const NavHeader: React.FC<UserData> = () => {
         setUnreadNotifCount={setUnreadNotifCount}
         allowLoading={allowLoading}
         setAllowLoading={setAllowLoading}
+        muteNotifications={muteNotifications}
+        toggleMuteNotifications={toggleMuteNotifs}
         />
       )}
     </>    
