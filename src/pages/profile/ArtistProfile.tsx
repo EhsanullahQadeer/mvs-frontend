@@ -167,7 +167,7 @@ const ArtistProfile = () => {
       {!isLoading ? (<>
         <div className="relative flex overflow-hidden">
 
-          <div className={`flex-grow ${chatOpen ? 'max-w-[calc(100%-500px)]' : 'max-w-[calc(100%-374px)]'} transition-all duration-300`}>
+          <div className={`${chatOpen ? 'w-[calc(100%-500px)]' : 'w-[calc(100%-374px)]'} transition-all duration-300`}>
             <ProfileRightSection
               artistData={artistData}
               currentUserInfo={user}
