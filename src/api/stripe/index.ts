@@ -1,24 +1,13 @@
-/*************************************************************************
- * @file api/stripe/index.tsx
- * @author End Quote
- * @desc 
- * 
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* IMPORTS */
 import { CardElement } from "@stripe/react-stripe-js";
 import { Stripe, StripeElements } from '@stripe/stripe-js';
-
-/* LOCAL IMPORTS */
 import axios from "api/axios";
 
 export const handleConnectWithStripe = async (
   userId: number,
+  origin: string
 ) => {
   try {
-    const response = await axios.post(`/stripe/connect?userId=${userId}`);
+    const response = await axios.post(`/stripe/connect?userId=${userId}&origin=${origin}`);
     const url = response.data.url;
     if (url) {
       return url;
@@ -37,8 +26,6 @@ export const handlePaymentIntentAPI = async (
   elements: StripeElements | null,
   amount: number
 ) => {
-
-  // Grab the user's credit card information
   const cardElement = elements.getElement( CardElement );
   if (!cardElement) {
     return;
@@ -80,7 +67,7 @@ export const handlePaymentIntentAPI = async (
   }
 };
 
-export const handleRefundAPI = async ( 
+export const handleRefundAPI = async (
   amount: number, 
   paymentIntentId: string
 ) => {

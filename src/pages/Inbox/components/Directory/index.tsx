@@ -184,8 +184,8 @@ const InboxDirectory = () => {
           <div className="bg-[#08090a] sticky top-0">
             {!searchTerm && (
               <div className="flex items-center w-full border-b border-eerieBlack">
-                <InboxTab tabName="Connections" currentTab={inboxTab} tabValue="connections" onClick={() => {
-                  handleInboxTabClick("connections");
+                <InboxTab tabName="My Network" currentTab={inboxTab} tabValue="network" onClick={() => {
+                  handleInboxTabClick("network");
                   setArchiveSpamFav("");
                   setSelectedConversations([]);
                   setSelectedMenuItem("")
