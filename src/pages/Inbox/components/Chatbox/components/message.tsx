@@ -138,7 +138,7 @@ const Message: React.FC<MessageProps> = ({
           </div>
           
           {message?.threadStats?.replyCount === 1 &&
-              message?.sender?.id === authUserId && (
+              message?.sender?.id === authUserId && message.threadStats.hasUnreadMessage && (
               <button
                 onClick={() => {
                   setIsThread(true);
@@ -161,10 +161,10 @@ const Message: React.FC<MessageProps> = ({
             </button>
           )}
         </div>
-        { (message.threadStats?.replyCount > 1 || (message.threadStats?.replyCount === 1 && message.sender.id !== authUserId)) && (
+        { (message.threadStats?.replyCount >= 1) && (
           <div className="flex gap-2.5 items-center pt-2">
             <div
-              className="flex gap-1.5 items-center cursor-pointer w-max"
+              className="flex gap-1.5 items-center cursor-pointer w-full"
               onClick={() => {
                 setIsThread(true);
                 handleLoadThread(message?.id);
@@ -188,6 +188,14 @@ const Message: React.FC<MessageProps> = ({
               <span className="text-mediumGray text-[10px] font-normal hidden group-hover:flex">
                 See Thread
               </span>
+              <div className="flex items-center gap-1 w-[30%]">
+                {message?.threadStats?.hasUnreadMessage && (
+                  <>
+                    <div className="w-full h-[1px] bg-[#EF4444] rounded-full"></div>
+                    <div className="text-[10px] text-[#EF4444] font-normal cursor-pointer">NEW</div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}

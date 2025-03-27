@@ -162,6 +162,7 @@ export enum MEDIA_TYPE {
 interface ThreadStats {
   replyCount: number;
   lastReplierThumbnail: string;
+  hasUnreadMessage: boolean;
 }
 
 export interface IMessage {
