@@ -10,8 +10,6 @@ interface NotificationProps {
 }
 
 const NotificationList: React.FC<NotificationProps> = ({ data, setNotifIdForIsRead }) => {
-  
-  console.log("Notifications List: ", data);
   return (
     <div className="notification-list">
       {data.map((notification, index) => {

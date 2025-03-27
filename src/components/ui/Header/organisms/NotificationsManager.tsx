@@ -29,6 +29,8 @@ interface NotificationManagerProps {
   setUnreadNotifCount: React.Dispatch<React.SetStateAction<number>>;
   allowLoading: boolean;
   setAllowLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  muteNotifications: boolean;
+  toggleMuteNotifications: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type NotificationType = 'CONNECTION_REQUEST' | 'CONNECTION_RESPONSE' | 'COLLABORATION_REQUEST' | 
@@ -65,9 +67,10 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   setUnreadNotifCount,
   allowLoading,
   setAllowLoading,
+  muteNotifications,
+  toggleMuteNotifications,
 }) => {
   let skip = 0;
-  const [isToggled, setIsToggled] = useState<boolean>(false);
   const [notifIdForIsRead, setNotifIdForIsRead] = useState<number>();
   const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
   const refreshRef = useRef(null);
@@ -88,12 +91,8 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
 
   useEffect(() => {
     if(!refreshRef.current) return;
-      observer.observe(refreshRef.current);
-    }, [])
-
-  const handleToggle = () => {
-    setIsToggled(!isToggled);
-  }
+    observer.observe(refreshRef.current);
+  }, [])
 
   useEffect(() => {
     if (notifIdForIsRead !== undefined) {
@@ -146,7 +145,6 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
     window.isNotificationInCurrentTab = isNotificationInCurrentTab;
   }, [selectedTab]);
 
-  
   return (
     <>
       {isOpen && (
@@ -158,18 +156,18 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
             <div className="flex justify-between items-center pb-[21px]">
               <h2 className="text-[18px] font-semibold text-white pt-5">Notifications</h2>
               <div className='pt-5'>
-                <span className="text-[14px] font-[400] text-[#666666] mr-2">Disable Alerts</span>
-                <label htmlFor="toggle" className="relative inline-block w-12 h-6">
+              <span className="text-[14px] font-[400] text-[#666666] mr-2">Mute Sound</span>
+              <label htmlFor="toggle" className="relative inline-block w-12 h-6">
                   <input
                     id="toggle"
                     type="checkbox"
                     className="opacity-0 w-0 h-0"
-                    checked={isToggled}
-                    onChange={handleToggle}
+                    checked={muteNotifications}
+                    onChange={(e) => toggleMuteNotifications(!muteNotifications)}
                   />
                   <span
-                    className={`slider round ${isToggled ? 'bg-blue-500' : 'bg-gray-300'}`}
-                    aria-checked={isToggled ? 'true' : 'false'}
+                    className={`slider round `}
+                    aria-checked={muteNotifications ? 'true' : 'false'}
                   ></span>
                 </label>
               </div>
