@@ -45,7 +45,7 @@ const SmsNotifications = (props: Props) => {
             const { title, desc } = item;
             return (
               <div key={title + idx}>
-                <NotificationItem
+              <NotificationItem
                   {...{
                     title,
                     desc,

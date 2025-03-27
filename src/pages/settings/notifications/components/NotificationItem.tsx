@@ -11,7 +11,7 @@ const NotificationItem = (props: Props) => {
   const { title, desc, active, value, onToggle, isDisabled } = props;
   return (
     <>
-      <div className="flex justify-between items-center mb-2">
+      <div className="px-4 flex justify-between items-center mb-2">
         <p className="text-sm font-normal text-white">{title}</p>
         <label htmlFor={`toggle-${value}`} className="relative inline-block w-12 h-6">
           <input
@@ -24,8 +24,8 @@ const NotificationItem = (props: Props) => {
           />
           <span className="slider round"></span>
         </label>
-        </div>
-      <p className="text-sm font-normal text-coolGray">{desc}</p>
+      </div>
+      <p className="px-4 text-sm font-normal text-coolGray">{desc}</p>
     </>
   );
 };

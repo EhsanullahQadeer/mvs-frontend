@@ -150,10 +150,10 @@ const EmailNotifications = () => {
   };
 
   return (
-    <div className="px-4 py-5 border-b border-eclipseGray">
+    <div className="py-5">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-5">
-          <div className="pt-2.5">
+          <div className="pt-2.5 px-4">
             <div className="flex items-center justify-between mb-2">
               <p className="text-lg text-white font-semibold">
                 Email
@@ -177,11 +177,11 @@ const EmailNotifications = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-[30px]">
+        <div className="flex flex-col gap-[20px]">
           {notificationItemArr.map((item, idx) => {
             const { title, desc, active, value } = item;
             return (
-              <div key={title + idx}>
+              <div key={title + idx} className="border-t-2 border-eclipseGray pt-4">
                 <NotificationItem
                   {...{
                     title,
