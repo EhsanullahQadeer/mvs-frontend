@@ -15,6 +15,7 @@ import {
   IGetArtistCreditsParams,
   IgetArtistInfoParams,
   IRequestInvitation,
+  IUserNotificationSettings,
   IUserProfessionalNameSearch,
   IUsersSearchParams,
   UserFiltersDTO,
@@ -260,4 +261,12 @@ export async function updateUserUsernameAPI(username: string) {
 
 export async function sendUserFeedbackAPI(data: any) {
   return axiosInstance.post('/users/feedback', data);
+}
+
+export async function getUserNotificationSettings() {
+  return axiosInstance.get('/users/email-notifications-settings');
+}
+
+export async function setUserNotificationSettings(body: IUserNotificationSettings) {
+  return axiosInstance.post('/users/email-notification-settings', body);
 }

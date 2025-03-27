@@ -1,6 +1,6 @@
 import { Switch } from "@mui/material";
-import NotificationItem from "./NotificationItem";
 import getMuiStyles from "styles/getMuiStyles";
+import NotificationItem from "./NotificationItem";
 
 type Props = {};
 
@@ -45,10 +45,14 @@ const SmsNotifications = (props: Props) => {
             const { title, desc } = item;
             return (
               <div key={title + idx}>
-                <NotificationItem
+              <NotificationItem
                   {...{
                     title,
                     desc,
+                    active: false,
+                    value: null,
+                    onToggle: null,
+                    isDisabled: false, // TODO: update this when we implement SMS notifications
                   }}
                 />
               </div>
