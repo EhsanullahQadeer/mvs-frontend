@@ -14,14 +14,10 @@ export interface ISendMessage {
 
 export const useSendMessage = (
   setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>,
-  messages: IMessage[]
 ) => {
   return useCallback(async (payload: ISendMessage): Promise<void> => {
     try {
-      console.log("useSendMessage payload", payload);
       const response = await axiosInstance.post('/messenger/message', payload);
-      console.log("useSendMessage response", response);
-      console.log("useSendMessage messages", messages);
       if (response.data?.results?.message) {
         setMessages(prevMessages => [...(prevMessages || []), response.data.results.message]);
       }

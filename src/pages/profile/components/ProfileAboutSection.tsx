@@ -107,7 +107,10 @@ const ProfileAboutSection = (props: Props) => {
     region,
     primary_role,
     secondary_role,
+    demo_fee,
+    publisher,
   } = artistData?.available ?? artistData ?? {};
+  console.log('Artist Data: ', artistData);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
@@ -374,16 +377,12 @@ const ProfileAboutSection = (props: Props) => {
         </p>
 
         <span className="text-base text-platinum font-semibold">
-          Publisher / Label
+          Publisher
         </span>
 
         <div className="mt-1.5 flex max-lg:flex-wrap items-center gap-1">
           <div className="px-2 py-1 bg-transparent text-dimGray rounded text-sm font-normal border border-charcoalGray whitespace-nowrap">
-            Warner Chappell
-          </div>
-
-          <div className="px-2 py-1 bg-transparent text-dimGray rounded text-sm font-normal border border-charcoalGray whitespace-nowrap">
-            Polydor Records
+            {publisher}
           </div>
         </div>
       </div>
@@ -397,19 +396,8 @@ const ProfileAboutSection = (props: Props) => {
           </div>
 
           <span className="font-semibold border border-mediumGray rounded-full px-2 py-0.5">
-            $25
+            {"$" + demo_fee || "$0"}
           </span>
-        </div>
-        
-        <div className="flex items-center justify-between max-lg:flex-wrap gap-1">
-          <div className="flex items-center gap-1">
-            <FiInfo />
-            <span className="font-normal leading-[18px]">
-              Cancellation policy
-            </span>
-          </div>
-
-          <span className="font-semibold text-[#7ECC00]">Flexible</span>
         </div>
       </div>
 
