@@ -79,7 +79,7 @@ const ProfileRightSection = (props: IProps) => {
   const topTabs = isPublicProfile ? publicTabs : normalTabs;
 
   return (
-    <div id="profile-right-section" className="flex-1 flex flex-col relative">
+    <div id="profile-right-section" className="h-screen flex flex-col overflow-hidden relative">
       <div className="flex w-full items-center">
         {topTabs.map((tab) => (
           <span

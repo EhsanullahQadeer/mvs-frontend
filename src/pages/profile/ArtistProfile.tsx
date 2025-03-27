@@ -167,6 +167,7 @@ const ArtistProfile = () => {
       {!isLoading ? (<>
         <div className="relative flex overflow-hidden">
 
+          <div className={`${chatOpen ? 'w-[calc(100%-500px)]' : 'w-[calc(100%-374px)]'} transition-all duration-300`}>
             <ProfileRightSection
               artistData={artistData}
               currentUserInfo={user}
@@ -182,8 +183,9 @@ const ArtistProfile = () => {
               setChatOpen={setChatOpen}
               isPublicProfile={false}
             />
+          </div>
 
-          <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
+          <section className={`border-l border-eclipseGray ${chatOpen ? 'w-[500px]' : 'w-[374px]'} h-screen overflow-x-hidden overflow-y-auto custom-dropdown transition-all duration-300`}>
             <MessageContextProvider>
               <ChatboxProvider>
                 <ProfileAboutSection
