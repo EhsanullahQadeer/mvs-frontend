@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
+import axiosInstance from "api/axios";
 import { useChatbox } from "./context";
 import Footer from "./components/footer";
 import NotesSection from "../NotesSection";
@@ -24,7 +25,6 @@ import { AudioRecordingProvider } from "./components/audioRecorder";
 import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
-import axiosInstance from "api/axios";
 
 interface ChatboxProps {
   onClose: () => void;
@@ -42,8 +42,6 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
   const {
     activeConversation,
-    CONVERSATIONS_PER_PAGE,
-    inboxTab
   } = useConversation();
 
   const {
@@ -52,8 +50,6 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     conversationNotes,
     setThreadMessages,
     threadMessages,
-    conversations,
-    setConversations,
     getConversationMessages
   } = useMessenger();
 

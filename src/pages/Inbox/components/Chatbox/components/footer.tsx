@@ -21,7 +21,6 @@ const Footer = () => {
     sendMessage,
     replyInThread,
     threadMessages,
-    getThreadMessages,
   } = useMessenger();
 
   const { 

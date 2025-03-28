@@ -1,25 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import DropDown from "components/util/dropdown";
 import AudioPlayer from "./player";
-import { useCallback, useEffect, useRef, useState } from "react";
-import musicBeam from "../../../assets/icons/musicBeam.svg";
-import playIcon from "../../../assets/icons/playIcon.svg";
-import {ReactComponent as MusicIcon} from "../../../assets/icons/musicIcon.svg";
+import { Avatar } from "@mui/material";
+import { FiDownload } from "react-icons/fi";
+import DropDown from "components/util/dropdown";
 import { AudioTrackType } from "../player-container";
 import { AudioTrack, useWaveform } from "./waveform";
 import { AnimatedWaveGraphic } from "./wave-graphic";
-import { Avatar } from "@mui/material";
-import artistimg from "../../../assets/img/artistImg.png";
-import { IoMdHeartEmpty } from "react-icons/io";
-import { FiDownload } from "react-icons/fi";
+import playIcon from "../../../assets/icons/playIcon.svg";
+import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
+import musicBeam from "../../../assets/icons/musicBeam.svg";
 import ConsideringModal from "components/modals/considering";
-import axios from "axios";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {ReactComponent as MusicIcon} from "../../../assets/icons/musicIcon.svg";
 import { getSampleConsidering, saveSampleDownloadAPI, sampleLikeAPI } from "api/sounds";
-import { IoMdHeart } from "react-icons/io";
-import { RootState } from "redux/reducers";
-import { useSelector } from "react-redux";
 
 const SampleTable = (props: {
   samples: any[];
@@ -78,7 +73,6 @@ const SampleTable = (props: {
 
   const rowRefs = useRef<Array<HTMLTableRowElement | null>>([]);
   const formatDuration = (totalSeconds: number) => {
-    console.log('totalSeconds', totalSeconds);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;

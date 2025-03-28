@@ -46,13 +46,18 @@ const ThreadMessage = (props: Props) => {
 
   const { 
     activeConversation,
-    markMessageAsRead
+    markMessageAsRead,
+    connectionStatus,
+    recipient
   } = useChatbox();
 
   let is_read = message?.is_read;
   const audioUrl = media?.url || null;
   const requiresFeedback = message_type === MESSAGE_TYPES.DEMO && 
     transaction?.status !== "completed";
+
+  const [hasListenedToDemo, setHasListenedToDemo] = useState<boolean>(false);
+  const [demoPlayerListenState, setDemoPlayerListenState] = useState<boolean>(false);
 
   const onIntersection = (entries, observer) => {
     for (const { isIntersecting, target } of entries) {
@@ -73,6 +78,14 @@ const ThreadMessage = (props: Props) => {
     audioRef.current.currentTime = 0;
     if (!intersectionRef.current) return;
     observer.observe(intersectionRef.current);
+    console.log('Recipient ID in thread: ', recipient.id);
+    console.log('Connection status In thread: ', connectionStatus);
+    console.log('Requires Feedback In thread: ', requiresFeedback);
+    console.log('Has Listened to Demo In thread: ', hasListenedToDemo);
+    if(connectionStatus !== true && requiresFeedback && !hasListenedToDemo) {
+      console.log('Listen state set to true');
+      setDemoPlayerListenState(true);
+    }
   }, [])
 
   useEffect(() => {
@@ -137,7 +150,7 @@ const ThreadMessage = (props: Props) => {
     });
     
     audio.addEventListener('canplaythrough', () => {
-      console.log('Audio format is supported');
+      //console.log('Audio format is supported');
       setNeedsConversion(false);
     });
   }, [media?.url]);

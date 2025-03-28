@@ -3,10 +3,10 @@ import { RootState } from 'redux/reducers';
 import { useMessenger } from 'api/messenger/context';
 import { IConversation, IMessage, INotes, TUser } from 'api/messenger/objects/states.types';
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
-import { checkUserHasStripeConnectedAccount } from 'api/user';
-// import { useMessageReactions } from '../../hooks/useMessageReactions';
+import { checkPendingConnectAPI, checkUserHasStripeConnectedAccount } from 'api/user';
 
 type ChatTabType = 'messages' | 'info' | 'notes';
+type ConnectionDetail = false | null | 'pending' | undefined | true;
 
 interface ChatboxContextType {
   // State
@@ -21,6 +21,8 @@ interface ChatboxContextType {
   notes: any[];
   recipient: TUser;
   totalPaid: number;
+  connectionStatus: ConnectionDetail;
+  setConnectionStatus: (status: ConnectionDetail) => void;
     // messageReactions: any;
     // handleEmojiSelect: (id: number, emoji: string) => void;
   
@@ -68,6 +70,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   } = useMessenger();
 
   const [activeTab, setActiveTab] = useState<ChatTabType>('messages');
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionDetail>(undefined);
   const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<IMessage[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -85,7 +88,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     if (recipient) {
       checkUserHasStripeConnectedAccount(recipient.id)
         .then((res) => {
-          console.log('res', res);
+          //console.log('res', res);
           setIsSendDemoAvailable(res.data || false);
         })
         .catch((error) => {
@@ -95,6 +98,8 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     } else {
       setIsSendDemoAvailable(false);
     }
+    console.log('Checking connection with user: ', recipient.id);
+    fetchConnectionStatus(recipient.id)
   }, [recipient]);
 
 
@@ -112,19 +117,32 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     }, 5000);
   }
 
-  useEffect(() => {
-    if (updateMessageReadIds.current.length > 0) {
-      toggleMessageIsRead({messageIds:updateMessageReadIds.current});
-      updateMessageReadIds.current = [];
+  const fetchConnectionStatus = async (id: number) => {
+    console.log('Fetching Connection status with user: ', id);
+    try {
+      const response = await checkPendingConnectAPI(id);
+      console.log('response: ', response);
+      if(response.data.results.connectionDetails === null) {setConnectionStatus(null);}
+      else {
+        setConnectionStatus(
+          response.data.results.connectionDetails.request_accepted
+        );
+      }
+    } catch (error) {
+      console.log("error while checking connection", error);
     }
-    setIsThread(false);
-  }, [activeConversation]);
+  }
 
   const getConversationInfo = useCallback(async () => {
     if (activeConversation) {
       setTotalPaid(activeConversation.total_paid);
       setRecipient(activeConversation.recipient);
     }
+    if (updateMessageReadIds.current.length > 0) {
+      toggleMessageIsRead({messageIds:updateMessageReadIds.current});
+      updateMessageReadIds.current = [];
+    }
+    setIsThread(false);
   }, [activeConversation]);
   
   useEffect(() => {
@@ -190,18 +208,10 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
       cursor: undefined,
     });
   }, [getThreadMessages, setMessages, setIsThread]);
-  
-  // useEffect(() => {
-  //   if (activeConversation) {
-  //     setLoading(true);
-  //     Promise.all([
-  //       refreshMessages(),
-  //       getNotes()
-  //     ]).finally(() => {
-  //       setLoading(false);
-  //     });
-  //   }
-  // }, [activeConversation, refreshMessages, getNotes]);
+
+  useEffect(() => {
+    console.log('Connection Detail: ', connectionStatus);
+  }, [connectionStatus]);
 
   const value: ChatboxContextType = {
     activeTab,
@@ -215,9 +225,8 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     chatMessages,
     recipient,
     totalPaid,
-    // messageReactions,
-    // handleEmojiSelect,
-  
+    connectionStatus,
+    setConnectionStatus,
     refreshMessages,
     handleSendMessage,
     getNotes,
