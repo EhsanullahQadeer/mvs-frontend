@@ -26,6 +26,7 @@ import { IoLocationOutline, IoAdd } from "react-icons/io5";
 import FormikOnChange from "./FormikOnChange";
 import { checkUsernameIsAvailable } from "api/user";
 import * as Yup from "yup";
+import { formatFileSize, estimateBase64Size } from "../../../utils/imageSizeUtils";
 
 type Props = {
   markSectionAsCompleted: () => void;
@@ -68,7 +69,14 @@ const PersonalInformation = (props: Props) => {
   const [thumbnailError, setThumbnailError] = useState(false);
   const [showCropModal, setShowCropModal] = useState(false);
   const [tempImageUrl, setTempImageUrl] = useState('');
-
+  const [originalFileSize, setOriginalFileSize] = useState<number | null>(null);
+  const [croppedFileSize, setCroppedFileSize] = useState<number | null>(null);
+  const [isFileTooLarge, setIsFileTooLarge] = useState(false);
+  const [fileSizeWarning, setFileSizeWarning] = useState("");
+  
+  // Constants
+  const MAX_FILE_SIZE = 250 * 1024 * 1024; // 250 MB in bytes
+  
   useEffect(() => {
     const countries = Object.values(countriesStates).map((country, index) => ({
       label: country.name,
@@ -185,11 +193,23 @@ const PersonalInformation = (props: Props) => {
 
   const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file) {      
+      setOriginalFileSize(file.size);
+      
+      const isTooLarge = file.size > MAX_FILE_SIZE;
+      setIsFileTooLarge(isTooLarge);
+      if (isTooLarge) {
+        const warningMsg = `File size (${formatFileSize(file.size)}) exceeds the ${formatFileSize(MAX_FILE_SIZE)} limit. You may continue with the upload, but the form cannot be submitted until a smaller image is provided.`;
+        setFileSizeWarning(warningMsg);
+      } else {
+        setFileSizeWarning("");
+      }
+      
       const url = URL.createObjectURL(file);
       setTempImageUrl(url);
       setShowCropModal(true);
     }
+    // Reset the input
     e.target.value = null;
   };
 
@@ -198,6 +218,20 @@ const PersonalInformation = (props: Props) => {
     setThumbnailType('image/jpeg');
     setButtonText("Save Changes");
     setThumbnailError(false);
+    
+    // Calculate base64 size using the utility function
+    const base64Size = estimateBase64Size(croppedImage);
+    
+    setCroppedFileSize(base64Size);
+    const croppedTooLarge = base64Size > MAX_FILE_SIZE;
+    setIsFileTooLarge(croppedTooLarge);
+    if (croppedTooLarge && originalFileSize) {
+      const warningMsg = `The cropped image (${formatFileSize(base64Size)}) still exceeds the ${formatFileSize(MAX_FILE_SIZE)} limit. Please use a smaller image.`;
+      setFileSizeWarning(warningMsg);
+    } else {
+      setFileSizeWarning("");
+    }
+    
     URL.revokeObjectURL(tempImageUrl); // Clean up
   };
 
@@ -208,6 +242,13 @@ const PersonalInformation = (props: Props) => {
 
     if (!thumbnail) {
       setThumbnailError(true);
+      return;
+    }
+
+    // Check if the cropped image exceeds the size limit
+    if (croppedFileSize && croppedFileSize > MAX_FILE_SIZE) {
+      setIsFileTooLarge(true);
+      setFileSizeWarning(`Cannot proceed: Profile picture size (${formatFileSize(croppedFileSize)}) exceeds the maximum allowed size of ${formatFileSize(MAX_FILE_SIZE)}.`);
       return;
     }
 
@@ -480,17 +521,25 @@ const PersonalInformation = (props: Props) => {
                             <img
                               src={thumbnail || avatarImg}
                               alt="thumbnail"
-                              className={`w-32 h-32 object-cover rounded-full ${thumbnailError ? 'border-4 border-darkRed' : ''}`}
+                              className={`w-32 h-32 object-cover rounded-full ${thumbnailError || isFileTooLarge ? 'border-4 border-darkRed' : ''}`}
                             />
                             <div className="absolute bottom-0 right-0 bg-limeGreen rounded-full p-1">
                               <IoAdd className="w-5 h-5 text-jetBlack" />
                             </div>
                           </label>
+
                           {thumbnailError && (
                             <div className="text-darkRed mt-1 text-xs font-medium">
                               Please provide a profile picture before proceeding.
                             </div>
                           )}
+                          
+                          {fileSizeWarning && (
+                            <div className="text-darkRed mt-1 text-xs font-medium max-w-[250px]">
+                              {fileSizeWarning}
+                            </div>
+                          )}
+                          
                         </div>
 
                         <div className="w-[231px]">
