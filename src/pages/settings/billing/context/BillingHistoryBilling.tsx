@@ -6,57 +6,35 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import { useState } from 'react';
+import axios from '../../../../api/axios';
+import { useEffect, useState } from 'react';
 
 interface Transaction {
     id: number;
-    date: string;
+    timestamp: string;
     description: string;
     amount: number;
-    transactionType: string;
+    type: string;
     paymentMethod: string;
-    state: string;
+    status: string;
 }
 
 const BillingHistoryBilling = () => {
-    const [transactions, setTransactions] = useState<Transaction[]>([
-        {
-            id: 1,
-            date: '08/22/2024',
-            description: 'Sale of sample pack "Urban Beats"',
-            amount: 120.00,
-            transactionType: 'Tipping',
-            paymentMethod: 'Visa ****1234',
-            state: 'Completed'
-        },
-        {
-            id: 2,
-            date: '08/15/2024',
-            description: 'Commission for sample sales',
-            amount: -30.00,
-            transactionType: 'Expense (Demo Submission)',
-            paymentMethod: 'Visa ****1234',
-            state: 'Completed'
-        },
-        {
-            id: 3,
-            date: '08/10/2024',
-            description: 'Monthly subscription - Pro Plan',
-            amount: -29.99,
-            transactionType: 'Expense (Subscription)',
-            paymentMethod: 'Visa ****1234',
-            state: 'Completed'
-        },
-        {
-            id: 4,
-            date: '08/01/2024',
-            description: 'Upgrade to Pro Plan (fee difference)',
-            amount: -20.00,
-            transactionType: 'Expense (Subscription)',
-            paymentMethod: 'Visa ****1234',
-            state: 'Completed'
-        }
-    ]);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    async function getBillingHistory() {
+        const response = await axios.get('/users/transaction-history?skip=0&take=10');
+        console.log('response',typeof response.data?.results?.transactions[0].amount);
+        setTransactions(response.data?.results?.transactions ?? []);
+
+    }
+    function getDate(date:string){
+        const d = new Date(date);
+        return `${d.getMonth()}/${d.getDay()}/${d.getFullYear()}`
+    }
+
+    useEffect(() => {
+        getBillingHistory();
+    },[])
 
     return (
         <div className="bg-[#0A0A0A] p-6 rounded-lg h-full flex flex-col">
@@ -85,14 +63,14 @@ const BillingHistoryBilling = () => {
                     <tbody className="bg-[#1C1C1C]">
                         {transactions.map((transaction) => (
                             <tr key={transaction.id} className="text-sm border-b border-[#242424] last:border-b-0">
-                                <td className="px-6 py-4 text-coolGray">{transaction.date}</td>
+                                <td className="px-6 py-4 text-coolGray">{getDate(transaction.timestamp)}</td>
                                 <td className="px-6 py-4 text-white">{transaction.description}</td>
                                 <td className="px-6 py-4 text-white">
-                                    {transaction.amount >= 0 ? '+' : ''}{transaction.amount.toFixed(2)}
+                                    {Number(transaction.amount) >= 0 ? '+' : ''}{Number(transaction.amount).toFixed(2)}
                                 </td>
-                                <td className="px-6 py-4 text-coolGray">{transaction.transactionType}</td>
+                                <td className="px-6 py-4 text-coolGray">{transaction.type}</td>
                                 <td className="px-6 py-4 text-coolGray">{transaction.paymentMethod}</td>
-                                <td className="px-6 py-4 text-coolGray">{transaction.state}</td>
+                                <td className="px-6 py-4 text-coolGray">{transaction.status}</td>
                                 <td className="px-6 py-4">
                                     <button className="text-coolGray hover:text-white transition-colors">
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
