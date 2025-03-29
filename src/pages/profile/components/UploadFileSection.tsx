@@ -78,7 +78,7 @@ const UploadFileSection = (props) => {
   return (
     <div>
       <div>
-        <div className="px-3">
+        <div className="px-3 py-2 md:border-none rounded-lg border border-eclipseGray">
           <DropFilesSection
             {...{
               uploadingFile,

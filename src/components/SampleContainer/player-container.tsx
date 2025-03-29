@@ -192,7 +192,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen, isConnect }) => 
 
   return (
     <WaveformProvider>
-      <div className="text-xs font-medium text-[#9C9C9C] py-4 px-3 border-t border-[#1F1F1F]">
+      <div className="md:text-xs text-[10px] font-medium text-[#9C9C9C] py-1 md:py-4 px-3 md:border-t md:border-[#1F1F1F]">
         {totalCount} results
       </div>
       <SampleTable samples={samples} chatOpen={chatOpen} isConnect={isConnect} />

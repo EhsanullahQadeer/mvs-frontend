@@ -18,6 +18,7 @@ import { rolesArr } from "../sample-data/sampleData";
 import { ICollaborator, IUserProfile } from "./types";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 import TableContainer from "@mui/material/TableContainer";
+import { AiOutlineDelete } from "react-icons/ai";
 
 interface Props {
   composerData: ICollaborator[];
@@ -28,10 +29,7 @@ interface Props {
   collaborators: any[];
 }
 
-function ContributersTable(
-  props: Props
-) {
-
+function ContributersTable(props: Props) {
   const {
     composerData,
     setComposerData,
@@ -61,7 +59,8 @@ function ContributersTable(
   };
 
   const handleInputChange = (
-    event: ChangeEvent<HTMLInputElement>, id: number
+    event: ChangeEvent<HTMLInputElement>,
+    id: number
   ) => {
     let { value } = event.target;
     let parsedValue = parseFloat(value);
@@ -78,13 +77,13 @@ function ContributersTable(
     setComposerData((prevCollaborators) => {
       const newData = prevCollaborators.map((composer) => {
         if (composer.user?.id === id) {
-          console.log('Updating composer:', composer.user.professional_name);
+          console.log("Updating composer:", composer.user.professional_name);
           return { ...composer, contribution: parsedValue };
         }
         return composer;
       });
 
-      console.log('After update - newData:', newData);
+      console.log("After update - newData:", newData);
       return newData;
     });
 
@@ -92,7 +91,7 @@ function ContributersTable(
   };
 
   return (
-    <TableContainer component={Paper}>
+  
       <Table
         sx={{
           border: "1px solid #242424",
@@ -100,7 +99,6 @@ function ContributersTable(
           borderTopRightRadius: "8px",
         }}
       >
-
         <TableHead
           sx={{
             ...muiStyles.tableHead,
@@ -113,10 +111,18 @@ function ContributersTable(
           }}
         >
           <TableRow>
-            <TableCell>Contributors</TableCell>
-            <TableCell>Publishing %</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Role</TableCell>
+            <TableCell className="text-[12px] md:text-base ">
+              Contributors
+            </TableCell>
+            <TableCell className="text-[12px] md:text-base ">
+              Publishing%
+            </TableCell>
+            <TableCell className="text-[12px] md:text-base ">Status</TableCell>
+            <TableCell>
+              <div className="text-[12px] md:text-base md:flex hidden ">
+                Role
+              </div>
+            </TableCell>
             <TableCell />
           </TableRow>
         </TableHead>
@@ -126,90 +132,113 @@ function ContributersTable(
             ...muiStyles.tableBody,
             "& .MuiTableRow-root": {
               backgroundColor: "#0F0F0F",
-              cursor: "auto"
-            }
+              cursor: "auto",
+            },
           }}
         >
           {composerData?.map((composer) => {
             return (
-              <TableRow key={composer.user?.id}>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full">
-                      <img
-                        src={composer?.user?.thumbnail}
-                        alt="composer"
-                        className="w-full h-full object-cover rounded-full"
+              <>
+                <TableRow key={composer.user?.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div>
+                        <div className="w-8 h-8 rounded-full">
+                          <img
+                            src={composer?.user?.thumbnail}
+                            alt="composer"
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        </div>
+                      </div>
+                      <span className="text-[10px] md:text-sm">
+                        {composer?.user?.professional_name}
+                      </span>
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <div>
+                      <div className="flex gap-2.5 items-stretch">
+                        <div className="flex items-center">
+                          {composer.isEditable ? (
+                            <input
+                              type="number"
+                              min="0"
+                              max="100"
+                              step="0.01"
+                              value={composer?.contribution}
+                              onChange={(e) =>
+                                handleInputChange(e, composer.user?.id)
+                              }
+                              className="text-silver text-[10px] md:text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11"
+                            />
+                          ) : (
+                            <span className="text-silver text-[10px] md:text-sm font-semibold">
+                              {composer.contribution}%
+                            </span>
+                          )}
+                        </div>
+
+                        <div
+                          onClick={() => handleEditBtn(composer.user?.id)}
+                          className="py-1 px-2 border border-eclipseGray rounded text-mediumGray text-[10px] md:text-sm font-normal w-max flex items-center cursor-pointer"
+                        >
+                          {composer.isEditable ? "Save" : "Edit"}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <span className="text-[10px] md:text-sm">Pending</span>
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="hidden md:flex">
+                      <MultiSelectDropdown
+                        name={`role${composer.user?.id}`}
+                        dropdownItems={rolesArr}
+                        value={composer.roles || []}
+                        setValue={(newRoles: string[]) =>
+                          handleRolesChange(composer.user?.id, newRoles)
+                        }
                       />
                     </div>
-                    <span className="text-base">{composer?.user?.professional_name}</span>
-                  </div>
-                </TableCell>
+                  </TableCell>
 
-                <TableCell>
-                  <div>
-                    <div className="flex gap-2.5 items-stretch">
-                      <div className="flex items-center">
-                        {composer.isEditable ? (
-                          <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="0.01"
-                            value={composer?.contribution}
-                            onChange={(e) => handleInputChange(e, composer.user?.id)}
-                            className="text-silver text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11"
-                          />
-                        ) : (
-                          <span className="text-silver text-sm font-semibold">
-                            {composer.contribution}%
-                          </span>
-                        )}
-                      </div>
-
+                  <TableCell align="right">
+                    <div
+                      onClick={() => handleOpenDeleteDialog(composer)}
+                      className="w-full  flex md:justify-end "
+                    >
                       <div
-                        onClick={() => handleEditBtn(composer.user?.id)}
-                        className="py-1 px-2 border border-eclipseGray rounded text-mediumGray text-sm font-normal w-max flex items-center cursor-pointer"
+                        className="rounded md:flex hidden border border-eclipseGray  px-2 py-1 text-[10px] md:text-sm text-mediumGray cursor-pointer"
                       >
-                        {composer.isEditable ? "Save" : "Edit"}
+                        Delete
                       </div>
+                      <AiOutlineDelete className="text-xs flex md:hidden" />
                     </div>
-                  </div>
-                </TableCell>
-
-                <TableCell>
-                  <span className="text-sm">Pending</span>
-                </TableCell>
-
-                <TableCell>
-                  <div>
+                  </TableCell>
+                </TableRow>
+                <TableRow className="block md:hidden">
+                  <TableCell colSpan={5} className="pt-2">
                     <MultiSelectDropdown
                       name={`role${composer.user?.id}`}
                       dropdownItems={rolesArr}
                       value={composer.roles || []}
-                      setValue={(newRoles: string[]) => handleRolesChange(composer.user?.id, newRoles)}
+                      setValue={(newRoles: string[]) =>
+                        handleRolesChange(composer.user?.id, newRoles)
+                      }
                     />
-                  </div>
-                </TableCell>
-
-                <TableCell align="right">
-                  <div className="w-full flex justify-end">
-                    <div
-                      onClick={() => handleOpenDeleteDialog(composer)}
-                      className="rounded border border-eclipseGray w-14 px-2 py-1 text-sm text-mediumGray cursor-pointer"
-                    >
-                      Delete
-                    </div>
-                  </div>
-                </TableCell>
-              </TableRow>
+                  </TableCell>
+                </TableRow>
+              </>
             );
           })}
         </TableBody>
       </Table>
-    </TableContainer>
   );
 }
 
 export default ContributersTable;
-

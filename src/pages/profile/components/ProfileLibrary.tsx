@@ -22,11 +22,11 @@ const ProfileLibrary = (props: Props) => {
   const { isLoginUser, user, tabs, hasSampleType, connectionDetail, selectedTab, setSelectedTab, isConnect, artistData, chatOpen, setChatOpen } = props;
 
   return (
-    <section className="flex-1 min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">
+    <section className="flex-1 md:min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">
       {isLoginUser && <UploadFileSection {...{ user }} />}
 
-      <div className={`text-coolGray flex flex-col py-3 mb-2 p-4 `}>
-        <h2 className="text-gainsBoro mb-3 font-bold">Library</h2>
+      <div className={`text-coolGray flex flex-col py-3 mb-2 px-4 `}>
+        <h2 className="text-gainsBoro md:block hidden mb-3 font-bold">Library</h2>
         <div className="flex justify-between items-center">
           <div className="flex">
             {tabs.map((tab) => {
@@ -41,7 +41,7 @@ const ProfileLibrary = (props: Props) => {
                 <button
                   key={tab.value}
                   onClick={() => setSelectedTab(tab.value)}
-                  className={`py-2 px-3 text-sm flex items-center justify-center border border-eclipseGray ${selectedTab === tab.value
+                  className={`md:py-2 md:px-3 px-2 py-1 text-[10px] md:text-sm flex items-center justify-center border border-eclipseGray ${selectedTab === tab.value
                     ? "text-softGray bg-eerieBlack"
                     : "text-charcoalGray bg-darkGray"
                     } ${isFirst && "rounded-l-md border-r-0"} ${isLast && "rounded-r-md border-l-0"

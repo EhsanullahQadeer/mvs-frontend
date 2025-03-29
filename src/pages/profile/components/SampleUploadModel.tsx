@@ -7,6 +7,8 @@ import AlertDialog from "components/util/AlertDialog";
 import { Form, Formik } from "formik";
 import { updateFileMetadata, uploadedFileMetadata } from "api/sounds";
 import { LuUserPlus } from "react-icons/lu";
+import SampleUpdatedModel from "./SampleUpdatedModel";
+import { MdKeyboardArrowLeft } from "react-icons/md";
 
 const SampleUploadModel = ({
   open,
@@ -22,6 +24,7 @@ const SampleUploadModel = ({
   const [activeTab, setActiveTab] = useState("File Metadata");
   const { filename, bpm, key, type, tags, s3_key, mime_type, length } =
     sampleToEdit || {};
+  const [showUpdatedModel, setShowUpdatedModel] = useState(false); // New state for SampleUpdatedModel
 
   const [selectedComposer, setSelectedComposer] = useState(() => collaborators);
   const [composerToDelete, setComposerToDelete] = useState(null);
@@ -166,6 +169,9 @@ const SampleUploadModel = ({
         handleClose?.();
         return;
       }
+      handleClose();
+
+      setShowUpdatedModel(true);
 
       console.error("No valid file key or sample ID for update");
     } catch (error) {
@@ -200,17 +206,26 @@ const SampleUploadModel = ({
     <>
       <Dialog
         sx={{
+          
           "& .MuiPaper-root": {
             backgroundColor: "#08090A",
             padding: "16px 20px",
-            maxWidth: "100%",
-            border: "1px solid #3D3D3D",
+            maxWidth: "100%", // Full width only on small screens
+            width: { xs: "100vw", md: "auto" }, // Full width on small screens, auto on larger
+            height: { xs: "100vh", md: "auto" }, // Full height except header on small screens
+            borderTop: "1px solid #3D3D3D",
+            borderBottom: {xs: "none" , md: "1px solid #3D3D3D" },
+
             borderRadius: "12px",
+            overflowY: "auto",
+            margin: { xs: "0px", md: "32px" },
+            position: { xs: "absolute", md: "static" }, // Stick to bottom only on small screens
+            bottom: { xs: 0, md: "auto" },
           },
         }}
         open={open}
         onClose={handleClose}
-        className="fixed scrollbar-custom inset-0 flex items-center justify-center z-50 rounded-xl"
+        className="fixed scrollbar-custom inset-0 flex items-center justify-center z-50"
       >
         <AlertDialog
           {...{
@@ -225,7 +240,12 @@ const SampleUploadModel = ({
         />
 
         <div className="relative scrollbar-custom flex flex-col gap-2.5">
-          <div className="flex mt-[-6px] justify-between text-lg text-gray-300 items-center font-semibold">
+         <div className='flex mt-[-6px] flex-col bg-black  gap-2'>
+           <div  className="md:hidden flex text-white"           onClick={handleClose}
+           >
+           <MdKeyboardArrowLeft className="text-2xl" />
+           </div>
+           <div className="flex  justify-between text-lg text-gray-300 items-center font-semibold">
             {isEditSample ? (
               <h2 className="text-softGray">Edit Sample</h2>
             ) : (
@@ -233,17 +253,19 @@ const SampleUploadModel = ({
             )}
             <div
               onClick={handleClose}
-              className="rounded-full w-6 h-6 flex justify-center items-center bg-eclipseGray cursor-pointer text-coolGray"
+              className="rounded-full w-6 h-6 hidden md:flex justify-center items-center bg-eclipseGray cursor-pointer text-coolGray"
             >
               <CancelIcon className="w-2 h-2" />
             </div>
           </div>
+          </div>
+      
 
           <div className="flex w-full items-center">
             {["File Metadata", "Contributor"].map((tab) => (
               <span
                 key={tab}
-                className={`cursor-pointer text-white flex items-center justify-center flex-1 py-5 ${
+                className={`cursor-pointer md:text-base text-sm text-white flex items-center justify-center flex-1 py-5 ${
                   activeTab === tab
                     ? "font-semibold border-b-2 border-charcoalGray"
                     : "border-b border-eerieBlack"
@@ -256,7 +278,7 @@ const SampleUploadModel = ({
           </div>
 
           <div className="flex-1 pt-4 flex flex-col overflow-hidden">
-            <div className="flex-1 min-w-[710px] overflow-y-auto custom-dropdown">
+            <div className="flex-1 md:min-w-[710px] overflow-y-auto custom-dropdown">
               <Formik
                 initialValues={initialValues}
                 onSubmit={(values) => handleSubmit(values)}
@@ -280,16 +302,20 @@ const SampleUploadModel = ({
 
                         {activeTab === "Contributor" &&
                           (selectedComposer?.length > 0 ? (
-                            <ContributersTable
-                              {...{
-                                composerData,
-                                setComposerData,
-                                handleOpenDeleteDialog,
-                                percentError,
-                                setPercentError,
-                                collaborators,
-                              }}
-                            />
+                            <div className="text-white  h-80 text-lg font-semibol">
+                              <ContributersTable
+                              
+                                {...{
+                                  composerData,
+                                  setComposerData,
+                                  handleOpenDeleteDialog,
+                                  percentError,
+                                  setPercentError,
+                                  collaborators,
+                                }}
+                              />{" "}
+                        
+                            </div>
                           ) : (
                             <div className="flex flex-col gap-3 items-center">
                               <div className="text-darkGray">
@@ -311,7 +337,7 @@ const SampleUploadModel = ({
                             </div>
                           ))}
 
-                        <div className="mt-5 flex justify-end">
+                        <div className="py-4 z-40 flex w-full justify-center md:justify-end  bg-[#08090A] ">
                           {activeTab === "File Metadata" ? (
                             <button
                               type="button"
@@ -319,14 +345,14 @@ const SampleUploadModel = ({
                                 e.preventDefault();
                                 setActiveTab("Contributor");
                               }}
-                              className="bg-limeGreen text-black py-1 px-5 rounded-full"
+                              className="bg-limeGreen w-full md:w-auto text-black py-2 px-5 rounded-full text-center"
                             >
                               Next
                             </button>
                           ) : (
                             <button
                               type="submit"
-                              className="bg-limeGreen text-black py-1 px-5 rounded-full"
+                              className="bg-limeGreen w-full md:w-auto text-black py-2 px-5 rounded-full text-center"
                             >
                               Post
                             </button>
@@ -341,6 +367,15 @@ const SampleUploadModel = ({
           </div>
         </div>
       </Dialog>
+      <div className="md:hidden block">
+        {" "}
+        <SampleUpdatedModel
+        message="sample updated!"
+          open={showUpdatedModel}
+          handleClose={() => setShowUpdatedModel(false)}
+        />
+      </div>
+
       {isSaving && (
         <>
           <div className="absolute top-0 left-0 z-[9999] bg-black opacity-40 pointer-events-none w-full h-full"></div>

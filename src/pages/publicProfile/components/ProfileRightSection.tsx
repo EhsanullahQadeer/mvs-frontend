@@ -95,7 +95,7 @@ const ProfileRightSection = (props: IProps) => {
 
       {/* Tab Content */}
       <div className="flex-1 py-5 flex flex-col overflow-hidden">
-        <div className="flex-1 px-5 overflow-y-auto custom-dropdown">
+        <div className="flex-1 md:px-5 overflow-y-auto custom-dropdown">
           {topTabs.find((tab) => tab.label === activeTab)?.component}
         </div>
       </div>

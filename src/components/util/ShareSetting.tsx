@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import debounce from "lodash/debounce";
+import { MdKeyboardArrowLeft } from "react-icons/md";
 
 interface Collaborator {
   id: number;
@@ -196,27 +197,30 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
   return (
     <>
       <Dialog
+     
         sx={{
+          
           "& .MuiPaper-root": {
+            backgroundColor: {xs:"#08090A" , md:"#00000"},
+            padding:{ xs: "10px 16px", md:"16px 20px"},
+            maxWidth: "100%", // Full width only on small screens
+            width: { xs: "100vw", md: "auto" }, // Full width on small screens, auto on larger
+            height: { xs: "100vh", md: "auto" }, // Full height except header on small screens
+            borderTop: {xs :"1px solid #3D3D3D" , md: "none"},
             borderRadius: "12px",
-            border: "none",
-            boxShadow: "none",
-            background: "#131313",
-            outline: "none"
+            overflowY: "auto",
+            borderBottom: "none",
+            margin: { xs: "0px", md: "32px" },
+            position: { xs: "absolute", md: "static" }, // Stick to bottom only on small screens
+            bottom: { xs: 0, md: "auto" },
           },
+          
           "& .MuiBackdrop-root": {
             backgroundColor: "rgba(0, 0, 0, 0.8)"
           },
-          "& .MuiDialog-container": {
-            "& .MuiPaper-root": {
-              outline: "none",
-              border: "none"
-            }
-          }
         }}
         open={isOpen}
         onClose={onClose}
-        maxWidth="sm"
         fullWidth
         BackdropProps={{
           style: { backgroundColor: "rgba(0, 0, 0, 0.8)" }
@@ -236,67 +240,61 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
             </div>
           </>
         )}
-
-        <div className="flex justify-between items-center text-white px-4 py-2 pb-3 bg-black">
+<div className='flex flex-col bg-black md:px-4 py-2 gap-2'>
+  <div  className="md:hidden flex text-white"           onClick={onClose}
+  >
+  <MdKeyboardArrowLeft className="text-2xl" />
+  </div>
+<div className="flex justify-between items-center text-white  pb-3 ">
           <h2 className=" font-semibold">Share Settings</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray transition"
+            className="text-gray-400 md:flex hidden hover:text-gray transition"
           >
             ✕
           </button>
         </div>
+</div>
+        
 
-        <div>
-          <Tabs
-            value={activeTab}
-            onChange={(_, newValue: "link" | "members") =>
-              setActiveTab(newValue)
-            }
-            textColor="inherit"
-            indicatorColor="primary"
-            sx={{
-              backgroundColor: "black",
-              color: "white",
-              "& .MuiTabs-flexContainer": {
-                justifyContent: "flex-start",
-                paddingX: "8px",
-              },
-              "& .MuiTab-root": {
-                fontSize: "14px",
-                textAlign: "left",
-                padding: "1px 12px",
-                minWidth: 0,
-                color: "white",
-                textTransform: "capitalize",
-              },
-              "& .Mui-selected": {
-                color: "white",
-              },
-              "& .MuiTabs-indicator": {
-                backgroundColor: "#242424",
-                height: "2px",
-              },
-            }}
-          >
-            <Tab value="link" label="Link" />
-            <Tab value="members" label="Members" />
-          </Tabs>
+        <div className="w-full">
+        <div className="bg-black text-white">
+  <div className="flex border-b-2 border-[#242424]">
+    <button
+      className={`flex-1 md:w-auto px-4 py-2 text-center capitalize ${
+        activeTab === "link" ? "border-b-2 border-[#242424]" : ""
+      }`}
+      onClick={() => setActiveTab("link")}
+    >
+      Link
+    </button>
+    <button
+      className={`flex-1 md:w-auto px-4 py-2 text-center capitalize ${
+        activeTab === "members" ? "border-b-2 border-[#242424]" : ""
+      }`}
+      onClick={() => setActiveTab("members")}
+    >
+      Members
+    </button>
+  </div>
+</div>
 
-          <div className="p-1 bg-[#181A1D]">
+
+
+          <div className="p-1  md:bg-[#181A1D]">
             {/* Tab Content */}
             {activeTab === "link" && (
-              <Box sx={{ background: "#131313" }}>
+              <Box sx={{ background:{xs: "" , md:"#131313" }}}>
 
                 <Box
                   sx={{
-                    width: "97%",
+                    width: {sx:"100%" , md: "97%"},
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
                   }}
                 >
-                  <div className="flex flex-col  px-4 gap-0.5 py-2 ">
+                  <div className="flex flex-col  md:px-4 gap-0.5 py-2 ">
                     <label className="text-white ">Enable Link</label>
                     <span className="text-slateGray-2 text-xs">
                       {" "}
@@ -357,20 +355,20 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
                   </>
                 )}
 
-                <div className="px-4 mt-10">
+                <div className="md:px-4 mt-6 md:mt-10">
                   <h3 className="text-white">Options</h3>
                 </div>
                 <div className="">
                   <Box>
                     <Box
                       sx={{
-                        width: "97%",
+                        width:{xs:"100%"  , md:"97%"},
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
                       }}
                     >
-                      <div className="flex items-center text-sm  text-gainsBoro   px-4 gap-2 py-2">
+                      <div className="flex items-center text-sm  text-gainsBoro   md:px-4 gap-2 py-2">
                         <FiDownload className="text-[16px] cursor-pointer" />
                         <label className="tetx-sm">Allow Downloads</label>
                       </div>
@@ -396,13 +394,13 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
 
                   <Box
                     sx={{
-                      width: "97%",
+                      width:{xs:"100%"  , md:"97%"},
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
                     }}
                   >
-                    <div className="flex items-center  text-gainsBoro  text-sm  px-4 gap-2 py-2">
+                    <div className="flex items-center  text-gainsBoro  text-sm  md:px-4 gap-2 py-2">
                       <FiLock />
                       <label className=" ">Require Password</label>
                     </div>
@@ -425,7 +423,7 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
                   </Box>
 
                   {requirePassword && (
-                    <Box mx={3} display="flex" gap={1}>
+                    <Box mx={3} display="flex" sx={{flexDirection : {xs:"column" , md: "row"}}} gap={1}>
                       <Input
                         type={showPassword ? "text" : "password"}
                         value={tempPassword}
@@ -460,9 +458,9 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
                         }
                       />
 
-                      <div className="flex gap-1 w-[40%]">
+                      <div className="flex gap-1 w-fit md:w-[40%]">
                         <button
-                          className="px-2 justify-center items-center flex gap-1 py-2 bg-limeGreen text-black w-full whitespace-nowrap text-sm rounded-full"
+                          className="md:p-2 px-3 py-2 justify-center items-center flex gap-1  bg-limeGreen text-black w-full whitespace-nowrap text-sm rounded-full"
                           onClick={handleSave}
                         >
                           <span>Save</span>
@@ -480,13 +478,13 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
 
                   <Box
                     sx={{
-                      width: "97%",
+                      width:{xs:"100%"  , md:"97%"},
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
                     }}
                   >
-                    <div className="flex items-center  text-gainsBoro   px-4 gap-1 py-2">
+                    <div className="flex items-center  text-gainsBoro   md:px-4 gap-1 py-2">
                       <RxPerson />
 
                       <label className="">Require Account</label>

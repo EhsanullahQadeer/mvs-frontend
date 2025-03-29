@@ -33,6 +33,7 @@ import { RootState } from "redux/reducers";
 import SampleUploadModel from "./components/SampleUploadModel";
 import ProfileLibrary from "./components/ProfileLibrary";
 import ProfileRightSection from "../publicProfile/components/ProfileRightSection";
+import ArtistProfileMobile from "./components/ArtistProfileMobile";
 // import { getUserSamplesAPI } from "api/sounds";
 
 const ArtistProfile = () => {
@@ -164,7 +165,7 @@ const ArtistProfile = () => {
   return (
     <Theme>
       {!isLoading ? (<>
-        <div className="relative flex overflow-hidden">
+        <div className="relative md:flex hidden md:flex-row overflow-hidden">
 
             <ProfileRightSection
               artistData={artistData}
@@ -189,7 +190,30 @@ const ArtistProfile = () => {
               />
             </MessageContextProvider>
           </section>
-        </div>{" "}
+        </div>
+        <div>
+          </div>{" "}
+          <div className="block md:hidden">
+            <ArtistProfileMobile
+                            {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
+
+/>
+<ProfileRightSection
+              artistData={artistData}
+              currentUserInfo={user}
+              hasSampleType={hasSampleType}
+              connectionDetail={connectionDetail}
+              selectedTab={selectedTab}
+              setSelectedTab={setSelectedTab}
+              isConnect={isConnect}
+              isLoginUser={isLoginUser}
+              user={user}
+              tabs={libraryTabs}
+              chatOpen={chatOpen}
+              setChatOpen={setChatOpen}
+              isPublicProfile={false}
+            />
+          </div>
       </>
       ) : (
         <>

@@ -28,7 +28,7 @@ const Theme = (props: ThemeProps) => {
     <MessengerProvider>
     <div className="flex flex-col h-screen w-full bg-[#08090A]">
       {/* Header Row - stays fixed */}
-      <div className="flex h-[80px] border-b-2 border-[#1F1F1F]">
+      <div className="md:flex hidden h-[80px] border-b-2 border-[#1F1F1F]">
         {/* M Logo */}
         <div
           className="w-[80px] border-r-2 border-[#1F1F1F] flex items-center justify-center"
@@ -44,20 +44,20 @@ const Theme = (props: ThemeProps) => {
         </div>
 
         {/* Nav Header */}
-        <div className="flex-1 flex items-center pl-[20px]">
+        <div className="flex-1 mflex   items-center pl-[20px]">
           <NavHeader name="navHeader" id="1" username="someUsername" email="test@test.com" />
         </div>
       </div>
 
       {/* Content Row - adjusts with sidebar */}
-      <div className="flex-1 grid overflow-hidden"
+      <div className=" md:grid md:flex-1 md:overflow-hidden"
         style={{
           gridTemplateColumns: `${isExpanded ? largeSidebarWidth : sidebarWidth} 1fr`,
           transition: 'grid-template-columns 0.15s ease-in-out'
         }}>
         
         {/* Sidebar */}
-        <div className="overflow-y-auto custom-dropdown border-r-2 border-[#1F1F1F]">
+        <div className="overflow-y-auto  hidden md:flex custom-dropdown border-r-2 border-[#1F1F1F]">
           <Sidebar
             isExpanded={isExpanded}
             setIsExpanded={setIsExpanded}
