@@ -1,23 +1,12 @@
-/*************************************************************************
- * @file AccountSetting.tsx
- * @author Ehsanullah Qadeer
- * @desc  component AccountSetting for account setting page.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-
-/* LOCAL IMPORTS */
 import { ReactComponent as EditIcon } from "../../../../assets/icons/editPencilIcon.svg";
-
-// THIRD PARTY IMPORTS
 import { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import MultiSelectDropdown from "./MultiSelectDropdown";
-import { genresArr, publishersArr, rolesArr } from "./data";
+import { genresArr, publishersArr } from "./data";
 import { updateUserProfileAPI } from "api/user";
 import * as Yup from 'yup';
+import { userTypes } from './sample-data/sampleData';
 
-// Add validation schema
 const validationSchema = Yup.object({
   primary_role: Yup.string().required('Primary role is required'),
   secondary_role: Yup.string().required('Secondary role is required'),
@@ -26,32 +15,38 @@ const validationSchema = Yup.object({
   publisher: Yup.string().required('Publisher is required'),
 });
 
+const getRoleValue = (label: string) => {
+  const role = userTypes.find(type => type.label === label);
+  return role?.value || "";
+};
+
+const getRoleLabel = (value: string) => {
+  const role = userTypes.find(type => type.value === value);
+  return role?.label || "";
+};
+
 const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) => { 
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showValidationError, setShowValidationError] = useState(false);
-  
-  // Initialize state with user's existing values
   const [selectedPrimaryRole, setSelectedPrimaryRole] = useState<string>(user.primary_role || "");
   const [selectedSecondaryRole, setSelectedSecondaryRole] = useState<string>(user.secondary_role || "");
   const [selectedMainGenre, setSelectedMainGenre] = useState<string>(user.main_genre || "");
   const [selectedSubGenre, setSelectedSubGenre] = useState<string>(user.sub_genre || "");
   const [selectedPublisher, setSelectedPublisher] = useState<string>(user.publisher || "");
 
-  // Store original values to reset on cancel
   const [originalValues, setOriginalValues] = useState({
     roles: [] as string[],
     genres: [] as string[],
     publishers: [] as string[]
   });
 
-  // Update selections when user data changes
   useEffect(() => {
     if (!user) return;
-    
+
     const roles = [
-      ...(user.primary_role ? [user.primary_role] : []),
-      ...(user.secondary_role ? [user.secondary_role] : [])
+      ...(user.primary_role ? [getRoleLabel(user.primary_role)] : []),
+      ...(user.secondary_role ? [getRoleLabel(user.secondary_role)] : [])
     ];
     
     const genres = [
@@ -75,7 +70,6 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
   }, [user]);
 
   const handleFormSubmit = async () => {
-    // Check if all fields are filled
     if (!selectedPrimaryRole || !selectedSecondaryRole || !selectedMainGenre || 
         !selectedSubGenre || !selectedPublisher) {
       setShowValidationError(true);
@@ -86,13 +80,13 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
       setIsSubmitting(true);
       
       const payload = {
-        primary_role: selectedPrimaryRole || "",
-        secondary_role: selectedSecondaryRole || "",
-        main_genre: selectedMainGenre || "",
-        sub_genre: selectedSubGenre || "",
-        publisher: selectedPublisher || ""
+        primary_role: getRoleValue(selectedPrimaryRole),
+        secondary_role: getRoleValue(selectedSecondaryRole),
+        main_genre: selectedMainGenre,
+        sub_genre: selectedSubGenre,
+        publisher: selectedPublisher
       };
-      
+
       const response = await updateUserProfileAPI(payload);
       
       if (response) {
@@ -186,8 +180,7 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
           )}
         </div>
       </div>
-      
-      {/* Only show validation error when showValidationError is true */}
+
       {showValidationError && (
         <div className="bg-red-900/30 border border-red-500 text-red-300 p-2 rounded mt-2 mb-2">
           Please fill out all fields before saving
@@ -214,7 +207,7 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
                   <div className="text-red-500 text-xs mb-1">{errors.primary_role}</div>
                 )}
                 <MultiSelectDropdown
-                  dataArr={rolesArr}
+                  dataArr={userTypes.map(type => type.label)}
                   selectedSkills={selectedPrimaryRole}
                   setSelectedSkills={setSelectedPrimaryRole}
                   label="Primary Role"
@@ -230,7 +223,7 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
                   <div className="text-red-500 text-xs mb-1">{errors.secondary_role}</div>
                 )}
                 <MultiSelectDropdown
-                  dataArr={rolesArr}
+                  dataArr={userTypes.map(type => type.label)}
                   selectedSkills={selectedSecondaryRole}
                   setSelectedSkills={setSelectedSecondaryRole}
                   label="Secondary Role"

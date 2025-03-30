@@ -9,6 +9,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
+import MessageOptions from "./messageOptions";
+
 
 interface MessageProps {
   message: IMessage;
@@ -286,7 +288,7 @@ const Message: React.FC<MessageProps> = ({
   // }
 
   return (
-    <div ref={intersectionRef}>
+    <div ref={intersectionRef} className="overflow-visible">
       {shouldShowDate && (
         <div className="flex items-center w-full justify-between px-4">
           <div className="flex-1 p-2.5 text-coolGray">
@@ -301,14 +303,21 @@ const Message: React.FC<MessageProps> = ({
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2 px-4 py-2 w-full relative group hover:bg-gunMetal">
-        <div className="absolute -top-8 left-28 mt-2 mr-2 hidden group-hover:flex transition-opacity duration-200">
-          {/* <MessageReactions
-            // handleEmojiSelect = {handleEmojiSelect}
+      <div className="flex flex-wrap gap-2 px-4 py-2 w-full relative group hover:bg-gunMetal overflow-visible">
+        <div 
+          className="absolute -top-8 left-28 mt-2 mr-2 hidden group-hover:flex transition-opacity duration-200"
+          style={{
+            zIndex: 9999,
+            position: 'absolute',
+            pointerEvents: 'auto'
+          }}
+        >
+          <MessageOptions
             id={id}
             isDemoSender={isDemoSender}
             isOwner={isDemoSender}
-          /> */}
+            handleEmojiSelect={() => {}}
+          />
         </div>
 
         <div className="flex rounded-full p-0.5 w-12 h-12">
