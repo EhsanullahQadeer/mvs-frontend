@@ -1,9 +1,7 @@
 import BalanceBilling from "./context/BalanceBilling";
 import PaymentMethodBilling from "./context/PaymentMethodBilling";
-import PayoutMethodBilling from "./context/PayoutMethodBilling";
 import BillingHistoryBilling from "./context/BillingHistoryBilling";
 import { useEffect, useState } from "react";
-import axiosInstance from "api/axios";
 import { checkUserHasStripeConnectedAccount } from "api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
@@ -15,7 +13,7 @@ import { handleConnectWithStripe } from "api/stripe";
 const BillingSettings = () => {
   const [isUserStripeConnected, setIsUserStripeConnected] = useState(false);
   const user = useSelector((state: RootState) => state.auth?.user);
-  
+
   useEffect(() => {
     const fetchUserStripeConnected = async () => {
       if (user?.id) {
