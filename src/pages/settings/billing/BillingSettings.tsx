@@ -1,9 +1,7 @@
 import BalanceBilling from "./context/BalanceBilling";
 import PaymentMethodBilling from "./context/PaymentMethodBilling";
-import PayoutMethodBilling from "./context/PayoutMethodBilling";
 import BillingHistoryBilling from "./context/BillingHistoryBilling";
 import { useEffect, useState } from "react";
-import axiosInstance from "api/axios";
 import { checkUserHasStripeConnectedAccount } from "api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
@@ -15,7 +13,7 @@ import { handleConnectWithStripe } from "api/stripe";
 const BillingSettings = () => {
   const [isUserStripeConnected, setIsUserStripeConnected] = useState(false);
   const user = useSelector((state: RootState) => state.auth?.user);
-  
+
   useEffect(() => {
     const fetchUserStripeConnected = async () => {
       if (user?.id) {
@@ -42,7 +40,7 @@ const BillingSettings = () => {
         <h2 className="text-white px-3 py-4 text-xl font-semibold border-b border-eclipseGray">
           Billing
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
           <div className="w-full h-full">
             <div className="h-full">
               <BalanceBilling />
@@ -51,11 +49,6 @@ const BillingSettings = () => {
           <div className="w-full h-full">
             <div className="h-full">
               <PaymentMethodBilling />
-            </div>
-          </div>
-          <div className="w-full h-full">
-            <div className="h-full">
-              <PayoutMethodBilling />
             </div>
           </div>
         </div>
