@@ -25,18 +25,18 @@ const BillingHistoryBilling = () => {
     const [skip, setSkip] = useState<number>(0);
     const [take, setTake] = useState<number>(4);
     const [total, setTotal] = useState<number>(0);
-    async function getBillingHistory() {
-        const response = await axios.get(`/users/transaction-history?skip=${skip}&take=${take}`);
-        setTotal(response.data?.results?.total ?? 0);
-        setTransactions(response.data?.results?.transactions ?? []);
-
-    }
     function getDate(date: string) {
         const d = new Date(date);
         return `${d.getMonth()}/${d.getDay()}/${d.getFullYear()}`
     }
 
     useEffect(() => {
+        async function getBillingHistory() {
+            const response = await axios.get(`/users/transaction-history?skip=${skip}&take=${take}`);
+            setTotal(response.data?.results?.total ?? 0);
+            setTransactions(response.data?.results?.transactions ?? []);
+    
+        }
         getBillingHistory();
     }, [skip, take])
 
@@ -93,7 +93,7 @@ const BillingHistoryBilling = () => {
                 <div className="flex justify-end mt-2 gap-2 items-center">
                     <span className="text-coolGray text-xs">Showing {skip + 1} - {skip + take > total ? total : skip + take} of {total} transactions</span>
                     <div className="flex items-center gap-2">
-                        <button disabled={skip - take < 0} className={`bg-[#131313] text-white px-4 py-2 rounded-full ${skip - take < 0 ? "" : "hover:bg-[#242424]"} transition-colors text-xs` } onClick={() => {setSkip(skip - take < 0 ? 0 : skip - take)}}>
+                        <button disabled={skip - take < 0} className={`bg-[#131313] text-white px-4 py-2 rounded-full ${skip - take < 0 ? "" : "hover:bg-[#242424]"} transition-colors text-xs` } onClick={() => {setSkip(skip - take < 0 ? 0 : skip - take);}}>
                             <IoChevronBackOutline className={`w-5 h-5 ${skip - take < 0 ? 'opacity-50' : ''}`} />
                         </button>
                         <button disabled={skip + take > total} className={`bg-[#131313] text-white px-4 py-2 rounded-full ${skip + take > total ? "" : "hover:bg-[#242424]"} transition-colors text-xs`} onClick={() => { setSkip(skip + take > total ? total-skip : skip + take);}}>
