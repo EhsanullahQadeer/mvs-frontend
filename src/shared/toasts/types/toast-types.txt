@@ -1,0 +1,17 @@
+To use add "const { addToast } = useToast();"
+and call addToast({state: "messageArchived" }) for prebuilt, or add the parameters you want for custom
+
+Success:
+  messageArchived
+  messageDeleted
+  messageMovedToSpam
+  messageMarkedAsUnread
+  messageMarkedAsRead
+  demoSentSuccessfully
+  tipSentSuccessfully
+  fileUploadedSuccessfully
+  downloadComplete
+  payoutMethodUpdated
+  newPayoutMethodAdded
+  stripeAccountConnected
+  withdrawalRequestSubmitted
