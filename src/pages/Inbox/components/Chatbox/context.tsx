@@ -12,7 +12,6 @@ interface ChatboxContextType {
   // State
   activeTab: ChatTabType;
   setActiveTab: (tab: ChatTabType) => void;
-  chatMessages: IMessage[] | null;
   activeConversation: IConversation | null;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -78,7 +77,6 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const [activeTab, setActiveTab] = useState<ChatTabType>('messages');
   const [connectionStatus, setConnectionStatus] = useState<ConnectionDetail>(undefined);
   const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
-  const [chatMessages, setChatMessages] = useState<IMessage[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [recipient, setRecipient] = useState<TUser>(activeConversation?.recipient || null);
   const [totalPaid, setTotalPaid] = useState<number>(activeConversation?.total_paid || 0);
@@ -150,12 +148,6 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     }
     setIsThread(false);
   }, [activeConversation]);
-  
-  useEffect(() => {
-    if (messages === null) {
-      setChatMessages(messages);
-    }
-  }, [messages]);
 
   useEffect(() => {
     if (notes) {
@@ -172,7 +164,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     if (activeConversation) {
       setLoading(true);
       if (!isThread) {
-        setChatMessages(null);
+        setMessages(null);
         getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 })
           .finally(() => {
             setLoading(false);
@@ -224,7 +216,6 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     overlayLoading,
     setOverlayLoading,
     notes,
-    chatMessages,
     recipient,
     totalPaid,
     connectionStatus,

@@ -93,10 +93,6 @@ const ThreadMessage = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    console.log('Message Media: ', message);    
-  }, [media])
-
-  useEffect(() => {
     if (threadMessages.length === 1 && hasListenedToDemo && listenToDemoEvent) {
       setOnlyAllowAudioRecording(true);
     }
