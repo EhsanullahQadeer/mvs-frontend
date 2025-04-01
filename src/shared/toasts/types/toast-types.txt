@@ -15,3 +15,28 @@ Success:
   newPayoutMethodAdded
   stripeAccountConnected
   withdrawalRequestSubmitted
+
+Error:
+  failedToArchiveMessage
+  failedToDeleteMessage
+  failedToMoveToSpam
+  couldNotApplyLabel
+  fileUploadFailed
+  unsupportedFileFormat
+  fileSizeExceeded
+  messageFailedToSend
+  freeMessageLimitExceeded
+  tooManyMessagesSent
+  unexpectedError
+  APITimeout
+  messageReported
+  userBlocked
+  failedToDownloadSample
+
+Warning:
+  actionCantBeUndone
+  attachmentTooLarge
+  insufficientCredits
+  paymentFailed
+  uploadFailed
+  connectionLost

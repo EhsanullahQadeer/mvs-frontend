@@ -6,7 +6,7 @@ import { toastStates } from "./types/toast-types";
 type ToastProps = {
   state?: string;
   message?: string;
-  type?: "success" | "error" | "warning";
+  type?: string;
   position?: "top-left" | "top-right" | "top-center" | "bottom-left" | "bottom-right" | "bottom-center";
   duration?: number;
   onClose?: () => void;
@@ -15,8 +15,8 @@ type ToastProps = {
 const Toast: React.FC<ToastProps> = ({
   state,
   message,
-  type = "success",
-  position = "bottom-right",
+  type,
+  position = "top-left", //default position
   duration = 3000,
   onClose
 }) => {
@@ -32,7 +32,7 @@ const Toast: React.FC<ToastProps> = ({
   const toastState = state ? toastStates[state] : null;
 
   return (
-    <div className={`toast ${type ? `toast-${type}` : toastState.type} ${position ? `toast-${position}` : toastState.position}`}>
+    <div className={`toast ${type ? `toast-${type}` : `toast-${toastState?.type}`} toast-${position}`}>
       {toastState ? toastState.element : message}
     </div>
   );

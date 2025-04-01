@@ -26,11 +26,13 @@
 
 /* Success toast */
 .toast-success {
-  background-color: #013124; /* Green */
+  background-color: #013124;
   border: 2px solid #056048;
   border-radius: 12px;
   padding: 12px;
   gap: 8px;
+  width: 26.875rem;
+  height: 6.25rem;
   display: flex;
   align-items: center;
   justify-content: left;
@@ -38,25 +40,72 @@
 
 /* Error toast */
 .toast-error {
-  background-color: #dc3545; /* Red */
-  border-left: 5px solid #c82333;
+  background-color: #380202;
+  border: 2px solid #C32929;
+  border-radius: 12px;
+  padding: 12px;
+  gap: 8px;
+  width: 26.875rem;
+  height: 6.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: left;
 }
 
 /* Warning toast */
 .toast-warning {
-  background-color: #ffc107; /* Yellow */
-  color: black;
-  border-left: 5px solid #e0a800;
+  background-color: #544000;
+  border: 2px solid #5a5000;
+  background-blend-mode: soft-light;
+  border-radius: 12px;
+  padding: 12px;
+  gap: 8px;
+  width: 26.875rem;
+  height: 6.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: left;
 }
 
 
 /* Positioning styles */
-.toast-top-right { top: 10px; right: 10px; position: fixed; }
-.toast-top-left { top: 10px; left: 10px; position: fixed; }
-.toast-bottom-right { bottom: 10px; right: 10px; position: fixed; }
-.toast-bottom-left { bottom: 10px; left: 10px; position: fixed; }
-.toast-top-center { top: 10px; left: 50%; transform: translateX(-50%); position: fixed; }
-.toast-bottom-center { bottom: 10px; left: 50%; transform: translateX(-50%); position: fixed; }
+.toast-top-right {
+  top: 10px;
+  right: 10px;
+  position: fixed;
+}
+
+.toast-top-left {
+  top: 10px;
+  left: 10px;
+  position: fixed;
+}
+
+.toast-bottom-right {
+  bottom: 10px;
+  right: 10px;
+  position: fixed;
+}
+
+.toast-bottom-left {
+  bottom: 10px;
+  left: 10px;
+  position: fixed;
+}
+
+.toast-top-center {
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
+}
+
+.toast-bottom-center {
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
+}
 
 /* Fade-in animation */
 @keyframes fadeIn {
@@ -64,6 +113,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
