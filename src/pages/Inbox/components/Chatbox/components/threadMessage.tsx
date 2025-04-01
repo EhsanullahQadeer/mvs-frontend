@@ -2,8 +2,10 @@ import moment from "moment";
 import WaveSurfer from "wavesurfer.js";
 import { useChatbox } from "../context";
 import { FiUnlock } from "react-icons/fi";
+import { useMessenger } from "api/messenger/context";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { IMessage, MEDIA_TYPE, MESSAGE_TYPES } from "api/messenger/objects/states.types";
+import { useUpdateHasListenedToDemo } from "api/messenger/hooks/useUpdateHasListenedToDemo";
 import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import DemoPlayerFeedbackThread from "components/ui/Header/molecules/chatboxMolecules/audioDemoPlayerFeedbackThread";
 
@@ -48,16 +50,22 @@ const ThreadMessage = (props: Props) => {
     activeConversation,
     markMessageAsRead,
     connectionStatus,
-    recipient
+    listenToDemoEvent,
+    setListenToDemoEvent,
+    setOnlyAllowAudioRecording,
   } = useChatbox();
+
+  const {
+    threadMessages,
+  } = useMessenger();
 
   let is_read = message?.is_read;
   const audioUrl = media?.url || null;
   const requiresFeedback = message_type === MESSAGE_TYPES.DEMO && 
     transaction?.status !== "completed";
 
-  const [hasListenedToDemo, setHasListenedToDemo] = useState<boolean>(false);
-  const [demoPlayerListenState, setDemoPlayerListenState] = useState<boolean>(false);
+  const updateHasListenedToDemo = useUpdateHasListenedToDemo(); // Call the hook
+  const [hasListenedToDemo, setHasListenedToDemo] = useState<boolean>(media?.played_through);
 
   const onIntersection = (entries, observer) => {
     for (const { isIntersecting, target } of entries) {
@@ -78,15 +86,21 @@ const ThreadMessage = (props: Props) => {
     audioRef.current.currentTime = 0;
     if (!intersectionRef.current) return;
     observer.observe(intersectionRef.current);
-    console.log('Recipient ID in thread: ', recipient.id);
-    console.log('Connection status In thread: ', connectionStatus);
-    console.log('Requires Feedback In thread: ', requiresFeedback);
-    console.log('Has Listened to Demo In thread: ', hasListenedToDemo);
     if(connectionStatus !== true && requiresFeedback && !hasListenedToDemo) {
-      console.log('Listen state set to true');
-      setDemoPlayerListenState(true);
+      setListenToDemoEvent(true);
+      setHasListenedToDemo(false);
     }
   }, [])
+
+  useEffect(() => {
+    console.log('Message Media: ', message);    
+  }, [media])
+
+  useEffect(() => {
+    if (threadMessages.length === 1 && hasListenedToDemo && listenToDemoEvent) {
+      setOnlyAllowAudioRecording(true);
+    }
+  }, [hasListenedToDemo])
 
   useEffect(() => {
     if (!waveformRef.current || !audioUrl) return;
@@ -150,7 +164,6 @@ const ThreadMessage = (props: Props) => {
     });
     
     audio.addEventListener('canplaythrough', () => {
-      //console.log('Audio format is supported');
       setNeedsConversion(false);
     });
   }, [media?.url]);
@@ -179,11 +192,9 @@ const ThreadMessage = (props: Props) => {
 
   const handleDemoPlayPause = useCallback(() => {
     if (isPlaying) {
-      console.log('Pausing...');
       setIsPlaying(false);
       audioRef.current?.pause();
     } else {
-      console.log('Playing...');
       setIsPlaying(true);
       audioRef.current?.play();
 
@@ -197,10 +208,12 @@ const ThreadMessage = (props: Props) => {
       audioRef.current.onended = () => {
         setIsPlaying(false);
         setProgress(0);
+        setHasListenedToDemo(true);
+        updateHasListenedToDemo({ mediaId: media?.id });
         audioRef.current.currentTime = 0;
       };
     }
-  }, [isPlaying]); // Add dependencies as needed
+  }, [isPlaying, media?.id]); // Added media?.id as dependency since we use it
 
   const handleRecordedAudioPlayPause = useCallback(() => {
     if (wavesurfer.current) {
@@ -221,15 +234,17 @@ const ThreadMessage = (props: Props) => {
   }, []);
 
   const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!audioRef.current || !progressBarRef.current) return;
+    if (hasListenedToDemo) {
+      if (!audioRef.current || !progressBarRef.current) return;
 
-    const rect = progressBarRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const percentage = (x / rect.width) * 100;
-    const time = (percentage / 100) * audioRef.current.duration;
-    
-    audioRef.current.currentTime = time;
-    setProgress(percentage);
+      const rect = progressBarRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = (x / rect.width) * 100;
+      const time = (percentage / 100) * audioRef.current.duration;
+      
+      audioRef.current.currentTime = time;
+      setProgress(percentage);
+    }
   };
 
   function renderActionRequired() {
@@ -242,9 +257,15 @@ const ThreadMessage = (props: Props) => {
           <div className="text-white text-base font-semibold">
             Action Required
           </div>
+          {hasListenedToDemo ? 
           <div className="text-coolGray text-sm font-normal w-64">
-            To receive your payment, please provide your feedback on the demo.
+            To receive your payment, finally please reply with an audio message.
           </div>
+          :
+          <div className="text-coolGray text-sm font-normal w-64">
+            To receive your payment, first please listen to the full demo.
+            </div>
+          }
         </div>
       </div>
     );
@@ -278,9 +299,9 @@ const ThreadMessage = (props: Props) => {
           {message_type === MESSAGE_TYPES.DEMO ? (
             <>
               <div className="mt-2">
-                <DemoPlayerFeedbackThread isPlaying={isPlaying} duration={media?.duration} fileName={media?.file_name} fileSizeBytes={media?.file_size_bytes} handlePlayPause={handleDemoPlayPause} progressBarRef={progressBarRef} handleProgressBarClick={handleProgressBarClick} progress={progress} currentTime={audioRef.current?.currentTime}/>
+                <DemoPlayerFeedbackThread isPlaying={isPlaying} duration={media?.duration} fileName={media?.file_name} fileSizeBytes={media?.file_size_bytes} handlePlayPause={handleDemoPlayPause} progressBarRef={progressBarRef} handleProgressBarClick={handleProgressBarClick} progress={progress} currentTime={audioRef.current?.currentTime} hasListened={hasListenedToDemo}/>
               </div>
-              {requiresFeedback && renderActionRequired()}
+              {requiresFeedback && connectionStatus !== true && threadMessages?.length === 1 && renderActionRequired()}
             </>
           ) : media?.type === MEDIA_TYPE.RECORDING ? (
             <div className="flex mt-2">

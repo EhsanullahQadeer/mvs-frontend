@@ -152,6 +152,7 @@ export type IMedia = {
   type: MEDIA_TYPE;
   created_at: string;
   updated_at: string;
+  played_through: boolean;
 } | null;
 
 export enum MEDIA_TYPE {

@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { useMessenger } from 'api/messenger/context';
+import { checkPendingConnectAPI, checkUserHasStripeConnectedAccount } from 'api/user';
 import { IConversation, IMessage, INotes, TUser } from 'api/messenger/objects/states.types';
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
-import { checkPendingConnectAPI, checkUserHasStripeConnectedAccount } from 'api/user';
 
 type ChatTabType = 'messages' | 'info' | 'notes';
 type ConnectionDetail = false | null | 'pending' | undefined | true;
@@ -23,6 +23,10 @@ interface ChatboxContextType {
   totalPaid: number;
   connectionStatus: ConnectionDetail;
   setConnectionStatus: (status: ConnectionDetail) => void;
+  listenToDemoEvent: boolean;
+  setListenToDemoEvent: (listenedToDemoEvent: boolean) => void;
+  onlyAllowAudioRecording: boolean;
+  setOnlyAllowAudioRecording: (onlyAllowAudioRecording: boolean) => void;
     // messageReactions: any;
     // handleEmojiSelect: (id: number, emoji: string) => void;
   
@@ -34,6 +38,8 @@ interface ChatboxContextType {
   handleLoadThread: (parentMessageId: number) => void;
   isThread: boolean;
   setIsThread: (isThread: boolean) => void;
+  hasListenedToDemo: boolean;
+  setHasListenedToDemo: (hasListened: boolean) => void;
   markMessageAsRead: (id:number)=> void;
   LIMIT_MESSAGES: number;
   isSendDemoAvailable: boolean;
@@ -77,7 +83,12 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const [recipient, setRecipient] = useState<TUser>(activeConversation?.recipient || null);
   const [totalPaid, setTotalPaid] = useState<number>(activeConversation?.total_paid || 0);
   const [notes, setNotes] = useState<INotes[]>(conversationNotes);
-  const [isThread, setIsThread] = useState<boolean>(false);
+  const [isThread, setIsThread] = useState<boolean>(false); // Todo: implement the new haslistened to demo var
+
+  const [hasListenedToDemo, setHasListenedToDemo] = useState<boolean>(false);
+  const [listenToDemoEvent, setListenToDemoEvent] = useState<boolean>(false);
+  const [onlyAllowAudioRecording, setOnlyAllowAudioRecording] = useState<boolean>(false);
+
   const [isSendDemoAvailable, setIsSendDemoAvailable] = useState<boolean>(false);
   const LIMIT_MESSAGES = 100;
 
@@ -98,14 +109,9 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     } else {
       setIsSendDemoAvailable(false);
     }
-    console.log('Checking connection with user: ', recipient.id);
+    //console.log('Checking connection with user: ', recipient.id);
     fetchConnectionStatus(recipient.id)
   }, [recipient]);
-
-
-  useEffect(() => {
-    console.log('isSendDemoAvailable', isSendDemoAvailable);
-  }, [isSendDemoAvailable]);
 
   async function markMessageAsRead(id:number){
     clearTimeout(onMessageReadTimeout);
@@ -118,10 +124,10 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }
 
   const fetchConnectionStatus = async (id: number) => {
-    console.log('Fetching Connection status with user: ', id);
+    //console.log('Fetching Connection status with user: ', id);
     try {
       const response = await checkPendingConnectAPI(id);
-      console.log('response: ', response);
+      //console.log('response: ', response);
       if(response.data.results.connectionDetails === null) {setConnectionStatus(null);}
       else {
         setConnectionStatus(
@@ -209,10 +215,6 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     });
   }, [getThreadMessages, setMessages, setIsThread]);
 
-  useEffect(() => {
-    console.log('Connection Detail: ', connectionStatus);
-  }, [connectionStatus]);
-
   const value: ChatboxContextType = {
     activeTab,
     setActiveTab,
@@ -234,6 +236,12 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     handleLoadThread,
     isThread,
     setIsThread,
+    hasListenedToDemo,
+    setHasListenedToDemo,
+    listenToDemoEvent,
+    setListenToDemoEvent,
+    onlyAllowAudioRecording,
+    setOnlyAllowAudioRecording,
     markMessageAsRead,
     LIMIT_MESSAGES,
     isSendDemoAvailable
