@@ -16,6 +16,7 @@ import { userProfessionalNameSearch } from "api/user";
 import React, { useState, useEffect, useRef } from "react";
 import { referUserByEmail } from "api/user";
 import DialogTitle from "@mui/material/DialogTitle";
+import Tooltip from "@mui/material/Tooltip";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -55,6 +56,7 @@ function ComposerDialog(props: Props) {
   // Feedback message states
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(true);
+  const [isFocused, setIsFocused] = useState(false);
   // Debounce the search value
   const debouncedSearchValue = useDebounce(searchTerm, 300);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -62,6 +64,19 @@ function ComposerDialog(props: Props) {
 
   // Email validation regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Function to truncate email addresses
+  const truncateEmail = (email: string) => {
+    const [localPart, domain] = email.split('@');
+    const [domainName, extension] = domain.split('.');
+    return `${localPart.substring(0, 6)}...@${domainName.substring(0, 3)}...${extension}`;
+  };
+
+  // Function to truncate text
+  const truncateText = (text: string) => {
+    if (text.length <= 10) return text;
+    return `${text.substring(0, 10)}...`;
+  };
 
   // Check if input is an email
   useEffect(() => {
@@ -107,7 +122,14 @@ function ComposerDialog(props: Props) {
             professionalName: debouncedSearchValue,
             take: 10,
           });
-          setSearchResults(response.data.users);
+          // Filter out users that are already in contributors list
+          const filteredUsers = response.data.users.filter(user => 
+            !contributors.some(contributor => 
+              contributor.user.id === user.id || 
+              contributor.user.professional_name === user.professional_name
+            )
+          );
+          setSearchResults(filteredUsers);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
@@ -117,7 +139,7 @@ function ComposerDialog(props: Props) {
     } else {
       setSearchResults([]);
     }
-  }, [debouncedSearchValue]);
+  }, [debouncedSearchValue, contributors]);
 
   const handleButtonClick = () => {
     if (selected) {
@@ -241,6 +263,13 @@ function ComposerDialog(props: Props) {
               className="px-4 relative py-3 text-sm font-normal text-coolGray w-full bg-jetBlack rounded-lg border border-eclipseGray hover:border-secondaryBlue focus:border-transparent focus:outline-secondaryBlue focus:outline-2 focus:outline-offset-0"
               value={searchTerm}
               onChange={handleSearchChange}
+              onFocus={() => setIsFocused(true)}
+              onBlur={(e) => {
+                // Only hide if we're not clicking inside the dropdown
+                if (!e.relatedTarget?.closest('.collaborators-dropdown')) {
+                  setIsFocused(false);
+                }
+              }}
             />
             <div className="absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer flex">
               {loading && (
@@ -260,7 +289,8 @@ function ComposerDialog(props: Props) {
             {isInvite ? "Invite" : "Add"}
           </div>
         </div>
-        <div className={`flex flex-col bg-[#1C1C17] absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown`}>
+        {isFocused && (
+          <div className={`flex flex-col bg-[#1C1C17] absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown collaborators-dropdown`}>
             {searchResults.map((composer, idx) => {
               const { thumbnail, professional_name, primary_role, secondary_role } =
                 composer;
@@ -283,9 +313,11 @@ function ComposerDialog(props: Props) {
                   <div className="flex-1 flex justify-between items-center">
                     <div>
                       <div className="flex items-center">
-                        <span className="text-sm font-semibold text-white">
-                          {professional_name}
-                        </span>
+                        <Tooltip title={professional_name} placement="top">
+                          <span className="text-sm font-semibold text-white">
+                            {professional_name}
+                            </span>
+                        </Tooltip>
 
                         {isOwner && (
                           <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">
@@ -312,7 +344,8 @@ function ComposerDialog(props: Props) {
                 </div>
               );
             })}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-1 overflow-hidden">
@@ -341,9 +374,11 @@ function ComposerDialog(props: Props) {
                   <div className="flex-1 flex justify-between items-center">
                     <div>
                       <div className="flex items-center">
-                        <span className="text-sm font-semibold text-white">
-                          {professional_name}
-                        </span>
+                        <Tooltip title={professional_name} placement="top">
+                          <span className="text-sm font-semibold text-white">
+                            {professional_name}
+                          </span>
+                        </Tooltip>
 
                         {isOwner && (
                           <span className="ml-1.5 px-1.5 bg-eerieBlack rounded-md">

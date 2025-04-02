@@ -25,6 +25,7 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 
 const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
   const {
@@ -184,7 +185,18 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
     }
   };
 
- 
+  // Function to truncate email addresses
+  const truncateEmail = (email: string) => {
+    const [localPart, domain] = email.split('@');
+    const [domainName, extension] = domain.split('.');
+    return `${localPart.substring(0, 6)}...@${domainName.substring(0, 3)}...${extension}`;
+  };
+
+  // Function to truncate text
+  const truncateText = (text: string) => {
+    if (text.length <= 10) return text;
+    return `${text.substring(0, 10)}...`;
+  };
 
   return (
     <>
@@ -289,9 +301,11 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
                       key={professional_name + idx}
                       className="flex gap-2 py-1 px-3 rounded-[20px] bg-eerieBlack border border-eerieBlack items-center"
                     >
-                      <span className="text-xs text-mediumGray whitespace-nowrap font-normal">
-                        {composer?.user?.professional_name}
-                      </span>
+                      <Tooltip title={composer?.user?.professional_name} placement="top">
+                        <span className="text-xs text-mediumGray whitespace-nowrap font-normal">
+                          {truncateText(composer?.user?.professional_name)}
+                        </span>
+                      </Tooltip>
                       <div 
                         className="w-3.5 h-3.5 cursor-pointer rounded-full text-mediumGray flex justify-center items-center hover:bg-dimGray hover:text-black" // Change 'gray-600' to your desired color
                         onClick={removeComposer} // Add onClick to remove composer
