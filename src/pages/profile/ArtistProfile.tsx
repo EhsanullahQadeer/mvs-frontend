@@ -58,9 +58,9 @@ const ArtistProfile = () => {
     instrumental: false,
     sample: false,
     contribution: false,
-    full_song: false
+    full_song: false,
   });
-  const [selectedTab, setSelectedTab] = useState('');
+  const [selectedTab, setSelectedTab] = useState("");
   const types = ["instrumental", "sample", "contribution", "full_song"];
   useEffect(() => {
     if (artistData && user) {
@@ -72,13 +72,16 @@ const ArtistProfile = () => {
 
   const fetchSampleTypes = async () => {
     if (user && artistData) {
-      const typeString = types.join(',');
-      const response = await getCheckUserHasSampleType(typeString, artistData.id);
+      const typeString = types.join(",");
+      const response = await getCheckUserHasSampleType(
+        typeString,
+        artistData.id
+      );
       console.log("response", response);
       console.log("response", user.id, artistData.id);
       setHasSampleType(response.data);
     }
-  }
+  };
 
   useEffect(() => {
     // Reset states when user or artist changes
@@ -86,15 +89,13 @@ const ArtistProfile = () => {
       instrumental: false,
       sample: false,
       contribution: false,
-      full_song: false
+      full_song: false,
     });
-    setSelectedTab('');
+    setSelectedTab("");
     fetchSampleTypes();
   }, [artistData, user]);
 
   const [creditsData, setCreditsData] = useState([]);
-
-
 
   const getArtistData = useCallback(async () => {
     try {
@@ -164,9 +165,9 @@ const ArtistProfile = () => {
 
   return (
     <Theme>
-      {!isLoading ? (<>
-        <div className="relative md:flex hidden md:flex-row overflow-hidden">
-
+      {!isLoading ? (
+        <>
+          <div className="relative md:flex hidden md:flex-row overflow-hidden">
             <ProfileRightSection
               artistData={artistData}
               currentUserInfo={user}
@@ -183,22 +184,34 @@ const ArtistProfile = () => {
               isPublicProfile={false}
             />
 
-          <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
-            <MessageContextProvider>
-              <ProfileAboutSection
-                {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
-              />
-            </MessageContextProvider>
-          </section>
-        </div>
-        <div>
-          </div>{" "}
+            <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
+              <MessageContextProvider>
+                <ProfileAboutSection
+                  {...{
+                    artistData,
+                    creditsData,
+                    connectionDetail,
+                    setConnectionDetail,
+                    chatOpen,
+                    setChatOpen,
+                  }}
+                />
+              </MessageContextProvider>
+            </section>
+          </div>
+          <div></div>{" "}
           <div className="block md:hidden">
             <ArtistProfileMobile
-                            {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
-
-/>
-<ProfileRightSection
+              {...{
+                artistData,
+                creditsData,
+                connectionDetail,
+                setConnectionDetail,
+                chatOpen,
+                setChatOpen,
+              }}
+            />
+            <ProfileRightSection
               artistData={artistData}
               currentUserInfo={user}
               hasSampleType={hasSampleType}
@@ -214,7 +227,7 @@ const ArtistProfile = () => {
               isPublicProfile={false}
             />
           </div>
-      </>
+        </>
       ) : (
         <>
           <div className="absolute top-0 left-0 z-[9999] bg-black opacity-40 w-full h-full"></div>
