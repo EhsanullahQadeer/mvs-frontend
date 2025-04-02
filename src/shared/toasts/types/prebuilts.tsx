@@ -1,7 +1,7 @@
 import { ToastConfig } from "./toast-types";
 
 export const prebuiltToasts: ToastConfig[] = [
-  // ************************ success toasts ************************
+  // ************************ success toasts *********************************************************************
   { 
     id: "messageArchived", 
     title: "Message archived", 
@@ -89,7 +89,110 @@ export const prebuiltToasts: ToastConfig[] = [
     message: "Withdrawal request has been submitted successfully.", 
     type: "success" 
   },
-  // ************************ error toasts ************************
+  // batch 2
+  { 
+    id: "profileUpdated", 
+    title: "Profile updated successfully", 
+    action: "View Profile", 
+    message: "Your profile details have been updated.", 
+    type: "success" 
+  },
+  { 
+    id: "changesSaved", 
+    title: "Changes saved",
+    message: "All changes have been saved successfully.", 
+    type: "success" 
+  },
+  { 
+    id: "informationDeleted", 
+    title: "Information deleted successfully", 
+    action: "Undo", 
+    message: "Selected information has been permanently removed.", 
+    type: "success" 
+  },
+  { 
+    id: "accountInfoUpdated", 
+    title: "Account info updated", 
+    action: "Edit Info", 
+    message: "Your account information has been updated.", 
+    type: "success" 
+  },
+  { 
+    id: "emailUpdated", 
+    title: "Email updated succesfully",
+    message: "Your email address has been updated.", 
+    type: "success" 
+  },
+  { 
+    id: "passwordChanged", 
+    title: "Password changed succesfully", 
+    message: "Your password was changed successfully.", 
+    type: "success" 
+  },
+  { 
+    id: "contributorAdded", 
+    title: "Contributor added", 
+    action: "View contributors", 
+    message: "The contributor was successfully added to your file.", 
+    type: "success" 
+  },
+  { 
+    id: "metadataUpdated", 
+    title: "Metadata updated", 
+    action: "View file", 
+    message: "File metadata was updated.", 
+    type: "success" 
+  },
+  { 
+    id: "fileDeleted", 
+    title: "File deleted", 
+    action: "Undo", 
+    message: "The file was permanently removed.", 
+    type: "success" 
+  },
+  { 
+    id: "publishPercentageUpdated", 
+    title: "Publishing percentage updated", 
+    action: "View Details", 
+    message: "The publishing percentage has been saved.", 
+    type: "success" 
+  },
+  { 
+    id: "roleUpdated", 
+    title: "Role updated", 
+    action: "Edit roles", 
+    message: "The role has been updated successfully.", 
+    type: "success" 
+  },
+  { 
+    id: "fileShared", 
+    title: "File shared successfully", 
+    action: "Add new method", 
+    message: "Your file was shared with selected users.", 
+    type: "success" 
+  },
+  { 
+    id: "paymentMethodRemoved", 
+    title: "Payment method removed", 
+    action: "Add new method", 
+    message: "Your payment method was successfully deleted.", 
+    type: "success" 
+  },
+  { 
+    id: "defaultPaymentMethodChanged", 
+    title: "Default payment method changed", 
+    action: "View payment method", 
+    message: "Your default payment method was updated.", 
+    type: "success" 
+  },
+  { 
+    id: "statusRefreshed", 
+    title: "Status refreshed", 
+    action: "View status", 
+    message: "Your billing status has been updated.", 
+    type: "success" 
+  },
+  // ************************ error toasts *****************************************************************
   { 
     id: "failedToArchiveMessage", 
     title: "Failed to archive message", 
@@ -195,7 +298,64 @@ export const prebuiltToasts: ToastConfig[] = [
     message: "The file could not be downloaded. Please try again.", 
     type: "error" 
   },
-  // ************************ warning toasts ************************
+  // batch 2
+  { 
+    id: "failedToSubmitWithdrawalRequest", 
+    title: "Failed to submit withdrawal request", 
+    action: "Retry", 
+    message: "We couldn’t process your request. Please try again later.", 
+    type: "error" 
+  },
+  { 
+    id: "somethingWentWrong", 
+    title: "Something went wrong", 
+    action: "Refresh", 
+    message: "An unexpected error occurred. Please refresh the page and try again.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToUpdateEmail", 
+    title: "Failed to update email", 
+    action: "Retry", 
+    message: "Something went wrong. Please try again.", 
+    type: "error" 
+  },
+  { 
+    id: "atLeastOneContributor", 
+    title: "You must select at least one contributor", 
+    action: "Add contributor", 
+    message: "Please assign at least one contributor to continue.", 
+    type: "error" 
+  },
+  { 
+    id: "publishingPercentage100", 
+    title: "Publishing percentage must equal 100%", 
+    action: "Edit split", 
+    message: "All contributor shares must add up to 100%.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToAddPaymentMethod", 
+    title: "Failed to add payment method", 
+    action: "Retry", 
+    message: "We couldn’t add your card. Please try again.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToUpdatePrivacySettings", 
+    title: "Failed to update privacy settings", 
+    action: "Retry", 
+    message: "We couldn’t save your changes.", 
+    type: "error" 
+  },
+  { 
+    id: "unableToUnblockAccount", 
+    title: "Unable to unblock account", 
+    action: "Retry", 
+    message: "Something went wrong while unblocking the user.", 
+    type: "error" 
+  },
+  // ************************ warning toasts *********************************************************************
   { 
     id: "actionCantBeUndone", 
     title: "This action cannot be undone", 
@@ -232,7 +392,57 @@ export const prebuiltToasts: ToastConfig[] = [
     message: "The connection was lost. Try again later to continue.", 
     type: "warning" 
   },
-  // ************************ info toasts ************************
+  // batch 2
+  { 
+    id: "mustConnectToPayoutMethod", 
+    title: "You must connect a payout method first", 
+    action: "Add payout method", 
+    message: "Please add a payout method to proceed.", 
+    type: "warning" 
+  },
+  { 
+    id: "payoutMethodAlreadyDefault", 
+    title: "This payout method is already set as default", 
+    action: "View payout methods", 
+    message: "No changes were made because this is already your default method.", 
+    type: "warning" 
+  },
+  { 
+    id: "mustCompleteMetadata", 
+    title: "You must complete all required metadata before saving/closing", 
+    action: "Go to metadata", 
+    message: "Some fields are missing. Please complete all details before continuing.", 
+    type: "warning" 
+  },
+  { 
+    id: "missingPublishingPercentage", 
+    title: "Missing publishing percentage for one or more contributors", 
+    action: "Edit percentages", 
+    message: "Each contributor must have a defined percentage.", 
+    type: "warning" 
+  },
+  { 
+    id: "fileAlreadyExists", 
+    title: "File already exists", 
+    action: "Rename file", 
+    message: "A file with this name has already been uploaded.", 
+    type: "warning" 
+  },
+  { 
+    id: "unsavedChanges", 
+    title: "Unsaved changes", 
+    action: "Save now", 
+    message: "You have unsaved changes. Don’t forget to save before closing.", 
+    type: "warning" 
+  },
+  { 
+    id: "cardAlreadyAdded", 
+    title: "You already have this card added", 
+    action: "Use another", 
+    message: "This card is already linked to your account.", 
+    type: "warning" 
+  },
+  // ************************ info toasts *********************************************************************
   { 
     id: "upcomingMaintenance", 
     title: "Upcoming maintenance", 
