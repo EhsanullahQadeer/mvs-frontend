@@ -52,7 +52,7 @@ const InboxHeader = () => {
   }
 
   const options = [
-    { 
+    {
       id: "archived", 
       icon: <ArchiveIcon />,
       icon2: <UnarchiveIcon />,
@@ -62,9 +62,18 @@ const InboxHeader = () => {
             refreshConversations();
             const isArchiving = selectedConversations.some(conv => !conv.is_archived);
             if (isArchiving) {
-              addToast({ state: "messageArchived", actionFunction: () => {
-                console.log("wuh huhhhh");
-              } });
+              addToast({ 
+                state: "messageArchived",
+                position: "bottom-center",
+                actionFunction: () => {
+                  toggleConversationIsArchived({ 
+                    conversationIds: selectedConversations.map(conv => conv.id) 
+                  })
+                  .then(() => {
+                    refreshConversations();
+                  });
+                }
+              });
             }
           });
       },

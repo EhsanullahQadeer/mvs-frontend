@@ -11,6 +11,7 @@ type ToastData = {
   permanent?: boolean;
   actionFunction?: (params?: any) => void; //action to be called when e.g. "retry" or "undo" button is clicked
   params?: any;
+  closeToast?: () => void;
 };
 
 const ToastContext = React.createContext<{ addToast: (toast: Omit<ToastData, "id">) => void } | undefined>(undefined);
@@ -19,6 +20,15 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const timeoutRefs = useRef<{ [key: number]: NodeJS.Timeout }>({});
   const remainingTimeRefs = useRef<{ [key: number]: number }>({});
+
+  const closeToast = (id: number) => {
+    if (timeoutRefs.current[id]) {
+      clearTimeout(timeoutRefs.current[id]);
+      delete timeoutRefs.current[id];
+    }
+    delete remainingTimeRefs.current[id];
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
 
   const addToast = (toast: Omit<ToastData, "id">) => {
     const id = Date.now();
@@ -30,9 +40,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const duration = toast.duration || 3000;
     const timeout = setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-      delete timeoutRefs.current[id];
-      delete remainingTimeRefs.current[id];
+      closeToast(id);
     }, duration);
 
     timeoutRefs.current[id] = timeout;
@@ -52,13 +60,20 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
     if (remainingTimeRefs.current[id]) {
       const timeout = setTimeout(() => {
-        setToasts((prev) => prev.filter((t) => t.id !== id));
-        delete timeoutRefs.current[id];
-        delete remainingTimeRefs.current[id];
+        closeToast(id);
       }, remainingTimeRefs.current[id]);
 
       timeoutRefs.current[id] = timeout;
     }
+  };
+
+  const wrapActionFunction = (id: number, originalFunction?: (params?: any) => void) => {
+    return (params?: any) => {
+      if (originalFunction) {
+        originalFunction(params);
+      }
+      closeToast(id);
+    };
   };
 
   return (
@@ -69,17 +84,10 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           <Toast 
             key={toast.id} 
             {...toast} 
-            onClose={() => {
-              if (timeoutRefs.current[toast.id]) {
-                clearTimeout(timeoutRefs.current[toast.id]);
-                delete timeoutRefs.current[toast.id];
-              }
-              delete remainingTimeRefs.current[toast.id];
-              setToasts((prev) => prev.filter((t) => t.id !== toast.id));
-            }}
+            onClose={() => closeToast(toast.id)}
             onMouseEnter={() => handleMouseEnter(toast.id)}
             onMouseLeave={() => handleMouseLeave(toast.id)}
-            actionFunction={toast.actionFunction}
+            actionFunction={wrapActionFunction(toast.id, toast.actionFunction)}
             params={toast.params}
           />
         ))}
