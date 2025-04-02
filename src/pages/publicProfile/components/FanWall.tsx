@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef, useCallback } from "react";
 import Comment from "./Comment";
 import icon from "../../../assets/img/icon.svg";
-import { createFanwallPost, getFanwallPosts } from "api/fanwall";
 import { CircularProgress } from "@mui/material";
-import { IArtistProfileData, ICurrentUser } from "./types";
 import UnlockContentModel from "./UnlockContentModel";
 import { IUserData } from "pages/profile/components/types";
+import { IArtistProfileData, ICurrentUser } from "./types";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { createFanwallPost, getFanwallPosts } from "api/fanwall";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 
 interface IProps {
@@ -239,7 +239,7 @@ const FanWall = (props: IProps) => {
           </div>
         </div>
 
-        <div>
+        <div className="overflow-y-auto h-[60vh] custom-dropdown"> {/* Set a fixed height and enable vertical scrolling */}
           {fanwallPostsData.map((fanwallPost, index) => (
             <div
               key={index}
