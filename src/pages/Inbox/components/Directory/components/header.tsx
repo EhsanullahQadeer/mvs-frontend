@@ -13,6 +13,7 @@ import { ReactComponent as ArchiveIcon } from "../../../../../assets/icons/archi
 import { ReactComponent as UnarchiveIcon } from "../../../../../assets/icons/unarchieveIcon.svg";
 import { ReactComponent as AlertOctagonIcon } from "../../../../../assets/icons/alertOctagon.svg";
 import { ReactComponent as FolderInputIcon } from "../../../../../assets/icons/folderInputIcon.svg";
+import { useToast } from "shared/toasts/ToastProvider";
 
 const InboxHeader = () => {
   const {
@@ -40,6 +41,8 @@ const InboxHeader = () => {
     getTotalConversationUnread,
   } = useMessenger();
 
+  const { addToast } = useToast();
+
   function refreshConversations(){
     loadConversations();
     setSelectedConversations([]);
@@ -49,12 +52,30 @@ const InboxHeader = () => {
   }
 
   const options = [
-    { 
+    {
       id: "archived", 
       icon: <ArchiveIcon />,
       icon2: <UnarchiveIcon />,
       onClick: () => {
-        toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
+        toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) })
+          .then(() => {
+            refreshConversations();
+            const isArchiving = selectedConversations.some(conv => !conv.is_archived);
+            if (isArchiving) {
+              addToast({ 
+                state: "messageArchived",
+                position: "bottom-center",
+                actionFunction: () => {
+                  toggleConversationIsArchived({ 
+                    conversationIds: selectedConversations.map(conv => conv.id) 
+                  })
+                  .then(() => {
+                    refreshConversations();
+                  });
+                }
+              });
+            }
+          });
       },
       label: "Archive Conversation",
       label2: "Unarchive Conversation"

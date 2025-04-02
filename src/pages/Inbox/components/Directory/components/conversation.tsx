@@ -47,13 +47,14 @@ export const Conversation = ({ conversation, onClick, searchTerm, searchContent,
             <div className="flex gap-2 items-center h-full min-w-[240px]">
               <div className="flex gap-2 items-center h-full min-w-[240px]">
                 <div className="flex gap-1 self-stretch my-auto rounded min-h-[32px]">
-                  <div className="flex justify-center items-center px-1 my-auto w-8 rounded min-h-[32px]">
+
+                  <div id="checkbox-container" className="flex justify-center items-center px-1 my-auto w-8 rounded min-h-[32px]" onClick={(e) => e.stopPropagation()}>
                     <div className="flex overflow-hidden justify-center items-center self-stretch my-auto w-6 min-h-[24px]">
                       <div className="flex self-stretch my-auto w-4 h-4">
                       <input
                         type="checkbox"
                         className="rounded border-solid border-[1.5px] border-zinc-500 min-h-[16px] bg-transparent cursor-pointer"
-                        checked={isChecked}
+                        checked={isChecked}                        
                         onChange={(e) => {
                           e.stopPropagation();
                           handleCheckboxChange(conversation, e.target.checked);
