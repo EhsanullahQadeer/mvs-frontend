@@ -12,6 +12,7 @@ type ToastProps = {
   onClose?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  params?: any;
 };
 
 const Toast: React.FC<ToastProps> = ({
@@ -23,7 +24,8 @@ const Toast: React.FC<ToastProps> = ({
   permanent = false,
   onClose,
   onMouseEnter,
-  onMouseLeave
+  onMouseLeave,
+  params
 }) => {
   const toastState = state ? toastStates[state] : null;
 
@@ -34,7 +36,7 @@ const Toast: React.FC<ToastProps> = ({
       onMouseLeave={onMouseLeave}
     >
       <div className="toast-content">
-        {toastState ? React.cloneElement(toastState.element as React.ReactElement, { onClose }) : message}
+        {toastState ? React.cloneElement(toastState.element(params) as React.ReactElement, { onClose }) : message}
       </div>
       <button
         className="toast-close"

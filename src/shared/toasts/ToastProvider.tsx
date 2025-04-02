@@ -5,10 +5,11 @@ type ToastData = {
   id: number;
   message?: string;
   state?: string;
-  type?: "success" | "error" | "warning";
+  type?: "success" | "error" | "warning" | "info";
   position?: "top-left" | "top-right" | "top-center" | "bottom-left" | "bottom-right" | "bottom-center";
   duration?: number;
   permanent?: boolean;
+  params?: any;
 };
 
 const ToastContext = React.createContext<{ addToast: (toast: Omit<ToastData, "id">) => void } | undefined>(undefined);
@@ -77,6 +78,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }}
             onMouseEnter={() => handleMouseEnter(toast.id)}
             onMouseLeave={() => handleMouseLeave(toast.id)}
+            params={toast.params}
           />
         ))}
       </div>
