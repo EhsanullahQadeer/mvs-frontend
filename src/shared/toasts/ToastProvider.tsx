@@ -9,6 +9,7 @@ type ToastData = {
   position?: "top-left" | "top-right" | "top-center" | "bottom-left" | "bottom-right" | "bottom-center";
   duration?: number;
   permanent?: boolean;
+  actionFunction?: (params?: any) => void; //action to be called when e.g. "retry" or "undo" button is clicked
   params?: any;
 };
 
@@ -78,6 +79,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }}
             onMouseEnter={() => handleMouseEnter(toast.id)}
             onMouseLeave={() => handleMouseLeave(toast.id)}
+            actionFunction={toast.actionFunction}
             params={toast.params}
           />
         ))}

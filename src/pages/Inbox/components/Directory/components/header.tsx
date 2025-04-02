@@ -62,7 +62,9 @@ const InboxHeader = () => {
             refreshConversations();
             const isArchiving = selectedConversations.some(conv => !conv.is_archived);
             if (isArchiving) {
-              addToast({ state: "messageArchived" });
+              addToast({ state: "messageArchived", actionFunction: () => {
+                console.log("wuh huhhhh");
+              } });
             }
           });
       },
