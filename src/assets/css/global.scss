@@ -1555,6 +1555,16 @@ input:checked + .slider:before {
   transform: translateX(100%); /* Move the circle to the right */
 }
 
+input[data-autocompleted] {
+  background-color: transparent !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 0s 0s, color 0s 0s;
+  transition-delay: calc(infinity * 1s);
+}
+
 /* Add this CSS to your styles */
 .scrollbar-hidden::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and Opera */

@@ -1,12 +1,10 @@
-import musicProducerIcon from "../../../assets/icons/userTypeIcons/musicProducerIcon.svg";
-import singerIcon from "../../../assets/icons/userTypeIcons/singerIcon.svg";
-import songwriterIcon from "../../../assets/icons/userTypeIcons/songwriterIcon.svg";
-import masteringEngineerIcon from "../../../assets/icons/userTypeIcons/masteringEngineerIcon.svg";
-import mixingEngineerIcon from "../../../assets/icons/userTypeIcons/mixingEngineerIcon.svg";
-import composerIcon from "../../../assets/icons/userTypeIcons/composerIcon.svg";
-import loopmakerIcon from "../../../assets/icons/userTypeIcons/loop-maker-white.svg";
-
-import sampleImg from "./Ellipse 730.png";
+import musicProducerIcon from "../../../../../assets/icons/userTypeIcons/musicProducerIcon.svg";
+import singerIcon from "../../../../../assets/icons/userTypeIcons/singerIcon.svg";
+import songwriterIcon from "../../../../../assets/icons/userTypeIcons/songwriterIcon.svg";
+import masteringEngineerIcon from "../../../../../assets/icons/userTypeIcons/masteringEngineerIcon.svg";
+import mixingEngineerIcon from "../../../../../assets/icons/userTypeIcons/mixingEngineerIcon.svg";
+import composerIcon from "../../../../../assets/icons/userTypeIcons/composerIcon.svg";
+import loopmakerIcon from "../../../../../assets/icons/userTypeIcons/loop-maker-white.svg";
 
 export const userTypes = [
   {
@@ -67,63 +65,4 @@ export const publishersArr = [
   "BMG Rights Management",
   "Kabalt Music Group",
   "Concord Music Publishing",
-];
-
-export const conncetPeopleArr = [
-  {
-    id: "1",
-    name: "Becky Hill",
-    role: "Artist",
-    thumbnaiSrc: sampleImg,
-    followers: "23k",
-  },
-  {
-    id: "2",
-    name: "Becky Hill",
-    role: "Artist",
-    thumbnaiSrc: sampleImg,
-    followers: "23k",
-  },
-  {
-    id: "3",
-    name: "Becky Hill",
-    role: "Artist",
-    thumbnaiSrc: sampleImg,
-    followers: "23k",
-  },
-  {
-    id: "4",
-    name: "Becky Hill",
-    role: "Artist",
-    thumbnaiSrc: sampleImg,
-    followers: "23k",
-  },
-  {
-    id: "5",
-    name: "Becky Hill",
-    role: "Artist",
-    thumbnaiSrc: sampleImg,
-    followers: "23k",
-  },
-  {
-    id: "6",
-    name: "Becky Hill",
-    role: "Artist",
-    thumbnaiSrc: sampleImg,
-    followers: "23k",
-  },
-  {
-    id: "7",
-    name: "Becky Hill",
-    role: "Artist",
-    thumbnaiSrc: sampleImg,
-    followers: "23k",
-  },
-  {
-    id: "8",
-    name: "Becky Hill",
-    role: "Artist",
-    thumbnaiSrc: sampleImg,
-    followers: "23k",
-  },
 ];

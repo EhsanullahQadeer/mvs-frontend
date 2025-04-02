@@ -77,6 +77,14 @@ const ArtistProfile = () => {
       console.log("response", response);
       console.log("response", user.id, artistData.id);
       setHasSampleType(response.data);
+      
+      // Find the first available sample type
+      const firstAvailableType = Object.entries(response.data).find(([_, value]) => value === true);
+      if (firstAvailableType) {
+        setSelectedTab(firstAvailableType[0]);
+      } else {
+        setSelectedTab(libraryTabs[0].value);
+      }
     }
   }
 
@@ -88,7 +96,6 @@ const ArtistProfile = () => {
       contribution: false,
       full_song: false
     });
-    setSelectedTab('');
     fetchSampleTypes();
   }, [artistData, user]);
 
@@ -139,11 +146,6 @@ const ArtistProfile = () => {
             response.data.results.connectionDetails.request_accepted
           );
         }
-
-        // console.log(
-        //   "response check connect",
-        //   response.data.results.connectionDetails
-        // );
       } catch (error) {
         console.log("error while checking connection", error);
       }
@@ -151,12 +153,14 @@ const ArtistProfile = () => {
   };
 
   useEffect(() => {
-    getArtistData();
-  }, [getArtistData]);
-
-  useEffect(() => {
     checkConnection();
   }, [artistData]);
+
+  useEffect(() => {
+    setCreditsData([]);
+    setLoading(true);
+    getArtistData();
+  }, [username, getArtistData]);
 
   useEffect(() => {
     setIsConnect(isLoginUser || connectionDetail);
@@ -167,6 +171,7 @@ const ArtistProfile = () => {
       {!isLoading ? (<>
         <div className="relative flex overflow-hidden">
 
+          <div className={`${chatOpen ? 'w-[calc(100%-500px)]' : 'w-[calc(100%-374px)]'} transition-all duration-300`}>
             <ProfileRightSection
               artistData={artistData}
               currentUserInfo={user}
@@ -182,8 +187,9 @@ const ArtistProfile = () => {
               setChatOpen={setChatOpen}
               isPublicProfile={false}
             />
+          </div>
 
-          <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
+          <section className={`border-l border-eclipseGray ${chatOpen ? 'w-[500px]' : 'w-[374px]'} h-screen overflow-x-hidden overflow-y-auto custom-dropdown transition-all duration-300`}>
             <MessageContextProvider>
               <ChatboxProvider>
                 <ProfileAboutSection

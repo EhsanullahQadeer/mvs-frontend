@@ -33,7 +33,7 @@ export const useGetThreadMessages = (
       });
 
       setThreadMessages(prevMessages => 
-        payload.cursor ? [...prevMessages, ...response.data.results.messages] : response.data.results.messages
+        payload.cursor ? [...prevMessages, ...response.data.results.messages.reverse()] : response.data.results.messages
       );
 
       return response.data;

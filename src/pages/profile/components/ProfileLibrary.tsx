@@ -2,6 +2,7 @@
 import LockedContent from "./LockedContent";
 import UploadFileSection from "./UploadFileSection";
 import SamplesContainer from "components/SampleContainer/player-container";
+import { useEffect } from "react";
 
 type Props = {
   isLoginUser: boolean,
@@ -18,6 +19,14 @@ type Props = {
 };
 const ProfileLibrary = (props: Props) => {
   const { isLoginUser, user, tabs, hasSampleType, selectedTab, setSelectedTab, isConnect, artistData, chatOpen } = props;
+
+  // Add useEffect to select the first visible tab when component mounts or tabs/hasSampleType changes
+  useEffect(() => {
+    const visibleTabs = tabs.filter(t => hasSampleType[t.value]);
+    if (visibleTabs.length > 0 && !selectedTab) {
+      setSelectedTab(visibleTabs[0].value);
+    }
+  }, [tabs, hasSampleType, selectedTab, setSelectedTab]);
 
   console.log('IsConnect var: ', isConnect);
   return (

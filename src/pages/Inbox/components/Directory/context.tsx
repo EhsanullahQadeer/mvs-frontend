@@ -6,7 +6,7 @@ import { IConversation, IMessage } from 'api/messenger/objects/states.types';
 import messageSound from "../../../../assets/audio/message-notification.mp3";
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 
-type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | 'connections' | '';
+type ConversationTabType = 'priority' | 'general' | 'icebreaker' | 'search' | 'network' | '';
 
 interface ConversationContextType {
   // State
@@ -93,8 +93,6 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         audioRef.current = new Audio(messageSound);
         audioRef.current.crossOrigin = "anonymous";
         audioRef.current.preload = "auto";
-
-        // Wait for audio to load
         await new Promise(resolve => {
           if (audioRef.current) {
             audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
@@ -218,15 +216,11 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         }
       }
 
-      console.log('got here at leats');
       if (message.conversation.is_priority) {
-        console.log("totalPriorityInboxUnread", totalPriorityInboxUnread);
         setTotalPriorityInboxUnread(totalPriorityInboxUnread + 1);
       } else if (message.conversation.active_icebreaker) {
-        console.log("totalIcebreakerInboxUnread", totalIcebreakerInboxUnread);
         setTotalIcebreakerInboxUnread(totalIcebreakerInboxUnread + 1);
       } else {
-        console.log("totalGeneralInboxUnread", totalGeneralInboxUnread);
         setTotalGeneralInboxUnread(totalGeneralInboxUnread + 1);
       }
 
@@ -291,7 +285,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         getArchived: archiveSpamFav === "archive",
         getSpam: archiveSpamFav === "spam",
         getFavorited: archiveSpamFav === "favorite",
-        getConnected: inboxTab === "connections"
+        getConnected: inboxTab === "network"
       });
     }
   }, [authUser, inboxTab, getConversations, CONVERSATIONS_PER_PAGE, currentPage, archiveSpamFav]);

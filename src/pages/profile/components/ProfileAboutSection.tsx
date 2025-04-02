@@ -19,7 +19,7 @@ import { ChatboxProvider, useChatbox } from "pages/Inbox/components/Chatbox/cont
 import { ReactComponent as MapPinIcon } from "../../../assets/icons/mapPin.svg";
 import { ConversationProvider } from "pages/Inbox/components/Directory/context";
 import { IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
-import { checkIfFollowing, handleFollowUsers, requestConncetAPI } from "api/user";
+import { checkIfFollowing, getMutualConnections, getUserFollowers, handleFollowUsers, requestConncetAPI } from "api/user";
 import { ReactComponent as ClockIcon } from "../../../assets/icons/clockIcon.svg";
 import { ReactComponent as UserPlusIcon } from "../../../assets/icons/userPlusIcon.svg";
 import { ReactComponent as CalendarIcon } from "../../../assets/icons/calendarIcon.svg";
@@ -29,6 +29,10 @@ import { ReactComponent as UserMinusIcon } from "../../../assets/icons/userMinus
 import { ReactComponent as UpArrowTrayIcon } from "../../../assets/icons/upArrowTrayIcon.svg";
 import { ReactComponent as ElipsesVerticalIcon } from "../../../assets/icons/threeVerticalDotsIcon.svg";
 import ProfileSectionButton from "components/ui/Header/atoms/profileAboutSectionAtoms/profileSectionButton";
+import FollowersModal from "./followersModal";
+import Avatar from "react-avatar";
+import { boolean } from "yup";
+import ConnectionsModal from './connectionsModal';
 
 type Props = {
   artistData: IArtistProfileData | null;
@@ -43,6 +47,23 @@ type Props = {
   chatOpen: boolean;
   setChatOpen: (chatOpen: boolean) => void;
 };
+
+export interface Connection {
+  id: number;
+  thumbnail: string;
+  professional_name: string;
+  username: string;
+  followers: number;
+  connectionId: number;
+  connectedAt: string;
+}
+
+export interface MutualConnection {
+  connections: Connection[];
+  cursor: number | null;
+  totalCount: number;
+  hasMore: boolean;
+}
 
 const ProfileAboutSection = (props: Props) => {
   const { 
@@ -67,6 +88,11 @@ const ProfileAboutSection = (props: Props) => {
   const user = useSelector((state: RootState) => state);
   const [menuSection, setMenuSection] = useState<boolean>(false);
 
+  const [mutualConnections, setMutualConnections] = useState<MutualConnection | null>(null);
+  const [showFollowersModal, setShowFollowersModal] = useState<boolean>(false);
+  const [showMutualConnectionsModal, setShowMutualConnectionsModal] = useState<boolean>(false);
+  const [showConnectionsModal, setShowConnectionsModal] = useState<boolean>(false);
+  
   const isConnectionPending =
     connectionDetail === false ||
     connectionDetail === null ||
@@ -81,29 +107,36 @@ const ProfileAboutSection = (props: Props) => {
     region,
     primary_role,
     secondary_role,
+    demo_fee,
+    publisher,
   } = artistData?.available ?? artistData ?? {};
+
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
 
+  const fetchConnections = async () => {
+    const connections = await getMutualConnections(artistData.id);
+    setMutualConnections(connections.data?.results);
+  };
+
   useEffect(() => {
     const fetchFollowingStatus = async () => {
-      const isFollowing = await checkIfFollowing(artistData.id); // Await the API call
-      setIsFollowing(isFollowing); // Set the state with the result
+      const isFollowing = await checkIfFollowing(artistData.id);
+      setIsFollowing(isFollowing);
     };
 
-    fetchFollowingStatus(); // Call the async function
+    fetchFollowingStatus();
+    fetchConnections();
   }, []);
 
   const handlePlayClick = (previewUrl: string, index: number) => {
     if (!previewUrl) return;
     if (audioRef.current) {
       if (currentPlayingIndex === index) {
-        // If the clicked track is already playing, pause it
         audioRef.current.pause();
         setCurrentPlayingIndex(null);
       } else {
-        // Play the new track
         audioRef.current.src = previewUrl;
         audioRef.current.play();
         setCurrentPlayingIndex(index);
@@ -179,10 +212,13 @@ const ProfileAboutSection = (props: Props) => {
     }
     handleFollowUsers([artistData.id]);
   };
+  
+  const connectionsList = mutualConnections?.connections;
+  const totalConnections = mutualConnections?.totalCount;
 
   if (showChat && activeConversation) {
     return (
-      <div className="fixed right-0 top-[70px] w-[500px] h-[calc(100vh-70px)] bg-richBlack overflow-hidden z-50">
+      <div className="h-[calc(100vh-70px)] bg-richBlack overflow-hidden z-50 animate-slide-in w-full">
         <ConversationProvider>
           <Chatbox
             onClose={() => {setShowChat(false); setChatOpen(false)}}
@@ -232,17 +268,54 @@ const ProfileAboutSection = (props: Props) => {
           </div>
 
           <div className="my-3 flex items-center gap-2 text-silver text-xs flex-wrap">
-            <span className="font-semibold">2 followers</span>
+            <span className="font-semibold cursor-pointer" onClick={() => setShowFollowersModal(true)}>{artistData?.followers} followers</span>
             <span className="font-semibold">
               <GoDotFill className="w-1.5 h-1.5" />
             </span>
             <span className="font-semibold text-[#0185FF]">
-              500+ connections
+              {totalConnections > 500 ? `500+` : totalConnections} connections
             </span>
           </div>
 
-          {/* Only show buttons row if not viewing own profile */}
-          {user.auth.user.id !== artistData?.id && (
+          <div className="pb-2">
+            <div 
+              className="flex items-center cursor-pointer hover:opacity-80"
+              onClick={() => setShowConnectionsModal(true)}
+            >
+              <div className="flex -space-x-3">
+                {connectionsList?.slice(0, 3).map((connection, index) => (
+                  <div 
+                    key={connection.id}
+                    className="relative ring-2 ring-jetBlack rounded-full"
+                    style={{ zIndex: 3 + index }}
+                  >
+                    <Avatar 
+                      name={connection.professional_name} 
+                      src={connection.thumbnail} 
+                      round={true}
+                      size="30" 
+                      className="shrink-0"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="text-silver text-xs ml-2">
+                {connectionsList?.slice(0, 3).map((connection, index, arr) => (
+                  <span key={connection.id}>
+                    {connection.professional_name}
+                    {index < arr.length - 1 && ", "}
+                  </span>
+                ))}
+                {connectionsList?.length > 3 && (
+                  <span className="text-[#0185FF]">
+                    {" "}and {totalConnections - 3} other connections
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {user.auth?.user?.id !== artistData?.id && (
             <div className="flex gap-1">
               <ProfileSectionButton tabName="Message" icon={<PaperPlaneIcon/>} onClick={handleMessageClick}/>
               {connectionDetail === true ? (
@@ -300,16 +373,12 @@ const ProfileAboutSection = (props: Props) => {
         </p>
 
         <span className="text-base text-platinum font-semibold">
-          Publisher / Label
+          Publisher
         </span>
 
         <div className="mt-1.5 flex max-lg:flex-wrap items-center gap-1">
           <div className="px-2 py-1 bg-transparent text-dimGray rounded text-sm font-normal border border-charcoalGray whitespace-nowrap">
-            Warner Chappell
-          </div>
-
-          <div className="px-2 py-1 bg-transparent text-dimGray rounded text-sm font-normal border border-charcoalGray whitespace-nowrap">
-            Polydor Records
+            {publisher}
           </div>
         </div>
       </div>
@@ -323,19 +392,8 @@ const ProfileAboutSection = (props: Props) => {
           </div>
 
           <span className="font-semibold border border-mediumGray rounded-full px-2 py-0.5">
-            $25
+            {"$" + demo_fee || "$0"}
           </span>
-        </div>
-        
-        <div className="flex items-center justify-between max-lg:flex-wrap gap-1">
-          <div className="flex items-center gap-1">
-            <FiInfo />
-            <span className="font-normal leading-[18px]">
-              Cancellation policy
-            </span>
-          </div>
-
-          <span className="font-semibold text-[#7ECC00]">Flexible</span>
         </div>
       </div>
 
@@ -391,6 +449,17 @@ const ProfileAboutSection = (props: Props) => {
             <audio ref={audioRef} />
           </div>
         </div>
+      )}
+
+      {showFollowersModal && <FollowersModal open={showFollowersModal} handleClose={() => setShowFollowersModal(false)} userId={artistData?.id} />}
+      {showConnectionsModal && (
+        <ConnectionsModal 
+          open={showConnectionsModal} 
+          handleClose={() => setShowConnectionsModal(false)} 
+          userId={artistData?.id}
+          mutualConnections={mutualConnections}
+          fetchConnections={fetchConnections}
+        />
       )}
     </div>
   );

@@ -5,20 +5,18 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import React, { useEffect, useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import logo from "../../assets/img/M-logo.png";
+import cookie from "js-cookie";
+import { login } from "redux/actions";
 import { GrApple } from "react-icons/gr";
-import { RiLockLine } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "redux/actions";
-import cookie from "js-cookie";
+import logo from "../../assets/img/M-logo.png";
 import { CircularProgress } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid'; // v2 import syntax
-
 
 interface RootState {
   auth: any;
@@ -74,8 +72,6 @@ const CreatorLogin: React.FC = () => {
         password,
       })
     );
-
-
   };
 
   const handleSignUpClick = () => {
@@ -87,27 +83,20 @@ const CreatorLogin: React.FC = () => {
   };
 
   return (
-    <div
-      className={`flex flex-col items-center justify-center p-8 bg-darkGray text-white min-h-full ${
-        loader ? "pointer-events-none" : "pointer-events-auto"
-      }`}
-    >
+    <div className={`flex flex-col items-center justify-center p-8 bg-darkGray text-white min-h-full ${loader ? "pointer-events-none" : "pointer-events-auto"}`}>
       <div className="flex text-xl items-center justify-center gap-2.5">
         <div className="">
           <img className="h-full w-full object-cover" src={logo} alt="logo" />
         </div>
         <span>mvssive.net</span>
       </div>
-      <div className="py-8 flex justify-center flex-col  items-center gap-2">
-        <h2 className="text-3xl  font-semibold tracking-tighter">Sign in</h2>
+      <div className="py-8 h-full flex justify-center flex-col items-center gap-2">
+        <h2 className="text-3xl font-semibold tracking-tighter">Sign in</h2>
         <p className="text-dimGray  text-sm">Welcome back</p>
       </div>
 
       {errors && (
-        <div
-          className="bg-red-100 border border-red-400 text-red-700 px-2 py-1 rounded relative mb-5"
-          role="alert"
-        >
+        <div className="bg-red-100 border border-red-400 text-red-700 px-2 py-1 rounded relative mb-5" role="alert">
           <span className="block sm:inline">
             Sorry, we don't recognize your credentials
           </span>
@@ -140,16 +129,16 @@ const CreatorLogin: React.FC = () => {
               className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm p-4 bg-jetBlack border  border-eclipseGray text-dimGray rounded-lg"
             />
             <button
-        type="button"
-        onClick={togglePasswordVisibility}
-        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 focus:outline-none"
-      >
-        {passwordVisible ? (
-          <EyeSlashIcon className="w-5 h-5" />
-        ) : (
-          <EyeIcon className="w-5 h-5" />
-        )}
-      </button>
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 focus:outline-none"
+            >
+              {passwordVisible ? (
+                <EyeSlashIcon className="w-5 h-5" />
+              ) : (
+                <EyeIcon className="w-5 h-5" />
+              )}
+            </button>
           </div>
 
           <div className="text-darkRed mt-1 text-xs font-medium">

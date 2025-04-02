@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import axiosInstance from "api/axios";
+import { IMessage } from "../objects/states.types";
 
 export interface IReplyInThread {
   parentMessageId: number;
@@ -7,17 +8,21 @@ export interface IReplyInThread {
   audioMediaId?: number;
 }
 
-export const useReplyInThread = () => {
+export const useReplyInThread = (
+  setThreadMessages: React.Dispatch<React.SetStateAction<IMessage[]>>,
+) => {
   return useCallback(async (payload: IReplyInThread): Promise<void> => {
     try {
-      console.log('useReplyInThread payload:', payload);
       const response = await axiosInstance.post('/messenger/message/reply', payload);
+      if (response.data?.replyMessage) {
+        setThreadMessages(prevMessages => [...(prevMessages || []), response.data.replyMessage]);
+      }
       return response.data;
     } catch (error) {
       console.error("Error replying in thread:", error);
       throw error;
     }
-  }, []);
+  }, [setThreadMessages]);
 };
 
 

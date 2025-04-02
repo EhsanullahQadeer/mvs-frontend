@@ -9,7 +9,13 @@ export const rolesArr = [
   "Composer",
 ];
 
-export const genresArr = ["Reggaeton", "Hip-Hop", "Pop", "Dance / EDM", "Rock"];
+export const genresArr = [
+  "Reggaeton",
+  "Hip-Hop",
+  "Pop",
+  "Dance / EDM",
+  "Rock",
+];
 
 export const publishersArr = [
   "Universal Music Publishing Group",

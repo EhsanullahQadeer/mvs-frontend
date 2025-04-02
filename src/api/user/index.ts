@@ -10,11 +10,11 @@
 import axiosPublic from "api/axiosPublic";
 import axiosInstance from "../axios";
 import {
-  IAddNewUser,
   IcreateWikiProfileBody,
   IGetArtistCreditsParams,
   IgetArtistInfoParams,
   IRequestInvitation,
+  IUserNotificationSettings,
   IUserProfessionalNameSearch,
   IUsersSearchParams,
   UserFiltersDTO,
@@ -179,6 +179,10 @@ export async function checkUsernameIsAvailable(username: string) {
   return axiosInstance.get(`/users/check-username-is-available?username=${username}`);
 }
 // =======================================================================================
+export async function checkUserHasStripeConnectedAccount(userId: number) {
+  return axiosInstance.get(`/users/has-stripe-connect-account?targetUserId=${userId}`);
+}
+// =======================================================================================
 export async function getTopPopularUsers(paginationDto: {skip, take}) {
   return axiosInstance.get(`/users/get-top-popular`, {
     params: {
@@ -197,6 +201,25 @@ export const resendInvitationCodeAPI = async (email: string) => {
     throw error;
   }
 };
+
+export const getUserFollowers = async (
+  userId: number,
+  limit: number = 100,
+  cursor: number | null = null
+) => {
+  return axiosInstance.get(
+    `/users/followers/?userId=${userId}&limit=${limit}&cursor=${cursor}`
+  );
+}
+
+export const getMutualConnections = async (userId: number, limit: number = 10, cursor: number | null = null) => {
+  return axiosInstance.get(`/users/mutual-connections/${userId}`, {
+    params: {
+      limit,
+      cursor,
+    },
+  });
+}
 
 export const handleConnectionRequest = async (requestId: number, acceptRequest: boolean) => {
   try {
@@ -236,4 +259,20 @@ export async function updateUserUsernameAPI(username: string) {
 
 export async function referUserByEmail(email: string) {
   return axiosInstance.post(`/users/refer-user`, { email });
+}
+
+export async function sendUserFeedbackAPI(data: any) {
+  return axiosInstance.post('/users/feedback', data);
+}
+
+export async function getUserNotificationSettings() {
+  return axiosInstance.get('/users/email-notifications-settings');
+}
+
+export async function setUserNotificationSettings(body: IUserNotificationSettings) {
+  return axiosInstance.post('/users/email-notification-settings', body);
+}
+
+export async function toggleMuteNotifications() {
+  return axiosInstance.post('users/toggle-mute-notifications');
 }

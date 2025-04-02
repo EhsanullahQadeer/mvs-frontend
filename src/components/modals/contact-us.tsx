@@ -12,6 +12,7 @@ import Modal from "react-modal";
 const ContactModal = (props: any) => {
   return (
     <Modal
+      id="contact-us-modal"
       ariaHideApp={false}
       className="bg-transparent"
       isOpen={props.openModal}
@@ -31,7 +32,7 @@ const ContactModal = (props: any) => {
         },
       }}
     >
-      <div className="z-modal animate-fade-in fixed left-0 top-0 flex flex-col items-stretch w-full h-screen overflow-y-auto">
+      <div className="z-modal animate-fade-in fixed left-0 top-0 flex flex-col items-stretch w-full h-screen overflow-y-auto custom-dropdown">
         <div className="flex flex-grow items-center justify-center py-4 w-full">
           <div
             role="dialog"

@@ -9,6 +9,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
+import MessageOptions from "./messageOptions";
+
 
 interface MessageProps {
   message: IMessage;
@@ -138,7 +140,7 @@ const Message: React.FC<MessageProps> = ({
           </div>
           
           {message?.threadStats?.replyCount === 1 &&
-              message?.sender?.id === authUserId && (
+              message?.sender?.id === authUserId && message.threadStats.hasUnreadMessage && (
               <button
                 onClick={() => {
                   setIsThread(true);
@@ -161,10 +163,10 @@ const Message: React.FC<MessageProps> = ({
             </button>
           )}
         </div>
-        { (message.threadStats?.replyCount > 1 || (message.threadStats?.replyCount === 1 && message.sender.id !== authUserId)) && (
+        { (message.threadStats?.replyCount >= 1) && (
           <div className="flex gap-2.5 items-center pt-2">
             <div
-              className="flex gap-1.5 items-center cursor-pointer w-max"
+              className="flex gap-1.5 items-center cursor-pointer w-full"
               onClick={() => {
                 setIsThread(true);
                 handleLoadThread(message?.id);
@@ -188,6 +190,14 @@ const Message: React.FC<MessageProps> = ({
               <span className="text-mediumGray text-[10px] font-normal hidden group-hover:flex">
                 See Thread
               </span>
+              <div className="flex items-center gap-1 w-[30%]">
+                {message?.threadStats?.hasUnreadMessage && (
+                  <>
+                    <div className="w-full h-[1px] bg-[#EF4444] rounded-full"></div>
+                    <div className="text-[10px] text-[#EF4444] font-normal cursor-pointer">NEW</div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -278,7 +288,7 @@ const Message: React.FC<MessageProps> = ({
   // }
 
   return (
-    <div ref={intersectionRef}>
+    <div ref={intersectionRef} className="overflow-visible">
       {shouldShowDate && (
         <div className="flex items-center w-full justify-between px-4">
           <div className="flex-1 p-2.5 text-coolGray">
@@ -293,14 +303,21 @@ const Message: React.FC<MessageProps> = ({
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2 px-4 py-2 w-full relative group hover:bg-gunMetal">
-        <div className="absolute -top-8 left-28 mt-2 mr-2 hidden group-hover:flex transition-opacity duration-200">
-          {/* <MessageReactions
-            // handleEmojiSelect = {handleEmojiSelect}
+      <div className="flex flex-wrap gap-2 px-4 py-2 w-full relative group hover:bg-gunMetal overflow-visible">
+        <div 
+          className="absolute -top-8 left-28 mt-2 mr-2 hidden group-hover:flex transition-opacity duration-200"
+          style={{
+            zIndex: 9999,
+            position: 'absolute',
+            pointerEvents: 'auto'
+          }}
+        >
+          <MessageOptions
             id={id}
             isDemoSender={isDemoSender}
             isOwner={isDemoSender}
-          /> */}
+            handleEmojiSelect={() => {}}
+          />
         </div>
 
         <div className="flex rounded-full p-0.5 w-12 h-12">

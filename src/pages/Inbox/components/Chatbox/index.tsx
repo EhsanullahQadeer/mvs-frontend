@@ -312,7 +312,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
           ) : (
             <div
               ref={messagesRef}
-              className="flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden w-full custom-dropdown"
+              className="flex-col flex-1 py-3 overflow-y-auto w-full custom-dropdown relative"
               onScroll={handleScroll}
             >
               {isLoadingMore && (
@@ -338,7 +338,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                       </p>
                     </div>
                   ) : (
-                    <div className={`flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto ${getAnimationClass()}`}>
+                    <div className={`flex flex-col flex-1 w-full overflow-visible ${getAnimationClass()}`}>
                       {isThread ? (
                         <div className="w-full flex flex-col">
                           <div className="sticky top-0 bg-[#131313] border-b border-[#242424] px-4 py-2 flex items-center justify-between">
@@ -359,7 +359,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                             </button>
                           </div>
                           {threadMessages && threadMessages?.length > 0 ? (
-                            <div className="w-full overflow-x-hidden overflow-y-auto">
+                            <div className="w-full overflow-visible">
                               {threadMessages?.map((message: IMessage, index) => (
                                 <>
                                   <div
@@ -412,11 +412,9 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                           )}
                         </div>
                       ) : (
-                        <div className="w-full overflow-x-hidden">
+                        <div className="w-full overflow-visible">
                           {messages && Array.isArray(messages) ? messages.map((message: IMessage, index) => (
-                            <div
-                              key={message?.id || index}
-                            >
+                            <div key={message?.id || index} className="overflow-visible">
                               <Message
                                 message={message}
                                 index={index}

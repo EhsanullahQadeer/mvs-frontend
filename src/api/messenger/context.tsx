@@ -1,4 +1,4 @@
-import { useSendMessage } from './hooks/useSendMessage';
+import { ISendMessage, useSendMessage } from './hooks/useSendMessage';
 import { useDeleteConversations } from './hooks/useDeleteConversations';
 import { useGetConversationNotes } from './hooks/useGetConversationNotes';
 import { IReplyInThread, useReplyInThread } from './hooks/useReplyInThread';
@@ -25,8 +25,9 @@ import {
   IToggleConversationIsSpam,
   IGetConversationNotes,
   IDeleteConversations,
-  ISendMessage,
+  IDeleteMessage,
 } from './objects/api.interfaces';
+import { useDeleteMessage } from './hooks/useDeleteMessage';
 
 interface MessengerContextType {
   // State
@@ -72,6 +73,7 @@ interface MessengerContextType {
   setMessages: (messages: IMessage[]) => void;
   sendMessage: (payload: ISendMessage) => Promise<void>;
   replyInThread: (payload: IReplyInThread) => Promise<void>;
+  deleteMessage: (payload: IDeleteMessage) => Promise<any>;
 }
 
 const MessengerContext = createContext<MessengerContextType | undefined>(undefined);
@@ -142,10 +144,11 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
   const getThreadMessagesFunc = useGetThreadMessages(setThreadMessages);
   const addReactionMessageFunc = useAddReactionMessage();
   const deleteReactionMessageFunc = useDeleteReactionMessage();
-  const sendMessageFunc = useSendMessage(setMessages, messages);
-  const replyInThreadFunc = useReplyInThread();
+  const sendMessageFunc = useSendMessage(setMessages);
+  const replyInThreadFunc = useReplyInThread(setThreadMessages);
   const getSearchMessagesFunc = 
     useGetSearchMessages(setSearchMessages,setTotalSearchMessages);
+  const deleteMessageFunc = useDeleteMessage();
 
   const value: MessengerContextType = useMemo(() => {
     return {
@@ -189,7 +192,8 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
       setThreadMessages,
       setMessages,
       sendMessage: sendMessageFunc,
-      replyInThread: replyInThreadFunc
+      replyInThread: replyInThreadFunc,
+      deleteMessage: deleteMessageFunc
     };
   }, [
     activeConversation,
@@ -232,7 +236,8 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
     setThreadMessages,
     setMessages,
     sendMessageFunc,
-    replyInThreadFunc
+    replyInThreadFunc,
+    deleteMessageFunc
   ]);
 
   return (
