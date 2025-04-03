@@ -41,7 +41,7 @@ const Theme = (props: ThemeProps) => {
           </div>
 
           {/* Nav Header */}
-          <div className="flex-1 mflex   items-center pl-[20px]">
+          <div className="flex-1 flex items-center pl-[20px]">
             <NavHeader
               name="navHeader"
               id="1"
@@ -53,7 +53,7 @@ const Theme = (props: ThemeProps) => {
 
         {/* Content Row - adjusts with sidebar */}
         <div
-          className=" md:grid md:flex-1 md:overflow-hidden"
+          className="md:grid md:flex-1 md:overflow-hidden"
           style={{
             gridTemplateColumns: `${
               isExpanded ? largeSidebarWidth : sidebarWidth
