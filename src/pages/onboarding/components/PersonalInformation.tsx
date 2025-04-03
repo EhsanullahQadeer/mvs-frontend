@@ -6,27 +6,27 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import FormikLabeledField from "components/util/FormikLabeledField";
-import FormikSingleSelectDropdown from "components/util/FormikSingleSelectDropdown";
-import { Field, Form, Formik } from "formik";
-import { useEffect, useState } from "react";
-import { countriesStates } from "../sample-data/countriesStates";
-import ImageCropModal from "../../../components/modals/ImageCropModal";
 import {
   FormControl,
   IconButton,
   InputAdornment,
   OutlinedInput,
 } from "@mui/material";
-import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import * as Yup from "yup";
+import { useEffect, useState } from "react";
+import { Field, Form, Formik } from "formik";
+import FormikOnChange from "./FormikOnChange";
 import getMuiStyles from "styles/getMuiStyles";
-import profileBannerBackImg from "../../../assets/img/profileBannerBackImg.png";
+import { checkUsernameIsAvailable } from "api/user";
 import avatarImg from "../../../assets/img/avatar.svg";
 import { IoLocationOutline, IoAdd } from "react-icons/io5";
-import FormikOnChange from "./FormikOnChange";
-import { checkUsernameIsAvailable } from "api/user";
-import * as Yup from "yup";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import { countriesStates } from "../sample-data/countriesStates";
+import FormikLabeledField from "components/util/FormikLabeledField";
+import ImageCropModal from "../../../components/modals/ImageCropModal";
+import profileBannerBackImg from "../../../assets/img/profileBannerBackImg.png";
 import { formatFileSize, estimateBase64Size } from "../../../utils/imageSizeUtils";
+import FormikSingleSelectDropdown from "components/util/FormikSingleSelectDropdown";
 
 type Props = {
   markSectionAsCompleted: () => void;
@@ -239,11 +239,6 @@ const PersonalInformation = (props: Props) => {
     setPasswordError(false);
     setConfirmPasswordError(false);
     setThumbnailError(false);
-
-    if (!thumbnail) {
-      setThumbnailError(true);
-      return;
-    }
 
     // Check if the cropped image exceeds the size limit
     if (croppedFileSize && croppedFileSize > MAX_FILE_SIZE) {

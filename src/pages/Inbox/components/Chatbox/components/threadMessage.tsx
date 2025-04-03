@@ -4,6 +4,7 @@ import { useChatbox } from "../context";
 import { FiUnlock } from "react-icons/fi";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { IMessage, MEDIA_TYPE, MESSAGE_TYPES } from "api/messenger/objects/states.types";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import DemoPlayerFeedbackThread from "components/ui/Header/molecules/chatboxMolecules/audioDemoPlayerFeedbackThread";
 
@@ -240,13 +241,8 @@ const ThreadMessage = (props: Props) => {
   return (
     <div ref={intersectionRef} className="w-full overflow-hidden">
       <div className="flex flex-wrap gap-2 px-4 py-2 w-full relative group hover:bg-gunMetal overflow-hidden">
-        <div className="flex-shrink-0 rounded-full p-0.5 w-12 h-12">
-          <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
-            <div
-              style={{ backgroundImage: `url("${sender.thumbnail}")` }}
-              className="w-full h-full rounded-full bg-cover bg-center"
-            ></div>
-          </div>
+        <div className="p-1">
+          <Thumbnail professionalName={sender.professional_name} thumbnail={sender.thumbnail} size="40" userId={sender.id}/>
         </div>
         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
           <div className="flex justify-between w-full items-start">

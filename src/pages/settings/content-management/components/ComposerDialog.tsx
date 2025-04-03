@@ -14,6 +14,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { userProfessionalNameSearch } from "api/user";
 import React, { useState, useEffect, useRef } from "react";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -25,9 +26,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const searchedContributorsPadding = 1;
-const thumbnailSize = 10;
 const searchedContributorItemYPadding = 3;
-// const 16.5 = (((thumbnailSize+(searchedContributorItemYPadding*2)) * maxDisplayContributors) + (searchedContributorsPadding*2))/4;
 // Had to be done this way because tailwind works weird
 const dropdownItemMaxHeight = `max-h-[16.5rem]`;
 
@@ -197,7 +196,7 @@ function ComposerDialog(props: Props) {
         </div>
         <div className={`flex flex-col bg-[#1C1C17] absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown`}>
             {searchResults.map((composer, idx) => {
-              const { thumbnail, professional_name, primary_role, secondary_role } =
+              const { thumbnail, professional_name, primary_role, secondary_role, id} =
                 composer;
               return (
                 <div
@@ -207,14 +206,7 @@ function ComposerDialog(props: Props) {
                   key={professional_name + idx}
                   className={`px-2.5 py-${searchedContributorItemYPadding} cursor-pointer flex gap-2.5 hover:bg-darkGray rounded`}
                 >
-                  <div className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}>
-                    <img
-                      src={thumbnail}
-                      alt="thumbnail"
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  </div>
-
+                  <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="10" userId={id}/>
                   <div className="flex-1 flex justify-between items-center">
                     <div>
                       <div className="flex items-center">
@@ -257,7 +249,7 @@ function ComposerDialog(props: Props) {
         <div className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}>
           {contributors?.length ? (
             contributors?.map((composer, idx) => {
-              const { user: { thumbnail, professional_name, primary_role, secondary_role } } =
+              const { user: { thumbnail, professional_name, primary_role, secondary_role, id } } =
                 composer;
 
               return (
@@ -265,14 +257,7 @@ function ComposerDialog(props: Props) {
                   key={"contributor" + idx}
                   className={`px-2.5 py-${searchedContributorItemYPadding} flex gap-2.5 rounded`}
                 >
-                  <div className={`w-${thumbnailSize} h-${thumbnailSize} rounded-full`}>
-                    <img
-                      src={thumbnail}
-                      alt={`${professional_name} thumbnail`}
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  </div>
-
+                  <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="40" userId={id}/>
                   <div className="flex-1 flex justify-between items-center">
                     <div>
                       <div className="flex items-center">

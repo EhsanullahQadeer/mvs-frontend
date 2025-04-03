@@ -7,19 +7,19 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
-import React, { useEffect } from "react";
-import sampleProfileImage from "../sampleAssets/Ellipse 730.png";
-import avatarImg from "../../../../assets/img/avatar.svg";
 import { FiCamera } from "react-icons/fi";
+import React, { useEffect, useState } from "react";
+import ImageCrop from "components/modals/ImageCropModal";
+import avatarImg from "../../../../assets/img/avatar.svg";
+import sampleProfileImage from "../sampleAssets/Ellipse 730.png";
+import { updateUserProfileAPI, updateUserUsernameAPI } from "api/user";
 import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import { ReactComponent as EditIcon } from "../../../../assets/icons/editPencilIcon.svg";
-import ImageCrop from "components/modals/ImageCropModal";
-import { updateUserProfileAPI, updateUserUsernameAPI } from "api/user";
 
 // THIRD PARTY IMPORTS
-import { useState } from "react";
 import { Form, Formik } from "formik";
 import FormikField from "components/util/FormikField";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface UserProfile {
   username: string;
@@ -160,19 +160,15 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
                 className="py-4 px-5 relative bg-center bg-cover"
               >
                 <div className="flex gap-3 items-center">
-                  <div
-                    className={`relative rounded-full p-0.5 w-48 h-48`}
-                  >
-                    <img
-                      src={thumbnail}
-                      alt="Profile"
-                      className="h-full w-full rounded-full object-cover border-4 border-gray-900"
-                    />
+                  <div className={`relative rounded-full`}>
+                    <div className="flex h-auto w-auto rounded-full object-cover bg-[#000] items-center justify-center">
+                      <div className="p-1">
+                        <Thumbnail professionalName={user?.professional_name} thumbnail={user?.thumbnail} size="188"/>
+                      </div>
+                    </div>
 
                     {isEditable && (
-                      <div
-                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 bg-[#414040B2] rounded-full text-white flex items-center justify-center cursor-pointer"
-                      >
+                      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 bg-[#414040B2] rounded-full text-white flex items-center justify-center cursor-pointer">
                         <input
                           accept="image/*"
                           type="file"

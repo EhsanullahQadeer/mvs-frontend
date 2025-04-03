@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toggleNotificationAsRead } from "api/notifier";
 import NotifTimestamp from "../../atoms/notificationAtoms/notifTimestamp";
 import AudioShareNotifContent from "./notificationContents/audioShareContent";
@@ -81,6 +81,9 @@ const Notification = ({ notification, unreadNotifCount, setUnreadNotifCount }: {
   const NotificationContent = 
     NOTIFICATION_COMPONENTS[notification.type as keyof typeof NOTIFICATION_COMPONENTS];
 
+    console.log('Notification username: ', notification.sender.username);
+    console.log('Notification profileName: ', notification.sender.displayName);
+
   const handleMarkAsRead = async () => {
     try {
       await toggleNotificationAsRead(notification.id);
@@ -106,7 +109,7 @@ const Notification = ({ notification, unreadNotifCount, setUnreadNotifCount }: {
           <div className="flex items-center">
             <ReadBubble isRead={notification.isRead} />
             <div className="mr-2">
-              <Thumbnail thumbnail={notification.sender.thumbnail} />
+              <Thumbnail professionalName={notification.sender.displayName} thumbnail={notification.sender.thumbnail} size="56" userId={notification.sender.id}/>
             </div>
           </div>
           <div className="flex-grow">

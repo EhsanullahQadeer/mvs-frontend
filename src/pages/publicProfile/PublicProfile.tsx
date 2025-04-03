@@ -1,5 +1,4 @@
 import { toast } from "react-toastify";
-import { FiInfo} from "react-icons/fi";
 import { Menu } from "@headlessui/react";
 import { currentUserAPI } from "api/auth";
 import { GoDotFill } from "react-icons/go";
@@ -9,7 +8,6 @@ import { useParams } from "react-router-dom";
 import { LuDollarSign } from "react-icons/lu";
 import { CircularProgress } from "@mui/material";
 import { artistPublicProfileAPI } from "api/user";
-import avatarImg from "../../assets/img/avatar.svg";
 import CreatorLogin from "pages/creator/CreatorLogin";
 import { IArtistProfileData } from "./components/types";
 import mvssiveLogo from "../../assets/icons/mvssive-logo.svg";
@@ -18,6 +16,7 @@ import { ReactComponent as MapPinIcon } from "../../assets/icons/mapPin.svg";
 import { ReactComponent as UserPlusIcon } from "../../assets/icons/userPlusIcon.svg";
 import { ReactComponent as CalendarIcon } from "../../assets/icons/calendarIcon.svg";
 import { ReactComponent as PaperPlaneIcon } from "../../assets/icons/paperPlane.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import { ReactComponent as UpArrowTrayIcon } from "../../assets/icons/upArrowTrayIcon.svg";
 import { ReactComponent as ElipsesVerticalIcon } from "../../assets/icons/threeVerticalDotsIcon.svg";
 import ProfileSectionButton from "components/ui/Header/atoms/profileAboutSectionAtoms/profileSectionButton";
@@ -121,12 +120,8 @@ const PublicProfile = () => {
             <div className="bg-jetBlack w-[340px]">
               <div className="h-[88px] bg-[#1a1a1a]"></div>
               <div className="px-4">
-                <div className="rounded-full p-1 bg-jetBlack w-[108px] h-[108px] relative -translate-y-1/2">
-                  <img
-                    src={artistData?.thumbnail || avatarImg}
-                    alt="Profile"
-                    className="h-full w-full rounded-full object-cover"
-                  />
+                <div className="p-1 relative -translate-y-1/2">
+                  <Thumbnail professionalName={artistData.professional_name} thumbnail={artistData.thumbnail} size="108" userId={artistData.id}/>
                 </div>
 
                 <div className="text-white flex flex-col -mt-10">
@@ -279,12 +274,8 @@ const PublicProfile = () => {
                   <div className="bg-jetBlack w-[391px]">
                     <div className="h-[88px] bg-[#1a1a1a]"></div>
                     <div className="px-4">
-                      <div className="rounded-full p-1 bg-jetBlack w-[108px] h-[108px] relative -translate-y-1/2">
-                        <img
-                          src={artistData?.thumbnail || avatarImg}
-                          alt="Profile"
-                          className="h-full w-full rounded-full object-cover"
-                        />
+                      <div className="p-1 relative -translate-y-1/2">
+                        <Thumbnail professionalName={artistData.professional_name} thumbnail={artistData.thumbnail} size="100" userId={artistData.id}/>
                       </div>
                       <div className="text-white flex flex-col -mt-10">
                         <div className="flex flex-col gap-2">
@@ -342,9 +333,6 @@ const PublicProfile = () => {
                                 Cancel anytime, no commitments
                               </span>
                             </div>
-
-
-
                           </div>
                         </div>
                       </div>
