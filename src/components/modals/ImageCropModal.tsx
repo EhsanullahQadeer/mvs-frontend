@@ -6,13 +6,13 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 import { Dialog } from "@mui/material";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   imageUrl: string;
-  onSave: (croppedImage: string) => void;
+  onSave: (croppedImage: string, imageType: string) => void;
 }
 
 const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
@@ -23,22 +23,114 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
   const [resizeStartPos, setResizeStartPos] = useState({ x: 0, y: 0 });
   const [initialSize, setInitialSize] = useState(128);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [fileType, setFileType] = useState<string>('');
 
-  React.useEffect(() => {
+  // Detect file type when image URL changes
+  useEffect(() => {
+    const detectFileType = async () => {
+      try {
+        const response = await fetch(imageUrl);
+        const contentType = response.headers.get('content-type');
+        if (contentType) {
+          if (contentType.includes('gif')) {
+            setFileType('GIF');
+          } else if (contentType.includes('jpeg') || contentType.includes('jpg')) {
+            setFileType('JPEG');
+          } else if (contentType.includes('png')) {
+            setFileType('PNG');
+          } else if (contentType.includes('webp')) {
+            setFileType('WebP');
+          } else {
+            setFileType('Image');
+          }
+        }
+      } catch (error) {
+        console.error('Error detecting file type:', error);
+        setFileType('Image');
+      }
+    };
+
+    if (imageUrl) {
+      detectFileType();
+    }
+  }, [imageUrl]);
+
+  const calculateAndSetPosition = () => {
+    const img = imageRef.current;
+    if (!img) return;
+
+    const bounds = img.getBoundingClientRect();
+    const containerRect = img.parentElement?.getBoundingClientRect();
+    if (!containerRect) return;
+
+    // Calculate the actual displayed image dimensions
+    const imageAspectRatio = img.naturalWidth / img.naturalHeight;
+    const containerAspectRatio = bounds.width / bounds.height;
+
+    let displayedWidth = bounds.width;
+    let displayedHeight = bounds.height;
+
+    if (imageAspectRatio > containerAspectRatio) {
+      displayedHeight = displayedWidth / imageAspectRatio;
+    } else {
+      displayedWidth = displayedHeight * imageAspectRatio;
+    }
+
+    // Calculate the actual visible image boundaries
+    const imageLeft = Math.floor((containerRect.width - displayedWidth) / 2);
+    const imageTop = Math.floor((containerRect.height - displayedHeight) / 2);
+
+    // Calculate center position
+    const centerX = imageLeft + (displayedWidth - size) / 2;
+    const centerY = imageTop + (displayedHeight - size) / 2;
+
+    console.log('Calculating new position:', {
+      centerX: Math.floor(centerX),
+      centerY: Math.floor(centerY),
+      imageLeft,
+      imageTop,
+      displayedWidth,
+      displayedHeight
+    });
+
+    // Force position update
+    setPosition({
+      x: Math.floor(centerX),
+      y: Math.floor(centerY)
+    });
+  };
+
+  // Handle initial position when modal opens
+  useEffect(() => {
+    if (open) {
+      const img = imageRef.current;
+      if (img && img.complete) {
+        calculateAndSetPosition();
+      }
+    }
+  }, [open]);
+
+  useEffect(() => {
+    console.log("Position updated:", position);
+  }, [position]);
+
+  // Handle image load
+  useEffect(() => {
     const img = imageRef.current;
     if (img) {
-      const handleImageLoad = () => {
-        const bounds = img.getBoundingClientRect();
-        setPosition({
-          x: (bounds.width - size) / 2,
-          y: (bounds.height - size) / 2
-        });
+      const handleLoad = () => {
+        setImageLoaded(true);
       };
-
-      img.addEventListener('load', handleImageLoad);
-      return () => img.removeEventListener('load', handleImageLoad);
+      
+      if (img.complete) {
+        setImageLoaded(true);
+      } else {
+        img.addEventListener('load', handleLoad);
+        return () => img.removeEventListener('load', handleLoad);
+      }
     }
-  }, [size, imageUrl]);
+  }, [imageUrl]);
 
   const handleMouseDown = () => setIsDragging(true);
   const handleMouseUp = () => {
@@ -50,19 +142,39 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
     const bounds = imageRef.current.getBoundingClientRect();
     const containerRect = e.currentTarget.getBoundingClientRect();
     
+    // Calculate actual image dimensions and position
+    const imageAspectRatio = imageRef.current.naturalWidth / imageRef.current.naturalHeight;
+    const containerAspectRatio = bounds.width / bounds.height;
+
+    let displayedWidth = bounds.width;
+    let displayedHeight = bounds.height;
+
+    if (imageAspectRatio > containerAspectRatio) {
+      displayedHeight = displayedWidth / imageAspectRatio;
+    } else {
+      displayedWidth = displayedHeight * imageAspectRatio;
+    }
+
+    // Calculate the actual visible image boundaries
+    const imageLeft = (containerRect.width - displayedWidth) / 2;
+    const imageRight = imageLeft + displayedWidth;
+    const imageTop = (containerRect.height - displayedHeight) / 2;
+    const imageBottom = imageTop + displayedHeight;
+    
     if (isDragging) {
+      // Constrain movement to actual visible image bounds
       const x = Math.max(
-        bounds.left - containerRect.left, 
+        imageLeft,
         Math.min(
-          e.clientX - containerRect.left, 
-          bounds.right - containerRect.left - size
+          e.clientX - containerRect.left - (size / 2),
+          imageRight - size
         )
       );
       const y = Math.max(
-        bounds.top - containerRect.top, 
+        imageTop,
         Math.min(
-          e.clientY - containerRect.top, 
-          bounds.bottom - containerRect.top - size
+          e.clientY - containerRect.top - (size / 2),
+          imageBottom - size
         )
       );
       setPosition({ x, y });
@@ -70,11 +182,13 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
       const dx = e.clientX - resizeStartPos.x;
       const dy = e.clientY - resizeStartPos.y;
       const delta = Math.max(dx, dy);
+      
+      // Constrain maximum size to fit within visible image bounds
       const maxSize = Math.min(
-        bounds.width,
-        bounds.height,
-        bounds.right - containerRect.left - position.x,
-        bounds.bottom - containerRect.top - position.y
+        imageRight - position.x,
+        imageBottom - position.y,
+        displayedWidth,
+        displayedHeight
       );
       const newSize = Math.max(128, Math.min(initialSize + delta, maxSize));
       setSize(newSize);
@@ -102,7 +216,6 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
     const image = imageRef.current;
     const imageRect = image.getBoundingClientRect();
     const containerRect = image.parentElement?.getBoundingClientRect();
-    
     if (!containerRect) return;
 
     // Calculate the actual displayed image dimensions
@@ -126,7 +239,7 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
     const scaleX = image.naturalWidth / displayedWidth;
     const scaleY = image.naturalHeight / displayedHeight;
 
-    // Calculate the center of the crop square
+    // Calculate the center of the crop square, accounting for 2px border
     const centerX = position.x + (size / 2);
     const centerY = position.y + (size / 2);
 
@@ -138,6 +251,10 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
     // Ensure crop area stays within image bounds
     const safeX = Math.max(0, Math.min(cropX, image.naturalWidth - cropSize));
     const safeY = Math.max(0, Math.min(cropY, image.naturalHeight - cropSize));
+
+    // Enable image smoothing for better quality
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
     ctx.drawImage(
       image,
@@ -151,8 +268,28 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
       outputSize            // destination height
     );
 
-    const base64Image = canvas.toDataURL('image/jpeg', 1.0);
-    onSave(base64Image);
+    // Determine the output format based on the original file type
+    let outputFormat = 'image/png'; // default to PNG
+    switch (fileType.toLowerCase()) {
+      case 'gif':
+        outputFormat = 'image/gif';
+        break;
+      case 'jpeg':
+      case 'jpg':
+        outputFormat = 'image/jpeg';
+        break;
+      case 'png':
+        outputFormat = 'image/png';
+        break;
+      case 'webp':
+        outputFormat = 'image/webp';
+        break;
+      default:
+        outputFormat = 'image/png';
+    }
+
+    const base64Image = canvas.toDataURL(outputFormat);
+    onSave(base64Image, fileType.toLowerCase());
     onClose();
   };
 
@@ -171,8 +308,13 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
       }}
     >
       <div className="flex flex-col gap-6 m-6">
-        <div className="text-white text-xl font-semibold">
-          Adjust Profile Picture
+        <div className="flex justify-between items-center">
+          <div className="text-white text-xl font-semibold">
+            Adjust Profile Picture
+          </div>
+          <div className="text-mediumGray text-sm">
+            File Type: {fileType}
+          </div>
         </div>
         
         <div 
@@ -184,13 +326,19 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
           style={{ 
             width: '100%',
             height: '70vh',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            msUserSelect: 'none',
+            MozUserSelect: 'none'
           }}
+          draggable={false}
         >
           <img
             ref={imageRef}
             src={imageUrl}
             alt="Crop me"
+            onLoad={calculateAndSetPosition}
             style={{ 
               height: '100%',
               width: '100%',
@@ -202,6 +350,8 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
               pointerEvents: 'none',
               touchAction: 'none',
               WebkitTouchCallout: 'none',
+              KhtmlUserSelect: 'none',
+              cursor: 'default'
             }}
             draggable={false}
           />
