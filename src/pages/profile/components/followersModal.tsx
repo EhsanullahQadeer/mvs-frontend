@@ -1,8 +1,10 @@
 import { Dialog } from "@mui/material";
-import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
 import { getUserFollowers } from "api/user";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+
 interface FollowersModalProps {
   open: boolean;
   handleClose: () => void;
@@ -82,7 +84,7 @@ const FollowersModal = ({ open, handleClose, userId }: FollowersModalProps) => {
           </div>
         </div>
         <div
-          className="flex-1 overflow-y-auto scrollbar-custom border border-[#3D3D3D] rounded-xl p-2"
+          className="flex-1 overflow-y-auto custom-dropdown border border-[#3D3D3D] rounded-xl p-2"
           onScroll={handleScroll}
           style={{ minHeight: "300px" }}
         >
@@ -101,11 +103,7 @@ const FollowersModal = ({ open, handleClose, userId }: FollowersModalProps) => {
                     handleClose();
                   }}
                 >
-                  <img
-                    src={follower.thumbnail || "/avatar.png"}
-                    alt={follower.professional_name}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
+                  <Thumbnail professionalName={follower.professional_name} thumbnail={follower.thumbnail} size="40" userId={follower.id}/>
                   <div className="flex-1">
                     <h3 className="text-white text-sm font-medium">
                       {follower.professional_name}

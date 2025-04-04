@@ -164,6 +164,8 @@ interface ThreadStats {
   replyCount: number;
   lastReplierThumbnail: string;
   hasUnreadMessage: boolean;
+  professionalName: string;
+  id: number;
 }
 
 export interface IMessage {

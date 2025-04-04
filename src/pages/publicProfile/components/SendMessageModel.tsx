@@ -1,12 +1,10 @@
 import Dialog from "@mui/material/Dialog";
-import React, { useEffect, useState } from "react";
-import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
-import { FaRegCircleQuestion } from "react-icons/fa6";
-import { IoIosArrowDown } from "react-icons/io";
-
-import CardInfoDialog from "pages/Inbox/components/CardInfoDialog";
 import { MdVerified } from "react-icons/md";
-import { IoEllipsisHorizontal } from "react-icons/io5";
+import { IoIosArrowDown } from "react-icons/io";
+import React, { useEffect, useState } from "react";
+import CardInfoDialog from "pages/Inbox/components/CardInfoDialog";
+import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface Props {
   openPurchaseOrder: boolean;
@@ -104,27 +102,21 @@ const SendMessageModel = (props: Props) => {
           </div>
 
           <div className="flex flex-col gap-2.5 pr-1 overflow-y-auto custom-dropdown">
-          <div className="flex justify-between text-[14px] text-grayishSilver">
-                <span>Recipent</span>
+            <div className="flex justify-between text-[14px] text-grayishSilver">
+              <span>Recipent</span>
+            </div>
+            <div className="flex  bg-jetBlack border border-eclipseGray p-2 rounded-md items-center w-full justify-between">
+              <div className="flex w-fit items-center gap-2">
+                <Thumbnail professionalName={username} thumbnail={profileImg} size="42"/>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[16px] text-white font-semibold">{username}</span>
+                    <MdVerified className="text-limeGreen" />
+                  </div>
+                  <span className="text-[12px] text-mediumGray">@{handle}</span>
+                </div>
               </div>
-                  <div className="flex  bg-jetBlack border border-eclipseGray p-2 rounded-md items-center w-full justify-between">
-                        <div className="flex w-fit items-center gap-2">
-                          <div className="w-[42px] h-[42px] rounded-full">
-                            <img
-                              src={profileImg}
-                              alt={username}
-                              className="w-full rounded-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[16px] text-white font-semibold">{username}</span>
-                              <MdVerified className="text-limeGreen" />
-                            </div>
-                            <span className="text-[12px] text-mediumGray">@{handle}</span>
-                          </div>
-                        </div>
-                      </div>
+            </div>
             <div className="flex flex-col text-[12px] gap-1 py-2 ">
               <div className="flex justify-between text-grayishSilver">
                 <span>Price</span>

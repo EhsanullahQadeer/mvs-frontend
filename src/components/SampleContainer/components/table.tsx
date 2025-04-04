@@ -9,12 +9,13 @@ import { AudioTrackType } from "../player-container";
 import { AudioTrack, useWaveform } from "./waveform";
 import { AnimatedWaveGraphic } from "./wave-graphic";
 import playIcon from "../../../assets/icons/playIcon.svg";
-import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
+import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io"
 import musicBeam from "../../../assets/icons/musicBeam.svg";
 import ConsideringModal from "components/modals/considering";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {ReactComponent as MusicIcon} from "../../../assets/icons/musicIcon.svg";
 import { getSampleConsidering, saveSampleDownloadAPI, sampleLikeAPI } from "api/sounds";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 const SampleTable = (props: {
   samples: any[];
@@ -328,6 +329,8 @@ const SampleTable = (props: {
     setLocalLikedStatus(initialStatus);
   }, [samples]);
 
+  console.log('Sample ID: ', samples);
+
   return (
     <>
       <table
@@ -521,27 +524,14 @@ const SampleTable = (props: {
                     {/* Considering List */}
                     <td className="considering-avatar whitespace-nowrap text-sm text-mediumGray text-center px-3 py-4">
                       {consideringData[sample.id]?.length > 0 ? (
-                        <div className="flex flex-wrap items-center justify-center gap-2.5 hover:opacity-100 opacity-40 transition-opacity duration-200">
+                        <div className="flex flex-wrap items-center justify-center gap-2.5 ">
                           <div className="flex items-center justify-center">
                             {consideringData[sample.id]
                               .slice(0, 3)
                               .map((person: any, index: number) => (
-                                <Avatar
-                                  key={index}
-                                  className={`flex cursor-pointer ${
-                                    index === 0 ? "ml-0" : "-ml-[8px]"
-                                  }`}
-                                  sx={{
-                                    width: "24px",
-                                    height: "24px",
-                                    border: "0.5px solid #292929",
-                                  }}
-                                  src={person.user.thumbnail || person.image}
-                                  onClick={() => {
-                                    // setSample(x);
-                                    // setConsidering(true);
-                                  }}
-                                />
+                                <div className={`flex border-[0.5px] rounded-full border-[#292929] ${index === 0 ? 'ml-0' : '-ml-[8px]'}`}>
+                                  <Thumbnail professionalName={person.user.professional_name} thumbnail={person.user.thumbnail} userId={person.user.id} size="24"/>
+                                </div>
                               ))}
                           </div>
                           {consideringData[sample.id].length > 3 && (

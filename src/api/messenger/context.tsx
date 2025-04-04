@@ -25,7 +25,9 @@ import {
   IToggleConversationIsSpam,
   IGetConversationNotes,
   IDeleteConversations,
+  IDeleteMessage,
 } from './objects/api.interfaces';
+import { useDeleteMessage } from './hooks/useDeleteMessage';
 
 interface MessengerContextType {
   // State
@@ -71,6 +73,7 @@ interface MessengerContextType {
   setMessages: (messages: IMessage[]) => void;
   sendMessage: (payload: ISendMessage) => Promise<void>;
   replyInThread: (payload: IReplyInThread) => Promise<void>;
+  deleteMessage: (payload: IDeleteMessage) => Promise<any>;
 }
 
 const MessengerContext = createContext<MessengerContextType | undefined>(undefined);
@@ -145,6 +148,7 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
   const replyInThreadFunc = useReplyInThread(setThreadMessages);
   const getSearchMessagesFunc = 
     useGetSearchMessages(setSearchMessages,setTotalSearchMessages);
+  const deleteMessageFunc = useDeleteMessage();
 
   const value: MessengerContextType = useMemo(() => {
     return {
@@ -188,7 +192,8 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
       setThreadMessages,
       setMessages,
       sendMessage: sendMessageFunc,
-      replyInThread: replyInThreadFunc
+      replyInThread: replyInThreadFunc,
+      deleteMessage: deleteMessageFunc
     };
   }, [
     activeConversation,
@@ -231,7 +236,8 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
     setThreadMessages,
     setMessages,
     sendMessageFunc,
-    replyInThreadFunc
+    replyInThreadFunc,
+    deleteMessageFunc
   ]);
 
   return (

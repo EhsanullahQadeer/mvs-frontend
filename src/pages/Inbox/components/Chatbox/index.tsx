@@ -25,6 +25,7 @@ import { AudioRecordingProvider } from "./components/audioRecorder";
 import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface ChatboxProps {
   onClose: () => void;
@@ -259,14 +260,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
             <div className="flex flex-wrap gap-5 justify-between items-center p-4 w-full">
               <div className="flex gap-2 items-center">
-                <div className="flex rounded-full p-0.5 w-12 h-12 aspect-square">
-                  <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
-                    <div
-                      style={{ backgroundImage: `url("${recipient?.thumbnail}")` }}
-                      className="w-full h-full rounded-full bg-cover bg-center"
-                    ></div>
-                  </div>
-                </div>
+                <Thumbnail professionalName={recipient.professional_name} thumbnail={recipient.thumbnail} size="40" userId={recipient.id}/>
                 <div className="flex flex-col gap-0.5">
                   <div className="text-sm font-semibold text-white">
                     {recipient?.name}
@@ -308,7 +302,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
           ) : (
             <div
               ref={messagesRef}
-              className="flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden w-full custom-dropdown"
+              className="flex-col flex-1 py-3 overflow-y-auto w-full custom-dropdown relative"
               onScroll={handleScroll}
             >
               {isLoadingMore && (
@@ -334,7 +328,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                       </p>
                     </div>
                   ) : (
-                    <div className={`flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto ${getAnimationClass()}`}>
+                    <div className={`flex flex-col flex-1 w-full overflow-visible ${getAnimationClass()}`}>
                       {isThread ? (
                         <div className="w-full flex flex-col">
                           <div className="sticky top-0 bg-[#131313] border-b border-[#242424] px-4 py-2 flex items-center justify-between">
@@ -355,7 +349,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                             </button>
                           </div>
                           {threadMessages && threadMessages?.length > 0 ? (
-                            <div className="w-full overflow-x-hidden overflow-y-auto">
+                            <div className="w-full overflow-visible">
                               {threadMessages?.map((message: IMessage, index) => (
                                 <>
                                   <div
@@ -408,11 +402,9 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                           )}
                         </div>
                       ) : (
-                        <div className="w-full overflow-x-hidden">
+                        <div className="w-full overflow-visible">
                           {messages && Array.isArray(messages) ? messages.map((message: IMessage, index) => (
-                            <div
-                              key={message?.id || index}
-                            >
+                            <div key={message?.id || index} className="overflow-visible">
                               <Message
                                 message={message}
                                 index={index}

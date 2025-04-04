@@ -8,6 +8,7 @@ import { useMessenger } from "api/messenger/context";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import StripeElements from "components/stripe/stripeElements";
 import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import { capitalizeRegion, convertToCurrencyFormat, formatNumberWithCommas } from "utils/dateUtils";
 
 interface Props {
@@ -44,6 +45,7 @@ const PurchaseOrderDialog = (props: Props) => {
   } = useMessenger();
 
   const recipient = activeConversation?.recipient;
+  console.log('Recipient: ', recipient);
   const MAX_TIP_AMOUNT = 1000000;
   const [basePrice, setBasePrice] = useState(0);
   const [inputTipAmount, setInputTipAmount] = useState("$0.00");
@@ -182,14 +184,11 @@ const PurchaseOrderDialog = (props: Props) => {
                   background:
                     "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
                 }}
-                className="flex rounded-full p-0.5 w-10 h-10 aspect-square"
+                className="flex rounded-full p-0.5 aspect-square"
               >
-                <img
-                  alt=""
-                  loading="lazy"
-                  src={recipient?.thumbnail}
-                  className="object-cover w-full h-full rounded-full border-[2px] border-[#151515]"
-                />
+                <div className=" border border-[#151515] rounded-full">
+                  <Thumbnail professionalName={recipient?.name} thumbnail={recipient?.thumbnail} size="35"/>
+                </div>
               </div>
               <div className="flex flex-col gap-0.5 text-[14px]">
                 <div className="text-sm font-semibold text-white">

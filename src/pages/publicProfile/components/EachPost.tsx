@@ -7,6 +7,7 @@ import comment from "../../../assets/img/comment.svg";
 import UnlockContentModel from "./UnlockContentModel";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import download from "../../../assets/img/downloadicon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface PostProps {
   username: string;
@@ -59,13 +60,7 @@ const EachPost: React.FC<PostProps> = ({
       <div className="p-4 w-full">
         <div className="flex items-center w-full justify-between">
           <div className="flex w-fit items-center gap-2">
-            <div className="w-[52px] h-[52px] rounded-full">
-              <img
-                src={profileImg}
-                alt={username}
-                className="w-full rounded-full h-full object-cover"
-              />
-            </div>
+            <Thumbnail professionalName={username} thumbnail={profileImg} size="52"/>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <span className="text-[18px] text-white font-semibold">

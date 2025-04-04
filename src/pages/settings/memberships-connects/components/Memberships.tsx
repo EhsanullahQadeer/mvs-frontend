@@ -8,7 +8,7 @@ const Memberships = () => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const handlePlan = () => {
-    navigate("/settings/plans/1");
+    navigate("/settings/plans/");
   };
 
   const handleBuyCreditsClick = () => {

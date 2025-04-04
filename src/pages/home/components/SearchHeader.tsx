@@ -7,23 +7,23 @@
  ****************************************************************************************/
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import banner from "../../../assets/img/welcome-banner.svg";
+import "../styles/search-header.scss";
+import { searchAllUsers } from "api/user";
+import { MdCancel } from "react-icons/md";
+import { useState, useEffect } from "react";
+import useDebounce from "hooks/useDebounce";
+import CustomPopper from "./CutomPopperSearch";
+import { Autocomplete, TextField } from "@mui/material";
 import leftWing from "../../../assets/img/left wing.svg";
 import rightWing from "../../../assets/img/right wing.svg";
-import frquesncyIcon from "../../../assets/img/frequency-Icon.svg";
-import crownIcon from "../../../assets/icons/crownIcon.svg";
-import "../styles/search-header.scss";
-import { Autocomplete, TextField } from "@mui/material";
-import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
-import { MdCancel } from "react-icons/md";
-import CustomPopper from "./CutomPopperSearch";
-import CircularProgress from "@mui/material/CircularProgress";
-import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 import { useSearchHeader } from '../hooks/useSearchHeader';
-import { searchAllUsers, userArtistSearch } from "api/user";
-import useDebounce from "hooks/useDebounce";
-import { useState, useEffect } from "react";
-import avatarImg from "../../../assets/img/avatar.svg";
+import banner from "../../../assets/img/welcome-banner.svg";
+import crownIcon from "../../../assets/icons/crownIcon.svg";
+import CircularProgress from "@mui/material/CircularProgress";
+import frquesncyIcon from "../../../assets/img/frequency-Icon.svg";
+import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
+import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 export interface IAppProps {}
 
@@ -160,11 +160,7 @@ export function SearchHeader() {
                         handleArtistSelected(option);
                       }}
                     >
-                      <img
-                        src={option?.thumbnail || avatarImg}
-                        alt={option.professionalName}
-                        className="w-10 h-10 rounded-md"
-                      />
+                      <Thumbnail professionalName={option?.professional_name} thumbnail={option?.thumbnail} size="40" round={false}/>
                       <div className="flex items-center gap-3">
                         <span className="text-gainsboro text-sm w-32">
                           {option.professionalName}

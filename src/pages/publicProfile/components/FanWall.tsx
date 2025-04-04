@@ -1,11 +1,12 @@
-import { useEffect, useState, useRef, useCallback } from "react";
 import Comment from "./Comment";
 import icon from "../../../assets/img/icon.svg";
-import { createFanwallPost, getFanwallPosts } from "api/fanwall";
 import { CircularProgress } from "@mui/material";
-import { IArtistProfileData, ICurrentUser } from "./types";
 import UnlockContentModel from "./UnlockContentModel";
 import { IUserData } from "pages/profile/components/types";
+import { IArtistProfileData, ICurrentUser } from "./types";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { createFanwallPost, getFanwallPosts } from "api/fanwall";
+import { useNotification } from "services/WebSocket/useNotification.hook";
 
 interface IProps {
   artistData: IArtistProfileData | IUserData | null;
@@ -27,6 +28,36 @@ const FanWall = (props: IProps) => {
   const [hasMore, setHasMore] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observer = useRef<IntersectionObserver | null>(null);
+  const [viewingRepliesForPost, setViewingRepliesForPost] = useState<number | null>(null);
+
+  useNotification('FANWALL_POST', (event) => {
+    const newPost = event.post;
+    if (newPost.parent || newPost.reply_to) {
+      const parentId = newPost.parent?.id;
+      setFanwallPostsData(prevPosts => {
+        return prevPosts.map(post => {
+          if (post.id === parentId) {
+            const updatedPost = {
+              ...post,
+              replies_count: (post.replies_count || 0) + 1,
+              replies_list: viewingRepliesForPost === post.id
+                ? [...(post.replies_list || []), { ...newPost, comment: newPost.post }]
+                : post.replies_list
+            };
+
+            return updatedPost;
+          }
+          return post;
+        });
+      });
+      return;
+    }
+
+    setFanwallPostsData(prevPosts => {
+      newPost.comment = newPost.post;
+      return [newPost, ...prevPosts];
+    });
+  });
 
   const lastPostElementRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -89,11 +120,34 @@ const FanWall = (props: IProps) => {
         fanwall_owner_id: id,
       };
 
-      await createFanwallPost(body);
+      const response = await createFanwallPost(body);
+      const createdPost = response.data;
+
+      if (postId) {
+        setViewingRepliesForPost(replyToId || postId);
+        
+        setFanwallPostsData(prevPosts => 
+          prevPosts.map(post => {
+            if (post.id === (replyToId || postId)) {
+              return {
+                ...post,
+                replies_count: (post.replies_count || 0) + 1,
+                replies_list: [...(post.replies_list || []), { ...createdPost, comment: createdPost.post }]
+              };
+            }
+            return post;
+          })
+        );
+      } else {
+        setFanwallPostsData(prevPosts => [{
+          ...createdPost,
+          comment: createdPost.post,
+        }, ...prevPosts]);
+      }
+
       handleCancel();
       setReplyText("");
       setReplyingTo(null);
-      await getFanwallPostsData();
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -118,9 +172,23 @@ const FanWall = (props: IProps) => {
     setIsFocused(false);
   };
 
+  const handleShowReplies = (postId: number) => {
+    console.log("Setting viewingRepliesForPost to:", postId);
+    if (viewingRepliesForPost === postId) {
+      setViewingRepliesForPost(null);
+    } else {
+      setViewingRepliesForPost(postId);
+    }
+  };
+
+  const handleHideReplies = () => {
+    console.log("Setting viewingRepliesForPost to null");
+    setViewingRepliesForPost(null);
+  };
+
   useEffect(() => {
-    console.log("post comment data...", fanwallPostsData);
-  }, [fanwallPostsData]);
+    console.log("viewingRepliesForPost changed to:", viewingRepliesForPost);
+  }, [viewingRepliesForPost]);
 
   return (
     <>
@@ -170,7 +238,8 @@ const FanWall = (props: IProps) => {
             )}
           </div>
         </div>
-        <div>
+
+        <div className="overflow-y-auto h-[60vh] custom-dropdown"> {/* Set a fixed height and enable vertical scrolling */}
           {fanwallPostsData.map((fanwallPost, index) => (
             <div
               key={index}
@@ -185,11 +254,14 @@ const FanWall = (props: IProps) => {
                   setReplyText,
                   handleSendReply: handleSend,
                   rootCommentId: fanwallPost.id,
+                  handleShowReplies,
+                  handleHideReplies,
+                  viewingRepliesForPost,
+                  allowReply: true,
                 }}
               />
             </div>
           ))}
-
         </div>
 
         <UnlockContentModel

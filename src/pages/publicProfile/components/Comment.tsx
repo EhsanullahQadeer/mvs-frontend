@@ -1,10 +1,10 @@
+import { MdVerified } from "react-icons/md";
+import icon from "../../../assets/img/icon.svg";
 import React, { useEffect, useState } from "react";
 import { IoEllipsisHorizontal } from "react-icons/io5";
-import { MdVerified } from "react-icons/md";
-import likeIcon from "../../../assets/img/heart.svg";
 import commentIcon from "../../../assets/img/comment.svg";
-import icon from "../../../assets/img/icon.svg";
 import { getFanwallPostReplies, toggleFanwallPostLike } from "api/fanwall";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface IProps {
   fanwallPost: {
@@ -26,6 +26,11 @@ interface IProps {
   setReplyText: (text: string) => void;
   handleSendReply: (postId: number, replyToId: number) => void;
   rootCommentId: number;
+  handleShowReplies: (postId: number) => void;
+  handleHideReplies: () => void;
+  viewingRepliesForPost: number | null;
+  allowReply: boolean;
+  onReplyAdded?: (reply: any) => void;
 }
 
 const getRelativeTime = (timestamp: string) => {
@@ -52,6 +57,11 @@ const Comment: React.FC<IProps> = ({
   setReplyText,
   handleSendReply,
   rootCommentId,
+  handleShowReplies,
+  handleHideReplies,
+  viewingRepliesForPost,
+  allowReply,
+  onReplyAdded,
 }) => {
   const {
     id,
@@ -63,12 +73,16 @@ const Comment: React.FC<IProps> = ({
     first_reply,
     is_liked,
   } = fanwallPost;
+
   const { professional_name, thumbnail } = author;
-  const [showReplies, setShowReplies] = useState(false);
   const [totalLikes, setTotalLikes] = useState(likes_count);
   const [fanwallRepliesData, setFanwallRepliesData] = useState([]);
   const [isTextareaFocused, setIsTextareaFocused] = useState(false);
   const [isLiked, setIsLiked] = useState(is_liked);
+  const [hasMoreReplies, setHasMoreReplies] = useState(false);
+  const [isLoadingMoreReplies, setIsLoadingMoreReplies] = useState(false);
+
+  const isShowingReplies = viewingRepliesForPost === id;
 
   const handleFanwallPostLike = async (e) => {
     e.stopPropagation();
@@ -84,36 +98,55 @@ const Comment: React.FC<IProps> = ({
     }
   };
 
-  const getFanwallRepliesData = async () => {
+  useEffect(() => {
+    if (isShowingReplies) {
+      setFanwallRepliesData([]);
+      setHasMoreReplies(false);
+      setIsLoadingMoreReplies(false);
+      getFanwallRepliesData();
+    }
+  }, [isShowingReplies]);
+
+  const getFanwallRepliesData = async (loadMore: boolean = false) => {
     try {
+      const skip = loadMore ? fanwallRepliesData.length : 0;
+      
       const params = {
         post_id: id,
-        skip: 0,
-        take: 10,
+        skip: skip,
+        take: 3,
       };
+      
       const response = await getFanwallPostReplies(params);
-      setFanwallRepliesData(response.data);
+      
+      setFanwallRepliesData(prevData => 
+        loadMore ? [...prevData, ...response.data] : response.data
+      );
+      
+      setHasMoreReplies(response.data.length === 3);
+      setIsLoadingMoreReplies(false);
     } catch (error) {
       console.log("Error fetching replies:", error);
+      setIsLoadingMoreReplies(false);
     }
   };
 
-  useEffect(() => {
-    if (replies_count > 1 || !first_reply) {
-      getFanwallRepliesData();
-    }
-  }, [id]);
-
   const handleCommentClick = () => {
-    setReplyText("");
-    setIsTextareaFocused(false);
-    setReplyingTo(replyingTo === id ? null : id);
+    if (allowReply) {
+      setReplyText("");
+      setIsTextareaFocused(false);
+      setReplyingTo(replyingTo === id ? null : id);
+    }
   };
 
   const handleReplyCancel = () => {
     setReplyText("");
     setReplyingTo(null);
     setIsTextareaFocused(false);
+  };
+
+  const handleReplyLocally = (newReply: any) => {
+    setFanwallRepliesData(prev => [...prev, newReply]);
   };
 
   return (
@@ -126,13 +159,7 @@ const Comment: React.FC<IProps> = ({
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-[52px] h-[52px] rounded-full overflow-hidden">
-              <img
-                src={thumbnail}
-                alt={professional_name}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="52"/>
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
                 <span className="text-[18px] text-white font-semibold">
@@ -164,10 +191,12 @@ const Comment: React.FC<IProps> = ({
             </div>
             <span>{totalLikes}</span>
           </div>
-          <div className="text-mediumGray flex gap-1 items-center">
-            <img src={commentIcon} alt="Comment" className="w-5 h-5" />
-            <span>{fanwallRepliesData.length}</span>
-          </div>
+          {allowReply && (
+            <div className="text-mediumGray flex gap-1 items-center">
+              <img src={commentIcon} alt="Comment" className="w-5 h-5" />
+              <span>{fanwallRepliesData.length}</span>
+            </div>
+          )}
         </div>
 
         {replyingTo === id && (
@@ -191,37 +220,42 @@ const Comment: React.FC<IProps> = ({
                   >
                     Cancel
                   </div>
-                  <div
-                    onClick={() => handleSendReply(id, rootCommentId)} // Pass rootCommentId
-                    className="w-full px-3 py-2 bg-limeGreen text-[#203300] rounded-full text-sm font-semibold cursor-pointer"
-                  >
-                    Comment
-                  </div>
+                    <div
+                      onClick={() => handleSendReply(id, rootCommentId)} // Pass rootCommentId
+                      className="w-full px-3 py-2 bg-limeGreen text-[#203300] rounded-full text-sm font-semibold cursor-pointer"
+                    >
+                      Comment
+                    </div>
                 </div>
               )}
             </div>
           </div>
         )}
 
-        {(replies_count > 1 || !first_reply) &&
-          fanwallRepliesData.length > 0 && (
+        {allowReply &&
+          replies_count > 0 && (
             <div
               className="my-4 text-[14px] text-dimGray flex items-center gap-0.5 cursor-pointer"
               onClick={(e) => {
-                setShowReplies(!showReplies);
                 e.stopPropagation();
+                if (isShowingReplies) {
+                  handleHideReplies();
+                } else {
+                  handleShowReplies(id);
+                }
               }}
             >
               <span className="bg-dimGray w-12 h-[1px]"></span>
-              {showReplies
+              {isShowingReplies
                 ? "Hide replies"
-                : `See replies (${fanwallRepliesData.length})`}
+                : `See replies (${replies_count})`}
             </div>
           )}
       </div>
 
       {first_reply && (
-        <div className="mt-4">
+        <div className="mt-4 pl-8 relative">
+          <div className="absolute top-0 bottom-0 w-[4px] bg-eclipseGray"></div>
           <Comment
             {...{
               fanwallPost: first_reply,
@@ -231,13 +265,19 @@ const Comment: React.FC<IProps> = ({
               setReplyText,
               handleSendReply,
               rootCommentId: rootCommentId,
+              handleShowReplies,
+              handleHideReplies,
+              viewingRepliesForPost,
+              allowReply: false,
+              onReplyAdded: handleReplyLocally,
             }}
           />
         </div>
       )}
 
-      {fanwallRepliesData.length > 0 && showReplies && (
-        <div className="mt-4">
+      {fanwallRepliesData.length > 0 && isShowingReplies && (
+        <div className="mt-4 pl-8 relative">
+          <div className="absolute top-0 bottom-0 w-[4px] h-[95%] bg-eclipseGray"></div>
           {(first_reply
             ? fanwallRepliesData.filter((reply) => reply.id !== first_reply.id)
             : fanwallRepliesData
@@ -252,9 +292,25 @@ const Comment: React.FC<IProps> = ({
                 setReplyText,
                 handleSendReply,
                 rootCommentId: rootCommentId,
+                handleShowReplies,
+                handleHideReplies,
+                viewingRepliesForPost,
+                allowReply: false,
+                onReplyAdded: handleReplyLocally,
               }}
             />
           ))}
+          {hasMoreReplies && (
+            <div 
+              className="mt-4 text-center text-dimGray text-sm cursor-pointer hover:text-silver"
+              onClick={(e) => {
+                e.stopPropagation();
+                getFanwallRepliesData(true);
+              }}
+            >
+              {isLoadingMoreReplies ? "Loading..." : "See more replies"}
+            </div>
+          )}
         </div>
       )}
     </div>

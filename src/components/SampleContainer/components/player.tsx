@@ -15,13 +15,14 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import skipBack from "../../../assets/img/player/skip-back.svg";
-import skipNext from "../../../assets/img/player/skip-forward.svg";
-import pauseButton from "../../../assets/img/player/pause-circle.svg";
-import playButton from "../../../assets/img/player/play-circle.svg";
+import "./player.scss";
 import { waveformCtx } from "./waveform";
 import { AnimatedWaveGraphic } from "./wave-graphic";
-import "./player.scss";
+import skipBack from "../../../assets/img/player/skip-back.svg";
+import skipNext from "../../../assets/img/player/skip-forward.svg";
+import playButton from "../../../assets/img/player/play-circle.svg";
+import pauseButton from "../../../assets/img/player/pause-circle.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 const AudioPlayer = ({
   currTrack,
@@ -272,11 +273,7 @@ const AudioPlayer = ({
       >
         <div className="h-8 w-8">
           {currTrack?.thumbnail && (
-            <img
-              src={currTrack.thumbnail}
-              alt="thumbnail"
-              className="w-full h-full"
-            />
+            <Thumbnail thumbnail={currTrack.thumbnail} size="32"/>
           )}
         </div>
 

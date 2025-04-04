@@ -6,20 +6,6 @@ function PaymentMethodStripe() {
   let elements = useElements();
 
   const [isReadytoSubmit, setIsReadytoSubmit] = useState(false);
-  // useEffect(() => {
-  //   if (elements) {
-  //     const paymentElement = elements.create("payment", {
-  //       layout: "accordion",
-  //     });
-  //     paymentElement.on("change", (event) => {
-  //       console.log("event", event);
-  //       if (event.complete) {
-  //         setIsReadytoSubmit(true);
-  //       }
-  //     });
-  //     paymentElement.mount("#payment-element");
-  //   }
-  // }, [elements]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -35,7 +21,6 @@ function PaymentMethodStripe() {
   }
   return (
     <form onSubmit={handleSubmit}>
-      {/* <div id="payment-element"></div> */}
       <PaymentElement
       onChange={(event)=>setIsReadytoSubmit(event.complete&&!event.value.payment_method)}
       options={{
