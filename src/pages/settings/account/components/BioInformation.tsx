@@ -166,7 +166,7 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
                     className={`relative rounded-full p-0.5 w-48 h-48`}
                   >
                     <img
-                      src={thumbnail}
+                      src={`${process.env.REACT_APP_ASSETS}${thumbnail}`}
                       alt="Profile"
                       className="h-full w-full rounded-full object-cover border-4 border-gray-900"
                     />
