@@ -35,6 +35,8 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [showCropModal, setShowCropModal] = useState<boolean>(false);
   const [cropImage, setCropImage] = useState<string | null>(null);
+  const [thumbnailChanged, setThumbnailChanged] = useState<boolean>(false);
+  const [savedThumbnail, setSavedThumbnail] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<UserProfile>({
     username: "",
     bio: "",
@@ -77,6 +79,7 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
       thumbnail: croppedImage,
       image_type: imageType
     }));
+    setThumbnailChanged(true);
   };
 
   const handleCropCancel = () => {
@@ -92,7 +95,8 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
         thumbnail: user.thumbnail || "",
         banner_image: user.banner_image || "",
       });
-      setThumbnail(user.thumbnail || sampleProfileImage);
+      setThumbnail(user.thumbnail || avatarImg);
+      setThumbnailChanged(false);
     }
     setIsEditable(false);
   };
@@ -114,12 +118,12 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
       if (Object.keys(changedValues).length > 0) {
         try {
           await updateUserProfileAPI(changedValues);
-          console.log("changedValues", changedValues);
           setUser({ ...user, ...changedValues });
+          setThumbnailChanged(true);
+          setSavedThumbnail(true);
           if (changedValues.username) {
-           const response = await updateUserUsernameAPI(changedValues.username);
-           console.log("response", response);
-           setUser({ ...user, ...changedValues });
+            const response = await updateUserUsernameAPI(changedValues.username);
+            setUser({ ...user, ...changedValues });
           }
         } catch (error) {
           console.error("Failed to update profile:", error);
@@ -166,7 +170,7 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
                     className={`relative rounded-full p-0.5 w-48 h-48`}
                   >
                     <img
-                      src={`${process.env.REACT_APP_ASSETS}${thumbnail}`}
+                      src={thumbnailChanged || savedThumbnail ? thumbnail : `${process.env.REACT_APP_ASSETS}${thumbnail}`}
                       alt="Profile"
                       className="h-full w-full rounded-full object-cover border-4 border-gray-900"
                     />
