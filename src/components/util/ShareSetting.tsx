@@ -1,7 +1,3 @@
-import { useEffect, useState, useCallback } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { RxPerson } from "react-icons/rx";
-import cover from "../../assets/img/artistImg.png";
 import {
   Box,
   Tab,
@@ -16,13 +12,16 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import { FaLink } from "react-icons/fa6";
-import { FiDownload, FiLock } from "react-icons/fi";
-import { getSamplePublicUrl, soundPublicUrl, updateSampleSettings, setSamplePassword, getSamplePassword, getSampleCollaborators } from "api/sounds";
 import { v4 as uuidv4 } from "uuid";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import debounce from "lodash/debounce";
+import { FaLink } from "react-icons/fa6";
+import { RxPerson } from "react-icons/rx";
+import { FiDownload, FiLock } from "react-icons/fi";
+import { useEffect, useState, useCallback } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import { getSamplePublicUrl, soundPublicUrl, updateSampleSettings, setSamplePassword, getSamplePassword, getSampleCollaborators } from "api/sounds";
 
 interface Collaborator {
   id: number;
@@ -35,7 +34,6 @@ interface Collaborator {
   }
 }
 const ShareSetting = ({ isOpen, onClose, sample }) => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"link" | "members">("link");
   const [linkEnabled, setLinkEnabled] = useState(sample.enable_public_access);
   const [allowDownloads, setAllowDownloads] = useState(sample.is_downloadable);
@@ -524,13 +522,7 @@ const ShareSetting = ({ isOpen, onClose, sample }) => {
                       index !== collaborators.length - 1 ? "bg-eclipseGray" : ""
                     }`}>
                       <div className="flex px-4 gap-2">
-                        <div className="w-8 h-8 rounded-full border-2 border-charcoalGray aspect-square">
-                          <img
-                            src={collaborator.user.thumbnail || cover}
-                            alt={collaborator.user.professional_name}
-                            className="w-full h-full object-cover rounded-full"
-                          />
-                        </div>
+                        <Thumbnail professionalName={collaborator.user.professional_name} thumbnail={collaborator.user.thumbnail} userId={collaborator.user.id} size="30"/>
                         <div className="flex flex-col">
                           <div className="flex gap-2 items-center">
                             <span className="text-white text-sm">

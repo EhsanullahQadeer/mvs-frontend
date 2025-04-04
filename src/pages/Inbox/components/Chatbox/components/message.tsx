@@ -4,12 +4,13 @@ import { useChatbox } from "../context";
 import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
+import MessageOptions from "./messageOptions";
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
-import MessageOptions from "./messageOptions";
 
 
 interface MessageProps {
@@ -31,6 +32,7 @@ const Message: React.FC<MessageProps> = ({
     media,
     transaction,
   } = message;
+  console.log('Message: ', message);
   
   const { 
     handleLoadThread,
@@ -172,13 +174,7 @@ const Message: React.FC<MessageProps> = ({
                 handleLoadThread(message?.id);
               }}
             >
-              <div className="w-6 h-6 rounded-full bg-[#151515] border-[0.5px] border-[#343434] p-[1px]">
-                <img
-                  src={message?.threadStats?.lastReplierThumbnail}
-                  alt="thumbnail"
-                  className="w-full h-full rounded-full"
-                />
-              </div>
+              <Thumbnail professionalName={message?.threadStats?.professionalName} thumbnail={message?.threadStats?.lastReplierThumbnail} userId={message?.threadStats?.id} size="23"/>
               <span className="text-[10px] text-secondaryBlue font-normal cursor-pointer">
                 {message?.threadStats?.replyCount} reply
               </span>
@@ -320,13 +316,8 @@ const Message: React.FC<MessageProps> = ({
           />
         </div>
 
-        <div className="flex rounded-full p-0.5 w-12 h-12">
-          <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
-            <div
-              style={{ backgroundImage: `url("${sender.thumbnail}")` }}
-              className="w-full h-full rounded-full bg-cover bg-center"
-            ></div>
-          </div>
+        <div className="p-1">
+          <Thumbnail professionalName={sender.professional_name} thumbnail={sender.thumbnail} size="40" userId={sender.id}/>
         </div>
 
         <div className="flex flex-col flex-1">

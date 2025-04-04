@@ -4,6 +4,7 @@ import starIcon from "../../../../../assets/icons/star.svg";
 import { lastMsgTimeStamp } from "../../../handlers/mediaUtils";
 import featuredIcon from "../../../../../assets/icons/featured-icon.svg";
 import { IConversation, TUser } from "api/messenger/objects/states.types";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 export const Conversation = ({ conversation, onClick, searchTerm, searchContent, searchCreatedAt, sender }: { 
   searchTerm?:string; 
@@ -94,13 +95,13 @@ export const Conversation = ({ conversation, onClick, searchTerm, searchContent,
                   className="flex gap-1 items-center self-stretch my-auto cursor-pointer"
                 >
                   <div className="flex gap-2 items-center self-stretch my-auto">
-                    <div className="flex rounded-full p-0.5 w-[52px] aspect-square">
-                      <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
-                        <div
-                          style={{ backgroundImage: `url("${searchTerm ? sender.thumbnail : recipient?.thumbnail}")` }}
-                          className="w-full h-full rounded-full bg-cover bg-center"
-                        ></div>
-                      </div>
+                    <div className="p-1">
+                      <Thumbnail
+                        professionalName={`${searchTerm ? sender?.professional_name : recipient?.professional_name}`}
+                        thumbnail={`${searchTerm ? sender?.thumbnail : recipient?.thumbnail}`}
+                        size="44"
+                        userId={searchTerm ? sender?.id : recipient?.id}
+                      />
                     </div>
                     <div className="flex flex-col justify-center self-stretch my-auto font-semibold w-[100px]">
                       <div

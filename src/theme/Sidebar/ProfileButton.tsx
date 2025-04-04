@@ -7,7 +7,6 @@
  *************************************************************************/
 
 /* IMPORTS */
-import Avatar from "react-avatar";
 import { Fragment, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
@@ -16,8 +15,9 @@ import { Menu, Transition } from "@headlessui/react";
 import ContactModal from "components/modals/contact-us";
 import { useHeaderHooks } from "../Header/Header.hooks";
 import UserSettingsModal from "components/modals/user-settings";
-import { ReactComponent as CaratIcon } from "../../assets/icons/caratIcon.svg";
 import FeedbackContactModal from "components/modals/feedback-contact";
+import { ReactComponent as CaratIcon } from "../../assets/icons/caratIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 const ProfileButton = () => {
   /* States and Hooks */
@@ -40,22 +40,14 @@ const ProfileButton = () => {
       <div className="flex items-center justify-center relative z-100" ref={buttonRef}>
         <Menu as="div" className="user">
           <Menu.Button>
-            {state?.auth?.user?.thumbnail ? (
-              <div className="border-2 border-[#1c1c1c] py-2 px-4 ml-2 mr-6 rounded-3xl flex items-center h-16 hover:border-[#3b3b3b] cursor-pointer">
-                <Avatar
-                  src={state?.auth?.user?.thumbnail}
-                  size="38"
-                  round={true}
-                />
-                {state?.auth?.user?.professional_name && (
-                  <span className="text-white text-[12px] font-[600] pr-9 pl-2">{state?.auth?.user?.professional_name}</span>
-                )}
-                {/* Caret Icon */}
-                <CaratIcon/>
-              </div>
-              ) : (
-              <Avatar name={state?.auth?.user?.name} size="40" round={true} />
-            )}
+            <div className="border-2 border-[#1c1c1c] py-2 px-4 ml-2 mr-6 rounded-3xl flex items-center h-16 hover:border-[#3b3b3b] cursor-pointer">
+              <Thumbnail professionalName={state?.auth?.user?.professional_name} thumbnail={state?.auth?.user?.thumbnail} size="38" userId={Number(state?.auth?.user?.id)} />
+              {state?.auth?.user?.professional_name && (
+                <span className="text-white text-[12px] font-[600] pr-9 pl-2">{state?.auth?.user?.professional_name}</span>
+              )}
+              {/* Caret Icon */}
+              <CaratIcon/>
+            </div>
           </Menu.Button>
           <Transition
             as={Fragment}

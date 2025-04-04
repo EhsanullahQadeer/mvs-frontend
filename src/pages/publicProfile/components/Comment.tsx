@@ -1,10 +1,10 @@
+import { MdVerified } from "react-icons/md";
+import icon from "../../../assets/img/icon.svg";
 import React, { useEffect, useState } from "react";
 import { IoEllipsisHorizontal } from "react-icons/io5";
-import { MdVerified } from "react-icons/md";
-import likeIcon from "../../../assets/img/heart.svg";
 import commentIcon from "../../../assets/img/comment.svg";
-import icon from "../../../assets/img/icon.svg";
 import { getFanwallPostReplies, toggleFanwallPostLike } from "api/fanwall";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface IProps {
   fanwallPost: {
@@ -159,13 +159,7 @@ const Comment: React.FC<IProps> = ({
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-[52px] h-[52px] rounded-full overflow-hidden">
-              <img
-                src={thumbnail}
-                alt={professional_name}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="52"/>
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
                 <span className="text-[18px] text-white font-semibold">
