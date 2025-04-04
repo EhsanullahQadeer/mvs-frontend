@@ -2,13 +2,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import AudioPlayer from "./player";
+import { Avatar } from "@mui/material";
 import { FiDownload } from "react-icons/fi";
 import DropDown from "components/util/dropdown";
 import { AudioTrackType } from "../player-container";
 import { AudioTrack, useWaveform } from "./waveform";
 import { AnimatedWaveGraphic } from "./wave-graphic";
 import playIcon from "../../../assets/icons/playIcon.svg";
-import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
+import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io"
 import musicBeam from "../../../assets/icons/musicBeam.svg";
 import ConsideringModal from "components/modals/considering";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -73,7 +74,6 @@ const SampleTable = (props: {
 
   const rowRefs = useRef<Array<HTMLTableRowElement | null>>([]);
   const formatDuration = (totalSeconds: number) => {
-    console.log('totalSeconds', totalSeconds);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;

@@ -2,8 +2,8 @@ import { toast } from "react-toastify";
 import { uploadMedia } from "api/sounds";
 import Dialog from "@mui/material/Dialog";
 import { useChatbox } from "./Chatbox/context";
-import React, { useEffect, useState } from "react";
 import { getUserByIdAPI } from "../../../api/user";
+import React, { useEffect, useState } from "react";
 import { useMessenger } from "api/messenger/context";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import StripeElements from "components/stripe/stripeElements";
@@ -29,7 +29,6 @@ const PurchaseOrderDialog = (props: Props) => {
     openPurchaseOrder,
     setOpenPurchaseOrder,
     activeConversation,
-    handleSendMessage,
     setIsSubmitting,
     demoFile,
     messageInputValue,
@@ -38,7 +37,6 @@ const PurchaseOrderDialog = (props: Props) => {
 
   const {
     LIMIT_MESSAGES,
-    isThread
   } = useChatbox();
 
   const {
@@ -55,7 +53,6 @@ const PurchaseOrderDialog = (props: Props) => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [discountCode, setDiscountCode] = useState<string>("");
   const [openCardInfo, setOpenCardInfo] = useState(false);
-  const [formData, setFormData] = useState({});
   const [isSending,setIsSending] = useState(false);
 
   useEffect(() => {

@@ -1575,6 +1575,22 @@ input:-webkit-autofill:focus {
   scrollbar-width: none;  /* For Firefox */
 }
 
+@keyframes pulse-border {
+  0% {
+    border-color: #9EFF00; /* Start with green */
+  }
+  50% {
+    border-color: #131313; /* Midway color (dark) */
+  }
+  100% {
+    border-color: #9EFF00; /* End with green */
+  }
+}
+
+.pulse-border {
+  border-width: 2px;
+  animation: pulse-border 2s infinite; /* Adjust duration as needed */
+}
 
 @tailwind base;
 @tailwind components;

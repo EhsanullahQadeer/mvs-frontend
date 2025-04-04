@@ -1,4 +1,3 @@
-import { CheckIcon } from '@heroicons/react/24/solid';
 import { ReactComponent as MicIcon } from '../../../../../assets/icons/micIcon.svg';
 import React, { createContext, useState, useContext, useRef, useCallback, useEffect, memo } from 'react';
 
@@ -53,7 +52,6 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
     
     for (const format of formats) {
       if (MediaRecorder.isTypeSupported(format)) {
-        console.log('Using format:', format);
         return format;
       }
     }
@@ -66,9 +64,7 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
   const initializeAudioSystem = useCallback(async () => {
     try {
       if (isInitialized) return;
-      
-      //console.log("Pre-initializing audio system...");
-      
+            
       // Request permissions and get the audio stream
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
@@ -86,7 +82,6 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       stream.getTracks().forEach(track => track.stop());
       
       setIsInitialized(true);
-      //console.log("Audio system pre-initialized");
     } catch (err) {
       console.error("Error pre-initializing audio system:", err);
     }
@@ -114,7 +109,6 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       audioStream.current = stream;
       
       const mimeType = getMimeType();
-      console.log("Selected recording format:", mimeType);
       
       const recorder = new MediaRecorder(stream, {
         mimeType,
@@ -126,16 +120,13 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
       recorder.ondataavailable = (e: BlobEvent) => {
         // Only add chunks that have actual data
         if (e.data.size > 0) {
-          console.log("Received audio chunk of size:", e.data.size, "bytes");
           chunks.current.push(e.data);
         } else {
           console.warn("Received empty audio chunk");
         }
       };
 
-      recorder.onstop = async () => {
-        console.log("Recording stopped, total chunks:", chunks.current.length);
-        
+      recorder.onstop = async () => {        
         if (chunks.current.length === 0) {
           console.log("No audio data recorded");
           setRecordedAudio(null);
@@ -145,14 +136,11 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
         
         // Calculate duration based on start and end time
         const calculatedDurationSeconds = Math.floor((Date.now() - startTime.current!) / 1000);
-        console.log("Calculated recording duration (seconds):", calculatedDurationSeconds);
         
         const blob = new Blob(chunks.current, {
           type: mediaRecorder.current?.mimeType || mimeType 
         });
-        
-        console.log("Created final blob of size:", blob.size, "bytes with type:", blob.type);
-        
+                
         if (blob.size > 0) {
           const blobWithDuration = blob as Blob & { duration?: number };
           blobWithDuration.duration = calculatedDurationSeconds;
@@ -237,8 +225,6 @@ interface AudioRecorderProps {
   onDelete?: () => void;
 }
 
-const buttonStyles = "p-2 rounded-lg hover:bg-[#202327]";
-
 const AudioRecorder = memo(({
   onStopRef,
   onDelete,
@@ -247,11 +233,7 @@ const AudioRecorder = memo(({
     isRecording, 
     startRecording, 
     stopRecording, 
-    recordingDuration 
   } = useAudioRecording();
-
-  // Format the duration for display
-  const formattedDuration = formatDuration(recordingDuration);
 
   // Handle the onDelete callback
   const handleStartRecording = async () => {
@@ -269,21 +251,16 @@ const AudioRecorder = memo(({
   }, [onStopRef, stopRecording]);
 
   return (
-    <div>
-      <button
-        onClick={isRecording ? stopRecording : handleStartRecording}
-        className={buttonStyles}
-      >
-        {isRecording ? (
-          <>
-            <CheckIcon className="text-[#9EFF00] w-6 h-6" />
-            <span>{formattedDuration}</span>
-          </>
-        ) : (
-          <MicIcon className="text-[#848484]" />
-        )}
-      </button>
-    </div>
+    <button
+      onClick={isRecording ? stopRecording : handleStartRecording}
+      className="p-2 rounded-lg hover:bg-[#202327]"
+    >
+      {isRecording ? (
+          <MicIcon className="text-[#9EFF00] w-6 h-6" />
+      ) : (
+        <MicIcon className="text-[#848484]" />
+      )}
+    </button>
   );
 });
 

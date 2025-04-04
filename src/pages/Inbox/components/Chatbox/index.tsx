@@ -43,8 +43,6 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
   const {
     activeConversation,
-    CONVERSATIONS_PER_PAGE,
-    inboxTab
   } = useConversation();
 
   const {
@@ -53,8 +51,6 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     conversationNotes,
     setThreadMessages,
     threadMessages,
-    conversations,
-    setConversations,
     getConversationMessages
   } = useMessenger();
 
