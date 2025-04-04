@@ -23,30 +23,67 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
   const [resizeStartPos, setResizeStartPos] = useState({ x: 0, y: 0 });
   const [initialSize, setInitialSize] = useState(128);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [fileType, setFileType] = useState<string>('');
 
   // Detect file type when image URL changes
   useEffect(() => {
     const detectFileType = async () => {
+      // Helper function to detect file type from extension
+      const detectFromExtension = (url: string): string => {
+        const extension = url.split('.').pop()?.toLowerCase();
+        switch (extension) {
+          case 'jpg':
+          case 'jpeg':
+            return 'JPEG';
+          case 'png':
+            return 'PNG';
+          case 'gif':
+            return 'GIF';
+          case 'webp':
+            return 'WebP';
+          case 'svg':
+            return 'SVG';
+          default:
+            return 'Image';
+        }
+      };
+
+      // Helper function to detect file type from content type
+      const detectFromContentType = (contentType: string): string => {
+        if (contentType.includes('gif')) return 'GIF';
+        if (contentType.includes('jpeg') || contentType.includes('jpg')) return 'JPEG';
+        if (contentType.includes('png')) return 'PNG';
+        if (contentType.includes('webp')) return 'WebP';
+        if (contentType.includes('svg')) return 'SVG';
+        return 'Image';
+      };
+
+      // Check if the URL is a data URL
+      if (imageUrl.startsWith('data:')) {
+        const mimeType = imageUrl.split(',')[0].split(':')[1].split(';')[0];
+        setFileType(detectFromContentType(mimeType));
+        return;
+      }
+
+      // For regular URLs, try to detect from extension first
+      const extensionType = detectFromExtension(imageUrl);
+      if (extensionType !== 'Image') {
+        setFileType(extensionType);
+        return;
+      }
+
+      // If no extension, try to fetch content type
       try {
-        const response = await fetch(imageUrl);
-        const contentType = response.headers.get('content-type');
-        if (contentType) {
-          if (contentType.includes('gif')) {
-            setFileType('GIF');
-          } else if (contentType.includes('jpeg') || contentType.includes('jpg')) {
-            setFileType('JPEG');
-          } else if (contentType.includes('png')) {
-            setFileType('PNG');
-          } else if (contentType.includes('webp')) {
-            setFileType('WebP');
-          } else {
-            setFileType('Image');
+        if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+          const response = await fetch(imageUrl);
+          const contentType = response.headers.get('content-type');
+          if (contentType) {
+            setFileType(detectFromContentType(contentType));
+            return;
           }
         }
+        setFileType('Image');
       } catch (error) {
-        console.error('Error detecting file type:', error);
         setFileType('Image');
       }
     };
@@ -85,19 +122,10 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
     const centerX = imageLeft + (displayedWidth - size) / 2;
     const centerY = imageTop + (displayedHeight - size) / 2;
 
-    console.log('Calculating new position:', {
-      centerX: Math.floor(centerX),
-      centerY: Math.floor(centerY),
-      imageLeft,
-      imageTop,
-      displayedWidth,
-      displayedHeight
-    });
-
-    // Force position update
+    // Force position update with precise values
     setPosition({
-      x: Math.floor(centerX),
-      y: Math.floor(centerY)
+      x: Math.round(centerX),
+      y: Math.round(centerY)
     });
   };
 
@@ -111,20 +139,16 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
     }
   }, [open]);
 
-  useEffect(() => {
-    console.log("Position updated:", position);
-  }, [position]);
-
   // Handle image load
   useEffect(() => {
     const img = imageRef.current;
     if (img) {
       const handleLoad = () => {
-        setImageLoaded(true);
+        calculateAndSetPosition();
       };
       
       if (img.complete) {
-        setImageLoaded(true);
+        calculateAndSetPosition();
       } else {
         img.addEventListener('load', handleLoad);
         return () => img.removeEventListener('load', handleLoad);
@@ -206,6 +230,9 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
     if (!imageRef.current) return;
 
     const canvas = document.createElement('canvas');
+    const image = imageRef.current;
+    
+    // Use fixed size for profile pictures
     const outputSize = 128;
     canvas.width = outputSize;
     canvas.height = outputSize;
@@ -213,7 +240,6 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const image = imageRef.current;
     const imageRect = image.getBoundingClientRect();
     const containerRect = image.parentElement?.getBoundingClientRect();
     if (!containerRect) return;
@@ -243,18 +269,20 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
     const centerX = position.x + (size / 2);
     const centerY = position.y + (size / 2);
 
-    // Calculate the crop area relative to the actual image
-    const cropX = ((centerX - (size / 2) - imageLeft)) * scaleX;
-    const cropY = ((centerY - (size / 2) - imageTop)) * scaleY;
-    const cropSize = size * scaleX;
+    // Calculate the crop area relative to the actual image with precise values
+    const cropX = Math.round(((centerX - (size / 2) - imageLeft)) * scaleX);
+    const cropY = Math.round(((centerY - (size / 2) - imageTop)) * scaleY);
+    const cropSize = Math.round(size * scaleX);
 
     // Ensure crop area stays within image bounds
     const safeX = Math.max(0, Math.min(cropX, image.naturalWidth - cropSize));
     const safeY = Math.max(0, Math.min(cropY, image.naturalHeight - cropSize));
 
-    // Enable image smoothing for better quality
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
+    // Set white background for JPEG images
+    if (fileType.toLowerCase() === 'jpeg') {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, outputSize, outputSize);
+    }
 
     ctx.drawImage(
       image,
@@ -268,27 +296,8 @@ const ImageCropModal = ({ open, onClose, imageUrl, onSave }: Props) => {
       outputSize            // destination height
     );
 
-    // Determine the output format based on the original file type
-    let outputFormat = 'image/png'; // default to PNG
-    switch (fileType.toLowerCase()) {
-      case 'gif':
-        outputFormat = 'image/gif';
-        break;
-      case 'jpeg':
-      case 'jpg':
-        outputFormat = 'image/jpeg';
-        break;
-      case 'png':
-        outputFormat = 'image/png';
-        break;
-      case 'webp':
-        outputFormat = 'image/webp';
-        break;
-      default:
-        outputFormat = 'image/png';
-    }
-
-    const base64Image = canvas.toDataURL(outputFormat);
+    // Use PNG format for all images to preserve quality
+    const base64Image = canvas.toDataURL('image/png');
     onSave(base64Image, fileType.toLowerCase());
     onClose();
   };
