@@ -65,6 +65,7 @@ const InboxHeader = () => {
               addToast({ 
                 state: "messageArchived",
                 position: "bottom-center",
+                duration: 7000,
                 actionFunction: () => {
                   toggleConversationIsArchived({ 
                     conversationIds: selectedConversations.map(conv => conv.id) 

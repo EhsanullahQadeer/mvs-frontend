@@ -104,7 +104,7 @@ const PublicProfile = () => {
         </>
       ) : (
         <>
-          <div className="flex px-10 py-3 justify-between items-center">
+          <div className="flex px-10 py-3 justify-between items-center border-2 border-b-[#1c1c1c]">
             <img
               src={mvssiveLogo}
               alt="mvssiveLogo"
@@ -116,8 +116,8 @@ const PublicProfile = () => {
             </div>
           </div>
 
-          <div className="flex-1 flex overflow-hidden">
-            <div className="bg-jetBlack w-[340px]">
+          <div className="flex overflow-hidden">
+            <div className="bg-jetBlack min-w-[340px] max-w-[340px]">
               <div className="h-[88px] bg-[#1a1a1a]"></div>
               <div className="px-4">
                 <div className="p-1 relative -translate-y-1/2">
@@ -233,7 +233,7 @@ const PublicProfile = () => {
                 </div>
               </div>
             </div>
-            <div className="flex-[75%] flex">
+            <div className="flex w-full">
               <ProfileRightSection 
               {...{ artistData,
                 currentUserInfo,
