@@ -17,6 +17,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { referUserByEmail } from "api/user";
 import DialogTitle from "@mui/material/DialogTitle";
 import Tooltip from "@mui/material/Tooltip";
+import * as Yup from "yup";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -30,8 +31,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 const searchedContributorsPadding = 1;
 const thumbnailSize = 10;
 const searchedContributorItemYPadding = 3;
-// const 16.5 = (((thumbnailSize+(searchedContributorItemYPadding*2)) * maxDisplayContributors) + (searchedContributorsPadding*2))/4;
-// Had to be done this way because tailwind works weird
 const dropdownItemMaxHeight = `max-h-[16.5rem]`;
 
 interface Props {
@@ -62,8 +61,10 @@ function ComposerDialog(props: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchResults, setSearchResults] = useState([]);
 
-  // Email validation regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // Replace the regex with Yup schema
+  const emailSchema = Yup.string()
+    .email('Invalid email address')
+    .required('Email is required');
 
   // Function to truncate email addresses
   const truncateEmail = (email: string) => {
@@ -78,9 +79,17 @@ function ComposerDialog(props: Props) {
     return `${text.substring(0, 10)}...`;
   };
 
-  // Check if input is an email
+  // Update the useEffect that checks email
   useEffect(() => {
-    setIsInvite(emailRegex.test(searchTerm));
+    const isValidEmail = async () => {
+      try {
+        await emailSchema.validate(searchTerm);
+        setIsInvite(true);
+      } catch (err) {
+        setIsInvite(false);
+      }
+    };
+    isValidEmail();
     // Clear feedback message when input changes
     if (feedbackMessage) {
       setFeedbackMessage("");
@@ -152,31 +161,30 @@ function ComposerDialog(props: Props) {
     }
   };
 
-  // Function to handle email invitation
-  const handleInviteByEmail = (email: string) => {
-    // Validate email again just to be sure
-    if (!emailRegex.test(email)) {
-      setFeedbackMessage("Invalid email address");
-      setIsSuccess(false);
-      return;
-    }
-
-    setLoading(true);
-    console.log("Inviting collaborator by email:", email);
-    
-    referUserByEmail(email)
-      .then(response => {
-        setLoading(false);
-        setFeedbackMessage("Invite sent");
-        setIsSuccess(true);
-        setSearchTerm("");
-        handleAddComposer({ email, isEmailValue: true });
-      })
-      .catch(error => {
-        setLoading(false);
+  // In handleInviteByEmail, update the validation
+  const handleInviteByEmail = async (email: string) => {
+    try {
+      // Validate email using Yup
+      await emailSchema.validate(email);
+      
+      setLoading(true);
+      console.log("Inviting collaborator by email:", email);
+      
+      const response = await referUserByEmail(email);
+      setLoading(false);
+      setFeedbackMessage("Invite sent");
+      setIsSuccess(true);
+      setSearchTerm("");
+      handleAddComposer({ email, isEmailValue: true });
+    } catch (error) {
+      setLoading(false);
+      if (error instanceof Yup.ValidationError) {
+        setFeedbackMessage("Invalid email address");
+      } else {
         setFeedbackMessage("Failed to send invite");
-        setIsSuccess(false);
-      });
+      }
+      setIsSuccess(false);
+    }
   };
 
   // Add a useEffect to monitor the feedback message state
