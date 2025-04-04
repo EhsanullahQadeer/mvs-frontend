@@ -28,6 +28,7 @@ interface UserProfile {
   banner_image: string;
   professional_name?: string;
   address?: string;
+  image_type?: string;
 }
 
 const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile) => void }> = ({ user, setUser }) => {
@@ -69,11 +70,12 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
     }
   };
 
-  const handleCropComplete = (croppedImage: string) => {
+  const handleCropComplete = (croppedImage: string, imageType: string) => {
     setThumbnail(croppedImage);
     setFormValues(prev => ({
       ...prev,
-      thumbnail: croppedImage
+      thumbnail: croppedImage,
+      image_type: imageType
     }));
   };
 
@@ -104,7 +106,7 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
         if (value !== user[typedKey] && key !== 'banner_image') {
           changedValues[typedKey] = value;
           if (typedKey === 'thumbnail') {
-            changedValues.image_type = 'profile';
+            changedValues.image_type = values.image_type;
           }
         }
       });
@@ -136,8 +138,8 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
             setShowCropModal(false);
           }}
           imageUrl={cropImage}
-          onSave={(img) => {
-            handleCropComplete(img);
+          onSave={(img, imageType) => {
+            handleCropComplete(img, imageType);
             setShowCropModal(false);
           }}
         />
@@ -193,26 +195,6 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
                     </p>
                   </div>
                 </div>
-
-                {isEditable && (
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-4 items-center">
-                    <div
-                      className="relative w-[52px] h-[52px] bg-[#41404066] rounded-full text-white flex items-center justify-center cursor-pointer"
-                    >
-                      <input
-                        accept="image/*"
-                        type="file"
-                        className="absolute w-full h-full opacity-0 cursor-pointer"
-                      />
-                      <FiCamera className="w-5 h-4" />
-                    </div>
-                    <div
-                      className="w-[52px] h-[52px] bg-[#41404066] rounded-full text-white flex items-center justify-center cursor-pointer"
-                    >
-                      <CancelIcon className="w-3 h-3" />
-                    </div>
-                  </div>
-                )}
               </div>
               <div className="pt-8 py-2.5 border-b border-[#242424]">
                 <div className="w-2/5 text-sm">
