@@ -18,6 +18,7 @@ import { rolesArr } from "../sample-data/sampleData";
 import { ICollaborator, IUserProfile } from "./types";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 import TableContainer from "@mui/material/TableContainer";
+import Tooltip from "@mui/material/Tooltip";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface Props {
@@ -28,6 +29,12 @@ interface Props {
   setPercentError: (value: boolean) => void;
   collaborators: any[];
 }
+
+// Function to truncate text
+const truncateText = (text: string, maxLength: number = 20) => {
+  if (!text) return '';
+  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+};
 
 function ContributersTable(
   props: Props

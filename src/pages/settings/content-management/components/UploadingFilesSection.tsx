@@ -167,7 +167,7 @@ const UploadingFilesSection = (props: Props) => {
         </div>
         {!isLoginProfile && (
           <MetaDataForm
-            {...{ fileRedisKey, handleCancel, currentUserInfo, setUpdateData }}
+            {...{ fileRedisKey, handleCancel, currentUserInfo, setUploadingFile,setUpdateData }}
           />
         )}
         {isLoginProfile && (
