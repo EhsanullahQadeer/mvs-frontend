@@ -1,11 +1,9 @@
+import * as Yup from "yup";
+import { AxiosResponse } from "axios";
 import React, { useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
 import { requestInvitationCodeWithEmailAPI } from "api/user";
 import NavigateBackButton from "components/buttons/NavigateBack";
-import { AxiosResponse } from "axios";
-import avatarImg from "../../../../assets/img/avatar.svg";
-
 
 interface ResponseDTO<T = any> { // T defaults to 'any' if not specified
   message: string;
@@ -47,8 +45,6 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
   setIsNotPartner
 }) => {
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [thumbnailError, setThumbnailError] = useState<boolean>(false);
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Email is invalid").required("Email is required"),
@@ -226,29 +222,6 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({
                 <span className="text-limeGreen">Terms of Service</span> and{" "}
                 <span className="text-limeGreen">Privacy Policy</span>
               </p>
-
-              {/* <div className={`flex flex-col items-center ${thumbnailError ? 'border-2 border-darkRed' : ''}`}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleThumbnailChange}
-                  className="hidden"
-                  id="thumbnail"
-                />
-                <label htmlFor="thumbnail" className="cursor-pointer">
-                  <img
-                    src={thumbnail || avatarImg}
-                    alt="thumbnail"
-                    className="w-32 h-32 object-cover rounded-full"
-                  />
-                </label>
-                {thumbnailError && (
-                  <div className="text-darkRed mt-1 text-xs font-medium">
-                    Please provide a thumbnail image.
-                  </div>
-                )}
-              </div> */}
-
               <div className='space-y-4'>
                 <button
                   type="submit"

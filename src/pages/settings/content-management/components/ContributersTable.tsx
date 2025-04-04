@@ -6,10 +6,10 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+import { ChangeEvent } from "react";
 import Table from "@mui/material/Table";
 import Paper from "@mui/material/Paper";
 import TableRow from "@mui/material/TableRow";
-import { ChangeEvent, useEffect } from "react";
 import getMuiStyles from "styles/getMuiStyles";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -19,6 +19,7 @@ import { ICollaborator, IUserProfile } from "./types";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 import TableContainer from "@mui/material/TableContainer";
 import Tooltip from "@mui/material/Tooltip";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface Props {
   composerData: ICollaborator[];
@@ -142,18 +143,8 @@ function ContributersTable(
               <TableRow key={composer.user?.id}>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full">
-                      <img
-                        src={composer?.user?.thumbnail}
-                        alt="composer"
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-                    <Tooltip title={composer?.user?.professional_name} placement="top">
-                      <span className="text-base">
-                        {truncateText(composer?.user?.professional_name)}
-                      </span>
-                    </Tooltip>
+                    <Thumbnail professionalName={composer?.user?.professional_name} thumbnail={composer?.user?.thumbnail} userId={composer?.user?.id} size="32"/>
+                    <span className="text-base">{composer?.user?.professional_name}</span>
                   </div>
                 </TableCell>
 

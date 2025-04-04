@@ -23,7 +23,7 @@ import publicRoutes from "routes/publicRoutes";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { initializeTokenRefresher, refreshTokenEvery } from "redux/actions/tokenrefresher.actions";
-
+import { ToastProvider } from "shared/toasts/ToastProvider";
 const cleanupActivityRefresh = initializeTokenRefresher();
 
 const renderRoutes = (routes: any[]) => {
@@ -41,11 +41,13 @@ const renderRoutes = (routes: any[]) => {
 const Application: React.FunctionComponent<{}> = (props) => {
   return (
     <BrowserRouter>
-      <Routes>
-        {renderRoutes(routes)}
-        {renderRoutes(publicRoutes)}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <ToastProvider>
+        <Routes>
+          {renderRoutes(routes)}
+          {renderRoutes(publicRoutes)}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </ToastProvider>
     </BrowserRouter>
   );
 };

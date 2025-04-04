@@ -1,0 +1,76 @@
+To use add "const { addToast } = useToast();"
+and call addToast({state: "messageArchived" }) for prebuilt, or add the parameters you want for custom
+
+Success:
+  messageArchived ✅
+  messageDeleted
+  messageMovedToSpam
+  messageMarkedAsUnread
+  messageMarkedAsRead
+  demoSentSuccessfully
+  tipSentSuccessfully
+  fileUploadedSuccessfully
+  downloadComplete
+  payoutMethodUpdated
+  newPayoutMethodAdded
+  stripeAccountConnected
+  withdrawalRequestSubmitted
+  //---group 2---
+  profileUpdated
+  changesSaved
+  informationDeleted
+  accountInfoUpdated
+  emailUpdated
+  passwordChanged
+  contributorAdded
+  metadataUpdated
+  fileDeleted
+  publishPercentageUpdated
+  roleUpdated
+  fileShared
+  paymentMethodRemoved
+  defaultPaymentMethodChanged
+  statusRefreshed
+
+
+Error:
+  failedToArchiveMessage
+  failedToDeleteMessage
+  failedToMoveToSpam
+  couldNotApplyLabel
+  fileUploadFailed
+  unsupportedFileFormat
+  fileSizeExceeded
+  messageFailedToSend
+  freeMessageLimitExceeded
+  tooManyMessagesSent
+  unexpectedError
+  APITimeout
+  messageReported
+  userBlocked
+  failedToDownloadSample
+  //---group 2---
+  failedToSubmitWithdrawalRequest
+  somethingWentWrong
+  failedToUpdateEmail
+  atLeastOneContributor
+  publishingPercentage100
+  failedToAddPaymentMethod
+  failedToUpdatePrivacySettings
+  unableToUnblockAccount
+
+Warning:
+  actionCantBeUndone
+  attachmentTooLarge
+  insufficientCredits
+  paymentFailed
+  uploadFailed
+  connectionLost
+  //---group 2---
+  mustConnectToPayoutMethod
+  payoutMethodAlreadyDefault
+  mustCompleteMetadata
+  missingPublishingPercentage
+  fileAlreadyExists
+  unsavedChanges
+  cardAlreadyAdded

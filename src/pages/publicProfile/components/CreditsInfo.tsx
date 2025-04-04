@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import pauseIcon from "../../../assets/img/player/pause-circle.svg";
 import playIcon from "../../../assets/img/player/play-circle.svg";
+import pauseIcon from "../../../assets/img/player/pause-circle.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface IProps {
   creditsData: {
@@ -52,13 +53,7 @@ const CreditsInfo = (props: IProps) => {
                   onMouseEnter={() => setHoveredRow(index)} // Set hovered row on hover
                   onMouseLeave={() => setHoveredRow(null)} // Reset on mouse leave
                 >
-                  <div className="w-12 h-12">
-                    <img
-                      src={thumbnail}
-                      alt="credits"
-                      className="w-full h-full object-contain rounded-[4px]"
-                    />
-                  </div>
+                  <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="12"/>
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-white font-semibold text-xs text-wrap">
                       {track_name}
