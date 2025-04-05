@@ -104,11 +104,10 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
           console.error('Error checking Stripe account:', error);
           setIsSendDemoAvailable(false);
         });
+        fetchConnectionStatus(recipient.id)
     } else {
       setIsSendDemoAvailable(false);
     }
-    //console.log('Checking connection with user: ', recipient.id);
-    fetchConnectionStatus(recipient.id)
   }, [recipient]);
 
   async function markMessageAsRead(id:number){
