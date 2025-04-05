@@ -81,7 +81,6 @@ const InboxHeader = () => {
             console.error(error);
             addToast({
               state: "failedToArchiveMessage",
-              position: "bottom-center",
               duration: 7000,
               actionFunction: () => {
                 toggleConversationIsArchived({
@@ -105,7 +104,32 @@ const InboxHeader = () => {
       icon: <AlertOctagonIcon />,
       icon2: <AlertOctagonIcon />,
       onClick: () => {
-        toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) }).then(() => refreshConversations())
+        toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) })
+        .then(() => {
+          refreshConversations();
+          addToast({
+            state: selectedConversations.length > 1 ? "messagesMovedToSpam" : "messageMovedToSpam",
+            duration: 7000,
+            actionFunction: () => {
+              toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) })
+              .then(() => refreshConversations())
+            }
+          })
+        })
+        .catch(error => {
+          console.error(error);
+          addToast({
+            state: "failedToMoveToSpam",
+            duration: 7000,
+            actionFunction: () => {
+              toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) })
+              .then(() => refreshConversations())
+              .catch(() => {
+                addToast({state: "unexpectedError", permanent: true, actionFunction: () => window.location.reload()})
+              })
+            }
+          })
+        })
       },
       label: "Mark as Spam",
       label2: "Unmark as Spam"

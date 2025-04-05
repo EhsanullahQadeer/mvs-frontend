@@ -5,7 +5,7 @@ Success:
   messageArchived ✅
   messagesArchived ✅
   messageDeleted ✅ - actually this cant be undone so removed "undo"
-  messageMovedToSpam
+  messageMovedToSpam ✅
   messageMarkedAsUnread
   messageMarkedAsRead
   demoSentSuccessfully
@@ -51,7 +51,7 @@ Success:
 Error:
   failedToArchiveMessage ✅
   failedToDeleteMessage ✅
-  failedToMoveToSpam
+  failedToMoveToSpam ✅
   couldNotApplyLabel
   fileUploadFailed
   unsupportedFileFormat
@@ -88,7 +88,7 @@ Error:
   failedToSaveChanges
 
 Warning:
-  actionCantBeUndone
+  actionCantBeUndone --not sure if change message deleted modal
   attachmentTooLarge
   insufficientCredits
   paymentFailed

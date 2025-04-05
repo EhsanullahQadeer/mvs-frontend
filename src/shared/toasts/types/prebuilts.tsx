@@ -30,6 +30,13 @@ export const prebuiltToasts: ToastConfig[] = [
     type: "success" 
   },
   { 
+    id: "messagesMovedToSpam", 
+    title: "Messages moved to Spam", 
+    action: "Undo", 
+    message: "The messages have been moved to Spam.", 
+    type: "success" 
+  },
+  { 
     id: "messageMarkedAsUnread", 
     title: "Message marked as unread", 
     message: "The message has been marked as unread.", 
@@ -308,7 +315,7 @@ export const prebuiltToasts: ToastConfig[] = [
     id: "failedToMoveToSpam", 
     title: "Failed to move to Spam", 
     action: "Retry", 
-    message: "The message could not be moved to Spam.", 
+    message: "The message(s) could not be moved to Spam.", 
     type: "error" 
   },
   { 
