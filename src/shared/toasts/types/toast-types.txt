@@ -4,7 +4,7 @@ and call addToast({state: "messageArchived" }) for prebuilt, or add the paramete
 Success:
   messageArchived ✅
   messagesArchived ✅
-  messageDeleted
+  messageDeleted ✅ - actually this cant be undone so removed "undo"
   messageMovedToSpam
   messageMarkedAsUnread
   messageMarkedAsRead
@@ -50,7 +50,7 @@ Success:
 
 Error:
   failedToArchiveMessage ✅
-  failedToDeleteMessage
+  failedToDeleteMessage ✅
   failedToMoveToSpam
   couldNotApplyLabel
   fileUploadFailed

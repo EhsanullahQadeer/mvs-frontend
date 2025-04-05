@@ -19,7 +19,6 @@ export const prebuiltToasts: ToastConfig[] = [
   { 
     id: "messageDeleted", 
     title: "Message deleted", 
-    action: "Undo", 
     message: "The message has been successfully deleted.", 
     type: "success" 
   },
@@ -364,7 +363,7 @@ export const prebuiltToasts: ToastConfig[] = [
   { 
     id: "unexpectedError", 
     title: "Unexpected error", 
-    action: "Refresh", 
+    action: "Refresh",
     message: "Oops! Something went wrong. Refresh and try again.", 
     type: "error" 
   },

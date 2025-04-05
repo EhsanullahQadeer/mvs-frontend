@@ -91,7 +91,7 @@ const InboxHeader = () => {
                     refreshConversations();
                   })
                   .catch(() => {
-                    addToast({state: "unexpectedError", permanent: true})
+                    addToast({state: "unexpectedError", permanent: true, actionFunction: () => window.location.reload()})
                   })
               }
             });
