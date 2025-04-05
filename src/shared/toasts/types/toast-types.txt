@@ -3,6 +3,7 @@ and call addToast({state: "messageArchived" }) for prebuilt, or add the paramete
 
 Success:
   messageArchived ✅
+  messagesArchived ✅
   messageDeleted
   messageMovedToSpam
   messageMarkedAsUnread
@@ -31,10 +32,24 @@ Success:
   paymentMethodRemoved
   defaultPaymentMethodChanged
   statusRefreshed
+  //---group 3---
+  privacySettingsUpdated
+  accountUnblocked
+  inboxFeeUpdated
+  automaticMessageSaved
+  demoFeeUpdated
+  meetingFeeSaved
+  meetingDurationsUpdated
+  planChanged
+  creditsPurchased
+  monthlyCreditsAdded
+  userTypeSaved
+  personalInfoSaved
+  pricesUpdated
 
 
 Error:
-  failedToArchiveMessage
+  failedToArchiveMessage ✅
   failedToDeleteMessage
   failedToMoveToSpam
   couldNotApplyLabel
@@ -58,6 +73,19 @@ Error:
   failedToAddPaymentMethod
   failedToUpdatePrivacySettings
   unableToUnblockAccount
+  //---group 3---
+  failedToAddPaymentMethod
+  failedToUpdatePayoutMethod
+  verificationFailed
+  failedToUpdateInboxFee
+  failedToSaveAutomaticMessage
+  failedToUpdateDemoFee
+  failedToSaveMeetingFee
+  failedToChangePlan
+  failedToPurchaseCredits
+  failedToRetrieveCreditHistory
+  pleaseSelectBothRoles
+  failedToSaveChanges
 
 Warning:
   actionCantBeUndone
@@ -74,3 +102,7 @@ Warning:
   fileAlreadyExists
   unsavedChanges
   cardAlreadyAdded
+  //---group 3---
+  feeCannotBeSetToZero
+  creditBalanceIsLow
+  aboutToRunOutOfCredits

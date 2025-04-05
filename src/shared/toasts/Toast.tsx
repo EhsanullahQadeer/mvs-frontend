@@ -20,7 +20,7 @@ const Toast: React.FC<ToastProps> = ({
   state,
   message,
   type,
-  position = "top-left", //default position
+  position = "bottom-center", //default position
   duration = 3000,
   permanent = false,
   onClose,
