@@ -7,30 +7,28 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
+import axiosPublic from "api/axiosPublic";
 import axiosInstance from "../axios";
 import {
-  IAddNewUser,
   IcreateWikiProfileBody,
   IGetArtistCreditsParams,
   IgetArtistInfoParams,
   IRequestInvitation,
+  IUserNotificationSettings,
   IUserProfessionalNameSearch,
   IUsersSearchParams,
   UserFiltersDTO,
 } from "../user/types";
 
-export async function getUserNotifications(types?: string[]) {
+export async function getUserNotifications(types?: string[], isRead?: boolean, skip?: number) {
   return axiosInstance.get("/users/notifications", {
     params: {
-      skip: 0,
-      take: 25,
+      skip: skip,
+      take: 10,
       type: types,
+      isRead: isRead,
     },
   });
-}
-
-export async function toggleNotificationAsRead(id?: number) {
-  return axiosInstance.post(`/notifier/toggle-read/${id}`);
 }
 
 export async function requestInvitationCodeWithEmailAPI(body: IRequestInvitation) {
@@ -88,6 +86,10 @@ export async function artistProfileAPI(username: string) {
   return axiosInstance.get(`/users/username/${username}`);
 }
 
+export async function artistPublicProfileAPI(username: string) {
+  return axiosPublic.get(`/users/username/${username}`);
+}
+
 export async function userArtistSearch(params: IUsersSearchParams) {
   return axiosInstance.get("/users/search-users", { params });
 }
@@ -135,6 +137,13 @@ export async function getSpotifyArtistTopTracks(params: IGetArtistCreditsParams)
     params,
   });
 }
+
+export async function getPublicSpotifyArtistTopTracks(params: IGetArtistCreditsParams) {
+  return axiosPublic.get(`/spotify/artist-top-tracks`, {
+    params,
+  });
+}
+
 export async function getArtistInfo(params: IgetArtistInfoParams) {
   return axiosInstance.get(`/users/get-artist-info`, {
     params,
@@ -160,9 +169,7 @@ export async function verifyAndRetrieveInviteCodeDetails(inviteCode: string) {
 }
 // =======================================================================================
 export async function verifyChangePasswordCode(code: string) {
-  return axiosInstance.post('/auth/verify/change-password-code', {
-    invite_code: code,
-  });
+  return axiosInstance.get(`/auth/verify-password-reset-token?code=${code}`);
 }
 export async function validatePasswordAPI(password?: string) {
   return axiosInstance.post(`/users/validate-password`, { password });
@@ -170,6 +177,10 @@ export async function validatePasswordAPI(password?: string) {
 // =======================================================================================
 export async function checkUsernameIsAvailable(username: string) {
   return axiosInstance.get(`/users/check-username-is-available?username=${username}`);
+}
+// =======================================================================================
+export async function checkUserHasStripeConnectedAccount(userId: number) {
+  return axiosInstance.get(`/users/has-stripe-connect-account?targetUserId=${userId}`);
 }
 // =======================================================================================
 export async function getTopPopularUsers(paginationDto: {skip, take}) {
@@ -190,6 +201,25 @@ export const resendInvitationCodeAPI = async (email: string) => {
     throw error;
   }
 };
+
+export const getUserFollowers = async (
+  userId: number,
+  limit: number = 100,
+  cursor: number | null = null
+) => {
+  return axiosInstance.get(
+    `/users/followers/?userId=${userId}&limit=${limit}&cursor=${cursor}`
+  );
+}
+
+export const getMutualConnections = async (userId: number, limit: number = 10, cursor: number | null = null) => {
+  return axiosInstance.get(`/users/mutual-connections/${userId}`, {
+    params: {
+      limit,
+      cursor,
+    },
+  });
+}
 
 export const handleConnectionRequest = async (requestId: number, acceptRequest: boolean) => {
   try {
@@ -220,3 +250,25 @@ export async function checkIfFollowing( id: number ) {
   const respose = axiosInstance.get(`/users/is-following/${id}`);
   return (await respose).data;
 };
+export async function updateUserProfileAPI(data: any) {
+  return axiosInstance.put('/users/me', data);
+}
+export async function updateUserUsernameAPI(username: string) {
+  return axiosInstance.put(`/users/username?username=${username}`);
+}
+
+export async function sendUserFeedbackAPI(data: any) {
+  return axiosInstance.post('/users/feedback', data);
+}
+
+export async function getUserNotificationSettings() {
+  return axiosInstance.get('/users/email-notifications-settings');
+}
+
+export async function setUserNotificationSettings(body: IUserNotificationSettings) {
+  return axiosInstance.post('/users/email-notification-settings', body);
+}
+
+export async function toggleMuteNotifications() {
+  return axiosInstance.post('users/toggle-mute-notifications');
+}

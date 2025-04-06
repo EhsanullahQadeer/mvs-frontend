@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import visaIcon from '../../../assets/icons/visa.svg';
 import musicBeam from "../../../assets/icons/musicBeam.svg";
+import StripeElements from "components/stripe/stripeElements";
+import { useMessenger } from "api/messenger/context";
+import { toast } from "react-toastify";
 
 interface AudioTrackTypeArray {
   id: number;
@@ -17,6 +20,14 @@ interface ISampleSendDemoModal {
   onClose: () => void;
   onCloseAllModals: () => void;
   selectedSamples: AudioTrackTypeArray[];
+  recipientId: number;
+  conversationId: string;
+}
+interface DemoStripeProps {
+  onPaymentComplete: (paymentIntentId: string) => void;
+  amount: number;
+  recipientId: string;
+  onClose: () => void;
 }
 
 const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
@@ -24,16 +35,45 @@ const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
   onClose,
   onCloseAllModals,
   selectedSamples,
+  recipientId,
+  conversationId,
 }) => {
-  const samplePrice = 5.00; // Price per sample
-  const serviceFeePercentage = 0.02; // 2%
+  const [discountCode, setDiscountCode] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const { sendMessage } = useMessenger();
+  
+  const samplePrice = 5.00;
+  const serviceFeePercentage = 0.02;
   const subtotal = selectedSamples.length * samplePrice;
   const serviceFee = subtotal * serviceFeePercentage;
   const total = subtotal + serviceFee;
 
-  const handleSendSamples = (samples: AudioTrackTypeArray[]) => {
-    // Implementation of handleSendSamples function
-    console.log("Sending samples:", samples);
+  const handleSendDemo = async (intentId: string) => {
+    try {
+      setIsSending(true);
+      console.log("Sending demo with intent:", intentId);
+      console.log("Selected samples:", selectedSamples);
+      console.log("Conversation ID:", conversationId);
+      console.log("Recipient ID:", recipientId);
+      // Send each sample as a message in the chat
+      for (const sample of selectedSamples) {
+        await sendMessage({
+          message: `Sent demo: ${sample.title}`,
+          conversationId: String(conversationId),
+          audioMediaId: sample.id,
+          messageType: "samples",
+          stripePaymentIntentId: intentId
+        });
+      }
+
+      toast.success("Demos sent successfully!");
+      onCloseAllModals();
+    } catch (error) {
+      console.error("Error sending demos:", error);
+      toast.error("Failed to send demos");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -57,7 +97,7 @@ const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl">Send Demos</h2>
-            <button 
+          <button 
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-[#2A2A2A] flex items-center justify-center text-gray-400 hover:text-white transition-colors text-lg"
           >
@@ -78,43 +118,13 @@ const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
                 <div className="w-8 h-8 bg-[#2A2A2A] rounded flex items-center justify-center">
                   <img src={musicBeam} alt="Music" className="w-4 h-4" />
                 </div>
-                <div className="w-[30%] text-[#B3B3B3]">{sample.title}</div>
+                <div className="w-[30%] text-[#B3B3B3] truncate" title={sample.title}>{sample.title}</div>
                 <div className="w-[12%] text-[#B3B3B3]">{sample.length}</div>
                 <div className="w-[12%] text-[#B3B3B3]">{sample.size}</div>
                 <div className="w-[12%] text-[#B3B3B3]">BMinor</div>
                 <div className="w-[12%] text-[#B3B3B3]">122</div>
               </div>
             ))}
-          </div>
-
-          {/* Updated Billing Method section */}
-          <div className="mt-6">
-            <h3 className="text-gray-400 mb-3">Billing method</h3>
-            <div className="flex items-center gap-3 p-4 border border-[#3D3D3D] rounded-lg">
-              <div className="flex items-center gap-3 flex-1">
-                <div className="inline-flex items-center">
-                  <label className="relative flex items-center cursor-pointer" htmlFor="payment-method">
-                    <input
-                      name="payment"
-                      type="radio"
-                      className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-[#3D3D3D] checked:border-[#3D3D3D] transition-all"
-                      id="payment-method"
-                      defaultChecked
-                    />
-                    <span className="absolute bg-[#0066FF] w-3 h-3 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></span>
-                  </label>
-                </div>
-                <img src={visaIcon} alt="Visa" className="h-4 mx-3" />
-                <div>
-                  <p className="text-sm">Visa ending in 7879</p>
-                  <p className="text-xs text-gray-400">Expiry 06/2024</p>
-                </div>
-              </div>
-              <span className="text-[#1C1C1C] text-sm bg-[#9EFF00] px-3 py-1 rounded-full">Default</span>
-            </div>
-            <button className="mt-3 text-[#0185FF] text-sm hover:underline flex items-center gap-1">
-              <span>+</span> Add new billing method
-            </button>
           </div>
 
           {/* Price Breakdown */}
@@ -144,24 +154,29 @@ const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
             This transaction is final, and refunds are not available once the sample has been sent.
           </p>
 
-          {/* Send Button - Added flex container for alignment */}
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={() => {
-                handleSendSamples(selectedSamples);
-                onCloseAllModals();
-                onClose();
-              }}
-              disabled={selectedSamples.length === 0}
-              className={`
-                min-w-[140px] px-8 py-3 rounded-full font-medium text-base flex-shrink-0
-                ${selectedSamples.length === 0 
-                  ? 'bg-[#242424] text-[#3D3D3D] cursor-not-allowed'
-                  : 'bg-[#1ed760] text-black hover:brightness-110 transition-all cursor-pointer'}
-              `}
-            >
-              Send {selectedSamples.length} demos 
-            </button>
+          {/* Moved Billing Method section to bottom */}
+          <div className="mt-6">
+            <h3 className="text-gray-400 mb-3">Billing method</h3>
+            <div className="mb-4">
+              <input
+                name="discount"
+                type="text"
+                placeholder="Enter Discount Code"
+                value={discountCode}
+                onChange={(e) => setDiscountCode(e.target.value)}
+                className="hover:border-charcoalGray flex-1 mb-2 focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm text-center p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
+              />
+            </div>
+            <div className="my-2">
+              <StripeElements 
+                demoStripeProps={{
+                  onPaymentComplete: handleSendDemo,
+                  amount: total * 100, // Convert to cents for Stripe
+                  recipientId: recipientId?.toString() || '',
+                  onClose: onClose
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

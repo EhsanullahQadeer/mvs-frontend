@@ -87,3 +87,18 @@ export interface IAddNewUser {
   connect_users: ["string"];
   stripe_connect_info: "string";
 }
+
+export interface IUserNotificationSettings {
+  audio_share?: boolean;
+  connection_request?: boolean;
+  connection_response?: boolean;
+  new_collaborator?: boolean;
+  collaboration_request?: boolean;
+  collaboration_accepted?: boolean;
+  demo_payment?: boolean;
+  like?: boolean;
+  follow?: boolean;
+  download?: boolean;
+  feedback_provided?: boolean;
+  fanwall_post?: boolean;
+}

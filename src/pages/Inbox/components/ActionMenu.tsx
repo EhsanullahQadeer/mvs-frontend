@@ -1,16 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type Props = {
-  menuItems: { label: string; icon: any; func: () => void }[];
+  dropdownMenuOptions: {
+    label: string;
+    icon: React.ReactNode;
+    func: () => void;
+  }[];
   setMenuSection: (value: boolean) => void;
   isConvoListMenu?: boolean;
+  selectedMenuItem?: string;
+  onItemClick?: (item: any) => void;
 };
 
-const ActionMenu = (props: Props) => {
-  const { menuItems, setMenuSection, isConvoListMenu = false } = props;
-
+const InboxDropdownMenu = ({ 
+  dropdownMenuOptions, 
+  setMenuSection, 
+  isConvoListMenu = false,
+  selectedMenuItem,
+  onItemClick
+}: Props) => {
+  
   const menuRef = useRef<HTMLDivElement>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const handleCloseMenu = () => {
     setMenuSection(false);
@@ -30,7 +40,6 @@ const ActionMenu = (props: Props) => {
   }, []);
 
   return (
-    <>
       <div
         ref={menuRef}
         className={`absolute z-[9999] ${
@@ -42,9 +51,9 @@ const ActionMenu = (props: Props) => {
             isConvoListMenu ? "" : "p-2.5"
           }`}
         >
-          {menuItems.map((item, idx) => {
+          {dropdownMenuOptions.map((item, idx) => {
             const { label, icon, func } = item;
-            const isLastItem = idx + 1 === menuItems.length;
+            const isLastItem = idx + 1 === dropdownMenuOptions.length;
             const isFirstItem = idx === 0;
             return (
               <div
@@ -59,11 +68,13 @@ const ActionMenu = (props: Props) => {
                     : "text-silver py-2 gap-2 rounded-lg"
                 }`}
                 onClick={() => {
-                  func();
+                  if (onItemClick) {
+                    onItemClick(item);
+                  } else {
+                    item.func();
+                  }
                   handleCloseMenu();
                 }}
-                onMouseEnter={() => setHoveredIndex(idx)}
-                onMouseLeave={() => setHoveredIndex(null)}
               >
                 <span
                   className={`flex items-center justify-center ${
@@ -75,23 +86,19 @@ const ActionMenu = (props: Props) => {
                 <span className={`flex-1 font-normal text-xs leading-4`}>
                   {label}
                 </span>
-
-                {isConvoListMenu ? (
+                {isConvoListMenu && (
                   <div
                     className={`flex w-2 h-2 rounded-full ${
-                      hoveredIndex === idx ? "bg-[#F56755]" : "bg-transparent"
+                      selectedMenuItem === item.label ? "bg-[#F56755]" : "bg-transparent"
                     }`}
                   />
-                ) : (
-                  <></>
                 )}
               </div>
             );
           })}
         </div>
       </div>
-    </>
   );
 };
 
-export default ActionMenu;
+export default InboxDropdownMenu;

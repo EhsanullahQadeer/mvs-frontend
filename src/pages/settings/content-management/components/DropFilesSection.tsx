@@ -10,24 +10,31 @@ import CustomFileDropper from "./CustomFileDropper";
 type Props = {
   uploadingFile: File;
   setUploadingFile: (event: any) => void;
+  isLoginProfile?: boolean;
 };
 
 const DropFilesSection = (props: Props) => {
-  const { uploadingFile, setUploadingFile } = props;
+
+  const { uploadingFile, setUploadingFile ,isLoginProfile } = props;
   return (
     <div>
+    {
+      !isLoginProfile &&
       <div className="py-3 flex flex-col gap-2">
-        <h3 className="text-lg font-semibold text-platinum">Audio Files</h3>
-        <p className="text-sm font-normal text-dimGray">
-          Drop your audio files here to start uploading to your profile.
-        </p>
-      </div>
+      <h3 className="text-lg font-semibold text-platinum">Audio Files</h3>
+      <p className="text-sm font-normal text-dimGray">
+        Drop your audio files here to start uploading to your profile.
+      </p>
+    </div>
+    }
 
       <CustomFileDropper
         {...{
           uploadingFile,
           setUploadingFile,
         }}
+        isLoginProfile={isLoginProfile}
+
       />
     </div>
   );

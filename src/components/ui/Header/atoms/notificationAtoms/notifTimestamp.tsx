@@ -3,7 +3,6 @@ import { timeAgo } from "utils/dateUtils";
 
 // Define the ButtonProps type to handle all possible props
 interface NotifTimestampData {
-  isHovered?: boolean;
   isRead?: boolean;
   id?: number;
   createdAt?: string;

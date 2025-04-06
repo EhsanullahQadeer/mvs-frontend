@@ -7,17 +7,17 @@
  *************************************************************************/
 
 import Table from "@mui/material/Table";
+import Paper from "@mui/material/Paper";
+import TableRow from "@mui/material/TableRow";
+import { ChangeEvent, useEffect } from "react";
+import getMuiStyles from "styles/getMuiStyles";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { ICollaborator, IUserProfile } from "./types";
-import getMuiStyles from "styles/getMuiStyles";
 import { rolesArr } from "../sample-data/sampleData";
-import { ChangeEvent, useEffect } from "react";
+import { ICollaborator, IUserProfile } from "./types";
 import MultiSelectDropdown from "./MultiSelectDropdown";
+import TableContainer from "@mui/material/TableContainer";
 
 interface Props {
   composerData: ICollaborator[];

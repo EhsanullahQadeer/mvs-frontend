@@ -109,6 +109,8 @@ const OnBoarding = () => {
   useEffect(() => {
     const submitAndRedirect = async () => {
       setLoading(true);
+      console.log('Completed Sections:', completedSections.length);
+      console.log('Required Number of Tabs:', numberOfTabs);
       if (!isPartner && completedSections.length === numberOfTabs) {
         await handleSubmitForm();
         const email = userEmail;
@@ -124,7 +126,7 @@ const OnBoarding = () => {
       }
       else if (isPartner && completedSections.length === numberOfTabs) {
         const user = await handleSubmitForm();
-        console.log('user', user);
+        console.log('user1', user);
         setUser(user);
         localStorage.removeItem("persist:root");
         setOpenTab("paidSection");
@@ -149,11 +151,21 @@ const OnBoarding = () => {
         stripe_connect_info: "",
         bio: formData.bio || "",
       };
+      console.log("body", body);
       const response = await addNewUser(body);
+      
+      console.log("response", response);
+      console.log("SDSDSDSD");
       localStorage.removeItem("user");
       return response.data;
     } catch (error) {
-      console.log("error", error);
+      console.log("Error details:", {
+        message: error.message,
+        status: error?.response?.status,
+        statusText: error?.response?.statusText,
+        data: error?.response?.data,
+        validation: error?.response?.data?.validation,
+      });
     }
   };
 
@@ -278,7 +290,7 @@ const OnBoarding = () => {
             <div className="max-w-[458px] mt-3 mb-5">
               <p className="text-mediumGray text-sm font-normal">
                 Set up your account to unlock the full potential of MVSSIVE.
-                This page will remain accessible until you’ve completed all the
+                This page will remain accessible until you've completed all the
                 steps.
               </p>
             </div>

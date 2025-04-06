@@ -41,6 +41,7 @@ import MembershipsConnects from "./settings/memberships-connects/MembershipsConn
 import Plans from "./settings/plans/Plans";
 import CreditsHistory from "./settings/credits-history/CreditsHistory";
 import Notification from "components/ui/Header/molecules/notifications/NotificationList"
+import ForgotPassword from "./creator/forgetPasword";
 
 interface IRoute {
   path: string;
@@ -144,12 +145,6 @@ const routes: IRoute[] = [
   // },
 
   // {
-  //   path: "/new-password",
-  //   name: "New Password",
-  //   component: ForgotPasswordPage,
-  // },
-
-  // {
   //   path: "/forgot-password-success",
   //   name: "Forgot Password Success",
   //   component: ForgotPasswordPage,
@@ -214,54 +209,54 @@ const routes: IRoute[] = [
     component: SettingsLayout,
     children: [
       {
-        path: "account/:id",
+        path: "account",
         name: "Account Settings",
         component: AccountSetting,
       },
       {
-        path: "content-management/:id",
+        path: "content-management",
         name: "Content Management",
         component: ContentManagement,
       },
       {
-        path: "notifications/:id",
+        path: "notifications",
         name: "Notifications",
         component: Notifications,
       },
       {
-        path: "privacy/:id",
+        path: "privacy",
         name: "Privacy",
         component: Privacy,
       },
       {
-        path: "monetization/:id",
+        path: "monetization",
         name: "Monetization",
         component: Monetization,
       },
       {
-        path: "security/:id",
+        path: "security",
         name: "Security",
         component: SecuritySettings,
       },
       {
-        path: "billing/:id",
+        path: "billing",
         name: "Billing",
         component: BillingLayout,
       },
       {
-        path: "memberships/:id",
+        path: "memberships",
         name: "Memberships & Connects",
         component: MembershipsConnects,
       },
     ],
   },
   {
-    path: "/settings/plans/:id",
+    path: "/settings/plans",
     name: "Plans",
     component: Plans,
   },
   {
-    path: "/settings/credits-history/:id",
+    path: "/settings/credits-history",
     name: "CreditsHistory",
     component: CreditsHistory,
   },

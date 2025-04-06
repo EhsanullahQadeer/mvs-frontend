@@ -31,6 +31,7 @@ export interface AudioTrackType {
   thumbnail?: string;
   bpm?: number;
   key?: string;
+  mp3_s3_key?: string;
   s3_key?: string;
   filename?: string;
   userInfo?: {
@@ -130,7 +131,7 @@ export const PlayerContext = createContext<PlayerContextType>({
 // };
 
 /* PlayerContainer */
-const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen }) => {
+const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen, isConnect }) => {
   // Add these states
   const [likedSamples, setLikedSamples] = useState<Record<number, boolean>>({});
   const [loading, setLoading] = useState(false);
@@ -149,7 +150,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen }) => {
         type: selectedTab,
         includeUserInfo: true,
       });
-      //console.log('response here', _sound?.data?.results);
+      console.log('response here', _sound?.data?.results);
       const samplesArray = Object.values(_sound?.data?.results?.samples || {}) as AudioTrackType[];
       
       setSamples(samplesArray);
@@ -194,7 +195,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen }) => {
       <div className="text-xs font-medium text-[#9C9C9C] py-4 px-3 border-t border-[#1F1F1F]">
         {totalCount} results
       </div>
-      <SampleTable samples={samples} chatOpen={chatOpen} />
+      <SampleTable samples={samples} chatOpen={chatOpen} isConnect={isConnect} />
       {totalCount > 0 && (
         <Pagination
           pageCount={Math.ceil(totalCount / samplesPerPage)}

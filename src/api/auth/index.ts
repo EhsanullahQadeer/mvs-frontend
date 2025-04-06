@@ -30,22 +30,18 @@ export async function changeUserPasswordAPI(params: any) {
   return axiosInstance.post('/auth/change-password', params);
 }
 
-
-
-
-
 export async function updateUserPassword(userData: {
-  email: string;
+  code: string;
   newPassword: string;
 }): Promise<{ errorCode?: string; message?: string; error?: boolean }> {
   try {
-    const response = await axiosInstance.post('/auth/update/user-password', userData);
-    return response.data; // Ensure the backend sends a proper response with errorCode
+    const response = await axiosInstance.post('/auth/reset/password', userData);
+    return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
       return {
         error: true,
-        errorCode: error.response.data.errorCode, // This should come from the backend
+        errorCode: error.response.data.errorCode,
         message: error.response.data.message,
       };
     } else {

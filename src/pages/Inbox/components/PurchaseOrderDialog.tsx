@@ -1,19 +1,27 @@
 import Dialog from "@mui/material/Dialog";
-import React, { useEffect, useState } from "react";
-import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
-import { FaRegCircleQuestion } from "react-icons/fa6";
 import CardInfoDialog from "./CardInfoDialog";
 import { IoIosArrowDown } from "react-icons/io";
-import { IConversation } from "./types";
 import { getUserByIdAPI } from "../../../api/user";
+import React, { useEffect, useState } from "react";
+import { FaRegCircleQuestion } from "react-icons/fa6";
+import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
+import { capitalizeRegion, convertToCurrencyFormat, formatNumberWithCommas } from "utils/dateUtils";
+import { useMessenger } from "api/messenger/context";
+import { uploadMedia } from "api/sounds";
+import { toast } from "react-toastify";
+import { CircularProgress } from "@mui/material";
+import StripeElements from "components/stripe/stripeElements";
+import { useChatbox } from "./Chatbox/context";
 
 interface Props {
   openPurchaseOrder: boolean;
   setOpenPurchaseOrder: React.Dispatch<React.SetStateAction<boolean>>;
-  setCreditPaymentAmount: (value: any) => void;
   handleSendMessage: () => void;
-  conversation: IConversation;
+  activeConversation: any;
   setIsSubmitting?: (value:boolean)=> void;
+  demoFile: File;
+  messageInputValue: string;
+  clearMessageInputs: () => void;
 }
 
 const serviceFeePercentage = 2.9;
@@ -22,52 +30,71 @@ const PurchaseOrderDialog = (props: Props) => {
   const {
     openPurchaseOrder,
     setOpenPurchaseOrder,
-    conversation,
-    setCreditPaymentAmount,
+    activeConversation,
     handleSendMessage,
     setIsSubmitting,
+    demoFile,
+    messageInputValue,
+    clearMessageInputs
   } = props;
-  const { thumbnail, displayName } = conversation || {};
 
-  const recipientId = conversation?.recipient_id;
+  const {
+    LIMIT_MESSAGES,
+    isThread
+  } = useChatbox();
+
+  const {
+    sendMessage,
+    getConversationMessages
+  } = useMessenger();
+
+  const recipient = activeConversation?.recipient;
+  const MAX_TIP_AMOUNT = 1000000;
   const [basePrice, setBasePrice] = useState(0);
+  const [inputTipAmount, setInputTipAmount] = useState("$0.00");
+  const [tipAmount, setTipAmount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [discountCode, setDiscountCode] = useState<string>("");
+  const [openCardInfo, setOpenCardInfo] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [isSending,setIsSending] = useState(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      if (!recipientId) return;
-      const response = await getUserByIdAPI(recipientId?.toString());
+      if (!recipient?.id) return;
+      const response = await getUserByIdAPI(recipient?.id?.toString());
       setBasePrice(response.data?.demo_fee || 0);
     };
     fetchUserInfo();
-  }, [recipientId]);
-
-  const [inputTipAmount, setInputTipAmount] = useState("");
-  const [tipAmount, setTipAmount] = useState(0);
-  const [totalAmount, setTotalAmount] = useState<string>("0.00");
-  const [discountCode, setDiscountCode] = useState<string>("");
-
-  const [openCardInfo, setOpenCardInfo] = useState(false);
-
-  const [formData, setFormData] = useState({});
-
-  const handleMatchBid = () => {};
-
-  const handleTipAmountChange = (event: any) => {
-    let inputValue = event.target.value;
-
-    const validPricePattern = /^\$?\d*\.?\d{0,2}$/;
-
-    let numericValue = inputValue.replace("$", "");
-
-    if (validPricePattern.test(inputValue)) {
-      setTipAmount(numericValue ? parseFloat(numericValue) : 0);
-
-      if (numericValue && !inputValue.startsWith("$")) {
-        inputValue = "$" + numericValue;
-      }
-
-      setInputTipAmount(inputValue);
+  }, [recipient?.id]);
+  
+  const handleTipAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let inputValue = event.target.value; // Get the current input value
+    let cleanedValue = inputValue.replace("$", "");
+    let updatedNumericValue = 0;
+    let updatedInputValue = "";
+    // Example usage:
+    updatedInputValue = convertToCurrencyFormat(cleanedValue); // Output: "$0.01"
+    updatedNumericValue = parseFloat(updatedInputValue.replace("$", "").replace(/,/g, ""));
+    if (updatedNumericValue > MAX_TIP_AMOUNT) {
+      updatedInputValue = "$1,000,000.00";
+      updatedNumericValue = MAX_TIP_AMOUNT;
     }
+    setInputTipAmount(updatedInputValue);
+    setTipAmount(updatedNumericValue);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    // Prevent arrow keys
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+    }
+  };
+
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    // Move the cursor to the end of the input value
+    const input = event.target;
+    input.setSelectionRange(input.value.length, input.value.length);
   };
 
   const handleClose = () => {
@@ -76,22 +103,51 @@ const PurchaseOrderDialog = (props: Props) => {
     setInputTipAmount("");
     setIsSubmitting(false);
   };
+  const handleBack = () => {
+    setOpenPurchaseOrder(true);
+    setOpenCardInfo(false);
 
+  };
   const handleOpenCardInfo = () => {
     setOpenCardInfo(true);
   };
 
-  const handleSendDemo = () => {
-    handleSendMessage();
+  const handleSendDemo = async (paymentIntentId: string) => {
+    console.log("handleSendDemo", demoFile, messageInputValue);
+    const response = await uploadMedia({
+      file: demoFile,
+      type: 'demo',
+    });
+    console.log("response", response);
+
+    if (!response?.data?.media?.id) {
+      console.error("No media ID in response:", response);
+      toast.error("Failed to upload audio file");
+      return;
+    }
+    console.log("response.data.media.id", response.data.media.id);
+    console.log("totalAmount", totalAmount);
+    await sendMessage({
+      conversationId: activeConversation?.conversation_id || '',
+      message: messageInputValue,
+      creditPaymentAmount: totalAmount,
+      messageType: 'demo',
+      audioMediaId: response.data.media.id,
+      stripePaymentIntentId: paymentIntentId,
+    });
+    setTipAmount(0);
+    setInputTipAmount("");
     setOpenPurchaseOrder(false);
+    setIsSending(false);
+    await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
+    clearMessageInputs();
   };
 
   useEffect(() => {
     const subtotal = basePrice + tipAmount;
     const serviceFee = (subtotal * serviceFeePercentage) / 100;
     const total = subtotal + serviceFee;
-    setTotalAmount(total.toFixed(2));
-    setCreditPaymentAmount(Number(total.toFixed(2)));
+    setTotalAmount(total);
   }, [tipAmount, basePrice]);
 
   const subtotal = basePrice + tipAmount;
@@ -137,16 +193,16 @@ const PurchaseOrderDialog = (props: Props) => {
                 <img
                   alt=""
                   loading="lazy"
-                  src={thumbnail}
+                  src={recipient?.thumbnail}
                   className="object-cover w-full h-full rounded-full border-[2px] border-[#151515]"
                 />
               </div>
               <div className="flex flex-col gap-0.5 text-[14px]">
                 <div className="text-sm font-semibold text-white">
-                  {displayName}
+                  {recipient?.name}
                 </div>
                 <div className="text-[12px] text-silver font-normal">
-                  Los Angeles, CA
+                  {capitalizeRegion(recipient?.region)}, {capitalizeRegion(recipient?.country)}
                 </div>
               </div>
             </div>
@@ -209,44 +265,22 @@ const PurchaseOrderDialog = (props: Props) => {
                   Charge:{" "}
                   <span className=" text-mediumGray font-medium">
                     You will only be charged once partner sends you feedback and
-                    a voicememo.
+                    a voice memo.
                   </span>
                 </span>
               </div>
             </div>
-
-            <div className="flex items-center py-1 flex-1 gap-4">
-
-              {/* <div className="flex gap-[5px] flex-col w-full">
-                <span className="text-silver text-[12px]">Tip Amount</span>
-                <div className="relative">
-                  <div className="absolute inset-y-0 right-3 flex items-center text-dimGray">
-                    USD
-                  </div>
-                  <input
-                    name="inputTipAmount"
-                    placeholder="$00.00"
-                    value={inputTipAmount}
-                    onChange={handleTipAmountChange}
-                    className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
-                  />
-                </div>
-              </div> */}
-
-              <div className="flex gap-[5px] flex-col w-full"></div>
-            </div>
-
             <div className="flex flex-col flex-1 text-[12px] gap-1 py-2 border-y border-eclipseGray">
               <div className="flex flex-col  text-grayishSilver">
                 <div className="flex justify-between items-center">
                   <span>Price</span>
-                  <span>${basePrice}</span>
+                  <span>${formatNumberWithCommas(basePrice)}</span>
                 </div>
               </div>
               <div className="flex flex-col  text-grayishSilver">
                 <div className="flex justify-between items-center">
                   <span>Service Fee ({serviceFeePercentage}%)</span>
-                  <span>${serviceFee.toFixed(2)}</span>
+                  <span>${formatNumberWithCommas(serviceFee)}</span>
                 </div>
               </div>
               <div className="flex flex-col  text-grayishSilver">
@@ -258,10 +292,12 @@ const PurchaseOrderDialog = (props: Props) => {
                     </div>
                     <input
                       name="inputTipAmount"
-                      placeholder="$00.00"
+                      placeholder="$0.00"
                       value={inputTipAmount}
                       onChange={handleTipAmountChange}
-                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-[160px] h-[40px] text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg text-right pr-14"
+                      onKeyDown={handleKeyDown}
+                      onFocus={handleFocus}
+                      className="hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-[170px] h-[40px] text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg text-right pr-14"
                     />
                   </div>
                 </div>
@@ -271,25 +307,11 @@ const PurchaseOrderDialog = (props: Props) => {
               <div className="flex flex-col  text-grayishSilver">
                 <div className="flex justify-between items-center">
                   <span>Total Amount</span>
-                  <span className="text-limeGreen">${totalAmount}</span>
+                  <span className="text-limeGreen">${formatNumberWithCommas(totalAmount)}</span>
                 </div>
               </div>
             </div>
             <div>
-              <h2 className="text-[18px] font-semibold pb-2 pt-3 text-softGray">
-                Payment Method
-              </h2>
-              <div onClick={handleOpenCardInfo} className="relative">
-                <span className="absolute inset-y-0 right-3 flex items-center text-dimGray">
-                  <IoIosArrowDown />
-                </span>
-                <input
-                  name="none"
-                  type="name"
-                  placeholder="MVSSIVE Beta - Testing Card"
-                  className=" focus:border-transparent flex-1 focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
-                />
-              </div>
             </div>
 
             <div>
@@ -301,34 +323,13 @@ const PurchaseOrderDialog = (props: Props) => {
                 onChange={(e) => setDiscountCode(e.target.value)}
                 className="hover:border-charcoalGray flex-1 mb-2 focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm text-center p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
               />
+              <div className="my-2">
+                <StripeElements demoStripeProps={{onPaymentComplete: (intentId)=>{setIsSending(true);handleSendDemo(intentId)}, amount: Number(totalAmount), recipientId: recipient?.id, onClose: handleClose}}/>
+              </div>
             </div>
-          </div>
-
-          <div className="flex bottom-0 sticky bg-darkGray justify-end pb-6 pt-1 gap-2">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="border border-charcoalGray bg-jetBlack text-sm text-white font-semibold py-[12px] w-[86px] flex justify-center items-center rounded-full"
-            >
-              Close
-            </button>
-            <button
-              type="submit"
-              onClick={handleSendDemo}
-              className="bg-limeGreen text-sm text-jetBlack font-semibold py-[12px] px-5 rounded-full"
-            >
-              Send Demo
-            </button>
           </div>
         </div>
       </Dialog>
-
-      <CardInfoDialog
-        openCardInfo={openCardInfo}
-        setOpenCardInfo={setOpenCardInfo}
-        formData={setFormData}
-        setFormData={setFormData}
-      />
     </div>
   );
 };

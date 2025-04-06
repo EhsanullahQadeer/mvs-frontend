@@ -45,18 +45,27 @@ interface ISampleModalFooter {
   onClose: () => void;
   onSelect: (sample: AudioTrackType) => void;
   userId?: number;
+  recipientId?: number;
+  userType?: 'partner' | 'creator';
+  isConnected?: boolean;
+  conversationId?: string;
 }
 
 const SampleModalFooter: React.FC<ISampleModalFooter> = ({ 
   open, 
   onClose, 
   onSelect,
-  userId 
+  userId,
+  recipientId,
+  userType = 'creator',
+  conversationId,
+  isConnected = false
 }) => {
   const [loading, setLoading] = useState(false);
   const [samples, setSamples] = useState<AudioTrackType[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const samplesPerPage = 20;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSamples, setSelectedSamples] = useState<Set<number>>(new Set());
@@ -198,6 +207,44 @@ const SampleModalFooter: React.FC<ISampleModalFooter> = ({
       }));
   };
 
+  const handleSampleSelection = (sampleId: number) => {
+    setSelectedSamples(prev => {
+      const newSelected = new Set(prev);
+      const isCurrentlySelected = newSelected.has(sampleId);
+
+      // If already selected, just remove it
+      if (isCurrentlySelected) {
+        newSelected.delete(sampleId);
+        setErrorMessage('');
+        return newSelected;
+      }
+
+      // Check selection limits based on user type
+      if (userType === 'creator') {
+        // Creator can only select 1 sample
+        if (newSelected.size >= 1) {
+          setErrorMessage('As a creator, you can only select one sample at a time when sending to partners.');
+          return prev;
+        }
+        newSelected.clear(); // Clear previous selection
+        newSelected.add(sampleId);
+      } else if (userType === 'partner' && isConnected) {
+        // Connected partners can select up to 5 samples
+        if (newSelected.size >= 5) {
+          setErrorMessage('You can select up to 5 samples when sending to connected partners.');
+          return prev;
+        }
+        newSelected.add(sampleId);
+      } else if (userType === 'partner' && !isConnected) {
+        setErrorMessage('You can only send samples to connected partners.');
+        return prev;
+      }
+
+      setErrorMessage('');
+      return newSelected;
+    });
+  };
+
   useEffect(() => {
     fetchUserSamples(0);
   }, []);
@@ -269,6 +316,11 @@ const SampleModalFooter: React.FC<ISampleModalFooter> = ({
             </div>
           </DialogTitle>
           <DialogContent className="flex flex-col" sx={{ padding: 0, overflow: 'hidden' }}>
+            {errorMessage && (
+              <div className="bg-red-900/20 text-red-400 px-4 py-2 text-sm">
+                {errorMessage}
+              </div>
+            )}
             <div className="bg-[#121212] rounded-lg p-4 mt-4 flex-1 overflow-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -285,17 +337,7 @@ const SampleModalFooter: React.FC<ISampleModalFooter> = ({
                   {samples.map((sample) => (
                     <tr
                       key={sample.id}
-                      onClick={() => {
-                        setSelectedSamples(prev => {
-                          const newSelected = new Set(prev);
-                          if (newSelected.has(sample.id)) {
-                            newSelected.delete(sample.id);
-                          } else {
-                            newSelected.add(sample.id);
-                          }
-                          return newSelected;
-                        });
-                      }}
+                      onClick={() => handleSampleSelection(sample.id)}
                       className={`
                         border-b border-[#1A1A1A] hover:bg-[#1F1F1F] cursor-pointer
                         ${selectedSamples.has(sample.id) ? 'bg-[#1F1F1F]' : ''}
@@ -305,7 +347,8 @@ const SampleModalFooter: React.FC<ISampleModalFooter> = ({
                         <input 
                           type="checkbox" 
                           checked={selectedSamples.has(sample.id)}
-                          className="w-4 h-4 accent-[#1ed760] bg-transparent border-gray-600 rounded"
+                          style={{ backgroundColor: selectedSamples.has(sample.id) ? '#1ed760' : 'transparent' }}
+                          className="w-4 h-4 accent-[#1ed760] border-gray-600 rounded"
                           readOnly
                         />
                       </td>
@@ -390,6 +433,8 @@ const SampleModalFooter: React.FC<ISampleModalFooter> = ({
           open={isSendModalOpen}
           onClose={() => setIsSendModalOpen(false)}
           selectedSamples={formatSelectedSamples()}
+          recipientId={recipientId} 
+          conversationId={conversationId}
           onCloseAllModals={handleClose}
 
         />

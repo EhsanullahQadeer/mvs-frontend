@@ -6,18 +6,22 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import { useEffect, useState } from "react";
-import { getSampleCollaborators, updateFileMetadata, uploadedFileMetadata } from "api/sounds";
+import * as Yup from "yup";
 import { Form, Formik } from "formik";
-import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
-import AlertDialog from "components/util/AlertDialog";
-import ContributersTable from "./ContributersTable";
-import UploadingFileMetaData from "./UploadingFileMetaData";
+import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import { sanitizeInput } from "utils/stringUtils";
+import ContributersTable from "./ContributersTable";
+import AlertDialog from "components/util/AlertDialog";
+import UploadingFileMetaData from "./UploadingFileMetaData";
+import { updateFileMetadata, uploadedFileMetadata } from "api/sounds";
+import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
 
 type Props = {
   fileRedisKey?: string;
+  setUploadingFile?: (file: File) => void;
   handleCancel?: () => void;
+  uploadProgress?: number;
   isEditSample?: boolean;
   handleClose?: () => void;
   sampleOwner?: IUserProfile;
@@ -27,13 +31,16 @@ type Props = {
   setUpdateData?: (event: any) => void;
 };
 
-const MetaDataForm = (
-  props: Props
-) => {
+const validationSchema = Yup.object().shape({
+  songName: Yup.string().required('Sample name is required'),
+});
 
+const MetaDataForm = (props: Props) => {
   const {
     fileRedisKey,
     handleCancel,
+    setUploadingFile,
+    uploadProgress,
     isEditSample,
     handleClose,
     sampleToEdit,
@@ -42,10 +49,9 @@ const MetaDataForm = (
     setUpdateData,
   } = props;
 
-  console.log("MetaDataForm - received composer:", collaborators);
-
   const {
     filename,
+    name,
     bpm,
     key,
     type,
@@ -56,7 +62,6 @@ const MetaDataForm = (
     mime_type,
     length,
   } = sampleToEdit || {};
-
 
   const [selectedComposer, setSelectedComposer] = useState(() => collaborators);
   const [composerToDelete, setComposerToDelete] = useState(null);
@@ -74,7 +79,7 @@ const MetaDataForm = (
       },
       contribution: composer.contribution,
       id: composer.id,
-      roles: composer.roles,
+      roles: [],
       isEditable: false,
     }))
   );
@@ -87,7 +92,8 @@ const MetaDataForm = (
   const [isSaving, setIsSaving] = useState(false);
 
   const initialValues = {
-    songName: filename ? filename : "",
+    filename: filename ? sanitizeInput(filename) : "",
+    songName: name ? name : "",
     songBpm: bpm ? bpm : "",
     songType: type ? type : "sample",
     songTags: tags ? tags : "",
@@ -98,14 +104,14 @@ const MetaDataForm = (
     setComposerData((prevComposerData) => {
       const updatedComposerData = selectedComposer?.map((composer) => {
         const existingComposer = prevComposerData?.find(
-          (existing) => existing.id === composer.id
-        );
-        
-        const initialCollaborator = collaborators?.find( 
-          collab => collab.id === composer.id
+          (existing) => existing.user.id === composer.user.id
         );
 
-        const percentValue = initialCollaborator?.contribution 
+        const initialCollaborator = collaborators?.find(
+          (collab) => collab.id === composer.id
+        );
+
+        const percentValue = initialCollaborator?.contribution
           ? initialCollaborator.contribution
           : parseFloat((100 / selectedComposer?.length).toFixed(2));
 
@@ -117,10 +123,10 @@ const MetaDataForm = (
             isEditable: existingComposer.isEditable || false,
           };
         }
-        
+
         return {
           ...composer,
-          roles: composer.roles || [],
+          roles: [],
           percentValue,
           isEditable: false,
         };
@@ -134,7 +140,7 @@ const MetaDataForm = (
   const handleSubmit = async (values) => {
     setIsSaving(true);
     try {
-      const { 
+      const {
         songName, 
         songBpm,
         sampleKey,
@@ -143,9 +149,9 @@ const MetaDataForm = (
       } = values;
 
       const formattedTags = songTags
-        .split(' ')
-        .filter(tag => tag.trim())
-        .map(tag => tag.startsWith('#') ? tag.slice(1) : tag)
+        .split(" ")
+        .filter((tag) => tag.trim())
+        .map((tag) => (tag.startsWith("#") ? tag.slice(1) : tag))
         .filter((tag, index, self) => self.indexOf(tag) === index);
 
       const percentSum = composerData.reduce((sum, composer) => {
@@ -175,7 +181,7 @@ const MetaDataForm = (
         }));
 
       const body = {
-        filename: songName,
+        name: songName,
         bpm: songBpm,
         key: sampleKey,
         type: songType?.value || songType,
@@ -190,31 +196,32 @@ const MetaDataForm = (
         }),
       };
 
-      console.log('Attempting save with:', { 
-        isEditSample, 
-        editFileId: sampleToEdit?.id, 
-        fileRedisKey, 
-        body 
+      console.log("Attempting save with:", {
+        isEditSample,
+        editFileId: sampleToEdit?.id,
+        fileRedisKey,
+        body,
       });
-      
+
       if (fileRedisKey) {
         const response = await uploadedFileMetadata(fileRedisKey, body);
-        console.log('Upload response:', response);
+        console.log("Upload response:", response);
         setUpdateData && setUpdateData(Date.now());
-        return;
-      } 
-      
-      if (isEditSample && sampleToEdit?.id) {
-        const response = await updateFileMetadata(sampleToEdit.id, body);
-        console.log('Update response:', response);
-        setUpdateData && setUpdateData(Date.now());
-        handleClose?.();
+        setUploadingFile && setUploadingFile(null);
         return;
       }
 
-      console.error('No valid file key or sample ID for update');
+      if (isEditSample && sampleToEdit?.id) {
+        const response = await updateFileMetadata(sampleToEdit.id, body);
+        console.log("Update response:", response);
+        setUpdateData && setUpdateData(Date.now());
+        setUploadingFile && setUploadingFile(null);
+        return;
+      }
+
+      console.error("No valid file key or sample ID for update");
     } catch (error) {
-      console.error('Save error:', error);
+      console.error("Save error:", error);
     } finally {
       setIsSaving(false);
     }
@@ -233,7 +240,7 @@ const MetaDataForm = (
   const handleDeleteComposer = () => {
     if (composerToDelete) {
       const updatedComposerData = composerData.filter(
-        (composer) => composer.id !== composerToDelete.id
+        (composer) => composer.user.id !== composerToDelete.user.id
       );
 
       setSelectedComposer(updatedComposerData);
@@ -255,8 +262,9 @@ const MetaDataForm = (
         }}
       />
 
-      <Formik 
+      <Formik
         initialValues={initialValues}
+        validationSchema={validationSchema}
         onSubmit={(values) => handleSubmit(values)}
       >
         {({ handleSubmit, errors, touched }) => (
@@ -276,6 +284,11 @@ const MetaDataForm = (
                     sample: sampleToEdit,
                   }}
                 />
+                {errors.songName && touched.songName && (
+                  <div className="text-red-500 text-xs mt-1 ml-4">
+                    {errors.songName}
+                  </div>
+                )}
               </div>
 
               {selectedComposer?.length > 0 && (
@@ -307,15 +320,17 @@ const MetaDataForm = (
                 </button>
                 <button
                   type="submit"
-                  disabled={isSaving}
+                  disabled={uploadProgress < 100}
                   className="bg-limeGreen w-[151px] flex justify-center items-center py-3 text-jetBlack text-sm font-semibold rounded-[60px]"
                 >
-                  {isSaving ? "Saving..." : "Save Changes"}
+                  {isSaving || uploadProgress < 100 ? "Saving..." : "Save Changes"}
                 </button>
               </div>
 
               {errors.songType && touched.songType && (
-                <div className="text-red-500 text-xs mt-1">{errors.songType}</div>
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.songType}
+                </div>
               )}
             </>
           </Form>

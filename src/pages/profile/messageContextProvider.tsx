@@ -23,8 +23,7 @@ export const MessageContextProvider: React.FC<{ children: ReactNode }> = ({
   const [message, setMessages] = useState<Message[]>([]);
 
   const sendMessage = (message: Message) => {
-    console.log("Message sent: " + message);
-    setMessages((prevMessages) => [...prevMessages, message]);
+    // setMessages((prevMessages) => [...prevMessages, message]);
   };
 
   return (
