@@ -3,8 +3,9 @@ and call addToast({state: "messageArchived" }) for prebuilt, or add the paramete
 
 Success:
   messageArchived ✅
-  messageDeleted
-  messageMovedToSpam
+  messagesArchived ✅
+  messageDeleted ✅ - actually this cant be undone so removed "undo"
+  messageMovedToSpam ✅
   messageMarkedAsUnread
   messageMarkedAsRead
   demoSentSuccessfully
@@ -31,12 +32,26 @@ Success:
   paymentMethodRemoved
   defaultPaymentMethodChanged
   statusRefreshed
+  //---group 3---
+  privacySettingsUpdated
+  accountUnblocked
+  inboxFeeUpdated
+  automaticMessageSaved
+  demoFeeUpdated
+  meetingFeeSaved
+  meetingDurationsUpdated
+  planChanged
+  creditsPurchased
+  monthlyCreditsAdded
+  userTypeSaved
+  personalInfoSaved
+  pricesUpdated
 
 
 Error:
-  failedToArchiveMessage
-  failedToDeleteMessage
-  failedToMoveToSpam
+  failedToArchiveMessage ✅
+  failedToDeleteMessage ✅
+  failedToMoveToSpam ✅
   couldNotApplyLabel
   fileUploadFailed
   unsupportedFileFormat
@@ -58,9 +73,22 @@ Error:
   failedToAddPaymentMethod
   failedToUpdatePrivacySettings
   unableToUnblockAccount
+  //---group 3---
+  failedToAddPaymentMethod
+  failedToUpdatePayoutMethod
+  verificationFailed
+  failedToUpdateInboxFee
+  failedToSaveAutomaticMessage
+  failedToUpdateDemoFee
+  failedToSaveMeetingFee
+  failedToChangePlan
+  failedToPurchaseCredits
+  failedToRetrieveCreditHistory
+  pleaseSelectBothRoles
+  failedToSaveChanges
 
 Warning:
-  actionCantBeUndone
+  actionCantBeUndone --not sure if change message deleted modal
   attachmentTooLarge
   insufficientCredits
   paymentFailed
@@ -74,3 +102,7 @@ Warning:
   fileAlreadyExists
   unsavedChanges
   cardAlreadyAdded
+  //---group 3---
+  feeCannotBeSetToZero
+  creditBalanceIsLow
+  aboutToRunOutOfCredits
