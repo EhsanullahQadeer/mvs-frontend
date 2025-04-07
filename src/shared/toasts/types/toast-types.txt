@@ -6,11 +6,11 @@ Success:
   messagesArchived ✅
   messageDeleted ✅ - actually this cant be undone so removed "undo"
   messageMovedToSpam ✅
-  messageMarkedAsUnread
-  messageMarkedAsRead
-  demoSentSuccessfully
-  tipSentSuccessfully
-  fileUploadedSuccessfully
+  messageMarkedAsUnread ❓- these features dont work yet i think
+  messageMarkedAsRead ❓- these features dont work yet i think
+  demoSentSuccessfully ✅ (purchase order dialog)
+  tipSentSuccessfully ✅(footer tip)
+  fileUploadedSuccessfully ✅ (purchase order dialog)
   downloadComplete
   payoutMethodUpdated
   newPayoutMethodAdded
@@ -53,20 +53,20 @@ Error:
   failedToDeleteMessage ✅
   failedToMoveToSpam ✅
   couldNotApplyLabel
-  fileUploadFailed
-  unsupportedFileFormat
-  fileSizeExceeded
-  messageFailedToSend
+  fileUploadFailed ✅ (purchase order dialog, footer)
+  unsupportedFileFormat ✅ (footer)
+  fileSizeExceeded ✅ (footer 50mb)
+  messageFailedToSend ✅ (purchase order dialog)
   freeMessageLimitExceeded
   tooManyMessagesSent
-  unexpectedError
+  unexpectedError ✅ (used when retrying once doesnt work for any toast)
   APITimeout
   messageReported
   userBlocked
   failedToDownloadSample
   //---group 2---
   failedToSubmitWithdrawalRequest
-  somethingWentWrong
+  somethingWentWrong ✅ (if demo id isnt created before sending)
   failedToUpdateEmail
   atLeastOneContributor
   publishingPercentage100
