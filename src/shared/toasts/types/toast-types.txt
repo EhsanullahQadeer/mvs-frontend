@@ -17,7 +17,7 @@ Success:
   stripeAccountConnected
   withdrawalRequestSubmitted
   //---group 2---
-  profileUpdated
+  profileUpdated ✅ (update profile: roles/genres, address, username/bio)
   changesSaved
   informationDeleted
   accountInfoUpdated
@@ -85,14 +85,14 @@ Error:
   failedToPurchaseCredits
   failedToRetrieveCreditHistory
   pleaseSelectBothRoles
-  failedToSaveChanges
+  failedToSaveChanges ✅ (update profile: roles/genres, address, bio/username)
 
 Warning:
   actionCantBeUndone --not sure if change message deleted modal
   attachmentTooLarge
   insufficientCredits
   paymentFailed
-  uploadFailed
+  uploadFailed ✅(chat recording)
   connectionLost
   //---group 2---
   mustConnectToPayoutMethod
