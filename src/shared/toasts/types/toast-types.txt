@@ -11,16 +11,16 @@ Success:
   demoSentSuccessfully ✅ (purchase order dialog)
   tipSentSuccessfully ✅(footer tip)
   fileUploadedSuccessfully ✅ (purchase order dialog)
-  downloadComplete
+  downloadComplete ✅ (dropdown, table)
   payoutMethodUpdated
   newPayoutMethodAdded
   stripeAccountConnected
   withdrawalRequestSubmitted
   //---group 2---
-  profileUpdated
+  profileUpdated ✅ (settings/account: roles/genres, address, username/bio)
   changesSaved
   informationDeleted
-  accountInfoUpdated
+  accountInfoUpdated ✅ (settings/account: account information)
   emailUpdated
   passwordChanged
   contributorAdded
@@ -63,7 +63,7 @@ Error:
   APITimeout
   messageReported
   userBlocked
-  failedToDownloadSample
+  failedToDownloadSample ✅(dropdown, table)
   //---group 2---
   failedToSubmitWithdrawalRequest
   somethingWentWrong ✅ (if demo id isnt created before sending)
@@ -85,14 +85,14 @@ Error:
   failedToPurchaseCredits
   failedToRetrieveCreditHistory
   pleaseSelectBothRoles
-  failedToSaveChanges
+  failedToSaveChanges ✅ (settings/account: roles/genres, address, bio/username)
 
 Warning:
   actionCantBeUndone --not sure if change message deleted modal
   attachmentTooLarge
   insufficientCredits
   paymentFailed
-  uploadFailed
+  uploadFailed ✅(chat recording)
   connectionLost
   //---group 2---
   mustConnectToPayoutMethod
