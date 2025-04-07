@@ -21,17 +21,18 @@ const Footer = () => {
 
   const {
     activeConversation,
-    getConversationMessages,
     sendMessage,
     replyInThread,
     threadMessages,
-    getThreadMessages,
   } = useMessenger();
 
   const { 
     isThread,
-    LIMIT_MESSAGES,
-    isSendDemoAvailable
+    isSendDemoAvailable,
+    listenToDemoEvent,
+    setListenToDemoEvent,
+    onlyAllowAudioRecording,
+    setOnlyAllowAudioRecording,
   } = useChatbox()
 
   const {
@@ -139,6 +140,8 @@ const Footer = () => {
           // if (threadMessages && threadMessages.length > 0) {
           //   await getThreadMessages({ parentMessageId: threadMessages[0].id });
           // }
+          setListenToDemoEvent(false);
+          setOnlyAllowAudioRecording(false);
           clearMessageInputs();
         }
         // await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
@@ -300,10 +303,10 @@ const Footer = () => {
                       ? `Recording... ${recordingDuration}` 
                       : recordedAudio 
                         ? "Audio message ready to send..." 
-                        : "Type your message..."
+                        : listenToDemoEvent ? "Unable to send text message for a demo event." : "Type your message..."
                   }
                   maxLength={255}
-                  disabled={isRecording || !!recordedAudio}
+                  disabled={isRecording || !!recordedAudio || listenToDemoEvent}
                 />
 
                 {recordedAudio && !uploadedAudioFile && (
@@ -359,14 +362,15 @@ const Footer = () => {
                     <div className="w-3.5 -rotate-90 border border-[#3D3D3D]"></div>
                     <div className={`flex-1 text-sm leading-none text-right font-normal ${determineTextColor()}`}>
                       <input
+                        disabled={listenToDemoEvent}
                         name="inputTipAmount"
                         placeholder="$0.00"
                         value={inputTipAmount}
                         onChange={handleTipAmountChange}
                         onKeyDown={handleKeyDown}
                         onFocus={handleFocus}
-                        className="bg-transparent border-none border-transparent focus:border-transparent focus:ring-0 w-auto min-w-[50px] max-w-full px-0 py-2"
-                        style={{ width: `${inputTipAmount.length}ch` }}
+                        className={`bg-transparent border-none border-transparent focus:border-transparent focus:ring-0 w-auto min-w-[50px] max-w-full px-0 py-2  ${listenToDemoEvent ? 'cursor-not-allowed' : 'cursor-pointer'}`} // Allow the input to grow and shrink
+                        style={{ width: `${inputTipAmount.length}ch` }} // Dynamically set width based on input length
                       />
                     </div>
                   </div>
@@ -404,21 +408,27 @@ const Footer = () => {
                     />
                     <button
                       onClick={handleButtonClick}
-                      className={`text-dimGray cursor-${isSendDemoAvailable ? 'pointer' : 'not-allowed'} p-2 rounded-lg ${
-                        isSendDemoAvailable ? 'hover:bg-[#202327]' : ''
+                      className={`text-dimGray cursor-${isSendDemoAvailable && !isThread ? 'pointer' : 'not-allowed'} p-2 rounded-lg ${
+                        isSendDemoAvailable && !isThread ? 'hover:bg-[#202327]' : ''
                       }`}
-                      disabled={!isSendDemoAvailable}
+                      disabled={!isSendDemoAvailable || isThread}
                       title={!isSendDemoAvailable ? "User currently is not accepting demos" : ""}
                     >
                       <div className="relative">
                         <AudioFileIcon />
-                        {!isSendDemoAvailable && (
+                        {!isSendDemoAvailable || isThread && (
                           <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'scale(1.8)' }}>
                             <div className="w-full h-0.5 bg-dimGray rotate-45 transform origin-center"/>
                           </div>
                         )}
                       </div>
                     </button>
+                  </div>
+
+                  <div className={`relative rounded-lg ${isThread ? (threadMessages?.length === 1 && onlyAllowAudioRecording && !recordedAudio) ? 'pulse-border' : 'cursor-not-allowed pointer-events-none' : ''}`}>
+                    <AudioRecorder
+                      onStopRef={stopRecordingRef}
+                    />
                   </div>
                 </div>
                 

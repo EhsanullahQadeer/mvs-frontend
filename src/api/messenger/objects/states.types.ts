@@ -152,6 +152,7 @@ export type IMedia = {
   type: MEDIA_TYPE;
   created_at: string;
   updated_at: string;
+  played_through: boolean;
 } | null;
 
 export enum MEDIA_TYPE {
@@ -163,6 +164,8 @@ interface ThreadStats {
   replyCount: number;
   lastReplierThumbnail: string;
   hasUnreadMessage: boolean;
+  professionalName: string;
+  id: number;
 }
 
 export interface IMessage {

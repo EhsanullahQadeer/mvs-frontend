@@ -18,12 +18,14 @@ import { IUploadingFileMetaDataProps } from "./types";
 import FormikLabeledField from "../../../../components/util/FormikLabeledField";
 import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import FormikSingleSelectDropdown from "../../../../components/util/FormikSingleSelectDropdown";
+import avatarImg from "../../../../assets/img/avatar.svg";
 import {
   FormControl,
   FormControlLabel,
   Radio,
   RadioGroup,
 } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 
 const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
   const {
@@ -92,31 +94,59 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
   };
 
   const handleAddComposer = (composerAdded) => {
-    setSelectedComposer((prev) => {
-      const isComposerAlreadySelected = prev.some(
-        (composer) => composer?.user?.id === composerAdded?.id
-      );
 
-      if (isComposerAlreadySelected) {
-        console.log("Composer already exists");
-        return prev;
-      }
+    if(composerAdded.isEmailValue){
+      setSelectedComposer((prev) => {
+        const isComposerAlreadySelected = prev.some(
+          (composer) => composer?.user?.email === composerAdded?.email
+        );
 
-      const newCollaborator = {
-        user: {
-          id: composerAdded.id,
-          thumbnail: composerAdded.thumbnail,
-          professional_name: composerAdded.professional_name,
-          is_owner: false,
-        },
-        contribution: 0,
-        roles: composerAdded.roles,
-      };
+        if(isComposerAlreadySelected){
+          console.log("Composer already exists");
+          return prev;
+        }
 
-      console.log("Uploading File Metadata - handleAddComposer - new Composer: ", newCollaborator);
+        const newCollaborator = {
+          user: {
+            id: null,
+            thumbnail: avatarImg,
+            professional_name: composerAdded.email,
+            is_owner: false,
+          },
+          contribution: 0,
+          roles: [],
+        };
 
-      return [...prev, newCollaborator];
-    });
+        return [...prev, newCollaborator];
+      });
+    }
+    else{
+      setSelectedComposer((prev) => {
+        const isComposerAlreadySelected = prev.some(
+          (composer) => composer?.user?.id === composerAdded?.id
+        );
+
+        if (isComposerAlreadySelected) {
+          console.log("Composer already exists");
+          return prev;
+        }
+
+        const newCollaborator = {
+          user: {
+            id: composerAdded.id,
+            thumbnail: composerAdded.thumbnail,
+            professional_name: composerAdded.professional_name,
+            is_owner: false,
+          },
+          contribution: 0,
+          roles: composerAdded.roles,
+        };
+
+        console.log("Uploading File Metadata - handleAddComposer - new Composer: ", newCollaborator);
+
+        return [...prev, newCollaborator];
+      });
+    }
   };
 
   const handlePrivacyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,7 +185,18 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
     }
   };
 
- 
+  // Function to truncate email addresses
+  const truncateEmail = (email: string) => {
+    const [localPart, domain] = email.split('@');
+    const [domainName, extension] = domain.split('.');
+    return `${localPart.substring(0, 6)}...@${domainName.substring(0, 3)}...${extension}`;
+  };
+
+  // Function to truncate text
+  const truncateText = (text: string) => {
+    if (text.length <= 10) return text;
+    return `${text.substring(0, 10)}...`;
+  };
 
   return (
     <>
@@ -260,9 +301,11 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
                       key={professional_name + idx}
                       className="flex gap-2 py-1 px-3 rounded-[20px] bg-eerieBlack border border-eerieBlack items-center"
                     >
-                      <span className="text-xs text-mediumGray whitespace-nowrap font-normal">
-                        {composer?.user?.professional_name}
-                      </span>
+                      <Tooltip title={composer?.user?.professional_name} placement="top">
+                        <span className="text-xs text-mediumGray whitespace-nowrap font-normal">
+                          {truncateText(composer?.user?.professional_name)}
+                        </span>
+                      </Tooltip>
                       <div 
                         className="w-3.5 h-3.5 cursor-pointer rounded-full text-mediumGray flex justify-center items-center hover:bg-dimGray hover:text-black" // Change 'gray-600' to your desired color
                         onClick={removeComposer} // Add onClick to remove composer

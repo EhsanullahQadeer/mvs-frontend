@@ -9,6 +9,7 @@ import { FiCopy } from "react-icons/fi";
 import { LuDelete } from "react-icons/lu";
 import { LuShieldAlert } from "react-icons/lu";
 import { useMessenger } from "api/messenger/context";
+import { useToast } from "shared/toasts/ToastProvider";
 
 
 type Props = {
@@ -35,6 +36,8 @@ const MessageOptions = (props: Props) => {
     messages,
     setMessages
   } = useMessenger();
+
+  const { addToast } = useToast();
 
   const emojiRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -276,15 +279,27 @@ const MessageOptions = (props: Props) => {
                   try {
                     setOverlayLoading?.(true);
                     const response = await deleteMessage({ messageId: id });
-                    console.log('message delete', response);
                     if (!response.error) {
-                      console.log('message deleted', messages);
+                      addToast({ state: "messageDeleted" })
                       setMessages(messages?.filter((message) => message.id !== id));
                     }
                     setShowDeleteConfirm(false);
                     onMessageDeleted?.();
                   } catch (error) {
-                    console.error('Failed to delete message:', error);
+                    addToast({ 
+                      state: "failedToDeleteMessage",
+                      actionFunction: async () => {
+                        await deleteMessage({ messageId: id })                        
+                        .then(() => {
+                          setMessages(messages?.filter((message) => message.id !== id));
+                          setShowDeleteConfirm(false);
+                          onMessageDeleted?.();
+                        })
+                        .catch(() => {
+                          addToast({ state: "unexpectedError", permanent: true, actionFunction: () => window.location.reload() })
+                        })
+                      }
+                    })
                   } finally {
                     setOverlayLoading?.(false);
                   }

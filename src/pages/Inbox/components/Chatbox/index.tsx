@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
+import axiosInstance from "api/axios";
 import { useChatbox } from "./context";
 import Footer from "./components/footer";
 import NotesSection from "../NotesSection";
@@ -24,7 +25,7 @@ import { AudioRecordingProvider } from "./components/audioRecorder";
 import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
-import axiosInstance from "api/axios";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface ChatboxProps {
   onClose: () => void;
@@ -42,8 +43,6 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
   const {
     activeConversation,
-    CONVERSATIONS_PER_PAGE,
-    inboxTab
   } = useConversation();
 
   const {
@@ -52,8 +51,6 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     conversationNotes,
     setThreadMessages,
     threadMessages,
-    conversations,
-    setConversations,
     getConversationMessages
   } = useMessenger();
 
@@ -263,14 +260,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
             <div className="flex flex-wrap gap-5 justify-between items-center p-4 w-full">
               <div className="flex gap-2 items-center">
-                <div className="flex rounded-full p-0.5 w-12 h-12 aspect-square">
-                  <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
-                    <div
-                      style={{ backgroundImage: `url("${recipient?.thumbnail}")` }}
-                      className="w-full h-full rounded-full bg-cover bg-center"
-                    ></div>
-                  </div>
-                </div>
+                <Thumbnail professionalName={recipient.professional_name} thumbnail={recipient.thumbnail} size="40" userId={recipient.id}/>
                 <div className="flex flex-col gap-0.5">
                   <div className="text-sm font-semibold text-white">
                     {recipient?.name}

@@ -46,7 +46,6 @@ export const AudioRecordingProvider: React.FC<{ children: React.ReactNode }> = (
     
     for (const format of formats) {
       if (MediaRecorder.isTypeSupported(format)) {
-        console.log('Using format:', format);
         return format;
       }
     }

@@ -1,5 +1,4 @@
 import { toast } from "react-toastify";
-import { FiInfo} from "react-icons/fi";
 import { Menu } from "@headlessui/react";
 import { useSelector } from "react-redux";
 import { GoDotFill } from "react-icons/go";
@@ -7,32 +6,30 @@ import { RootState } from "redux/reducers";
 import { MdVerified } from "react-icons/md";
 import { IArtistProfileData } from "./types";
 import { LuDollarSign } from "react-icons/lu";
+import FollowersModal from "./followersModal";
+import ConnectionsModal from './connectionsModal';
 import { useEffect, useRef, useState } from "react";
 import { useMessenger } from "api/messenger/context";
 import Chatbox from "pages/Inbox/components/Chatbox";
-import avatarImg from "../../../assets/img/avatar.svg";
 import { getConversationsWithUser } from "api/messenger";
 import Tooltip from "components/ui/Header/atoms/tooltip";
 import playIcon from "../../../assets/img/player/play-circle.svg";
 import pauseIcon from "../../../assets/img/player/pause-circle.svg";
-import { ChatboxProvider, useChatbox } from "pages/Inbox/components/Chatbox/context";
+import { useChatbox } from "pages/Inbox/components/Chatbox/context";
 import { ReactComponent as MapPinIcon } from "../../../assets/icons/mapPin.svg";
 import { ConversationProvider } from "pages/Inbox/components/Directory/context";
 import { IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
-import { checkIfFollowing, getMutualConnections, getUserFollowers, handleFollowUsers, requestConncetAPI } from "api/user";
 import { ReactComponent as ClockIcon } from "../../../assets/icons/clockIcon.svg";
 import { ReactComponent as UserPlusIcon } from "../../../assets/icons/userPlusIcon.svg";
 import { ReactComponent as CalendarIcon } from "../../../assets/icons/calendarIcon.svg";
 import { ReactComponent as PaperPlaneIcon } from "../../../assets/icons/paperPlane.svg";
 import { ReactComponent as UserCheckIcon } from "../../../assets/icons/userCheckIcon.svg";
 import { ReactComponent as UserMinusIcon } from "../../../assets/icons/userMinusIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import { ReactComponent as UpArrowTrayIcon } from "../../../assets/icons/upArrowTrayIcon.svg";
 import { ReactComponent as ElipsesVerticalIcon } from "../../../assets/icons/threeVerticalDotsIcon.svg";
+import { checkIfFollowing, getMutualConnections, handleFollowUsers, requestConncetAPI } from "api/user";
 import ProfileSectionButton from "components/ui/Header/atoms/profileAboutSectionAtoms/profileSectionButton";
-import FollowersModal from "./followersModal";
-import Avatar from "react-avatar";
-import { boolean } from "yup";
-import ConnectionsModal from './connectionsModal';
 
 type Props = {
   artistData: IArtistProfileData | null;
@@ -110,6 +107,8 @@ const ProfileAboutSection = (props: Props) => {
     demo_fee,
     publisher,
   } = artistData?.available ?? artistData ?? {};
+
+  console.log('Prof Name Prof about section: ', professional_name);
 
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const truncatedBio =
@@ -233,11 +232,7 @@ const ProfileAboutSection = (props: Props) => {
       <div className="w-full h-[88px] bg-[#1a1a1a]"></div>
       <div className="px-4">
         <div className="rounded-full p-1 bg-jetBlack w-[108px] h-[108px] relative -translate-y-1/2">
-          <img
-            src={thumbnail || avatarImg}
-            alt="Profile"
-            className="h-full w-full rounded-full object-cover"
-          />
+          <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="100" userId={id}/>
         </div>
 
         <div className="text-white flex flex-col -mt-10">
@@ -289,13 +284,7 @@ const ProfileAboutSection = (props: Props) => {
                     className="relative ring-2 ring-jetBlack rounded-full"
                     style={{ zIndex: 3 + index }}
                   >
-                    <Avatar 
-                      name={connection.professional_name} 
-                      src={connection.thumbnail} 
-                      round={true}
-                      size="30" 
-                      className="shrink-0"
-                    />
+                    <Thumbnail professionalName={connection.professional_name} thumbnail={connection.thumbnail} size="30" userId={connection.id}/>
                   </div>
                 ))}
               </div>
@@ -412,13 +401,7 @@ const ProfileAboutSection = (props: Props) => {
                   onMouseEnter={() => setHoveredRow(index)} // Set hovered row on hover
                   onMouseLeave={() => setHoveredRow(null)} // Reset on mouse leave
                 >
-                  <div className="w-12 h-12">
-                    <img
-                      src={thumbnail}
-                      alt="credits"
-                      className="w-full h-full object-contain rounded-[4px]"
-                    />
-                  </div>
+                  <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="12"/>
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-white font-semibold text-xs text-wrap">
                       {track_name}

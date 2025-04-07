@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import axiosInstance from "api/axios";
-import { useMessenger } from "../context";
 import { IMessage } from "../objects/states.types";
 
 export interface ISendMessage {

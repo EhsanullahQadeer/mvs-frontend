@@ -31,9 +31,12 @@ export const useGetThreadMessages = (
           cursor: payload.cursor,
         }
       });
+      const messages = response.data.results.messages;
+      const firstMessage = messages[0]; // Get the first message
+      const remainingMessages = messages.slice(1).reverse(); // Get the rest and reverse them
 
       setThreadMessages(prevMessages => 
-        payload.cursor ? [...prevMessages, ...response.data.results.messages.reverse()] : response.data.results.messages
+        payload.cursor ? [firstMessage, ...remainingMessages, ...prevMessages] : [firstMessage, ...remainingMessages]
       );
 
       return response.data;

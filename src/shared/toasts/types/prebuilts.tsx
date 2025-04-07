@@ -10,9 +10,15 @@ export const prebuiltToasts: ToastConfig[] = [
     type: "success" 
   },
   { 
+    id: "messagesArchived", 
+    title: "Messages archived", 
+    action: "Undo", 
+    message: "The conversations have been moved to your archive.", 
+    type: "success" 
+  },
+  { 
     id: "messageDeleted", 
     title: "Message deleted", 
-    action: "Undo", 
     message: "The message has been successfully deleted.", 
     type: "success" 
   },
@@ -21,6 +27,13 @@ export const prebuiltToasts: ToastConfig[] = [
     title: "Message moved to Spam", 
     action: "Undo", 
     message: "The message has been moved to Spam.", 
+    type: "success" 
+  },
+  { 
+    id: "messagesMovedToSpam", 
+    title: "Messages moved to Spam", 
+    action: "Undo", 
+    message: "The messages have been moved to Spam.", 
     type: "success" 
   },
   { 
@@ -192,12 +205,103 @@ export const prebuiltToasts: ToastConfig[] = [
     message: "Your billing status has been updated.", 
     type: "success" 
   },
+  // batch 3
+  { 
+    id: "privacySettingsUpdated", 
+    title: "Privacy settings updated", 
+    action: "View settings", 
+    message: "Your privacy settings were updated successfully.", 
+    type: "success" 
+  },
+  { 
+    id: "accountUnblocked", 
+    title: "Account successfully unblocked", 
+    action: "View account", 
+    message: "The account has been unblocked.", 
+    type: "success" 
+  },
+  { 
+    id: "inboxFeeUpdated", 
+    title: "Inbox fee updated successfully", 
+    action: "View fee", 
+    message: "Your inbox fee has been saved.", 
+    type: "success" 
+  },
+  { 
+    id: "automaticMessageSaved", 
+    title: "Automatic message saved", 
+    action: "View message", 
+    message: "Your auto-response has been saved.", 
+    type: "success" 
+  },
+  { 
+    id: "demoFeeUpdated", 
+    title: "Demo fee updated successfully", 
+    action: "View fee", 
+    message: "Your demo fee has been saved.", 
+    type: "success" 
+  },
+  { 
+    id: "meetingFeeSaved", 
+    title: "Meeting fee saved", 
+    action: "View meeting settings", 
+    message: "Your meeting fee has been saved.", 
+    type: "success" 
+  },
+  { 
+    id: "meetingDurationsUpdated", 
+    title: "Meeting durations updated", 
+    action: "View meeting settings", 
+    message: "Your availability times have been updated.", 
+    type: "success" 
+  },
+  { 
+    id: "planChanged", 
+    title: "Plan changed successfully", 
+    action: "View plan", 
+    message: "Your subscription plan was updated.", 
+    type: "success" 
+  },
+  { 
+    id: "creditsPurchased", 
+    title: "Credits purchased successfully", 
+    action: "View credits", 
+    message: "Your credits have been added to your account.", 
+    type: "success" 
+  },
+  { 
+    id: "monthlyCreditsAdded", 
+    title: "Monthly credits added", 
+    action: "View usage", 
+    message: "Your credits have been renewed.", 
+    type: "success" 
+  },
+  { 
+    id: "userTypeSaved", 
+    title: "User type saved successfully", 
+    message: "Your user role has been saved.", 
+    type: "success" 
+  },
+  { 
+    id: "personalInfoSaved", 
+    title: "Personal information saved successfully", 
+    action: "Review profile", 
+    message: "Your information has been saved.", 
+    type: "success" 
+  },
+  { 
+    id: "pricesUpdated", 
+    title: "Prices updated successfully", 
+    action: "View pricing", 
+    message: "Your pricing settings have been saved.", 
+    type: "success" 
+  },
   // ************************ error toasts *****************************************************************
   { 
     id: "failedToArchiveMessage", 
-    title: "Failed to archive message", 
+    title: "Failed to archive message(s)", 
     action: "Retry", 
-    message: "Could not archive the message. Please try again.", 
+    message: "Could not archive the message(s). Please try again.", 
     type: "error" 
   },
   { 
@@ -211,7 +315,7 @@ export const prebuiltToasts: ToastConfig[] = [
     id: "failedToMoveToSpam", 
     title: "Failed to move to Spam", 
     action: "Retry", 
-    message: "The message could not be moved to Spam.", 
+    message: "The message(s) could not be moved to Spam.", 
     type: "error" 
   },
   { 
@@ -266,7 +370,7 @@ export const prebuiltToasts: ToastConfig[] = [
   { 
     id: "unexpectedError", 
     title: "Unexpected error", 
-    action: "Refresh", 
+    action: "Refresh",
     message: "Oops! Something went wrong. Refresh and try again.", 
     type: "error" 
   },
@@ -303,7 +407,7 @@ export const prebuiltToasts: ToastConfig[] = [
     id: "failedToSubmitWithdrawalRequest", 
     title: "Failed to submit withdrawal request", 
     action: "Retry", 
-    message: "We couldn’t process your request. Please try again later.", 
+    message: "We could not process your request. Please try again later.", 
     type: "error" 
   },
   { 
@@ -338,14 +442,14 @@ export const prebuiltToasts: ToastConfig[] = [
     id: "failedToAddPaymentMethod", 
     title: "Failed to add payment method", 
     action: "Retry", 
-    message: "We couldn’t add your card. Please try again.", 
+    message: "We could not add your card. Please try again.", 
     type: "error" 
   },
   { 
     id: "failedToUpdatePrivacySettings", 
     title: "Failed to update privacy settings", 
     action: "Retry", 
-    message: "We couldn’t save your changes.", 
+    message: "We could not save your changes.", 
     type: "error" 
   },
   { 
@@ -355,6 +459,91 @@ export const prebuiltToasts: ToastConfig[] = [
     message: "Something went wrong while unblocking the user.", 
     type: "error" 
   },
+  // batch 3
+  { 
+    id: "failedToAddPaymentMethod", 
+    title: "Failed to add payment method", 
+    action: "Retry", 
+    message: "We could not add your card. Please try again.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToUpdatePayoutMethod", 
+    title: "Unable to update payout method", 
+    action: "Retry", 
+    message: "Failed to update your payout method. Please try again", 
+    type: "error" 
+  },
+  { 
+    id: "verificationFailed", 
+    title: "Verification failed", 
+    action: "Retry", 
+    message: "We could not verify your identity. Please try again.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToUpdateInboxFee", 
+    title: "Failed to update inbox fee", 
+    action: "Retry", 
+    message: "We could not update your inbox fee. Please try again.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToSaveAutomaticMessage", 
+    title: "Could not save automatic message", 
+    action: "Retry", 
+    message: "We could not save your automatic response.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToUpdateDemoFee", 
+    title: "Error updating demo fee", 
+    action: "Retry", 
+    message: "Something went wrong while saving your demo fee.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToSaveMeetingFee", 
+    title: "Meeting fee save failed", 
+    action: "Retry", 
+    message: "We could not save your meeting fee.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToChangePlan", 
+    title: "Failed to change plan", 
+    action: "Retry", 
+    message: "Something went wrong when changing your plan.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToPurchaseCredits", 
+    title: "Credit purchase failed", 
+    action: "Retry", 
+    message: "We could not process your payment.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToRetrieveCreditHistory", 
+    title: "Could not retrieve credit history", 
+    action: "Retry", 
+    message: "We could not load your transactions.", 
+    type: "error" 
+  },
+  { 
+    id: "pleaseSelectBothRoles", 
+    title: "Please select both a main and a sub-role", 
+    action: "Complete now", 
+    message: "Both roles are required to proceed.", 
+    type: "error" 
+  },
+  { 
+    id: "failedToSaveChanges", 
+    title: "Failed to save changes", 
+    action: "Retry", 
+    message: "We could not save your information. Please try again.", 
+    type: "error" 
+  },  
   // ************************ warning toasts *********************************************************************
   { 
     id: "actionCantBeUndone", 
@@ -432,7 +621,7 @@ export const prebuiltToasts: ToastConfig[] = [
     id: "unsavedChanges", 
     title: "Unsaved changes", 
     action: "Save now", 
-    message: "You have unsaved changes. Don’t forget to save before closing.", 
+    message: "You have unsaved changes. Do not forget to save before closing.", 
     type: "warning" 
   },
   { 
@@ -440,6 +629,27 @@ export const prebuiltToasts: ToastConfig[] = [
     title: "You already have this card added", 
     action: "Use another", 
     message: "This card is already linked to your account.", 
+    type: "warning" 
+  },
+  { 
+    id: "feeCannotBeSetToZero", 
+    title: "Fee cannot be set to $0", 
+    action: "Edit fee", 
+    message: "Minimum price must be at least $1.", 
+    type: "warning" 
+  },
+  { 
+    id: "creditBalanceIsLow", 
+    title: "Credit balance is low", 
+    action: "Buy credits", 
+    message: "You are about to run out of monthly credits.", 
+    type: "warning" 
+  },
+  { 
+    id: "aboutToRunOutOfCredits", 
+    title: "You are about to run out of monthly credits", 
+    action: "View plans", 
+    message: "Consider upgrading your plan or buying more credits.", 
     type: "warning" 
   },
   // ************************ info toasts *********************************************************************
