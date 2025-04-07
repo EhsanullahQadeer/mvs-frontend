@@ -1,3 +1,5 @@
+import { REACT_APP_ASSETS } from "constants/music-list";
+
 // Function to format the time difference
 export const timeAgo = (date: Date) => {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -82,4 +84,16 @@ export const formatBytes = (bytes: number): string => {
   if (MB < 1024) return `${MB.toFixed(1)} MB`; // Return MB if less than 1 GB
   const GB = MB / 1024;
   return `${GB.toFixed(1)} GB`; // Return GB
+};
+
+// Function to append the environment variable to the beginning of all assets in our S3 bucket
+export const loadAsset = (url: string): string => {
+  if (url === null) {
+    return '';
+  }
+  if (url.startsWith('https://')) {
+    return url;
+  }
+  const assetUrl = REACT_APP_ASSETS + url;
+  return assetUrl;
 };

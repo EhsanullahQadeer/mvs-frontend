@@ -8,7 +8,7 @@ import { useMessenger } from "api/messenger/context";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 import StripeElements from "components/stripe/stripeElements";
 import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { capitalizeRegion, convertToCurrencyFormat, formatNumberWithCommas } from "utils/dateUtils";
 
 interface Props {

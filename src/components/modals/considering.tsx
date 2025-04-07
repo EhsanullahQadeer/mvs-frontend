@@ -10,7 +10,7 @@
 import Modal from "react-modal";
 import { getSampleConsidering } from "api/sounds";
 import React, { useEffect, useState } from "react";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface ConsideringModalProps {
   considering: boolean;

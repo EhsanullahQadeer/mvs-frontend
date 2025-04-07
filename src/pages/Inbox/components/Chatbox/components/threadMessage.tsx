@@ -4,9 +4,9 @@ import { useChatbox } from "../context";
 import { FiUnlock } from "react-icons/fi";
 import { useMessenger } from "api/messenger/context";
 import { useState, useEffect, useRef, useCallback } from "react";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { IMessage, MEDIA_TYPE, MESSAGE_TYPES } from "api/messenger/objects/states.types";
 import { useUpdateHasListenedToDemo } from "api/messenger/hooks/useUpdateHasListenedToDemo";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import DemoPlayerFeedbackThread from "components/ui/Header/molecules/chatboxMolecules/audioDemoPlayerFeedbackThread";
 

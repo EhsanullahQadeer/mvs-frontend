@@ -3,7 +3,7 @@ import { getUserFollowers } from "api/user";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface FollowersModalProps {
   open: boolean;

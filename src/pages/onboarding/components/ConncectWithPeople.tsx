@@ -13,7 +13,7 @@ import { CircularProgress } from "@mui/material";
 import { IUserFollowConnection } from "api/user/types";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 const MIN_ITEMS = 21;
 const ITEM_WIDTH = 230;

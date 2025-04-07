@@ -7,7 +7,7 @@ import { RootState } from "redux/reducers";
 import MessageOptions from "./messageOptions";
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";

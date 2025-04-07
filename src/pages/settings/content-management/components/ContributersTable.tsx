@@ -18,8 +18,7 @@ import { rolesArr } from "../sample-data/sampleData";
 import { ICollaborator, IUserProfile } from "./types";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 import TableContainer from "@mui/material/TableContainer";
-import Tooltip from "@mui/material/Tooltip";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface Props {
   composerData: ICollaborator[];

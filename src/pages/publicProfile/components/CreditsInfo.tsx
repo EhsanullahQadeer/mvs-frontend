@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import playIcon from "../../../assets/img/player/play-circle.svg";
 import pauseIcon from "../../../assets/img/player/pause-circle.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface IProps {
   creditsData: {

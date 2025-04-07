@@ -14,8 +14,8 @@ import musicBeam from "../../../assets/icons/musicBeam.svg";
 import ConsideringModal from "components/modals/considering";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {ReactComponent as MusicIcon} from "../../../assets/icons/musicIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { getSampleConsidering, saveSampleDownloadAPI, sampleLikeAPI } from "api/sounds";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 const SampleTable = (props: {
   samples: any[];

@@ -17,7 +17,7 @@ import { useHeaderHooks } from "../Header/Header.hooks";
 import UserSettingsModal from "components/modals/user-settings";
 import FeedbackContactModal from "components/modals/feedback-contact";
 import { ReactComponent as CaratIcon } from "../../assets/icons/caratIcon.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 const ProfileButton = () => {
   /* States and Hooks */

@@ -23,7 +23,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import frquesncyIcon from "../../../assets/img/frequency-Icon.svg";
 import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 export interface IAppProps {}
 
@@ -48,7 +48,6 @@ export function SearchHeader() {
     (async () => {
       const response = await searchAllUsers("", 10, true, true);
       setSearchResults(response.data);
-      //console.log("searchResults", searchResults);
     })();
   }, []);
 

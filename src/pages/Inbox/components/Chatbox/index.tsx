@@ -25,7 +25,7 @@ import { AudioRecordingProvider } from "./components/audioRecorder";
 import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
 import { useNotification } from "services/WebSocket/useNotification.hook";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface ChatboxProps {
   onClose: () => void;
