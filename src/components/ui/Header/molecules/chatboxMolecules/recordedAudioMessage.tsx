@@ -1,4 +1,4 @@
-import { formatTime } from "utils/dateUtils";
+import { formatTime } from "shared/utils/dateUtils";
 import VolumeIcon from '../../../../../assets/img/volume.svg';
 import PlayPauseButton from "../../atoms/chatboxPlayPauseButton";
 import VolumeMuteIcon from '../../../../../assets/img/volume-x.svg';

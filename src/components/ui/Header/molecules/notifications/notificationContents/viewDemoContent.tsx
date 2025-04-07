@@ -1,4 +1,4 @@
-import { truncateFilename } from 'utils/dateUtils';
+import { truncateFilename } from 'shared/utils/dateUtils';
 import { TNotificationData } from "../Notification";
 import FileMediaAttachment from '../FileMediaAttachment';
 import audioIcon from "../../../../../../assets/img/voice.svg";

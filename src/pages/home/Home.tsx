@@ -12,7 +12,7 @@ import Theme from "theme";
 import { getUsersByTag } from "api/user";
 import Filters from "./components/Filters";
 import { UserFiltersDTO } from "api/user/types";
-import { userTags, userTagsObj } from "utils/usersTags";
+import { userTags, userTagsObj } from "shared/utils/usersTags";
 import { SearchHeader } from "./components/SearchHeader";
 import ScrollableComponent from "./components/ScrollableComponent";
 import FilterResultComponent from "./components/FilterResultComponent";

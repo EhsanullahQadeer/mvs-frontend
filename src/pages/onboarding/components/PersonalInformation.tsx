@@ -25,7 +25,7 @@ import { countriesStates } from "../sample-data/countriesStates";
 import FormikLabeledField from "components/util/FormikLabeledField";
 import ImageCropModal from "../../../components/modals/ImageCropModal";
 import profileBannerBackImg from "../../../assets/img/profileBannerBackImg.png";
-import { formatFileSize, estimateBase64Size } from "../../../utils/imageSizeUtils";
+import { formatFileSize, estimateBase64Size } from "../../../shared/utils/imageSizeUtils";
 import FormikSingleSelectDropdown from "components/util/FormikSingleSelectDropdown";
 
 type Props = {
