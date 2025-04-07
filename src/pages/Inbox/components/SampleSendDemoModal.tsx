@@ -23,6 +23,7 @@ interface ISampleSendDemoModal {
   recipientId: number;
   conversationId: string;
 }
+
 interface DemoStripeProps {
   onPaymentComplete: (paymentIntentId: string) => void;
   amount: number;
@@ -40,34 +41,40 @@ const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
 }) => {
   const [discountCode, setDiscountCode] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const { sendMessage } = useMessenger();
+  const { sendMessage, getConversationMessages } = useMessenger();
   
   const samplePrice = 5.00;
-  const serviceFeePercentage = 0.02;
+  const serviceFeePercentage = 0.029; // 2.9%
+  
+  // Ensure we have valid samples before calculating
+  if (selectedSamples.length === 0) {
+    onClose();
+    return null;
+  }
+
   const subtotal = selectedSamples.length * samplePrice;
   const serviceFee = subtotal * serviceFeePercentage;
-  const total = subtotal + serviceFee;
+  const total = Math.max(Math.round((subtotal + serviceFee) * 100), 50);
 
   const handleSendDemo = async (intentId: string) => {
     try {
       setIsSending(true);
-      console.log("Sending demo with intent:", intentId);
-      console.log("Selected samples:", selectedSamples);
-      console.log("Conversation ID:", conversationId);
-      console.log("Recipient ID:", recipientId);
-      // Send each sample as a message in the chat
-      for (const sample of selectedSamples) {
-        await sendMessage({
-          message: `Sent demo: ${sample.title}`,
-          conversationId: String(conversationId),
-          audioMediaId: sample.id,
-          messageType: "samples",
-          stripePaymentIntentId: intentId
-        });
-      }
+      
+      await sendMessage({
+        message: `Sent a demo: ${selectedSamples[0].title}`,
+        conversationId: String(conversationId),
+        sampleId: selectedSamples[0].id,
+        messageType: 'sample',
+        stripePaymentIntentId: intentId
+      });
 
       toast.success("Demos sent successfully!");
       onCloseAllModals();
+      getConversationMessages({
+        conversationId: conversationId,
+        limit: 10,
+        cursor: 0
+      });
     } catch (error) {
       console.error("Error sending demos:", error);
       toast.error("Failed to send demos");
@@ -141,7 +148,7 @@ const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
             </div>
             <div className="flex justify-between font-medium pt-2">
               <span className="text-[#B9B9B9]">Total Amount</span>
-              <span className="text-[#7ECC00]">${total.toFixed(2)}</span>
+              <span className="text-[#7ECC00]">${(total / 100).toFixed(2)}</span>
             </div>
           </div>
 
@@ -171,7 +178,7 @@ const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
               <StripeElements 
                 demoStripeProps={{
                   onPaymentComplete: handleSendDemo,
-                  amount: total * 100, // Convert to cents for Stripe
+                  amount: total, // Already in cents
                   recipientId: recipientId?.toString() || '',
                   onClose: onClose
                 }}
