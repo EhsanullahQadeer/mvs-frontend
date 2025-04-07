@@ -240,7 +240,7 @@ const FanWall = (props: IProps) => {
         </div>
 
         <div className="overflow-y-auto h-[60vh] custom-dropdown"> {/* Set a fixed height and enable vertical scrolling */}
-          {fanwallPostsData.map((fanwallPost, index) => (
+          {fanwallPostsData.length > 0 ? fanwallPostsData.map((fanwallPost, index) => (
             <div
               key={index}
               ref={index === fanwallPostsData.length - 1 ? lastPostElementRef : null}
@@ -261,7 +261,11 @@ const FanWall = (props: IProps) => {
                 }}
               />
             </div>
-          ))}
+          )) : (
+            <div className="flex justify-center items-center h-full">
+              <p className="text-silver">No posts yet</p>
+            </div>
+          )}
         </div>
 
         <UnlockContentModel
