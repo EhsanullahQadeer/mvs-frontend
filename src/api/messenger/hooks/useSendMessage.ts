@@ -7,6 +7,7 @@ export interface ISendMessage {
   message: string;
   messageType: string;
   audioMediaId?: number | null;
+  sampleId?: number | null;
   creditPaymentAmount?: number | null;
   stripePaymentIntentId?: string | null;
 }

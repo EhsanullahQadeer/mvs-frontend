@@ -128,3 +128,15 @@
   75% { transform: scaleY(1.2); }
 }
 
+.bottom-audio-player {
+  border: none;
+  background: none;
+  box-shadow: none;
+
+  &--compact {
+    border: none;
+    background: none;
+    box-shadow: none;
+  }
+}
+
