@@ -1,5 +1,5 @@
 import React from "react";
-import { timeAgo } from "utils/dateUtils";
+import { timeAgo } from "shared/utils/dateUtils";
 
 // Define the ButtonProps type to handle all possible props
 interface NotifTimestampData {

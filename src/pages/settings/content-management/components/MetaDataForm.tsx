@@ -10,7 +10,7 @@ import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
-import { sanitizeInput } from "utils/stringUtils";
+import { sanitizeInput } from "shared/utils/stringUtils";
 import ContributersTable from "./ContributersTable";
 import AlertDialog from "components/util/AlertDialog";
 import UploadingFileMetaData from "./UploadingFileMetaData";

@@ -9,7 +9,7 @@ import { FaRegCircleQuestion } from "react-icons/fa6";
 import StripeElements from "components/stripe/stripeElements";
 import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
-import { capitalizeRegion, convertToCurrencyFormat, formatNumberWithCommas } from "utils/dateUtils";
+import { capitalizeRegion, convertToCurrencyFormat, formatNumberWithCommas } from "shared/utils/dateUtils";
 
 interface Props {
   openPurchaseOrder: boolean;
