@@ -96,10 +96,14 @@ const ProfileRightSection = (props: IProps) => {
       </div>
 
       {/* Tab Content */}
-      <div className=" pt-5 flex flex-col ">
-        <div className="flex-1 px-5 overflow-y-auto custom-dropdown">
-          {topTabs.find((tab) => tab.label === activeTab)?.component}
-        </div>
+      <div className="flex-1 min-h-0">
+        {activeTab === "Library" ? (
+          <div className="h-full overflow-y-auto custom-dropdown">
+            {topTabs.find((tab) => tab.label === activeTab)?.component}
+          </div>
+        ) : (
+          topTabs.find((tab) => tab.label === activeTab)?.component
+        )}
       </div>
 
       {!isConnect && !isLoginUser && activeTab === "Library" && (

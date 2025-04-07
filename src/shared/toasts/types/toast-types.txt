@@ -11,7 +11,7 @@ Success:
   demoSentSuccessfully ✅ (purchase order dialog)
   tipSentSuccessfully ✅(footer tip)
   fileUploadedSuccessfully ✅ (purchase order dialog)
-  downloadComplete
+  downloadComplete ✅ (dropdown, table)
   payoutMethodUpdated
   newPayoutMethodAdded
   stripeAccountConnected
@@ -63,7 +63,7 @@ Error:
   APITimeout
   messageReported
   userBlocked
-  failedToDownloadSample
+  failedToDownloadSample ✅(dropdown, table)
   //---group 2---
   failedToSubmitWithdrawalRequest
   somethingWentWrong ✅ (if demo id isnt created before sending)
