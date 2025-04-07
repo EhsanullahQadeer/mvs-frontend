@@ -343,7 +343,8 @@ export const prebuiltToasts: ToastConfig[] = [
     id: "fileSizeExceeded", 
     title: "File size exceeded", 
     action: "Choose a smaller file", 
-    message: "The file size is too large to upload.", 
+    message: (params?: { sizeLimit?: string }) => 
+      `The file size is too large to upload. ${params?.sizeLimit ? `Limit is ${params?.sizeLimit}.` : ''}`, 
     type: "error" 
   },
   { 

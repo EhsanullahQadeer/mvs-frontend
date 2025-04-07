@@ -16,6 +16,7 @@ import SampleModalFooter from "../../SampleModalFooter";
 import SampleSendDemoModal from "../../SampleSendDemoModal";
 import { ReactComponent as AudioFileIconFromSample } from "../../../../../assets/icons/audioFile.svg";
 
+import { useToast } from "shared/toasts/ToastProvider";
 
 const Footer = () => {
 
@@ -42,6 +43,8 @@ const Footer = () => {
     stopRecording,
     clearRecording,
   } = useAudioRecording();
+
+  const { addToast } = useToast();
 
   const MAX_TIP_AMOUNT = 1000000;
   const [tipAmount, setTipAmount] = useState(0);
@@ -79,17 +82,29 @@ const Footer = () => {
     console.log('Audio File look: ', e.target.files?.[0]);
     const file = validateFile(e.target.files?.[0]);
     if (file) {
-      console.log('File: ', file);
       setUploadedAudioFile(file);
     }
     e.target.value = "";
   };
 
-  const validateFile = (file: File): File | null =>
-    file.type.startsWith("audio/") ? file : null;
-
   const handleButtonClick = () => {
     fileInputRef.current?.click(); // Programmatically click the hidden file input
+  };
+
+  const validateFile = (file: File): File | null => {
+    if (!file) {
+      addToast({state: "unsupportedFileFormat", actionFunction: () => handleButtonClick()});
+      return null;
+    }
+    if (!file.type.startsWith("audio/")) {
+      addToast({state: "unsupportedFileFormat", actionFunction: () => handleButtonClick()});
+      return null;
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      addToast({state: "fileSizeExceeded", params: { sizeLimit: "50 MB" }, actionFunction: () => handleButtonClick()});
+      return null;
+    }
+    return file;
   };
 
   const handleSendMessage = async () => {
@@ -106,17 +121,25 @@ const Footer = () => {
           type: recordedAudio.type 
         });
 
-        const response = await uploadMedia({
-          file: file,
-          type: 'recording',
-          duration: Number(recordingDuration),
-        });
+        let response;
+        try {
+          response = await uploadMedia({
+            file: file,
+            type: 'recording',
+            duration: Number(recordingDuration),
+          });
 
         if (!response?.data?.media?.id) {
           console.error("No media ID in response:", response);
-          toast.error("Failed to upload audio file");
+          addToast({state: "somethingWentWrong", permanent: true, actionFunction: () => window.location.reload()})
           return;
         }
+        } catch (error) {
+          addToast({state: "fileUploadFailed", permanent: true, actionFunction: () => handleSendMessage()})
+          return;
+        }
+
+        addToast({state: "fileUploadedSuccessfully", permanent: true, actionFunction: () => handleSendMessage()})
         
         const mediaId = response.data.media.id;
         if (!isThread) {
@@ -168,12 +191,19 @@ const Footer = () => {
           // }
         } else {
           if (tipAmount > 0) {
-            const response = await sendMessage({
-              message: String(messageInputValue || ''),
-              conversationId: String(activeConversation?.conversation_id || ''),
-              messageType: "tip",
-              creditPaymentAmount: tipAmount,
-            });
+            try {
+              const response = await sendMessage({
+                message: String(messageInputValue || ''),
+                conversationId: String(activeConversation?.conversation_id || ''),
+                messageType: "tip",
+                creditPaymentAmount: tipAmount,
+              });
+            } catch (error) {
+              addToast({state: "messageFailedToSend", permanent: true, actionFunction: () => handleSendMessage()})
+              return;
+            } finally {
+              addToast({state: "tipSentSuccessfully" })
+            }
           } else {
             const response = await sendMessage({
               message: String(messageInputValue || ''),
@@ -186,7 +216,7 @@ const Footer = () => {
       }
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
-      toast.error("An error occurred while sending the message");
+      addToast({state: "messageFailedToSend", permanent: true, actionFunction: () => handleSendMessage()})
     } finally {
       setIsSubmitting(false);
     }
@@ -424,12 +454,6 @@ const Footer = () => {
                       </div>
                     </button>
                   </div>
-
-                  <div className={`relative rounded-lg ${isThread ? (threadMessages?.length === 1 && onlyAllowAudioRecording && !recordedAudio) ? 'pulse-border' : 'cursor-not-allowed pointer-events-none' : ''}`}>
-                    <AudioRecorder
-                      onStopRef={stopRecordingRef}
-                    />
-                  </div>
                 </div>
                 
                 <div className="shrink-0 flex items-center gap-2">
@@ -484,7 +508,8 @@ const Footer = () => {
           handleSendMessage: () => handleSendMessage(),
           setIsSubmitting,
           messageInputValue,
-          clearMessageInputs
+          clearMessageInputs,
+          handleButtonClick
         }}
       />
 
@@ -496,18 +521,6 @@ const Footer = () => {
         recipientId={activeConversation?.user?.id}
         conversationId={activeConversation?.conversation_id}
       />
-
-      {/* <SampleSendDemoModal
-        open={isSendDemoModalOpen}
-        onClose={() => setIsSendDemoModalOpen(false)}
-        onCloseAllModals={() => {
-          setIsSendDemoModalOpen(false);
-          setIsSampleModalOpen(false);
-        }}
-        selectedSamples={selectedSamples}
-        recipientId={activeConversation?.user?.id}
-        conversationId={activeConversation?.conversation_id}
-      /> */}
     </>
   );
 };
