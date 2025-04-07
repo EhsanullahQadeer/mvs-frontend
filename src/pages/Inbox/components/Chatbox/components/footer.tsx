@@ -109,7 +109,7 @@ const Footer = () => {
           return;
         }
         setOpenPurchaseOrder(true);
-      } else if (!uploadedAudioFile && recordedAudio) {
+      } else if (!uploadedAudioFile && recordedAudio) { // Send Recording
         const file = new File([recordedAudio], `recording.${recordedAudio.type.split('/')[1]}`, { 
           type: recordedAudio.type 
         });
@@ -128,7 +128,7 @@ const Footer = () => {
           return;
         }
         } catch (error) {
-          addToast({state: "fileUploadFailed", permanent: true, actionFunction: () => handleSendMessage()})
+          addToast({state: "uploadFailed", permanent: true, actionFunction: () => handleSendMessage()})
           return;
         }
 
