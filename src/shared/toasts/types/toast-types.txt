@@ -17,10 +17,10 @@ Success:
   stripeAccountConnected
   withdrawalRequestSubmitted
   //---group 2---
-  profileUpdated ✅ (update profile: roles/genres, address, username/bio)
+  profileUpdated ✅ (settings/account: roles/genres, address, username/bio)
   changesSaved
   informationDeleted
-  accountInfoUpdated
+  accountInfoUpdated ✅ (settings/account: account information)
   emailUpdated
   passwordChanged
   contributorAdded
@@ -85,7 +85,7 @@ Error:
   failedToPurchaseCredits
   failedToRetrieveCreditHistory
   pleaseSelectBothRoles
-  failedToSaveChanges ✅ (update profile: roles/genres, address, bio/username)
+  failedToSaveChanges ✅ (settings/account: roles/genres, address, bio/username)
 
 Warning:
   actionCantBeUndone --not sure if change message deleted modal

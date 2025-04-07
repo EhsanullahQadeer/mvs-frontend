@@ -74,7 +74,7 @@ const AccountInformation: React.FC<{ user: any, setUser: any }> = ({ user, setUs
           
           setValues(newValues);
           setInitialValues(newValues);
-          addToast({state: "profileUpdated", actionFunction: () => window.location.href = `/profile/${user.username}`});  
+          addToast({state: "accountInfoUpdated", actionFunction: () => setIsEditable(true)});  
         }
       } catch (error) {
         console.error("Error updating profile:", error);
