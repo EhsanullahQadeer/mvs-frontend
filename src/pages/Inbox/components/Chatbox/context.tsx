@@ -108,6 +108,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     } else {
       setIsSendDemoAvailable(false);
     }
+    fetchConnectionStatus(recipient?.id)
   }, [recipient]);
 
   async function markMessageAsRead(id:number){
