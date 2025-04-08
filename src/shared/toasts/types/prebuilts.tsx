@@ -433,6 +433,13 @@ export const prebuiltToasts: ToastConfig[] = [
     message: "Something went wrong. Please try again.", 
     type: "error" 
   },
+  {
+    id: "failedToDeleteFile", //added by karla
+    title: "Failed to delete file",
+    action: "Retry",
+    message: "Something went wrong. Please try again.",
+    type: "error"
+  },
   { 
     id: "atLeastOneContributor", 
     title: "You must select at least one contributor", 

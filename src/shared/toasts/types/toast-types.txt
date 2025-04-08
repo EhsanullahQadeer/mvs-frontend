@@ -25,7 +25,7 @@ Success:
   passwordChanged ✅ (settings/security)
   contributorAdded
   metadataUpdated
-  fileDeleted
+  fileDeleted ✅(settings/content-management: attached files)
   publishPercentageUpdated
   roleUpdated
   fileShared
@@ -64,11 +64,12 @@ Error:
   messageReported
   userBlocked
   failedToDownloadSample ✅(dropdown, table, sampleMessage)
-  fileDoesntExist ✅ (added by karla, when file isnt found in db)
+  fileDoesntExist ✅❕ (added by karla, when file isnt found in db)
   //---group 2---
   failedToSubmitWithdrawalRequest
-  somethingWentWrong ✅ (if demo id isnt created before sending)
+  somethingWentWrong ✅ (chatbox: if demo id isnt created before sending)
   failedToUpdateEmail ✅ (settings/security)
+  failedToDeleteFile ✅❕(added by karla, settings/content-management: attached files)
   atLeastOneContributor
   publishingPercentage100
   failedToAddPaymentMethod
