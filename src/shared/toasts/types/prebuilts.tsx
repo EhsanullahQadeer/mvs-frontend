@@ -670,4 +670,26 @@ export const prebuiltToasts: ToastConfig[] = [
       `Scheduled maintenance will take place on ${params?.date || 'toastDate'} at ${params?.time || 'toastTime'}. Some features may be temporarily unavailable.`,
     type: "info" 
   },
+  { 
+    id: "systemUpdateCompleted", 
+    title: "System Update Completed", 
+    action: "See What is New",
+    message: "We have just rolled out some improvements. No action needed.",
+    type: "info" 
+  },
+  { 
+    id: "newVersionAvailable", 
+    title: "New Version Available", 
+    action: "Refresh Now",
+    message: "A new version of MVSSIVE is live. Please refresh to get the latest updates.",
+    type: "info" 
+  },
+  { 
+    id: "scheduledDowntime", 
+    title: "Scheduled Downtime", 
+    action: "View Schedule",
+    message: (params?: { date?: string; time?: string }) => 
+      `MVSSIVE will be temporarily unavailable for scheduled downtime on ${params?.date || 'toastDate'} at ${params?.time || 'toastTime'}.`,
+    type: "info" 
+  },
 ];

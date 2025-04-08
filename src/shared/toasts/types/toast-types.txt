@@ -21,7 +21,7 @@ Success:
   changesSaved
   informationDeleted
   accountInfoUpdated ✅ (settings/account: account information)
-  emailUpdated
+  emailUpdated ✅ (settings/security)
   passwordChanged
   contributorAdded
   metadataUpdated
@@ -68,7 +68,7 @@ Error:
   //---group 2---
   failedToSubmitWithdrawalRequest
   somethingWentWrong ✅ (if demo id isnt created before sending)
-  failedToUpdateEmail
+  failedToUpdateEmail ✅ (settings/security)
   atLeastOneContributor
   publishingPercentage100
   failedToAddPaymentMethod
