@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -10,10 +10,11 @@ import { MdCancel } from "react-icons/md";
 import { FaArrowLeft } from "react-icons/fa6";
 import { SiVisa } from "react-icons/si";
 import StripeElements from "components/stripe/stripeElements";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/reducers";
 interface BuyCreditsDialogProps {
   open: boolean;
   onClose: () => void;
-  user?: any;
 }
 
 interface CreditOption {
@@ -36,10 +37,15 @@ const creditOptions: CreditOption[] = [
   },
 ];
 
-const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose, user }) => {
+const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
+  const state = useSelector((state: RootState) => state);
+  useEffect(() => {
+    setAvailableCredits(state.auth.user?.credits || 0);
+  }, [state.auth.user]);  
+
   const [selectedAmount, setSelectedAmount] = useState<number>(0);
   const [promoCode, setPromoCode] = useState<string>("");
-  const [availableCredits, setAvailableCredits] = useState<number>(user?.credits);
+  const [availableCredits, setAvailableCredits] = useState<number>(0);
   const [chargeAmount, setChargeAmount] = useState<number>(9.5);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [secondOpen, setSecondOpen] = useState<boolean>(false);
