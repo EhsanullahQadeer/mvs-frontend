@@ -404,6 +404,13 @@ export const prebuiltToasts: ToastConfig[] = [
     message: "The file could not be downloaded. Please try again.", 
     type: "error" 
   },
+  { 
+    id: "fileDoesntExist", 
+    title: "File doesn't exist", 
+    action: "Refresh", 
+    message: "The file could not be downloaded.", 
+    type: "error" 
+  },
   // batch 2
   { 
     id: "failedToSubmitWithdrawalRequest", 

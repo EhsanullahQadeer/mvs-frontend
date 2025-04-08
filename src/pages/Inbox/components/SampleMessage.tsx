@@ -4,6 +4,7 @@ import { ReactComponent as PauseIcon } from '../../../assets/icons/SampleMessage
 import { ReactComponent as DownloadIcon } from '../../../assets/icons/SampleMessageIcons/download.svg';
 import { ReactComponent as MoreIcon } from '../../../assets/icons/SampleMessageIcons/more-horizontal.svg';
 import { ISenderSample } from 'api/messenger/objects/states.types';
+import { useToast } from 'shared/toasts/ToastProvider';
 
 interface SampleMessageProps {
   sample: ISenderSample;
@@ -21,6 +22,7 @@ const SampleMessage: React.FC<SampleMessageProps> = ({
   const progressRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const { addToast } = useToast();
 
   // Initialize audio when component mounts
   useEffect(() => {
@@ -111,7 +113,7 @@ const SampleMessage: React.FC<SampleMessageProps> = ({
     e.stopPropagation();
     
     if (!sample?.s3_key || !sample?.filename) {
-      console.error('No sample data available for download');
+      addToast({state: "fileDoesntExist", permanent: true, actionFunction: () => window.location.reload()});
       return;
     }
 
@@ -126,8 +128,10 @@ const SampleMessage: React.FC<SampleMessageProps> = ({
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      addToast({state: "downloadComplete", permanent: true, params: {actionRemove: true}});
     } catch (error) {
       console.error('Download failed:', error);
+      addToast({state: "failedToDownloadSample", permanent: true, actionFunction: () => handleDownload(e, sample) });
     }
   };
 

@@ -11,7 +11,7 @@ Success:
   demoSentSuccessfully ✅ (purchase order dialog, sample send demo)
   tipSentSuccessfully ✅(footer tip)
   fileUploadedSuccessfully ✅ (purchase order dialog)
-  downloadComplete ✅ (dropdown, table)
+  downloadComplete ✅ (dropdown, table, sampleMessage)
   payoutMethodUpdated
   newPayoutMethodAdded
   stripeAccountConnected
@@ -64,6 +64,7 @@ Error:
   messageReported
   userBlocked
   failedToDownloadSample ✅(dropdown, table)
+  fileDoesntExist ✅ (added by karla, when file isnt found in db)
   //---group 2---
   failedToSubmitWithdrawalRequest
   somethingWentWrong ✅ (if demo id isnt created before sending)
