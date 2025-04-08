@@ -4,14 +4,15 @@ import { useChatbox } from "../context";
 import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
+import { loadAsset } from "shared/utils/dateUtils";
 import MessageOptions from "./messageOptions";
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
-
+import SampleMessage from "../../SampleMessage";
 
 interface MessageProps {
   message: IMessage;
@@ -83,7 +84,7 @@ const Message: React.FC<MessageProps> = ({
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const [isMuted, setIsMuted] = useState(false);
-  const audioUrl = media?.url || null;
+  const audioUrl = loadAsset(media?.url) || null;
   
   function handleMessagedAsRead(){
     if (is_read === true || sender.id === activeConversation.user.id) return;
@@ -283,6 +284,17 @@ const Message: React.FC<MessageProps> = ({
   //   emojiPassthrough(id, emoji);
   // }
 
+  useEffect(() => {
+    if (message?.message_type === MESSAGE_TYPES.SAMPLE) {
+      console.log('Message sample data:', {
+        messageId: message.id,
+        sample: message.sample,
+        content: message.content,
+        messageType: message.message_type
+      });
+    }
+  }, [message]);
+
   return (
     <div ref={intersectionRef} className="overflow-visible">
       {shouldShowDate && (
@@ -339,7 +351,13 @@ const Message: React.FC<MessageProps> = ({
               <div className="text-sm text-[#CACCCD] break-all whitespace-normal max-w-full w-full">{content}</div>
               {renderDemoMessage()}
             </div>
-
+          ) : message?.message_type === MESSAGE_TYPES.SAMPLE ? (
+            <div className="flex flex-col gap-2">
+                <SampleMessage 
+                  sample={message?.sample}
+                  displayName={sender.professional_name}
+                />
+            </div>
           ) : media?.type === MEDIA_TYPE.RECORDING ? (
             <div id="2" className="flex mt-3">
               <RecordedAudioMessagePlayer isMuted={isMuted} waveformRef={waveformRef} isPlaying={isPlaying} duration={media?.duration} handleMuteToggle={handleMuteToggleClick} handlePlayPause={handlePlayPauseClick}/>

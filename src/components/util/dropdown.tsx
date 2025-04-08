@@ -27,8 +27,11 @@ import { useSelector } from "react-redux";
 import ShareSetting from "./ShareSetting";
 import { deleteSampleAPI } from "api/sounds";
 import { saveSampleDownloadAPI } from "api/sounds";
+import { useToast } from "shared/toasts/ToastProvider";
 
 const DropDown = (props: any) => {
+  const { addToast } = useToast();
+
   const { sample, play, fetchAllUserSamples, is_owner } = props;
 
   const [request_split_sheet, setRequestSplitSheet] = useState(false);
@@ -81,10 +84,13 @@ const DropDown = (props: any) => {
   const handleDownload = async (e: React.MouseEvent, sample: any) => {
     e.preventDefault();
     try {
-      await saveSampleDownloadAPI(sample.id);
-      window.location.href = sample.s3_key;
+      const response = await saveSampleDownloadAPI(sample.id);
     } catch (error) {
-      console.error('Download failed:', error);
+      addToast({state: "failedToDownloadSample", actionFunction: () => handleDownload(e, sample)});
+    } finally {
+      addToast({state: "downloadComplete", actionFunction: () => {
+        window.open(sample.s3_key, '_blank');
+      }});
     }
   };
 

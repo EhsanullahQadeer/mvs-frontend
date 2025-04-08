@@ -16,7 +16,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import TablePagination from "@mui/material/TablePagination";
 import { ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "../types";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface Column {
   id: "filename" | "created_at" | "artist" | "uploadedBy";

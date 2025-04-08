@@ -5,3 +5,5 @@ export const HHRAP = "Hip-Hop/Rap";
 export const RNBSOUL = "R&B/Soul";
 export const ELECDANCE = "Electronic/Dance";
 export const JAZZ = "Jazz";
+
+export const REACT_APP_ASSETS = "https://assets.mvssive.net/"

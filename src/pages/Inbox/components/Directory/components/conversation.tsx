@@ -4,7 +4,7 @@ import starIcon from "../../../../../assets/icons/star.svg";
 import { lastMsgTimeStamp } from "../../../handlers/mediaUtils";
 import featuredIcon from "../../../../../assets/icons/featured-icon.svg";
 import { IConversation, TUser } from "api/messenger/objects/states.types";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 export const Conversation = ({ conversation, onClick, searchTerm, searchContent, searchCreatedAt, sender }: { 
   searchTerm?:string; 

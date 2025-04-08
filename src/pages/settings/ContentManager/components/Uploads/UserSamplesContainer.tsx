@@ -9,6 +9,7 @@ import {
 import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
 import UserSamplesTable from "./UserSamplesTable";
+import { useToast } from "shared/toasts/ToastProvider";
 import UpdateSamplePopup from "../Uploader/UpdateSamplePopup";
 
 type Props = {
@@ -42,6 +43,7 @@ const UserSamplesContainer = (props: Props) => {
 
   const [getUserSamplesResponse, setGetUserSamplesResponse] =
     useState<IGetUserSamplesResponse>();
+  const { addToast } = useToast();
 
   const handleTabClick = (value: string, clickFunc: () => void) => {
     setSelectedTab(value);
@@ -98,9 +100,11 @@ const UserSamplesContainer = (props: Props) => {
         if (response.status === 200) {
           getSamplesData();
           handleCloseDialog();
+          addToast({ state: 'fileDeleted' })
         }
       } catch (error) {
         console.log("error while delete the sample file: ", error);
+        addToast({ state: 'failedToDeleteFile', actionFunction: () => handleDeleteComposer() })
       }
     }
   };

@@ -8,24 +8,24 @@ Success:
   messageMovedToSpam ✅
   messageMarkedAsUnread ❓- these features dont work yet i think
   messageMarkedAsRead ❓- these features dont work yet i think
-  demoSentSuccessfully ✅ (purchase order dialog)
+  demoSentSuccessfully ✅ (purchase order dialog, sample send demo)
   tipSentSuccessfully ✅(footer tip)
   fileUploadedSuccessfully ✅ (purchase order dialog)
-  downloadComplete
+  downloadComplete ✅ (dropdown, table, sampleMessage)
   payoutMethodUpdated
   newPayoutMethodAdded
   stripeAccountConnected
   withdrawalRequestSubmitted
   //---group 2---
-  profileUpdated
+  profileUpdated ✅ (settings/account: roles/genres, address, username/bio)
   changesSaved
   informationDeleted
-  accountInfoUpdated
-  emailUpdated
-  passwordChanged
+  accountInfoUpdated ✅ (settings/account: account information)
+  emailUpdated ✅ (settings/security)
+  passwordChanged ✅ (settings/security)
   contributorAdded
   metadataUpdated
-  fileDeleted
+  fileDeleted ✅(settings/content-management: attached files)
   publishPercentageUpdated
   roleUpdated
   fileShared
@@ -56,18 +56,20 @@ Error:
   fileUploadFailed ✅ (purchase order dialog, footer)
   unsupportedFileFormat ✅ (footer)
   fileSizeExceeded ✅ (footer 50mb)
-  messageFailedToSend ✅ (purchase order dialog)
+  messageFailedToSend ✅ (purchase order dialog, inbox demo)
   freeMessageLimitExceeded
   tooManyMessagesSent
   unexpectedError ✅ (used when retrying once doesnt work for any toast)
   APITimeout
   messageReported
   userBlocked
-  failedToDownloadSample
+  failedToDownloadSample ✅(dropdown, table, sampleMessage)
+  fileDoesntExist ✅❕ (added by karla, when file isnt found in db)
   //---group 2---
   failedToSubmitWithdrawalRequest
-  somethingWentWrong ✅ (if demo id isnt created before sending)
-  failedToUpdateEmail
+  somethingWentWrong ✅ (chatbox: if demo id isnt created before sending)
+  failedToUpdateEmail ✅ (settings/security)
+  failedToDeleteFile ✅❕(added by karla, settings/content-management: attached files)
   atLeastOneContributor
   publishingPercentage100
   failedToAddPaymentMethod
@@ -85,14 +87,14 @@ Error:
   failedToPurchaseCredits
   failedToRetrieveCreditHistory
   pleaseSelectBothRoles
-  failedToSaveChanges
+  failedToSaveChanges ✅ (settings/account: roles/genres, address, bio/username)
 
 Warning:
-  actionCantBeUndone --not sure if change message deleted modal
-  attachmentTooLarge
+  actionCantBeUndone ❓ --not sure where to use
+  attachmentTooLarge ❓ -- this vs fileSizeExceeded ?? where
   insufficientCredits
   paymentFailed
-  uploadFailed
+  uploadFailed ✅(chat recording)
   connectionLost
   //---group 2---
   mustConnectToPayoutMethod
@@ -106,3 +108,9 @@ Warning:
   feeCannotBeSetToZero
   creditBalanceIsLow
   aboutToRunOutOfCredits
+
+  Info:
+  upcomingMaintenance
+  systemUpdateCompleted
+  newVersionAvailable
+  scheduledDowntime

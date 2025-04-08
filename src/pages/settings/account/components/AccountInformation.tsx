@@ -8,6 +8,8 @@
 
 /* LOCAL IMPORTS */
 import { ReactComponent as EditIcon } from "../../../../assets/icons/editPencilIcon.svg";
+import { updateUserProfileAPI } from "api/user";
+import { useToast } from "shared/toasts/ToastProvider";
 
 // THIRD PARTY IMPORTS
 import React, { useEffect } from "react";
@@ -16,7 +18,7 @@ import { Form, Formik } from "formik";
 import FormikField from "components/util/FormikField";
 import * as Yup from 'yup';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { updateUserProfileAPI } from "api/user";
+
 
 const AccountInformation: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) => {
   const [isEditable, setIsEditable] = useState<boolean>(false);
@@ -26,7 +28,8 @@ const AccountInformation: React.FC<{ user: any, setUser: any }> = ({ user, setUs
     phone: "",
   });
   const [values, setValues] = useState<any>({});
-  
+  const { addToast } = useToast();
+
   useEffect(() => {
     const newValues = {
       firstname: user?.first_name,
@@ -50,8 +53,6 @@ const AccountInformation: React.FC<{ user: any, setUser: any }> = ({ user, setUs
       lastname: 'last_name',
       phone: 'phone'
     };
-    
-
 
     Object.keys(values).forEach(key => {
       if (values[key] !== initialValues[key]) {
@@ -73,9 +74,11 @@ const AccountInformation: React.FC<{ user: any, setUser: any }> = ({ user, setUs
           
           setValues(newValues);
           setInitialValues(newValues);
+          addToast({state: "accountInfoUpdated", actionFunction: () => setIsEditable(true)});  
         }
       } catch (error) {
         console.error("Error updating profile:", error);
+        addToast({state: "failedToSaveChanges", actionFunction: () => handleFormSubmit(values)});
       }
     }
     

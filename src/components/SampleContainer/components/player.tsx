@@ -22,7 +22,7 @@ import skipBack from "../../../assets/img/player/skip-back.svg";
 import skipNext from "../../../assets/img/player/skip-forward.svg";
 import playButton from "../../../assets/img/player/play-circle.svg";
 import pauseButton from "../../../assets/img/player/pause-circle.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 const AudioPlayer = ({
   currTrack,
@@ -30,6 +30,7 @@ const AudioPlayer = ({
   onPlayToggle,
   onPrevClick,
   onNextClick,
+  compact = false,
 }) => {
   const { collaborators, filename } = currTrack || {};
   const bottomAudioPlayerRef = useRef<HTMLDivElement>(null);
@@ -228,7 +229,7 @@ const AudioPlayer = ({
   }, []);
 
   const className = [
-    "bottom-audio-player",
+    compact ? "" : "bottom-audio-player",
     ...(isPlaying ? ["bottom-audio-player--playing"] : []),
     ...(changingTrack ? ["bottom-audio-player--switch"] : []),
     ...(playbackEnded ? ["bottom-audio-player--completed"] : []),
@@ -243,6 +244,13 @@ const AudioPlayer = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        width: compact ? "600px" : "100%",
+        marginRight: compact ? "20px" : "0",
+        position: compact ? "relative" : "fixed",
+        bottom: compact ? "auto" : 0,
+        left: compact ? "auto" : 0,
+        right: compact ? "auto" : 0,
+        backgroundColor: compact ? "transparent" : "#1A1A1A"
       }}
     >
       {/* Control buttons */}

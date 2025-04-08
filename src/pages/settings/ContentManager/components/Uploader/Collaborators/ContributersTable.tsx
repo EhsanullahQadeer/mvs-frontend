@@ -17,8 +17,8 @@ import TableHead from "@mui/material/TableHead";
 import { ICollaborator, IUserProfile } from "../../types";
 import TableContainer from "@mui/material/TableContainer";
 import Tooltip from "@mui/material/Tooltip";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import MultiSelectDropdown from "../../MultiSelectDropdown";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 export const rolesArr = [
   "Producer",

@@ -7,7 +7,7 @@ import comment from "../../../assets/img/comment.svg";
 import UnlockContentModel from "./UnlockContentModel";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import download from "../../../assets/img/downloadicon.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface PostProps {
   username: string;

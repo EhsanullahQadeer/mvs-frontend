@@ -16,7 +16,7 @@ import { ReactComponent as MapPinIcon } from "../../assets/icons/mapPin.svg";
 import { ReactComponent as UserPlusIcon } from "../../assets/icons/userPlusIcon.svg";
 import { ReactComponent as CalendarIcon } from "../../assets/icons/calendarIcon.svg";
 import { ReactComponent as PaperPlaneIcon } from "../../assets/icons/paperPlane.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { ReactComponent as UpArrowTrayIcon } from "../../assets/icons/upArrowTrayIcon.svg";
 import { ReactComponent as ElipsesVerticalIcon } from "../../assets/icons/threeVerticalDotsIcon.svg";
 import ProfileSectionButton from "components/ui/Header/atoms/profileAboutSectionAtoms/profileSectionButton";

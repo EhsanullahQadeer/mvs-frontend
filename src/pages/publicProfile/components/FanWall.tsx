@@ -7,16 +7,18 @@ import { IArtistProfileData, ICurrentUser } from "./types";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createFanwallPost, getFanwallPosts } from "api/fanwall";
 import { useNotification } from "services/WebSocket/useNotification.hook";
+import { ReactComponent as MessageSquareHeart } from "../../../assets/icons/messageSquareHeart.svg";
 
 interface IProps {
   artistData: IArtistProfileData | IUserData | null;
   currentUserInfo: ICurrentUser | null;
+  isLoginUser?: boolean;
 }
 
 const LIMIT = 10;
 
 const FanWall = (props: IProps) => {
-  const { artistData, currentUserInfo } = props;
+  const { artistData, currentUserInfo, isLoginUser = false } = props;
   const { id } = artistData || {};
   const [isLoading, setLoading] = useState(true);
   const [fanwallPostsData, setFanwallPostsData] = useState([]);
@@ -186,6 +188,22 @@ const FanWall = (props: IProps) => {
     setViewingRepliesForPost(null);
   };
 
+  function emptyFanwallPostsData() {
+    return isLoginUser ? (
+      <div className="flex flex-col text-[#FFFFFF] justify-center items-center h-full">
+        <MessageSquareHeart/>
+        <p className="text-lg mt-4 mb-2">No comments yet</p>
+        <p className="text-mediumGray m-0 w-[300px] text-center">No posts on your FanWall yet. When fans show support, you’ll see it here.</p>
+      </div>
+    ) :(
+      <div className="flex flex-col text-[#FFFFFF] justify-center items-center h-full">
+        <MessageSquareHeart/>
+        <p className="text-lg mt-4 mb-2">No comments yet</p>
+        <p className="text-mediumGray m-0">Be the first to leave a message and show your support!</p>
+      </div>
+    )
+  }
+
   useEffect(() => {
     console.log("viewingRepliesForPost changed to:", viewingRepliesForPost);
   }, [viewingRepliesForPost]);
@@ -240,7 +258,7 @@ const FanWall = (props: IProps) => {
         </div>
 
         <div className="overflow-y-auto h-[60vh] custom-dropdown"> {/* Set a fixed height and enable vertical scrolling */}
-          {fanwallPostsData.map((fanwallPost, index) => (
+          {fanwallPostsData.length > 0 ? fanwallPostsData.map((fanwallPost, index) => (
             <div
               key={index}
               ref={index === fanwallPostsData.length - 1 ? lastPostElementRef : null}
@@ -261,7 +279,7 @@ const FanWall = (props: IProps) => {
                 }}
               />
             </div>
-          ))}
+          )) : emptyFanwallPostsData()}
         </div>
 
         <UnlockContentModel

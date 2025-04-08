@@ -21,7 +21,7 @@ import { useHeaderHooks } from "theme/Header/Header.hooks";
 import publicLinksBg from "../../assets/img/publicLinksBg.png";
 import AudioPlayer from "components/SampleContainer/components/player";
 import { checkIfSoundHasPass, getSoundMetaData, soundStream } from "api/sounds";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 export interface ISoundMetaData {
   bpm: string;

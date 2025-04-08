@@ -10,8 +10,12 @@ import PurchaseOrderDialog from "../../PurchaseOrderDialog";
 import RecordedAudioPlayer from "../../RecordedAudioPlayer";
 import AudioRecorder, { useAudioRecording } from './audioRecorder';
 import FooterRecordedAudioPlayer from "./footerRecordedAudioPlayer";
-import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
+import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFileFromDevice.svg";
 import { ReactComponent as SendArrowIcon } from "../../../../../assets/icons/sendArrowIcon.svg";
+import SampleModalFooter from "../../SampleModalFooter";
+import SampleSendDemoModal from "../../SampleSendDemoModal";
+import { ReactComponent as AudioFileIconFromSample } from "../../../../../assets/icons/audioFile.svg";
+
 import { useToast } from "shared/toasts/ToastProvider";
 
 const Footer = () => {
@@ -56,6 +60,9 @@ const Footer = () => {
   const stopRecordingRef = useRef<(() => void) | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null); // Create a ref for the file input
   const isSendButtonDisabled = messageInputValue.length === 0 && !recordedAudio && !uploadedAudioFile && tipAmount < 1;
+  const [isSampleModalOpen, setIsSampleModalOpen] = useState(false);
+  const [isSendDemoModalOpen, setIsSendDemoModalOpen] = useState(false);
+  const [selectedSamples, setSelectedSamples] = useState<any[]>([]);
 
   useEffect(() => {
     if (reloadComponent) {
@@ -109,7 +116,7 @@ const Footer = () => {
           return;
         }
         setOpenPurchaseOrder(true);
-      } else if (!uploadedAudioFile && recordedAudio) {
+      } else if (!uploadedAudioFile && recordedAudio) { // Send Recording
         const file = new File([recordedAudio], `recording.${recordedAudio.type.split('/')[1]}`, { 
           type: recordedAudio.type 
         });
@@ -128,7 +135,7 @@ const Footer = () => {
           return;
         }
         } catch (error) {
-          addToast({state: "fileUploadFailed", permanent: true, actionFunction: () => handleSendMessage()})
+          addToast({state: "uploadFailed", permanent: true, actionFunction: () => handleSendMessage()})
           return;
         }
 
@@ -269,6 +276,24 @@ const Footer = () => {
     return "text-[#848484]"; // Return gray
   }
 
+  const handleSampleSelect = (sample: any) => {
+    setSelectedSamples([...selectedSamples, sample]);
+    setIsSampleModalOpen(false);
+    setIsSendDemoModalOpen(true);
+  };
+
+  const handleSendSamples = async (samples: any[]) => {
+    try {
+      // Handle sending samples logic here
+      console.log("Sending samples:", samples);
+      setIsSendDemoModalOpen(false);
+      setSelectedSamples([]);
+    } catch (error) {
+      console.error("Error sending samples:", error);
+      toast.error("Failed to send samples");
+    }
+  };
+
   return (
     <>
       <div className="sticky bottom-0">
@@ -355,7 +380,6 @@ const Footer = () => {
 
               <div className="flex items-center justify-between mt-3">
                 <div className="flex gap-4 items-center">
-
                   <div className="flex gap-4 items-center p-2 rounded-lg border border-[#3D3D3D]">
                     <div className="flex flex-col gap-1">
                       <div className="text-sm font-semibold leading-none text-white whitespace-nowrap">
@@ -380,6 +404,23 @@ const Footer = () => {
                       />
                     </div>
                   </div>
+
+                  <button
+                    onClick={() => setIsSampleModalOpen(true)}
+                    className={`text-dimGray p-2 rounded-lg ${
+                      isThread
+                        ? "cursor-not-allowed pointer-events-none"
+                        : "cursor-pointer hover:bg-[#202327]"
+                    }`}
+                    disabled={isThread}
+                    title={isThread ? "Cannot send samples in a thread" : "Select from your samples"}
+                  >
+                    <AudioFileIconFromSample />
+                  </button>
+
+                  <AudioRecorder
+                    onStopRef={stopRecordingRef}
+                  />
 
                   <div
                     className={`${
@@ -412,12 +453,6 @@ const Footer = () => {
                         )}
                       </div>
                     </button>
-                  </div>
-
-                  <div className={`relative rounded-lg ${isThread ? (threadMessages?.length === 1 && onlyAllowAudioRecording && !recordedAudio) ? 'pulse-border' : 'cursor-not-allowed pointer-events-none' : ''}`}>
-                    <AudioRecorder
-                      onStopRef={stopRecordingRef}
-                    />
                   </div>
                 </div>
                 
@@ -476,6 +511,15 @@ const Footer = () => {
           clearMessageInputs,
           handleButtonClick
         }}
+      />
+
+      <SampleModalFooter
+        open={isSampleModalOpen}
+        onClose={() => setIsSampleModalOpen(false)}
+        onSelect={handleSampleSelect}
+        userId={activeConversation?.user?.id}
+        recipientId={activeConversation?.user?.id}
+        conversationId={activeConversation?.conversation_id}
       />
     </>
   );

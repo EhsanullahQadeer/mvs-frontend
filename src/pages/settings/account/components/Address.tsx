@@ -12,6 +12,7 @@ import FormikSingleSelectDropdown from "components/util/FormikSingleSelectDropdo
 import { ReactComponent as EditIcon } from "../../../../assets/icons/editPencilIcon.svg";
 import { Select, MenuItem, Chip, FormControl } from "@mui/material";
 import { updateUserProfileAPI } from "api/user";
+import { useToast } from "shared/toasts/ToastProvider";
 // THIRD PARTY IMPORTS
 import { useState, useEffect } from "react";
 import { Form, Formik } from "formik";
@@ -49,6 +50,7 @@ const Address: React.FC<AddressProps> = ({ user, setUser }) => {
   const [countriesArr, setCountriesArr] = useState<Array<{label: string, value: string}>>([]);
   const [statesArr, setStatesArr] = useState<Array<{label: string, value: string}>>([]);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const { addToast } = useToast();
 
   useEffect(() => {
     if (user) {
@@ -77,8 +79,13 @@ const Address: React.FC<AddressProps> = ({ user, setUser }) => {
     }
     
     if (Object.keys(changedValues).length > 0) {
-      await updateUserProfileAPI(changedValues);
-      setUser({ ...user, ...changedValues });
+      try {
+        await updateUserProfileAPI(changedValues);
+        setUser({ ...user, ...changedValues });
+        addToast({state: "profileUpdated", actionFunction: () => window.location.href = `/profile/${user.username}`});
+      } catch (error) {
+        addToast({state: "failedToSaveChanges", actionFunction: () => handleFormSubmit(values)});
+      }
     }
     
     setInitialValues(values);
