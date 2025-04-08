@@ -1,30 +1,27 @@
-import AudioPlayer from "components/SampleContainer/components/player";
-import { useCallback, useEffect, useState } from "react";
-import { FiDownload } from "react-icons/fi";
+import cookie from "js-cookie";
+import { toast } from "react-toastify";
 import { FaLink } from "react-icons/fa6";
-import { PiCornersOutFill, PiUploadSimple } from "react-icons/pi";
-import { CircularProgress } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
-import { checkIfSoundHasPass, getSoundMetaData, soundStream } from "api/sounds";
+import { getUserByIdAPI } from "api/user";
+import { FiDownload } from "react-icons/fi";
 import logo from "../../assets/img/M-logo.png";
+import { CircularProgress } from "@mui/material";
 import linesImg from "../../assets/img/lines.png";
-import publicLinksBg from "../../assets/img/publicLinksBg.png";
-import defaultImg from "../../assets/img/artistImg.png";
 import EnterPasswordPage from "./EnterPasswordPage";
-import BlurCircle from "../../assets/img/blur-circle.png";
-import musicIcon from "../../assets/icons/musicIcon.svg";
-
 import {
   useWaveform,
   WaveformProvider,
 } from "components/SampleContainer/components/waveform";
-import cookie from "js-cookie";
-import { useHeaderHooks } from "theme/Header/Header.hooks";
-import Avatar from "react-avatar";
-import { toast } from "react-toastify";
-import { getUserByIdAPI } from "api/user";
-import thunk from "redux-thunk";
+import defaultImg from "../../assets/img/artistImg.png";
 import ProfileButton from "theme/Sidebar/ProfileButton";
+import musicIcon from "../../assets/icons/musicIcon.svg";
+import { useCallback, useEffect, useState } from "react";
+import BlurCircle from "../../assets/img/blur-circle.png";
+import { useParams, useNavigate } from "react-router-dom";
+import { useHeaderHooks } from "theme/Header/Header.hooks";
+import publicLinksBg from "../../assets/img/publicLinksBg.png";
+import AudioPlayer from "components/SampleContainer/components/player";
+import { checkIfSoundHasPass, getSoundMetaData, soundStream } from "api/sounds";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 export interface ISoundMetaData {
   bpm: string;
@@ -254,7 +251,7 @@ const SamplePageChilds = () => {
                 <span className="w-px h-[23px] bg-charcoalGray mx-5"></span>
 
                 {token ? (
-                  <ProfileButton direction="left" />
+                  <ProfileButton/>
                 ) : (
                   <div className="gap-2 flex items-center">
                     <button className="px-4 py-2 bg-limeGreen text-jetBlack w-fit whitespace-nowrap text-xs font-normal rounded-full">
@@ -288,12 +285,7 @@ const SamplePageChilds = () => {
                   <div className="w-[260px] h-[260px] flex justify-center items-center">
                     <div className="w-[220px] h-[220px] bg-darkGray border border-eerieBlack rounded-lg p-[45px]">
                       <div className="w-full h-full rounded-full relative">
-                        <img
-                          src={user?.thumbnail}
-                          alt=""
-                          className="rounded-full w-full h-full object-cover"
-                        />
-                        {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-charcoalGray rounded-full"></div> */}
+                        <Thumbnail professionalName={user?.professional_name} thumbnail={user?.thumbnail} userId={user?.id}/>
                       </div>
                     </div>
                   </div>

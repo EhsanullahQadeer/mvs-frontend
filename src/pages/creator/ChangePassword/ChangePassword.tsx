@@ -50,17 +50,14 @@ const ChangePassword = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const handleSubmit = async (values: { newPassword: string; confirmPassword: string }, { setErrors }) => {
-    const { newPassword } = values; 
-    const { email } = user;
-  
+    const { newPassword } = values;
+
     try {
-      // Call API to update user password
       const response = await updateUserPassword({
-        email,
+        code: id,
         newPassword,
       });
-      console.log(response);
-      // Handle specific password policy error from backend
+
       if (response?.errorCode === 'INVALID_PASSWORD') {
         setErrors({ newPassword: 'The password does not meet the required policy.' });
       } else {

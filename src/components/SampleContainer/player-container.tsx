@@ -19,6 +19,7 @@ import { getUserSamplesAPI, getUserSamplesByTypeAPI } from "../../api/sounds";
 import SampleTable from "./components/table";
 import { WaveformProvider } from "./components/waveform";
 import Pagination from "./components/pagination";
+import { ReactComponent as LibraryWaveformIcon } from "../../assets/icons/libraryWaveformIcon.svg";
 // import { AudioPlayer } from "./components/waveform/player";
 
 /* Define AudioTrackType interface */
@@ -31,6 +32,7 @@ export interface AudioTrackType {
   thumbnail?: string;
   bpm?: number;
   key?: string;
+  mp3_s3_key?: string;
   s3_key?: string;
   filename?: string;
   userInfo?: {
@@ -130,7 +132,7 @@ export const PlayerContext = createContext<PlayerContextType>({
 // };
 
 /* PlayerContainer */
-const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen }) => {
+const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen, isConnect, isLoginUser }) => {
   // Add these states
   const [likedSamples, setLikedSamples] = useState<Record<number, boolean>>({});
   const [loading, setLoading] = useState(false);
@@ -149,7 +151,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen }) => {
         type: selectedTab,
         includeUserInfo: true,
       });
-      //console.log('response here', _sound?.data?.results);
+      console.log('response here', _sound?.data?.results);
       const samplesArray = Object.values(_sound?.data?.results?.samples || {}) as AudioTrackType[];
       
       setSamples(samplesArray);
@@ -172,6 +174,43 @@ const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen }) => {
     }
   };
 
+  function samplesContainerContent(){
+    if (samples.length > 0 ){
+      return ( 
+      <>
+        <div className="text-xs font-medium text-[#9C9C9C] py-4 px-3 border-t border-[#1F1F1F]">
+          {totalCount} results
+        </div>
+        <SampleTable samples={samples} chatOpen={chatOpen} isConnect={isConnect} />
+        {totalCount > 0 && (
+          <Pagination
+            pageCount={Math.ceil(totalCount / samplesPerPage)}
+            onPageChange={handlePageClick}
+            currentPage={currentPage}
+          />
+        )}
+      </>
+      );
+    } else {
+      return (
+        <div className="text-xs font-medium text-dimGray py-4 px-3 border-t border-[#1F1F1F] flex flex-col justify-center items-center gap-2">
+          <LibraryWaveformIcon className="mt-16" />
+          {
+            isLoginUser ? (
+              <p className="text-sm"><span className="font-bold text-[#CCCCCC]">Empty Library</span> your samples will appear here.</p>
+
+            ) : (
+              <>
+                <p className="text-sm text-[#CCCCCC]">No Samples Available</p>
+                <p className="text-sm w-[345px] text-center">This creator hasn’t uploaded any samples yet. Check back soon to explore their sounds.</p>
+              </>
+            )
+          }
+        </div>
+      )
+    }
+  }
+
   // Update the page change handler to prevent going to invalid pages
   const handlePageClick = async (event: { selected: number }) => {
     const selectedPage = event.selected;
@@ -191,17 +230,7 @@ const SamplesContainer = ({ user_id = 0, selectedTab, chatOpen }) => {
 
   return (
     <WaveformProvider>
-      <div className="text-xs font-medium text-[#9C9C9C] py-4 px-3 border-t border-[#1F1F1F]">
-        {totalCount} results
-      </div>
-      <SampleTable samples={samples} chatOpen={chatOpen} />
-      {totalCount > 0 && (
-        <Pagination
-          pageCount={Math.ceil(totalCount / samplesPerPage)}
-          onPageChange={handlePageClick}
-          currentPage={currentPage}
-        />
-      )}
+      {samplesContainerContent()}
     </WaveformProvider>
   );
 };

@@ -47,6 +47,11 @@ const authReducer = (state = initialState, action: any): any => {
         transactions: action.payload.data.results,
         type:action.type
       };
+    case ActionType.USER_LOGOUT_SUCCESS:
+      return {
+        ...initialState,
+        type: action.type
+      };
     default:
       return {
         ...state,

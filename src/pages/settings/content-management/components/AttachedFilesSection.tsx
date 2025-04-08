@@ -11,8 +11,14 @@ import { useEffect, useState } from "react";
 import AttachedFilesTable from "./AttachedFilesTable";
 import { deleteSampleAPI, getUserSamplesAPI } from "api/sounds";
 import AlertDialog from "components/util/AlertDialog";
-import { ICurrentUser, ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "./types";
+import {
+  ICurrentUser,
+  ISample,
+  ISampleSearchConstraints,
+  IGetUserSamplesResponse,
+} from "./types";
 import UpdateSamplePopup from "./UpdateSamplePopup";
+import { useToast } from "../../../../shared/toasts/ToastProvider";
 
 type Props = {
   setLoading: (value: boolean) => void;
@@ -35,8 +41,12 @@ const defaultSampleSearchConstraints: ISampleSearchConstraints = {
 const AttachedFilesSection = (props: Props) => {
   const { setLoading, currentUserInfo, isNewUser, updateData } = props;
   const [selectedTab, setSelectedTab] = useState("all");
-  const [sampleSearchConstraints, setSampleSearchConstraints] = useState(defaultSampleSearchConstraints);
-  const [getUserSamplesResponse, setGetUserSamplesResponse] = useState<IGetUserSamplesResponse>();
+  const [sampleSearchConstraints, setSampleSearchConstraints] = useState(
+    defaultSampleSearchConstraints
+  );
+  const [getUserSamplesResponse, setGetUserSamplesResponse] =
+    useState<IGetUserSamplesResponse>();
+  const { addToast } = useToast();
 
   const handleTabClick = (value: string, clickFunc: () => void) => {
     setSelectedTab(value);
@@ -47,11 +57,10 @@ const AttachedFilesSection = (props: Props) => {
     if (!isNewUser) {
       getSamplesData();
     }
-  }, [selectedTab,sampleSearchConstraints]);
-  useEffect(()=>{
+  }, [selectedTab, sampleSearchConstraints]);
+  useEffect(() => {
     getSamplesData();
-
-  },[updateData])
+  }, [updateData]);
 
   const getSamplesData = async () => {
     setLoading(true);
@@ -63,7 +72,7 @@ const AttachedFilesSection = (props: Props) => {
         filter: selectedTab,
       });
       console.log("response here!!!", response);
-      const samples:IGetUserSamplesResponse = response.data.results;
+      const samples: IGetUserSamplesResponse = response.data.results;
       setGetUserSamplesResponse(samples);
     } catch (error) {
       console.log("error while fetching samples data: ", error);
@@ -98,9 +107,11 @@ const AttachedFilesSection = (props: Props) => {
         if (response.status === 200) {
           getSamplesData();
           handleCloseDialog();
+          addToast({ state: 'fileDeleted' })
         }
       } catch (error) {
         console.log("error while delete the sample file: ", error);
+        addToast({ state: 'failedToDeleteFile', actionFunction: () => handleDeleteComposer() })
       }
     }
   };
@@ -156,17 +167,18 @@ const AttachedFilesSection = (props: Props) => {
         })}
       </div>
 
-      {getUserSamplesResponse &&(
-      <div>
-        <AttachedFilesTable
-          {...{
-            getUserSamplesResponse,
-            handleOpenDialog,
-            sampleSearchConstraints,
-            setSampleSearchConstraints
-          }}
-        />
-      </div>)}
+      {getUserSamplesResponse && (
+        <div>
+          <AttachedFilesTable
+            {...{
+              getUserSamplesResponse,
+              handleOpenDialog,
+              sampleSearchConstraints,
+              setSampleSearchConstraints,
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

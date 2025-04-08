@@ -1496,7 +1496,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .lockImg {
-  z-index: 100;
+  z-index: 10;
   padding: 50px;
 }
 
@@ -1555,6 +1555,16 @@ input:checked + .slider:before {
   transform: translateX(100%); /* Move the circle to the right */
 }
 
+input[data-autocompleted] {
+  background-color: transparent !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 0s 0s, color 0s 0s;
+  transition-delay: calc(infinity * 1s);
+}
+
 /* Add this CSS to your styles */
 .scrollbar-hidden::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and Opera */
@@ -1565,6 +1575,22 @@ input:checked + .slider:before {
   scrollbar-width: none;  /* For Firefox */
 }
 
+@keyframes pulse-border {
+  0% {
+    border-color: #9EFF00; /* Start with green */
+  }
+  50% {
+    border-color: #131313; /* Midway color (dark) */
+  }
+  100% {
+    border-color: #9EFF00; /* End with green */
+  }
+}
+
+.pulse-border {
+  border-width: 2px;
+  animation: pulse-border 2s infinite; /* Adjust duration as needed */
+}
 
 @tailwind base;
 @tailwind components;

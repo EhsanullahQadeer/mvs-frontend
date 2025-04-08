@@ -7,16 +7,18 @@ export interface IComposer {
 }
 
 export interface IUploadingFileMetaDataProps {
-  privacyValue: string;
-  setPrivacyValue: (value: string) => void;
-  midiFile: File;
-  setMidiFile: (event: any) => void;
+  privacyValue?: string;
+  setPrivacyValue?: (value: string) => void;
+  midiFile?: File;
+  setMidiFile?: (event: any) => void;
   selectedComposer: ICollaborator[];
   setSelectedComposer: (value: any) => void;
   isEditSample?: boolean;
   handleClose?: () => void;
   sample?: ISample;
   sampleOwner?: IUserProfile;
+  isLoginProfile?: boolean;
+
 }
 
 export interface IEditComposerData {

@@ -7,10 +7,10 @@
  *************************************************************************/
 
 /* IMPORTS */
-import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import Avatar from 'react-avatar';
 import { getSampleConsidering } from "api/sounds";
+import React, { useEffect, useState } from "react";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface ConsideringModalProps {
   considering: boolean;
@@ -118,13 +118,7 @@ const ConsideringModal: React.FC<ConsideringModalProps> = ({
                     ) : consideringList.length > 0 ? (
                       consideringList.map((person: any, index: number) => (
                         <div key={index} className="flex gap-2 py-2.5 border-b border-solid border-stone-900 last:border-b-0">
-                          <Avatar 
-                            name={person.user.professional_name} 
-                            src={person.user.thumbnail} 
-                            round={true} 
-                            size="30" 
-                            className="shrink-0"
-                          />
+                          <Thumbnail professionalName={person.user.professional_name} thumbnail={person.user.thumbnail} size="30" userId={person.user.id}/>
                           <div className="my-auto">{person.user.professional_name}</div>
                         </div>
                       ))

@@ -7,23 +7,23 @@
  ****************************************************************************************/
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import banner from "../../../assets/img/welcome-banner.svg";
+import "../styles/search-header.scss";
+import { searchAllUsers } from "api/user";
+import { MdCancel } from "react-icons/md";
+import { useState, useEffect } from "react";
+import useDebounce from "hooks/useDebounce";
+import CustomPopper from "./CutomPopperSearch";
+import { Autocomplete, TextField } from "@mui/material";
 import leftWing from "../../../assets/img/left wing.svg";
 import rightWing from "../../../assets/img/right wing.svg";
-import frquesncyIcon from "../../../assets/img/frequency-Icon.svg";
-import crownIcon from "../../../assets/icons/crownIcon.svg";
-import "../styles/search-header.scss";
-import { Autocomplete, TextField } from "@mui/material";
-import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
-import { MdCancel } from "react-icons/md";
-import CustomPopper from "./CutomPopperSearch";
-import CircularProgress from "@mui/material/CircularProgress";
-import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 import { useSearchHeader } from '../hooks/useSearchHeader';
-import { searchAllUsers, userArtistSearch } from "api/user";
-import useDebounce from "hooks/useDebounce";
-import { useState, useEffect } from "react";
-import avatarImg from "../../../assets/img/avatar.svg";
+import banner from "../../../assets/img/welcome-banner.svg";
+import crownIcon from "../../../assets/icons/crownIcon.svg";
+import CircularProgress from "@mui/material/CircularProgress";
+import frquesncyIcon from "../../../assets/img/frequency-Icon.svg";
+import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
+import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 export interface IAppProps {}
 
@@ -79,15 +79,17 @@ export function SearchHeader() {
   };
 
   return (
-    <div className="search-header-wrap w-full relative">
-      <img src={banner} alt="banner" className="h-full w-full banner" />
-      <div className="serach-wrap  absolute left-1/2 top-0  transform -translate-x-1/2">
+    <div 
+        className="search-header-wrap relative flex justify-center items-center" 
+        style={{backgroundImage: `url(${banner})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
+    >
+      <div className="search-wrap w-[45em]">
         <div className="flex h-full search-box gap-1">
           <div className="flex items-end ">
             <img className="wing-img h-auto" src={leftWing} alt="left-wing" />
           </div>
           <div className="flex-1 flex flex-col  justify-end pb-3 gap-5">
-            <div className="flex justify-center">
+            <div id="title-and-description" className="flex justify-center">
               <div className="relative">
                 <img
                   className="absolute left-[-22px] top-1/2 transform -translate-y-1/2"
@@ -111,7 +113,7 @@ export function SearchHeader() {
                 </div>
               </div>
             </div>
-            <div className="relative">
+            <div id="search-input" className="relative">
               <Autocomplete
                 inputValue={searchInput}
                 freeSolo
@@ -158,11 +160,7 @@ export function SearchHeader() {
                         handleArtistSelected(option);
                       }}
                     >
-                      <img
-                        src={option?.thumbnail || avatarImg}
-                        alt={option.professionalName}
-                        className="w-10 h-10 rounded-md"
-                      />
+                      <Thumbnail professionalName={option?.professional_name} thumbnail={option?.thumbnail} size="40" round={false}/>
                       <div className="flex items-center gap-3">
                         <span className="text-gainsboro text-sm w-32">
                           {option.professionalName}

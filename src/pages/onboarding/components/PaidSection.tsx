@@ -18,7 +18,7 @@ const PaidSection = (
   const { markSectionAsCompleted, user, handleSkip } = props; 
 
   const handleSubmit = async () => {
-    const url = await handleConnectWithStripe(user.results?.user.id);
+    const url = await handleConnectWithStripe(user.results?.user.id, 'onboarding');
     if (url) {
       window.location.href = url;
     } else {

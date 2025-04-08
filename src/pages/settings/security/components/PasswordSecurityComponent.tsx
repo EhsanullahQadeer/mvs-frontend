@@ -5,14 +5,17 @@
  *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
+// LOCAL IMPORTS
+import { useToast } from '../../../../shared/toasts/ToastProvider';
+import { validatePasswordAPI } from '../../../../api/user'; 
+import PasswordField from './PasswordSecurityField';
+import { changeUserPasswordAPI } from 'api/auth';
 
 // THIRD PARTY IMPORTS
 import React, { useState } from 'react';
 import { Form, Formik } from 'formik';
-import { validatePasswordAPI } from '../../../../api/user'; 
-import PasswordField from './PasswordSecurityField';
 import * as Yup from 'yup';
-import { changeUserPasswordAPI } from 'api/auth';
+
 
 const validationSchema = Yup.object({
   currentPassword: Yup.string().required('Current password is required'),
@@ -35,6 +38,7 @@ const PasswordSecurityComponent = () => {
     const [isSubmitted, setIsSubmitted] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const { addToast } = useToast();
 
     const handleFormSubmit = async (values: any, { resetForm }) => {
         try {
@@ -51,6 +55,7 @@ const PasswordSecurityComponent = () => {
                 });
                 resetForm();
                 setSuccessMessage("Password Successfully Changed");
+                addToast({ state: 'passwordChanged' })
                 console.log('Password validated successfully');
             } else {
                 setHasPasswordError(true);

@@ -1,9 +1,9 @@
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { FiLock } from "react-icons/fi";
 import linesImg from "../../assets/img/lines.png";
 import publicLinksBg from "../../assets/img/publicLinksBg.png";
-import defaultImg from "../../assets/img/artistImg.png";
-import { useState } from "react";
-import { FiLock } from "react-icons/fi";
-import { toast } from "react-toastify";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface IProps {
   setIsLoading: (value: boolean) => void;
@@ -41,14 +41,8 @@ const EnterPasswordPage = (props: IProps) => {
 
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="flex flex-wrap justify-center items-center gap-6 p-5 border border-eerieBlack rounded-lg">
-            <div className="w-[108px] h-[108px] bg-darkGray border border-eerieBlack rounded-lg p-[22px]">
-              <div className="w-full h-full rounded-full relative">
-                <img
-                  src={user?.thumbnail}
-                  alt=""
-                  className="rounded-full w-full h-full object-cover"
-                />
-              </div>
+            <div className="p-[22px] relative">
+              <Thumbnail professionalName={user?.professional_name} thumbnail={user?.thumbnail} size="108" userId={user?.id}/>
             </div>
 
             <div className="flex flex-col gap-4">

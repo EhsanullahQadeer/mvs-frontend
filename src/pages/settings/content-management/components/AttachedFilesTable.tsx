@@ -7,27 +7,27 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
-
+import { tableStyles } from "./tableStyles";
 import getMuiStyles from "styles/getMuiStyles";
 import musicBeam from "../../../../assets/icons/musicBeam.svg";
-import { tableStyles } from "./tableStyles";
 
 // THIRD PARTY IMPORTS
+import moment from "moment";
+import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
+import { Checkbox } from "@mui/material";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/reducers";
+import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
+import TableContainer from "@mui/material/TableContainer";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import moment from "moment";
-import { useDispatch, useSelector } from "react-redux";
-import React, { useState } from "react";
-import { Checkbox } from "@mui/material";
+import TablePagination from "@mui/material/TablePagination";
 import { ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "./types";
-import { RootState } from "redux/reducers";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface Column {
   id: "filename" | "created_at" | "artist" | "uploadedBy";
@@ -206,7 +206,7 @@ const AttachedFilesTable = (props: Props) => {
               sortedData
                 .map((row, idx) => {
                   const { filename, thumbnail, name, created_at, collaborators } = row as any;
-                  console.log("collaborators ", collaborators);
+                  //console.log("collaborators ", collaborators);
                   const owner = collaborators?.find(collaborator => collaborator?.is_owner);
                   const ownerName = owner?.collaborator?.professional_name;
                   const isItemSelected = selected.includes(row.id);
@@ -264,14 +264,7 @@ const AttachedFilesTable = (props: Props) => {
                         onClick={(event) => handleClick(event, row.id)}
                       >
                         <div className="flex gap-2.5 items-center">
-                          <div className="rounded-full w-8 h-8">
-                            <img
-                              src={owner?.collaborator?.thumbnail}
-                              alt=""
-                              className="rounded-full w-full h-full"
-                            />
-                          </div>
-
+                          <Thumbnail professionalName={owner?.collaborator?.professional_name} thumbnail={owner?.collaborator?.thumbnail} userId={owner?.collaborator?.id} size="32"/>
                           <div className="text-sm font-medium whitespace-nowrap">
                             {ownerName}
                           </div>

@@ -1,22 +1,35 @@
-import { IArtistProfileData } from "./types";
-import { MdVerified } from "react-icons/md";
-import { FiSend, FiUserPlus } from "react-icons/fi";
-import { LiaEllipsisHSolid } from "react-icons/lia";
-import { useRef, useState } from "react";
-import pauseIcon from "../../../assets/img/player/pause-circle.svg";
-import playIcon from "../../../assets/img/player/play-circle.svg";
-import { RootState } from "redux/reducers";
+import { toast } from "react-toastify";
+import { Menu } from "@headlessui/react";
 import { useSelector } from "react-redux";
-import {
-  getConversationsById,
-  getConversationsList,
-  getConversationWithUser,
-} from "api/messenger";
-import MessagesDetail from "pages/Inbox/components/MessagesDetail";
-import { requestConncetAPI } from "api/user";
-import avatarImg from "../../../assets/img/avatar.svg";
-import { useNotification } from "services/WebSocket/useNotification.hook";
-import { useMessages } from "../../../pages/profile/messageContextProvider";
+import { GoDotFill } from "react-icons/go";
+import { RootState } from "redux/reducers";
+import { MdVerified } from "react-icons/md";
+import { IArtistProfileData } from "./types";
+import { LuDollarSign } from "react-icons/lu";
+import FollowersModal from "./followersModal";
+import ConnectionsModal from './connectionsModal';
+import { useEffect, useRef, useState } from "react";
+import { useMessenger } from "api/messenger/context";
+import Chatbox from "pages/Inbox/components/Chatbox";
+import { getConversationsWithUser } from "api/messenger";
+import Tooltip from "components/ui/Header/atoms/tooltip";
+import playIcon from "../../../assets/img/player/play-circle.svg";
+import pauseIcon from "../../../assets/img/player/pause-circle.svg";
+import { useChatbox } from "pages/Inbox/components/Chatbox/context";
+import { ReactComponent as MapPinIcon } from "../../../assets/icons/mapPin.svg";
+import { ConversationProvider } from "pages/Inbox/components/Directory/context";
+import { IGetConversationsWithUser } from "api/messenger/objects/api.interfaces";
+import { ReactComponent as ClockIcon } from "../../../assets/icons/clockIcon.svg";
+import { ReactComponent as UserPlusIcon } from "../../../assets/icons/userPlusIcon.svg";
+import { ReactComponent as CalendarIcon } from "../../../assets/icons/calendarIcon.svg";
+import { ReactComponent as PaperPlaneIcon } from "../../../assets/icons/paperPlane.svg";
+import { ReactComponent as UserCheckIcon } from "../../../assets/icons/userCheckIcon.svg";
+import { ReactComponent as UserMinusIcon } from "../../../assets/icons/userMinusIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import { ReactComponent as UpArrowTrayIcon } from "../../../assets/icons/upArrowTrayIcon.svg";
+import { ReactComponent as ElipsesVerticalIcon } from "../../../assets/icons/threeVerticalDotsIcon.svg";
+import { checkIfFollowing, getMutualConnections, handleFollowUsers, requestConncetAPI } from "api/user";
+import ProfileSectionButton from "components/ui/Header/atoms/profileAboutSectionAtoms/profileSectionButton";
 
 type Props = {
   artistData: IArtistProfileData | null;
@@ -32,8 +45,35 @@ type Props = {
   setChatOpen: (chatOpen: boolean) => void;
 };
 
+export interface Connection {
+  id: number;
+  thumbnail: string;
+  professional_name: string;
+  username: string;
+  followers: number;
+  connectionId: number;
+  connectedAt: string;
+}
+
+export interface MutualConnection {
+  connections: Connection[];
+  cursor: number | null;
+  totalCount: number;
+  hasMore: boolean;
+}
+
 const ProfileAboutSection = (props: Props) => {
-  const { artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen } =
+  const { 
+    setActiveConversation,
+    activeConversation,
+    getConversationMessages
+  } = useMessenger();
+
+  const {
+    LIMIT_MESSAGES
+  } = useChatbox();
+
+  const { artistData, creditsData, connectionDetail, setConnectionDetail, setChatOpen } =
     props;
   const [hoveredRow, setHoveredRow] = useState<number | null>(null); // State to track hovered row
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
@@ -41,11 +81,15 @@ const ProfileAboutSection = (props: Props) => {
   ); // Track the currently playing index
   const audioRef = useRef<HTMLAudioElement | null>(null); // Ref for the audio element
   const [showChat, setShowChat] = useState(false);
-  const [chatData, setChatData] = useState(null);
-  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: RootState) => state);
+  const [menuSection, setMenuSection] = useState<boolean>(false);
 
+  const [mutualConnections, setMutualConnections] = useState<MutualConnection | null>(null);
+  const [showFollowersModal, setShowFollowersModal] = useState<boolean>(false);
+  const [showMutualConnectionsModal, setShowMutualConnectionsModal] = useState<boolean>(false);
+  const [showConnectionsModal, setShowConnectionsModal] = useState<boolean>(false);
+  
   const isConnectionPending =
     connectionDetail === false ||
     connectionDetail === null ||
@@ -53,59 +97,45 @@ const ProfileAboutSection = (props: Props) => {
 
   const {
     id,
-    username,
     thumbnail,
     professional_name,
     bio,
-    primary_label,
-    sub_label,
+    country,
+    region,
+    primary_role,
+    secondary_role,
+    demo_fee,
+    publisher,
   } = artistData?.available ?? artistData ?? {};
+
+  console.log('Prof Name Prof about section: ', professional_name);
+
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
 
-    useNotification("NEW_MESSAGE", (event) => {
-      try {
-        const { conversationId, sender, message, timestamp } = event.data;
-    
-        const timeoutId = setTimeout(async () => {
-          try {
-            if (chatData.id === Number(conversationId)) {
-              // const newMessage = {
-              //   conversation_id: conversationId,
-              //   Timestamp: timestamp || new Date().toISOString(),
-              //   message_content: message,
-              //   sender_id: sender
-              // };
-              // const formatMessages = [
-              //   {
-              //     date: new Date().toISOString().split("T")[0],
-              //     messages: [...messages[0]?.messages || [], newMessage]
-              //   }
-              // ]
-              //setMessages(formatMessages);
-              getConversationMessages(chatData);
-            }
-          } catch (error) {
-            console.error('Error refreshing data:', error);
-          }
-        }, 300);
-    
-        return () => clearTimeout(timeoutId);
-    
-      } catch (error) {
-        console.error('Error processing new message event:', error);
-      }
-    });
+  const fetchConnections = async () => {
+    const connections = await getMutualConnections(artistData.id);
+    setMutualConnections(connections.data?.results);
+  };
+
+  useEffect(() => {
+    const fetchFollowingStatus = async () => {
+      const isFollowing = await checkIfFollowing(artistData.id);
+      setIsFollowing(isFollowing);
+    };
+
+    fetchFollowingStatus();
+    fetchConnections();
+  }, []);
 
   const handlePlayClick = (previewUrl: string, index: number) => {
     if (!previewUrl) return;
     if (audioRef.current) {
       if (currentPlayingIndex === index) {
-        // If the clicked track is already playing, pause it
         audioRef.current.pause();
         setCurrentPlayingIndex(null);
       } else {
-        // Play the new track
         audioRef.current.src = previewUrl;
         audioRef.current.play();
         setCurrentPlayingIndex(index);
@@ -119,12 +149,12 @@ const ProfileAboutSection = (props: Props) => {
     try {
       setLoading(true);
 
-      // Pass recipient_id as a query parameter
-      const response = await getConversationWithUser(artistData.id);
-      console.log("conversation with user response:", response);
+      const payload: IGetConversationsWithUser = {userId: artistData?.id};
+      const response = await getConversationsWithUser(payload);
 
+      let conversation;
       if (response.data) {
-        const conversation = {
+        conversation = {
           id: response.data.id,
           thumbnail: artistData.thumbnail,
           displayName: artistData.professional_name,
@@ -132,37 +162,11 @@ const ProfileAboutSection = (props: Props) => {
           recipient_id: artistData.id,
           conversation_id: response.data.id,
         };
-
-        console.log("existing conversation found:", conversation);
-        setChatData(conversation);
-        await getConversationMessages(conversation);
+        setActiveConversation(response.data);
+        getConversationMessages({ conversationId: response.data.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
         setChatOpen(true);
-      } else {
-        // For new conversations, use a temporary ID that will be replaced
-        const tempId = `temp_${Date.now()}`;
-        const conversation = {
-          id: tempId, // Add a temporary ID here
-          thumbnail: artistData.thumbnail,
-          displayName: artistData.professional_name,
-          sender: user.auth.user.id,
-          recipient_id: artistData.id,
-          conversation_id: null,
-          messages: [],
-          isNew: true, // Flag to indicate this is a new conversation
-        };
-
-        console.log("creating new conversation:", conversation);
-        setChatData(conversation);
-        setMessages([
-          {
-            date: new Date().toISOString().split("T")[0],
-            messages: [],
-          },
-        ]);
-        setChatOpen(true);
+        setShowChat(true);
       }
-
-      setShowChat(true);
     } catch (error) {
       console.error("Error opening chat:", error);
     } finally {
@@ -183,80 +187,42 @@ const ProfileAboutSection = (props: Props) => {
     }
   };
 
-  const getConversationMessages = async (conversation) => {
+  const handleShareClick = async () => {
+    const urlToShare = window.location.href; // Get the current URL
     try {
-      console.log("Getting messages for conversation:", conversation);
-
-      // If this is a new conversation that just got created
-      if (!conversation.id && conversation.conversation_id) {
-        // Update the chatData with the new conversation_id
-        setChatData((prev) => ({
-          ...prev,
-          id: conversation.conversation_id,
-          conversation_id: conversation.conversation_id,
-        }));
-      }
-
-      let conversationId = conversation.id || conversation.conversation_id;
-      if (String(conversationId).startsWith("temp")){
-        const response = await getConversationWithUser(artistData.id);
-
-        if (response.data) {
-          conversationId = response.data.id
-          setChatData({
-            id: response.data.id,
-            thumbnail: artistData.thumbnail,
-            displayName: artistData.professional_name,
-            sender: user.auth.user.id,
-            recipient_id: artistData.id,
-            conversation_id: response.data.id,
-          });
-        }
-      }
-      if (conversationId) {
-        const messagesResponse = await getConversationsById(
-          { limit: 10 },
-          conversationId
-        );
-
-        // Format messages in the expected structure
-        const formattedMessages = [
-          {
-            date: new Date().toISOString().split("T")[0],
-            messages: messagesResponse.data.messages || [],
-          },
-        ];
-
-        console.log("Setting formatted messages:", formattedMessages);
-        setMessages(formattedMessages);
-      } else {
-        // For new conversations, set an empty messages array with the correct structure
-        setMessages([
-          {
-            date: new Date().toISOString().split("T")[0],
-            messages: [],
-          },
-        ]);
-      }
+      await navigator.clipboard.writeText(urlToShare); // Copy the URL to clipboard
+      console.log("URL Copied to Clipboard");
+      toast.success("URL Copied to Clipboard");
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error("Failed to copy URL:", error);
+      toast.error("Error deleting conversations");
     }
   };
 
-  if (showChat && chatData) {
+  const handleMenuSection = () => {
+    setMenuSection(!menuSection);
+  };
+
+  const handleFollowUnfollow = () => {
+    if(isFollowing) {
+      setIsFollowing(false);
+    } else {
+      setIsFollowing(true);
+    }
+    handleFollowUsers([artistData.id]);
+  };
+  
+  const connectionsList = mutualConnections?.connections;
+  const totalConnections = mutualConnections?.totalCount;
+
+  if (showChat && activeConversation) {
     return (
-      <div className="relative w-full h-[calc(100vh-70px)] bg-richBlack overflow-hidden">
-        <MessagesDetail
-          conversation={chatData}
-          loading={loading}
-          messages={messages}
-          getConversationMessages={getConversationMessages}
-          getNotes={() => {}}
-          notes={[]}
-          currentUserInfo={user.auth.user}
-          onClose={() => {setShowChat(false); setChatOpen(false)}}
-          userInfo={artistData}
-        />
+      <div className="h-[calc(100vh-70px)] bg-richBlack overflow-hidden z-50 animate-slide-in w-full">
+        <ConversationProvider>
+          <Chatbox
+            onClose={() => {setShowChat(false); setChatOpen(false)}}
+          />
+        </ConversationProvider>
       </div>
     );
   }
@@ -266,91 +232,158 @@ const ProfileAboutSection = (props: Props) => {
       <div className="w-full h-[88px] bg-[#1a1a1a]"></div>
       <div className="px-4">
         <div className="rounded-full p-1 bg-jetBlack w-[108px] h-[108px] relative -translate-y-1/2">
-          <img
-            src={thumbnail || avatarImg}
-            alt="Profile"
-            className="h-full w-full rounded-full object-cover"
-          />
+          <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="100" userId={id}/>
         </div>
 
         <div className="text-white flex flex-col -mt-10">
-          <div className="flex flex-col gap-2 mb-3">
+          <div className="flex flex-col gap-2">
             <h1 className={`text-lg flex items-center gap-1 font-semibold`}>
               {professional_name}
               <MdVerified className="text-[#9EFF00]" />
             </h1>
+            <div className="flex">
+              <MapPinIcon/>
+              <span className="text-base font-normal text-coolGray ml-1">
+                {region}, {country}
+              </span>
+            </div>
+          </div>
 
-            <span className="text-base font-normal text-coolGray">
-              @{username}
+          <div className="flex gap-1 mt-3">
+            {primary_role &&
+              <div className="bg-eclipseGray text-dimGray rounded-md px-2 py-1 text-sm font-normal">
+                {primary_role}
+              </div>
+            }
+            {secondary_role &&
+              <div className="bg-eclipseGray text-dimGray rounded-md px-2 py-1 text-sm font-normal">
+                {secondary_role}
+              </div>
+            }
+          </div>
+
+          <div className="my-3 flex items-center gap-2 text-silver text-xs flex-wrap">
+            <span className="font-semibold cursor-pointer" onClick={() => setShowFollowersModal(true)}>{artistData?.followers} followers</span>
+            <span className="font-semibold">
+              <GoDotFill className="w-1.5 h-1.5" />
+            </span>
+            <span className="font-semibold text-[#0185FF]">
+              {totalConnections > 500 ? `500+` : totalConnections} connections
             </span>
           </div>
 
-          <div className="flex gap-1">
-            <div className="bg-eclipseGray text-dimGray rounded-md px-2 py-1 text-sm font-normal">
-              {primary_label}
-            </div>
-
-            <div className="bg-eclipseGray text-dimGray rounded-md px-2 py-1 text-sm font-normal">
-              {sub_label}
+          <div className="pb-2">
+            <div 
+              className="flex items-center cursor-pointer hover:opacity-80"
+              onClick={() => setShowConnectionsModal(true)}
+            >
+              <div className="flex -space-x-3">
+                {connectionsList?.slice(0, 3).map((connection, index) => (
+                  <div 
+                    key={connection.id}
+                    className="relative ring-2 ring-jetBlack rounded-full"
+                    style={{ zIndex: 3 + index }}
+                  >
+                    <Thumbnail professionalName={connection.professional_name} thumbnail={connection.thumbnail} size="30" userId={connection.id}/>
+                  </div>
+                ))}
+              </div>
+              <div className="text-silver text-xs ml-2">
+                {connectionsList?.slice(0, 3).map((connection, index, arr) => (
+                  <span key={connection.id}>
+                    {connection.professional_name}
+                    {index < arr.length - 1 && ", "}
+                  </span>
+                ))}
+                {connectionsList?.length > 3 && (
+                  <span className="text-[#0185FF]">
+                    {" "}and {totalConnections - 3} other connections
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Only show buttons row if not viewing own profile */}
-          {user.auth.user.id !== artistData?.id && (
-            <div className="mt-[22px] mb-2 flex justify-between flex-wrap gap-2">
-              <div className="gap-2 flex items-center flex-wrap">
-                {connectionDetail === true ? (
-                  <></>
-                ) : (
-                  <button
-                    onClick={handleConnectFunction}
-                    className={`flex items-center bg-transparent text-dimGray border border-dimGray text-sm rounded-full transition py-2 px-4 font-normal ${
-                      isConnectionPending
-                        ? "cursor-default pointer-events-none"
-                        : "cursor-pointer pointer-events-auto"
-                    }`}
-                  >
-                    {isConnectionPending ? (
-                      <span>Connection Pending</span>
-                    ) : (
-                      <div className="flex gap-2 items-center">
-                        <FiUserPlus className="w-4 h-4" />
-                        <span>Connect</span>
+          {user.auth?.user?.id !== artistData?.id && (
+            <div className="flex gap-1">
+              <ProfileSectionButton tabName="Message" icon={<PaperPlaneIcon/>} onClick={handleMessageClick}/>
+              {connectionDetail === true ? (
+                <ProfileSectionButton tabName="Connected" icon={<UserCheckIcon/>} onClick={handleConnectFunction} disabled={true}/>
+              ) : (
+                <div className="relative w-full">
+                  <Tooltip disappear={false} text={isConnectionPending ? "Connection" : ""}>
+                    <ProfileSectionButton tabName={`${isConnectionPending ? "Pending" : "Connect"}`} icon={isConnectionPending ? <ClockIcon/> : <UserPlusIcon/>} onClick={handleConnectFunction}/>
+                  </Tooltip>
+                </div>
+              )}
+              <ProfileSectionButton tabName="Share" icon={<UpArrowTrayIcon/>} onClick={handleShareClick}/>
+
+              <Menu as="div" className="user">
+                <Menu.Button>
+                  <ProfileSectionButton width="w-[32px]" icon={<ElipsesVerticalIcon/>} onClick={handleMenuSection}/>
+                </Menu.Button>
+                <Menu.Items 
+                  className="zindex fixed mt-2 right-4 w-[130px] bg-[#1C1C1C] border border-[#3D3D3D] rounded-[8px] p-[10px]"
+                  onMouseDown={(event) => event.stopPropagation()}
+                >
+                  {/* Menu Items */}
+    
+                  {/* Follow Unfollow */}
+                  <Menu.Item>
+                    {({ active }) => (
+                      <div
+                      className={`flex items-center px-[12px] py-[8px] rounded-[8px] cursor-pointer ${active ? "bg-[#242424] text-white" : "text-[#b2b2b2]"}`}
+                      onClick={(event) => {
+                        event.stopPropagation(); // Prevent menu from closing
+                        handleFollowUnfollow();
+                      }}>
+                        {isFollowing ? <UserMinusIcon/> : <UserPlusIcon/>}
+                        <p className=" font-['Mona-Sans-M'] text-[14px] pl-[8px]">
+                          {isFollowing ? "Unfollow" : "Follow"}
+                        </p>
                       </div>
                     )}
-                  </button>
-                )}
-
-                <button
-                  onClick={handleMessageClick}
-                  style={{
-                    width: "unset",
-                  }}
-                  className="flex font-normal items-center text-jetBlack text-sm rounded-full transition py-2 px-4 bg-limeGreen cursor-pointer"
-                >
-                  <div className="flex gap-2 items-center">
-                    <FiSend className="w-4 h-4" />
-                    <span>Message</span>
-                  </div>
-                </button>
-              </div>
-
-              <div>
-                <button className="bg-eerieBlack text-coolGray p-2 rounded-lg hover:bg-gray-700 transition border border-eerieBlack">
-                  <LiaEllipsisHSolid className="w-4 h-4" />
-                </button>
-              </div>
+                  </Menu.Item>
+                </Menu.Items>
+              </Menu>
             </div>
           )}
+          <div className="w-full h-[41px] rounded-md text-xs font-semibold flex items-center justify-center cursor-pointer text-jetBlack hover:bg-transparent hover:text-white bg-limeGreen transition-all duration-200 my-2">
+            <CalendarIcon/>
+            <span className='ml-1'>Book a Meeting</span>
+          </div>
         </div>
       </div>
 
-      <div className="border-t border-b border-eclipseGray px-2.5 pb-6">
-        <div className="px-4 pt-5 text-platinum font-semibold text-base">
-          About
-        </div>
+      <div className="px-5 py-3 pb-5 border-t border-eclipseGray">
+        <h3 className="text-base text-platinum font-semibold mb-1">About</h3>
+        <p className="mb-2 text-sm text-mediumGray font-normal">
+          {truncatedBio}
+        </p>
 
-        <div className="text-dimGray font-normal text-sm">{truncatedBio}</div>
+        <span className="text-base text-platinum font-semibold">
+          Publisher
+        </span>
+
+        <div className="mt-1.5 flex max-lg:flex-wrap items-center gap-1">
+          <div className="px-2 py-1 bg-transparent text-dimGray rounded text-sm font-normal border border-charcoalGray whitespace-nowrap">
+            {publisher}
+          </div>
+        </div>
+      </div>
+      <div className="px-5 py-4 pb-20 border-t border-eclipseGray text-silver text-sm flex flex-col gap-5">
+        <div className="flex items-center justify-between max-lg:flex-wrap gap-1">
+          <div className="flex items-center gap-1">
+            <LuDollarSign />
+            <span className="font-normal leading-[18px]">
+              Demo submission starting at
+            </span>
+          </div>
+
+          <span className="font-semibold border border-mediumGray rounded-full px-2 py-0.5">
+            {"$" + demo_fee || "$0"}
+          </span>
+        </div>
       </div>
 
       {creditsData && creditsData.length > 0 && (
@@ -368,13 +401,7 @@ const ProfileAboutSection = (props: Props) => {
                   onMouseEnter={() => setHoveredRow(index)} // Set hovered row on hover
                   onMouseLeave={() => setHoveredRow(null)} // Reset on mouse leave
                 >
-                  <div className="w-12 h-12">
-                    <img
-                      src={thumbnail}
-                      alt="credits"
-                      className="w-full h-full object-contain rounded-[4px]"
-                    />
-                  </div>
+                  <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="12"/>
                   <div className="flex flex-col gap-0.5">
                     <h2 className="text-white font-semibold text-xs text-wrap">
                       {track_name}
@@ -405,6 +432,17 @@ const ProfileAboutSection = (props: Props) => {
             <audio ref={audioRef} />
           </div>
         </div>
+      )}
+
+      {showFollowersModal && <FollowersModal open={showFollowersModal} handleClose={() => setShowFollowersModal(false)} userId={artistData?.id} />}
+      {showConnectionsModal && (
+        <ConnectionsModal 
+          open={showConnectionsModal} 
+          handleClose={() => setShowConnectionsModal(false)} 
+          userId={artistData?.id}
+          mutualConnections={mutualConnections}
+          fetchConnections={fetchConnections}
+        />
       )}
     </div>
   );
