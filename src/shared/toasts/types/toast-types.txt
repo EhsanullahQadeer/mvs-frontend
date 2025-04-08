@@ -63,7 +63,7 @@ Error:
   APITimeout
   messageReported
   userBlocked
-  failedToDownloadSample ✅(dropdown, table)
+  failedToDownloadSample ✅(dropdown, table, sampleMessage)
   fileDoesntExist ✅ (added by karla, when file isnt found in db)
   //---group 2---
   failedToSubmitWithdrawalRequest
@@ -89,8 +89,8 @@ Error:
   failedToSaveChanges ✅ (settings/account: roles/genres, address, bio/username)
 
 Warning:
-  actionCantBeUndone --not sure if change message deleted modal
-  attachmentTooLarge
+  actionCantBeUndone ❓ --not sure where to use
+  attachmentTooLarge ❓ -- this vs fileSizeExceeded ?? where
   insufficientCredits
   paymentFailed
   uploadFailed ✅(chat recording)
