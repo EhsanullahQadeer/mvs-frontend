@@ -270,7 +270,7 @@ export function SearchHeader() {
           </p>
         </div>
 
-        <div className="flex w-full  py-3 my-2 items-center justify-center flex-wrap gap-2">
+        <div className="flex w-full  py-3 mb-2 items-center justify-center flex-wrap gap-2">
           <div className="flex mx-auto gap-2 flex-wrap">
             {headerButtons.map((value, idx) => {
               return (
