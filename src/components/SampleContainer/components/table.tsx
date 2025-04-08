@@ -16,7 +16,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {ReactComponent as MusicIcon} from "../../../assets/icons/musicIcon.svg";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { getSampleConsidering, saveSampleDownloadAPI, sampleLikeAPI } from "api/sounds";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import { useToast } from "shared/toasts/ToastProvider";
 
 const SampleTable = (props: {
