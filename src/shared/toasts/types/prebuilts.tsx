@@ -48,12 +48,13 @@ export const prebuiltToasts: ToastConfig[] = [
     message: "The message has been marked as read.", 
     type: "success" 
   },
-  { 
-    id: "demoSentSuccessfully", 
-    title: "Demo sent successfully", 
-    action: "Send Another", 
-    message: "Your demo has been sent successfully.", 
-    type: "success" 
+  {
+    id: "demoSentSuccessfully",
+    title: "Demo sent successfully",
+    action: "Send Another",
+    message: (params?: { count?: number }) =>
+      `Your demo${params?.count && params?.count > 1 ? `s have` : ' has'} been sent successfully.`,
+    type: "success"
   },
   { 
     id: "tipSentSuccessfully", 

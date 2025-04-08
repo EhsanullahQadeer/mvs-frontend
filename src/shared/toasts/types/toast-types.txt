@@ -8,7 +8,7 @@ Success:
   messageMovedToSpam ✅
   messageMarkedAsUnread ❓- these features dont work yet i think
   messageMarkedAsRead ❓- these features dont work yet i think
-  demoSentSuccessfully ✅ (purchase order dialog)
+  demoSentSuccessfully ✅ (purchase order dialog, sample send demo)
   tipSentSuccessfully ✅(footer tip)
   fileUploadedSuccessfully ✅ (purchase order dialog)
   downloadComplete ✅ (dropdown, table)
@@ -56,7 +56,7 @@ Error:
   fileUploadFailed ✅ (purchase order dialog, footer)
   unsupportedFileFormat ✅ (footer)
   fileSizeExceeded ✅ (footer 50mb)
-  messageFailedToSend ✅ (purchase order dialog)
+  messageFailedToSend ✅ (purchase order dialog, inbox demo)
   freeMessageLimitExceeded
   tooManyMessagesSent
   unexpectedError ✅ (used when retrying once doesnt work for any toast)
