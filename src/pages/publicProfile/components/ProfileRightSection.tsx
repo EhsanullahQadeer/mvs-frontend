@@ -37,8 +37,8 @@ const ProfileRightSection = (props: IProps) => {
       setChatOpen,
       isPublicProfile,
     } = props;
-  // const [activeTab, setActiveTab] = useState(isPublicProfile ? "Posts" : "Library");
-  const [activeTab, setActiveTab] = useState("Fanwall");
+  const [activeTab, setActiveTab] = useState(isPublicProfile ? "Fanwall" : "Library");
+  // const [activeTab, setActiveTab] = useState("Fanwall");
 
   const fanwallKey = `fanwall-${JSON.stringify(artistData?.id)}`;
 
@@ -72,7 +72,7 @@ const ProfileRightSection = (props: IProps) => {
     // },
     {
       label: "Fanwall",
-      component: <FanWall key={fanwallKey} {...{ artistData, currentUserInfo }} />
+      component: <FanWall key={fanwallKey} {...{ artistData, currentUserInfo,isLoginUser }} />
     }
   ];
 
@@ -85,7 +85,7 @@ const ProfileRightSection = (props: IProps) => {
           <span
             key={tab.label}
             className={` text-white flex items-center justify-center flex-1 py-5 ${activeTab === tab.label
-                ? "font-semibold border-b-2 border-[#1c1c1c]"
+                ? "font-semibold border-b-2 border-charcoalGray"
                 : "border-b border-eerieBlack"
               }`}
             onClick={() => setActiveTab(tab.label)}
