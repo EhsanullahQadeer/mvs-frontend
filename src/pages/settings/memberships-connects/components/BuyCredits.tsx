@@ -13,6 +13,7 @@ import StripeElements from "components/stripe/stripeElements";
 interface BuyCreditsDialogProps {
   open: boolean;
   onClose: () => void;
+  user?: any;
 }
 
 interface CreditOption {
@@ -35,10 +36,10 @@ const creditOptions: CreditOption[] = [
   },
 ];
 
-const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
+const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose, user }) => {
   const [selectedAmount, setSelectedAmount] = useState<number>(0);
   const [promoCode, setPromoCode] = useState<string>("");
-  const [availableCredits, setAvailableCredits] = useState<number>(215);
+  const [availableCredits, setAvailableCredits] = useState<number>(user?.credits);
   const [chargeAmount, setChargeAmount] = useState<number>(9.5);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [secondOpen, setSecondOpen] = useState<boolean>(false);
@@ -298,7 +299,7 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
               </div>
             </div>
           </div>
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-0.5 mb-2">
           <span className="text-[#fff] font-medium text-[12px]">
             Select a billing method
           </span>
@@ -308,7 +309,7 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
           </span>
         </div>
         <StripeElements buyCreditsComponentProps={{amount: amount, onClose: closeConfirmationDialog, creditsAmount: creditOptions[selectedAmount].amount}} />
-        <p className="text-[10px] my-2 text-dimGray">
+        <p className="text-[10px] my-4 text-dimGray">
           By completing this transection , you are authorizing the change to your selected billing method. The total amount includes a 2.9% service fee.
           Please insure your billing  details up to date to avoid any interruptions. For more information on charges and fees , please review your <a href="" className="text-limeGreen">billing policies</a>
         </p>

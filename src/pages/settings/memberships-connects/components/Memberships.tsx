@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as MLogo } from "../../../../assets/img/MLogo.svg";
 import BuyCredits from "./BuyCredits";
 
-const Memberships = () => {
+const Memberships = (props: any) => {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
+  const {user} = props;
 
   const handlePlan = () => {
     navigate("/settings/plans/");
@@ -34,7 +35,7 @@ const Memberships = () => {
                   $99.99/mo with 100 monthly credits
                 </p>
                 <p className="text-dimGray text-xs font-semibold">
-                  215 credits remaining
+                  {user?.credits} credits remaining
                 </p>
               </div>
             </div>
@@ -58,7 +59,7 @@ const Memberships = () => {
           <div className="flex justify-between gap-1">
             <div className="flex flex-col gap-2">
               <h3 className="text-white text-base font-semibold">Credits balance</h3>
-              <p className="text-mediumGray text-xs font-normal">215</p>
+              <p className="text-mediumGray text-xs font-normal">{user?.credits}</p>
               <p className="text-mediumGray text-xs font-semibold">
                 Learn more about how to use{" "}
                 <span className="text-limeGreen">Credits</span>
@@ -77,7 +78,7 @@ const Memberships = () => {
         </div>
       </div>
 
-      <BuyCredits open={openDialog} onClose={handleCloseDialog} />
+      <BuyCredits open={openDialog} onClose={handleCloseDialog} user={user} />
     </>
   );
 };
