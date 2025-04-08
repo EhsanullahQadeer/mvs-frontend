@@ -16,6 +16,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {ReactComponent as MusicIcon} from "../../../assets/icons/musicIcon.svg";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { getSampleConsidering, saveSampleDownloadAPI, sampleLikeAPI } from "api/sounds";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import { useToast } from "shared/toasts/ToastProvider";
 
 const SampleTable = (props: {
   samples: any[];
@@ -37,6 +39,7 @@ const SampleTable = (props: {
   const [Play, setPlay] = useState(false);
   const [localLikedStatus, setLocalLikedStatus] = useState<Record<number, boolean>>({});
 
+  const { addToast } = useToast();
   useEffect(() => {
     if (samples && setLikedSamples) {
       const initialLikes: Record<number, boolean> = {};
@@ -311,6 +314,11 @@ const SampleTable = (props: {
       document.body.removeChild(link);
     } catch (error) {
       console.error('Download failed:', error);
+      addToast({state: "failedToDownloadSample", actionFunction: () => handleDownload(e, sample)});
+    } finally {
+      addToast({state: "downloadComplete", actionFunction: () => {
+        window.open(sample.s3_key, '_blank');
+      }});
     }
   };
 

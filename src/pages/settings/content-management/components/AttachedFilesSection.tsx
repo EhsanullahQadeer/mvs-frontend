@@ -18,6 +18,7 @@ import {
   IGetUserSamplesResponse,
 } from "./types";
 import UpdateSamplePopup from "./UpdateSamplePopup";
+import { useToast } from "../../../../shared/toasts/ToastProvider";
 
 type Props = {
   setLoading: (value: boolean) => void;
@@ -45,6 +46,7 @@ const AttachedFilesSection = (props: Props) => {
   );
   const [getUserSamplesResponse, setGetUserSamplesResponse] =
     useState<IGetUserSamplesResponse>();
+  const { addToast } = useToast();
 
   const handleTabClick = (value: string, clickFunc: () => void) => {
     setSelectedTab(value);
@@ -105,9 +107,11 @@ const AttachedFilesSection = (props: Props) => {
         if (response.status === 200) {
           getSamplesData();
           handleCloseDialog();
+          addToast({ state: 'fileDeleted' })
         }
       } catch (error) {
         console.log("error while delete the sample file: ", error);
+        addToast({ state: 'failedToDeleteFile', actionFunction: () => handleDeleteComposer() })
       }
     }
   };

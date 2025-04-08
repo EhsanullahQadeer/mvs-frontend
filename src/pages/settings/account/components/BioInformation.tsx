@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import ImageCrop from "components/modals/ImageCropModal";
 import { updateUserProfileAPI, updateUserUsernameAPI } from "api/user";
 import { ReactComponent as EditIcon } from "../../../../assets/icons/editPencilIcon.svg";
+import { useToast } from "shared/toasts/ToastProvider";
 
 // THIRD PARTY IMPORTS
 import { Form, Formik } from "formik";
@@ -41,7 +42,8 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
     thumbnail: "",
     banner_image: "",
   });
-  const [thumbnail, setThumbnail] = useState("");
+  const [thumbnail, setThumbnail] = useState("")
+  const { addToast } = useToast();
 
   useEffect(() => {
     if (user) {
@@ -122,9 +124,13 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
           if (changedValues.username) {
             const response = await updateUserUsernameAPI(changedValues.username);
             setUser({ ...user, ...changedValues });
+            addToast({state: "profileUpdated", actionFunction: () => window.location.href = `/profile/${changedValues.username}`});
+          } else {
+            addToast({state: "profileUpdated", actionFunction: () => window.location.href = `/profile/${user.username}`});
           }
         } catch (error) {
           console.error("Failed to update profile:", error);
+          addToast({state: "failedToSaveChanges", actionFunction: () => handleSubmit(values)});
         }
       }
     }

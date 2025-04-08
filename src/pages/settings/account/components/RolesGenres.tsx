@@ -6,6 +6,7 @@ import { genresArr, publishersArr } from "./data";
 import { updateUserProfileAPI } from "api/user";
 import * as Yup from 'yup';
 import { userTypes } from './sample-data/sampleData';
+import { useToast } from "shared/toasts/ToastProvider";
 
 const validationSchema = Yup.object({
   primary_role: Yup.string().required('Primary role is required'),
@@ -35,6 +36,7 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
   const [selectedSubGenre, setSelectedSubGenre] = useState<string>(user.sub_genre || "");
   const [selectedPublisher, setSelectedPublisher] = useState<string>(user.publisher || "");
 
+  const { addToast } = useToast();
   const [originalValues, setOriginalValues] = useState({
     roles: [] as string[],
     genres: [] as string[],
@@ -104,8 +106,10 @@ const RolesGenres: React.FC<{ user: any, setUser: any }> = ({ user, setUser }) =
         setShowValidationError(false);
         setIsEditable(false);
       }
+      addToast({state: "profileUpdated", actionFunction: () => window.location.href = `/profile/${user.username}`});
     } catch (error) {
       console.error("Error updating profile:", error);
+      addToast({state: "failedToSaveChanges", actionFunction: () => handleFormSubmit()});
     } finally {
       setIsSubmitting(false);
     }
