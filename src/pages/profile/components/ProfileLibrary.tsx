@@ -80,6 +80,7 @@ const ProfileLibrary = (props: Props) => {
               selectedTab={selectedTab}
               chatOpen={chatOpen}
               isConnect={isConnect}
+              isLoginUser={isLoginUser}
             />
           </div>
         </div>
