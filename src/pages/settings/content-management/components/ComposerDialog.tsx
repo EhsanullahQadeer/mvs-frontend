@@ -6,19 +6,19 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+import * as Yup from "yup";
 import Dialog from "@mui/material/Dialog";
 import useDebounce from "hooks/useDebounce";
+import { referUserByEmail } from "api/user";
+import Tooltip from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import { CircularProgress } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import DialogTitle from "@mui/material/DialogTitle";
 import { userProfessionalNameSearch } from "api/user";
 import React, { useState, useEffect, useRef } from "react";
-import { referUserByEmail } from "api/user";
-import DialogTitle from "@mui/material/DialogTitle";
-import Tooltip from "@mui/material/Tooltip";
-import * as Yup from "yup";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {

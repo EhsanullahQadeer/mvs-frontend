@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { createContext, useEffect, useRef, useState } from 'react'
 import {
   WaveformContext,
   AudioTrack,
@@ -11,6 +10,7 @@ import {
   ConfigOptions,
 } from '../types'
 import { AudioPlayer } from '../player'
+import { createContext, useEffect, useRef, useState } from 'react'
 
 const initialPlayState: PlayState = {
   id: '',
@@ -64,27 +64,29 @@ export function WaveformProvider({
   const [current, setCurrent] = useState<AudioTrack | null>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
 
-
   const playTrack = (track: AudioTrack) => {
-    if (audioRef.current) {
-      if (!(audioRef.current.src === track.src)){
-
-        audioRef.current.src = track.src; // Set the track source
+    // Wait for next tick to ensure audioRef is initialized
+    setTimeout(() => {
+      if (audioRef.current) {
+        if (!(audioRef.current.src === track.src)){
+          audioRef.current.src = track.src;
+        }
+    
+        try {
+          audioRef.current.play().catch((error) => {
+            if (error.name === 'AbortError') {
+              console.log('Playback aborted:', error);
+            } else {
+              console.error('Error playing track:', error);
+            }
+          });
+        } catch (error) {
+          console.error('Error initiating playback:', error);
+        }
+      } else {
+        console.error('audioRef is still null after initialization');
       }
-  
-      // Try to play the track and catch any errors
-      try {
-        audioRef.current.play().catch((error) => {
-          if (error.name === 'AbortError') {
-            console.log('Playback aborted:', error); // Ignore aborted error
-          } else {
-            console.error('Error playing track:', error); // Log other errors
-          }
-        });
-      } catch (error) {
-        console.error('Error initiating playback:', error); // Handle any sync errors
-      }
-    }
+    }, 0);
   };
 
   const pauseTrack = () => {
@@ -135,7 +137,6 @@ export function WaveformProvider({
     playTrack,
     pauseTrack,
   };
-
   return (
     <waveformCtx.Provider value={{ ...value }}>
       {children}

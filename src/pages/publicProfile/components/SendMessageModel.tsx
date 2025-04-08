@@ -4,7 +4,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import React, { useEffect, useState } from "react";
 import CardInfoDialog from "pages/Inbox/components/CardInfoDialog";
 import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface Props {
   openPurchaseOrder: boolean;

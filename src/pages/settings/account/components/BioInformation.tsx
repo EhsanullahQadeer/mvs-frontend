@@ -10,17 +10,14 @@
 import { FiCamera } from "react-icons/fi";
 import React, { useEffect, useState } from "react";
 import ImageCrop from "components/modals/ImageCropModal";
-import avatarImg from "../../../../assets/img/avatar.svg";
-import sampleProfileImage from "../sampleAssets/Ellipse 730.png";
 import { updateUserProfileAPI, updateUserUsernameAPI } from "api/user";
-import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
 import { ReactComponent as EditIcon } from "../../../../assets/icons/editPencilIcon.svg";
 import { useToast } from "shared/toasts/ToastProvider";
 
 // THIRD PARTY IMPORTS
 import { Form, Formik } from "formik";
 import FormikField from "components/util/FormikField";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface UserProfile {
   username: string;
@@ -28,6 +25,7 @@ interface UserProfile {
   thumbnail: string;
   banner_image: string;
   professional_name?: string;
+  id?: number;
   address?: string;
   image_type?: string;
 }
@@ -44,7 +42,7 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
     thumbnail: "",
     banner_image: "",
   });
-  const [thumbnail, setThumbnail] = useState(avatarImg);
+  const [thumbnail, setThumbnail] = useState("")
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -56,7 +54,7 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
         banner_image: user.banner_image || "",
       };
       setFormValues(newValues);
-      setThumbnail(user.thumbnail || avatarImg);
+      setThumbnail(user.thumbnail);
     }
   }, [user]);
 
@@ -97,7 +95,7 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
         thumbnail: user.thumbnail || "",
         banner_image: user.banner_image || "",
       });
-      setThumbnail(user.thumbnail || avatarImg);
+      setThumbnail(user.thumbnail);
       setThumbnailChanged(false);
     }
     setIsEditable(false);
@@ -110,7 +108,7 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
       Object.entries(values).forEach(([key, value]) => {
         const typedKey = key as keyof UserProfile;
         if (value !== user[typedKey] && key !== 'banner_image') {
-          changedValues[typedKey] = value;
+          (changedValues as any)[typedKey] = value;
           if (typedKey === 'thumbnail') {
             changedValues.image_type = values.image_type;
           }
@@ -175,11 +173,9 @@ const BioInformation: React.FC<{ user: UserProfile, setUser: (user: UserProfile)
                   <div
                     className={`relative rounded-full p-0.5 w-48 h-48`}
                   >
-                    <img
-                      src={thumbnailChanged || savedThumbnail ? thumbnail : `${process.env.REACT_APP_ASSETS}${thumbnail}`}
-                      alt="Profile"
-                      className="h-full w-full rounded-full object-cover border-4 border-gray-900"
-                    />
+                    <div className="rounded-full border-4 border-gray-900">
+                      <Thumbnail professionalName={user.professional_name} thumbnail={thumbnail} size="180" userId={user.id}/>
+                    </div>
                     {isEditable && (
                       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 bg-[#414040B2] rounded-full text-white flex items-center justify-center cursor-pointer">
                         <input

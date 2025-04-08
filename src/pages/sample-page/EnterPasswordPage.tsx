@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { FiLock } from "react-icons/fi";
 import linesImg from "../../assets/img/lines.png";
 import publicLinksBg from "../../assets/img/publicLinksBg.png";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface IProps {
   setIsLoading: (value: boolean) => void;

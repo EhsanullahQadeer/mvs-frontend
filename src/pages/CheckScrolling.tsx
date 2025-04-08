@@ -1,5 +1,5 @@
+import { useState } from "react";
 import ScrollableContainer from "components/util/scrollable-container";
-import React, { useState } from "react";
 
 type Props = {};
 

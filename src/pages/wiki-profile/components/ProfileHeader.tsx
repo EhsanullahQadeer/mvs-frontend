@@ -11,7 +11,7 @@ import { MdVerified } from "react-icons/md";
 import { IArtistProfileData } from "./types";
 import { LiaEllipsisVSolid } from "react-icons/lia";
 import { FiSend, FiUserPlus } from "react-icons/fi";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface ProfileHeaderProps {
   isWikiProfile?: boolean;

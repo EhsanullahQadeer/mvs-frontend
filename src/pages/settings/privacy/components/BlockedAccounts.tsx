@@ -1,6 +1,6 @@
 import sampleImg from "../download.png";
 import { FiSearch } from "react-icons/fi";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 type Props = {};
 

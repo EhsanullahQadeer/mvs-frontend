@@ -1,5 +1,6 @@
 import React from "react";
 import Avatar from "react-avatar";
+import { loadAsset } from "utils/dateUtils";
 
 // Define the ButtonProps type to handle all possible props
 interface ButtonProps {
@@ -41,7 +42,7 @@ const Thumbnail: React.FC<ButtonProps> = ({
   return (
       <Avatar
         name={professionalName}
-        src={thumbnail}
+        src={loadAsset(thumbnail)}
         size={size}
         round={round}
         color={"transparent"}

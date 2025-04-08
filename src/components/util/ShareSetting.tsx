@@ -20,7 +20,7 @@ import { RxPerson } from "react-icons/rx";
 import { FiDownload, FiLock } from "react-icons/fi";
 import { useEffect, useState, useCallback } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { getSamplePublicUrl, soundPublicUrl, updateSampleSettings, setSamplePassword, getSamplePassword, getSampleCollaborators } from "api/sounds";
 
 interface Collaborator {

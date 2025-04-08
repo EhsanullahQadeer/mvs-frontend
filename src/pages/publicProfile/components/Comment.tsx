@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import commentIcon from "../../../assets/img/comment.svg";
 import { getFanwallPostReplies, toggleFanwallPostLike } from "api/fanwall";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface IProps {
   fanwallPost: {

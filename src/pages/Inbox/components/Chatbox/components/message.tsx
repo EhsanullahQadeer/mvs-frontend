@@ -4,15 +4,15 @@ import { useChatbox } from "../context";
 import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
+import { loadAsset } from "utils/dateUtils";
 import MessageOptions from "./messageOptions";
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import { ReactComponent as AudioFileIcon } from "../../../../../assets/icons/audioFile.svg";
 import RecordedAudioMessagePlayer from "components/ui/Header/molecules/chatboxMolecules/recordedAudioMessage";
 import { MEDIA_TYPE, TRANSACTION_STATUS, IMessage, MESSAGE_TYPES, TRANSACTION_TYPE } from "api/messenger/objects/states.types";
 import SampleMessage from "../../SampleMessage";
-
 
 interface MessageProps {
   message: IMessage;
@@ -84,7 +84,7 @@ const Message: React.FC<MessageProps> = ({
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const [isMuted, setIsMuted] = useState(false);
-  const audioUrl = media?.url || null;
+  const audioUrl = loadAsset(media?.url) || null;
   
   function handleMessagedAsRead(){
     if (is_read === true || sender.id === activeConversation.user.id) return;

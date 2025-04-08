@@ -22,7 +22,7 @@ import skipBack from "../../../assets/img/player/skip-back.svg";
 import skipNext from "../../../assets/img/player/skip-forward.svg";
 import playButton from "../../../assets/img/player/play-circle.svg";
 import pauseButton from "../../../assets/img/player/pause-circle.svg";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 const AudioPlayer = ({
   currTrack,
