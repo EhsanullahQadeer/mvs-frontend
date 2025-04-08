@@ -211,8 +211,8 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
 
       <div
         className={`${
-          !isEditSample && "rounded-xl border border-eclipseGray bg-eerieBlack"
-        } p-5 flex flex-col gap-4`}
+          !isEditSample && "md:rounded-xl md:border border-b border-eclipseGray md:bg-eerieBlack"
+        } md:p-5 pb-3 flex flex-col gap-4`}
       >
         <div className="flex items-center justify-between">
           {!isLoginProfile && (
@@ -230,7 +230,7 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
           )}
         </div>
 
-        <div className="flex gap-5">
+        <div className="flex md:flex-row flex-col gap-3  md:gap-5">
           <FormikLabeledField
             name="songName"
             label="Song / Sample Name"
@@ -244,7 +244,7 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
           />
         </div>
 
-        <div className="flex gap-5">
+        <div className="flex md:flex-row flex-col gap-3 md:gap-5">
           <FormikSingleSelectDropdown
             name="songType"
             label="Song / Sample Type"
@@ -269,7 +269,7 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
           </div>
         </div>
 
-        <div className="flex gap-5">
+        <div className="flex md:flex-row flex-col  gap-5">
           <FormikLabeledField
             name="sampleKey"
             label="Sample Key"
