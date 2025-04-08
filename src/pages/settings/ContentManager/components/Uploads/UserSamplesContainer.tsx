@@ -1,27 +1,18 @@
-/*************************************************************************
- * @file AttachedFilesSection.tsx
- * @author Ehsanullah Qadeer
- * @desc  This is the component for showing attached files.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import { useEffect, useState } from "react";
-import AttachedFilesTable from "./AttachedFilesTable";
 import { deleteSampleAPI, getUserSamplesAPI } from "api/sounds";
 import AlertDialog from "components/util/AlertDialog";
 import {
-  ICurrentUser,
   ISample,
   ISampleSearchConstraints,
   IGetUserSamplesResponse,
-} from "./types";
-import UpdateSamplePopup from "./UpdateSamplePopup";
+} from "../types";
+import { RootState } from "redux/reducers";
+import { useSelector } from "react-redux";
+import UserSamplesTable from "./UserSamplesTable";
+import UpdateSamplePopup from "../Uploader/UpdateSamplePopup";
 
 type Props = {
   setLoading: (value: boolean) => void;
-  currentUserInfo: ICurrentUser;
   isNewUser?: boolean;
   updateData?: number;
 };
@@ -37,12 +28,18 @@ const defaultSampleSearchConstraints: ISampleSearchConstraints = {
   take: 10,
 };
 
-const AttachedFilesSection = (props: Props) => {
-  const { setLoading, currentUserInfo, isNewUser, updateData } = props;
+const UserSamplesContainer = (props: Props) => {
+  const user = useSelector((state: RootState) => state.auth?.user);
+  const { setLoading, isNewUser, updateData } = props;
   const [selectedTab, setSelectedTab] = useState("all");
+  const [sampleToEdit, setSampleToEdit] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openSampleEditPopup, setOpenSampleEditPopup] = useState(false);
+
   const [sampleSearchConstraints, setSampleSearchConstraints] = useState(
     defaultSampleSearchConstraints
   );
+
   const [getUserSamplesResponse, setGetUserSamplesResponse] =
     useState<IGetUserSamplesResponse>();
 
@@ -56,6 +53,7 @@ const AttachedFilesSection = (props: Props) => {
       getSamplesData();
     }
   }, [selectedTab, sampleSearchConstraints]);
+  
   useEffect(() => {
     getSamplesData();
   }, [updateData]);
@@ -64,12 +62,11 @@ const AttachedFilesSection = (props: Props) => {
     setLoading(true);
     try {
       const response = await getUserSamplesAPI({
-        user_id: currentUserInfo.id,
+        user_id: user.id,
         skip: sampleSearchConstraints.skip,
         take: sampleSearchConstraints.take,
         filter: selectedTab,
       });
-      console.log("response here!!!", response);
       const samples: IGetUserSamplesResponse = response.data.results;
       setGetUserSamplesResponse(samples);
     } catch (error) {
@@ -79,22 +76,18 @@ const AttachedFilesSection = (props: Props) => {
     }
   };
 
-  const [sampleToEdit, setSampleToEdit] = useState(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openEditPopup, setOpenEditPopup] = useState(false);
-
   const handleOpenDialog = (action: string, sample: ISample) => {
     if (action === "delete") {
       setOpenDeleteDialog(true);
     } else {
-      setOpenEditPopup(true);
+      setOpenSampleEditPopup(true);
     }
     setSampleToEdit(sample);
   };
 
   const handleCloseDialog = () => {
     setOpenDeleteDialog(false);
-    setOpenEditPopup(false);
+    setOpenSampleEditPopup(false);
     setSampleToEdit(null);
   };
 
@@ -125,15 +118,15 @@ const AttachedFilesSection = (props: Props) => {
           onConfirm: handleDeleteComposer,
         }}
       />
-
-      <UpdateSamplePopup
-        {...{
-          open: openEditPopup,
-          handleClose: handleCloseDialog,
-          sampleToEdit,
-          currentUserInfo,
-        }}
-      />
+      {openSampleEditPopup && (
+        <UpdateSamplePopup
+          {...{
+            handleClose: handleCloseDialog,
+            sampleToEdit,
+            user,
+            }}
+        />
+      )}
 
       <div className="py-3 flex flex-col gap-2">
         <h3 className="text-lg font-semibold text-platinum">Attached files</h3>
@@ -165,7 +158,7 @@ const AttachedFilesSection = (props: Props) => {
 
       {getUserSamplesResponse && (
         <div>
-          <AttachedFilesTable
+          <UserSamplesTable
             {...{
               getUserSamplesResponse,
               handleOpenDialog,
@@ -179,4 +172,4 @@ const AttachedFilesSection = (props: Props) => {
   );
 };
 
-export default AttachedFilesSection;
+export default UserSamplesContainer;

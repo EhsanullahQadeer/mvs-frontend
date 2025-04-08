@@ -1,44 +1,25 @@
-/*************************************************************************
- * @file UploadingFilesSection.tsx
- * @author Ehsanullah Qadeer
- * @desc  This is the main wrapper for the files that are uploading.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-
-import waveformIcon from "../../../../assets/icons/waveformIcon.svg";
-import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
+import waveformIcon from "../../../../../assets/icons/waveformIcon.svg";
+import { ReactComponent as CancelIcon } from "../../../../../assets/icons/cancelIcon.svg";
 import { FaCircleCheck } from "react-icons/fa6";
-import MetaDataForm from "./MetaDataForm";
-import { ICurrentUser } from "./types";
 import { useState } from "react";
-import SampleUploadModel from "pages/profile/components/SampleUploadModel";
-
+import { useContentManager } from "../../context";
+import UploadingSampleDetails from "./UploadingSampleDetails";
+import UploadingSampleDetailsModal from "pages/profile/components/SampleUploadModel";
 const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
-type Props = {
-  uploadingFile: File;
-  fileRedisKey: string;
-  uploadProgress: number;
-  handleCancel: () => void;
-  setUploadingFile?: (event: any) => void;
-  currentUserInfo: ICurrentUser;
-  setUpdateData?: (event: number) => void;
-  isLoginProfile?: boolean;
-};
+interface FileUploadingContainerProps {
+  modal?: boolean;
+}
 
-const UploadingFilesSection = (props: Props) => {
+const FileUploadingContainer = (props: FileUploadingContainerProps) => {
+  const { modal } = props;
   const {
     uploadingFile,
     setUploadingFile,
-    fileRedisKey,
     uploadProgress,
-    handleCancel,
-    currentUserInfo,
-    setUpdateData,
-    isLoginProfile,
-  } = props;
+    handleCancelUpload,
+  } = useContentManager();
 
   function formatFileSize(sizeInBytes: number): string {
     const sizeInMB = sizeInBytes / (1024 * 1024);
@@ -57,6 +38,7 @@ const UploadingFilesSection = (props: Props) => {
 
     return file;
   };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     const validFile = selectedFile ? validateFile(selectedFile) : null;
@@ -72,7 +54,7 @@ const UploadingFilesSection = (props: Props) => {
       <div className="border-b border-eclipseGray">
         <div className="py-3 flex flex-col gap-2">
           <h3 className="text-[28px] font-semibold text-white -tracking-[0.56px] leading-[34px]">
-            Your files are uploading!
+            Your file is uploading!
           </h3>
           <p className="text-sm font-normal text-mediumGray">
             Please enter the file information below.
@@ -95,7 +77,7 @@ const UploadingFilesSection = (props: Props) => {
               <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                   <h4 className="text-platinum text-sm font-semibold">
-                    {uploadingFile.name}
+                    {uploadingFile?.name}
                   </h4>
                   <div className="text-limeGreen w-5 h-5">
                     <FaCircleCheck className="w-full h-full" />
@@ -103,17 +85,15 @@ const UploadingFilesSection = (props: Props) => {
                 </div>
 
                 <div
-                  onClick={() => handleCancel()}
+                  onClick={() => handleCancelUpload()}
                   className="bg-[#41404066] text-white rounded-[30px] w-6 h-6 cursor-pointer flex justify-center items-center"
                 >
                   <CancelIcon className="w-3 h-3" />
                 </div>
               </div>
-
               <span className="text-dimGray text-sm font-normal">
-                {formatFileSize(uploadingFile.size)}
+                {formatFileSize(uploadingFile?.size)}
               </span>
-
               <div className="flex items-center gap-3 py-1">
                 {uploadProgress !== 100 && (
                   <>
@@ -142,7 +122,6 @@ const UploadingFilesSection = (props: Props) => {
                   File uploaded successfully
                 </span>
               </div>
-
               <div className="flex gap-4">
                 <span className="text-silver text-xs font-normal underline cursor-pointer">
                   <label htmlFor="replace-file-upload" className="cursor-pointer">Replace File</label>
@@ -154,7 +133,6 @@ const UploadingFilesSection = (props: Props) => {
                     className="hidden"
                   />
                 </span>
-                
                 <span 
                   onClick={() => setIsModalOpen(true)} 
                   className="text-silver text-xs font-normal underline cursor-pointer"
@@ -165,22 +143,18 @@ const UploadingFilesSection = (props: Props) => {
             </div>
           )}
         </div>
-        {!isLoginProfile && (
-          <MetaDataForm
-            {...{ fileRedisKey, handleCancel, currentUserInfo, setUploadingFile,setUpdateData }}
+        {!modal && (
+          <UploadingSampleDetails
+            {...{ 
+              handleCancelUpload,
+              setUploadingFile 
+            }}
           />
         )}
-        {isLoginProfile && (
-          <SampleUploadModel
-            open={isModalOpen}
+        {modal && (
+          <UploadingSampleDetailsModal
+            open={modal}
             handleClose={() => setIsModalOpen(false)}
-            fileRedisKey={fileRedisKey}
-            handleCancel={handleCancel}
-            currentUserInfo={currentUserInfo}
-            setUpdateData={setUpdateData}
-            isEditSample={false}
-            sampleToEdit={null}
-            collaborators={[]}
           />
         )}
       </div>
@@ -188,4 +162,4 @@ const UploadingFilesSection = (props: Props) => {
   );
 };
 
-export default UploadingFilesSection;
+export default FileUploadingContainer;

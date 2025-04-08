@@ -1,17 +1,6 @@
-/*************************************************************************
- * @file AttachedFilesTable.tsx
- * @author Ehsanullah Qadeer
- * @desc AttachedFilesTable for content management page to show the list of attached files.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-
-/* LOCAL IMPORTS */
-import { tableStyles } from "./tableStyles";
+import { tableStyles } from "../tableStyles";
 import getMuiStyles from "styles/getMuiStyles";
-import musicBeam from "../../../../assets/icons/musicBeam.svg";
-
-// THIRD PARTY IMPORTS
+import musicBeam from "../../../../../assets/icons/musicBeam.svg";
 import moment from "moment";
 import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
@@ -26,7 +15,7 @@ import TableHead from "@mui/material/TableHead";
 import TableContainer from "@mui/material/TableContainer";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import TablePagination from "@mui/material/TablePagination";
-import { ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "./types";
+import { ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "../types";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 
 interface Column {
@@ -56,18 +45,18 @@ interface Props {
   setSampleSearchConstraints: (value:ISampleSearchConstraints) => void;
 }
 
-const AttachedFilesTable = (props: Props) => {
+const UserSamplesTable = (props: Props) => {
   const { 
     getUserSamplesResponse, 
     handleOpenDialog,
     sampleSearchConstraints={skip:0,take:10},
     setSampleSearchConstraints
-   } = props;
+  } = props;
 
+  const user = useSelector((state: RootState) => state.auth?.user);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<keyof Data>("filename");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
-  const currentUserInfo = useSelector((state: RootState) => state.auth.user);
 
 
   const handleRequestSort = (
@@ -192,7 +181,6 @@ const AttachedFilesTable = (props: Props) => {
                     active={orderBy === column.id}
                     direction={orderBy === column.id ? order : "asc"}
                     onClick={(e) => handleRequestSort(e, column.id)}
-                    // className="text-sm font-medium text-mediumGray hover:text-white transition-colors"
                   >
                     {column.label}
                   </TableSortLabel>
@@ -205,8 +193,7 @@ const AttachedFilesTable = (props: Props) => {
             {sortedData.length > 0 ? (
               sortedData
                 .map((row, idx) => {
-                  const { filename, thumbnail, name, created_at, collaborators } = row as any;
-                  //console.log("collaborators ", collaborators);
+                  const { filename, created_at, collaborators } = row as any;
                   const owner = collaborators?.find(collaborator => collaborator?.is_owner);
                   const ownerName = owner?.collaborator?.professional_name;
                   const isItemSelected = selected.includes(row.id);
@@ -272,7 +259,7 @@ const AttachedFilesTable = (props: Props) => {
                       </TableCell>
 
                       <TableCell align="right" sx={{ verticalAlign: "middle" }}>
-                        {owner?.collaborator?.id === currentUserInfo?.id && (
+                        {owner?.collaborator?.id === user?.id && (
                           <div className="flex gap-2 justify-end">
                             <div
                               onClick={() => handleOpenDialog("delete", row)}
@@ -336,4 +323,4 @@ const AttachedFilesTable = (props: Props) => {
   );
 };
 
-export default AttachedFilesTable;
+export default UserSamplesTable;

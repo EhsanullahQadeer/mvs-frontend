@@ -22,7 +22,7 @@ import ArtistProfile from "./profile/ArtistProfile";
 //Settings
 import ArtistWikiProfile from "./wiki-profile/ArtistWikiProfile";
 import AccountSetting from "./settings/account/AccountSetting";
-import ContentManagement from "./settings/content-management/ContentManagement";
+import ContentManagement from "./settings/ContentManager/ContentManagement";
 import SettingsLayout from "./settings/SettingsLayout";
 import BillingLayout from "./settings/billing/BillingSettings";
 import OnBoarding from "./onboarding/OnBoarding";

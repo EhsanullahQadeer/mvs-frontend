@@ -1,12 +1,5 @@
-/*************************************************************************
- * @file CustomFileDropper.tsx
- * @author Ehsanullah Qadeer
- * @desc  This is the component for uploading files.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
 import React, { useState } from "react";
-import uploadFileIcon from "../../../../assets/icons/uploadSheetIcon.svg";
+import uploadFileIcon from "../../../../../assets/icons/uploadSheetIcon.svg";
 
 const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
@@ -15,14 +8,17 @@ type Props = {
   uploadingFile: File | null;
   setUploadingFile: (file: File | null) => void;
   isLoginProfile?: boolean;
-
 };
 
-const CustomFileDropper = (props: Props) => {
-  const { uploadingFile, setUploadingFile ,isLoginProfile } = props;
-
+const FileDropper = (props: Props) => {
+  const { 
+    uploadingFile, 
+    setUploadingFile, 
+    isLoginProfile 
+  } = props;
+  
   const [errorMessage, setErrorMessage] = useState<string>("");
-
+  
   const validateFile = (file: File) => {
     setErrorMessage("");
 
@@ -69,11 +65,10 @@ const CustomFileDropper = (props: Props) => {
     <div
       onDrop={handleDrop}
       onDragOver={handleDragOver}
-      className={`${
-        uploadingFile
+      className={`${uploadingFile
           ? "border-2 border-[#0185FF] border-solid"
           : "border border-coolGray border-dashed"
-      } bg-richBlack text-center my-3 rounded-lg`}
+        } bg-richBlack text-center my-3 rounded-lg`}
     >
       <input
         accept="audio/*"
@@ -110,9 +105,8 @@ const CustomFileDropper = (props: Props) => {
             Maximum file size 50MB.
           </p>
           {!isLoginProfile &&
-                    <p className="text-red-300 text-base">Only ".WAV" and ".MP3"</p>
-
-                  }
+            <p className="text-red-300 text-base">Only ".WAV" and ".MP3"</p>
+          }
         </div>
 
         {(errorMessage || uploadingFile) && (
@@ -133,4 +127,4 @@ const CustomFileDropper = (props: Props) => {
   );
 };
 
-export default CustomFileDropper;
+export default FileDropper;

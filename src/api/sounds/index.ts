@@ -114,18 +114,15 @@ export async function uploadFile(payload: any, configs: any) {
   return axiosInstance.post("/sounds/upload/sample", payload, configs);
 }
 
-export async function uploadedFileMetadata(redisKey: string, payload: any) {
-  return axiosInstance.post(
-    `/sounds/sample/${redisKey}/save-metadata`,
-    payload
-  );
+export async function storeSample(payload: any) {
+  return axiosInstance.post(`/sounds/sample`, payload);
 }
 
 export async function soundPublicUrl(id: number, payload: any) {
   return axiosInstance.post(`/sounds/public-url/${id}`, payload);
 }
 
-export async function updateFileMetadata(id: any, payload: any) {
+export async function updateSampleData(id: any, payload: any) {
   return axiosInstance.put(`/sounds/sample/${id}`, payload);
 }
 

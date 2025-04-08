@@ -14,12 +14,22 @@ import getMuiStyles from "styles/getMuiStyles";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
-import { rolesArr } from "../sample-data/sampleData";
-import { ICollaborator, IUserProfile } from "./types";
-import MultiSelectDropdown from "./MultiSelectDropdown";
+import { ICollaborator, IUserProfile } from "../../types";
 import TableContainer from "@mui/material/TableContainer";
 import Tooltip from "@mui/material/Tooltip";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
+import MultiSelectDropdown from "../../MultiSelectDropdown";
+
+export const rolesArr = [
+  "Producer",
+  "Songwriter",
+  "Instrumentalist",
+  "Artist",
+  "DJ",
+  "Mixing Engineer",
+  "Mastering Engineer",
+  "Composer",
+];
 
 interface Props {
   composerData: ICollaborator[];
@@ -30,12 +40,6 @@ interface Props {
   collaborators: any[];
 }
 
-// Function to truncate text
-const truncateText = (text: string, maxLength: number = 20) => {
-  if (!text) return '';
-  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
-};
-
 function ContributersTable(
   props: Props
 ) {
@@ -44,9 +48,8 @@ function ContributersTable(
     composerData,
     setComposerData,
     handleOpenDeleteDialog,
-    percentError,
     setPercentError,
-    collaborators,
+    percentError
   } = props;
   const muiStyles = getMuiStyles();
 
@@ -72,7 +75,7 @@ function ContributersTable(
     event: ChangeEvent<HTMLInputElement>, id: number
   ) => {
     let { value } = event.target;
-    let parsedValue = parseFloat(value);
+    let parsedValue = value === '' ? 0 : parseFloat(value);
 
     if (isNaN(parsedValue)) {
       parsedValue = 0;
@@ -86,7 +89,6 @@ function ContributersTable(
     setComposerData((prevCollaborators) => {
       const newData = prevCollaborators.map((composer) => {
         if (composer.user?.id === id) {
-          console.log('Updating composer:', composer.user.professional_name);
           return { ...composer, contribution: parsedValue };
         }
         return composer;
@@ -122,7 +124,16 @@ function ContributersTable(
         >
           <TableRow>
             <TableCell>Contributors</TableCell>
-            <TableCell>Publishing %</TableCell>
+            <TableCell>
+              <div className="flex flex-col">
+                <span>Publishing %</span>
+                {percentError && (
+                  <span className="text-red-500 text-xs">
+                    Total percentage must equal 100%
+                  </span>
+                )}
+              </div>
+            </TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Role</TableCell>
             <TableCell />
@@ -147,7 +158,6 @@ function ContributersTable(
                     <span className="text-base">{composer?.user?.professional_name}</span>
                   </div>
                 </TableCell>
-
                 <TableCell>
                   <div>
                     <div className="flex gap-2.5 items-stretch">
@@ -157,13 +167,12 @@ function ContributersTable(
                             type="number"
                             min="0"
                             max="100"
-                            step="0.01"
-                            value={composer?.contribution}
+                            value={composer.contribution || ''}
                             onChange={(e) => handleInputChange(e, composer.user?.id)}
-                            className="text-silver text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11"
+                            className={`text-silver text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border ${percentError ? 'border-red-500' : 'border-eclipseGray'} hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                           />
                         ) : (
-                          <span className="text-silver text-sm font-semibold">
+                          <span className={`text-silver text-sm font-semibold ${percentError ? 'text-red-500' : ''}`}>
                             {composer.contribution}%
                           </span>
                         )}
@@ -196,12 +205,14 @@ function ContributersTable(
 
                 <TableCell align="right">
                   <div className="w-full flex justify-end">
-                    <div
-                      onClick={() => handleOpenDeleteDialog(composer)}
-                      className="rounded border border-eclipseGray w-14 px-2 py-1 text-sm text-mediumGray cursor-pointer"
-                    >
-                      Delete
-                    </div>
+                    {!composer.user?.is_owner && (
+                      <div
+                        onClick={() => handleOpenDeleteDialog(composer)}
+                        className="rounded border border-eclipseGray w-14 px-2 py-1 text-sm text-mediumGray cursor-pointer"
+                      >
+                        Delete
+                      </div>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>

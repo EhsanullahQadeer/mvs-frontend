@@ -1,24 +1,12 @@
-/*************************************************************************
- * @file UploadingFileMetaData.tsx
- * @author Ehsanullah Qadeer
- * @desc  This is the component for the files that are uploading to give their information.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-
 import { Field } from 'formik';
 import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { RootState } from "redux/reducers";
-import ComposerDialog from "./ComposerDialog";
+
 import getMuiStyles from "styles/getMuiStyles";
 import React, { useState, useEffect } from "react";
-import { songType } from "../sample-data/sampleData";
-import { IUploadingFileMetaDataProps } from "./types";
-import FormikLabeledField from "../../../../components/util/FormikLabeledField";
-import { ReactComponent as CancelIcon } from "../../../../assets/icons/cancelIcon.svg";
-import FormikSingleSelectDropdown from "../../../../components/util/FormikSingleSelectDropdown";
-import avatarImg from "../../../../assets/img/avatar.svg";
+import { ReactComponent as CancelIcon } from "../../../../../assets/icons/cancelIcon.svg";
+import avatarImg from "../../../../../assets/img/avatar.svg";
 import {
   FormControl,
   FormControlLabel,
@@ -26,8 +14,19 @@ import {
   RadioGroup,
 } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
+import { IUploadingFileMetaDataProps } from '../types';
+import ComposerDialog from './Collaborators/ComposerDialog';
+import FormikSingleSelectDropdown from 'components/util/FormikSingleSelectDropdown';
+import FormikLabeledField from 'components/util/FormikLabeledField';
 
-const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
+const songType = [
+  { label: "Instrumental", value: "instrumental" },
+  { label: "Full Song", value: "full_song" },
+  { label: "Vocal", value: "vocal" },
+  { label: "Sample", value: "sample" },
+];
+
+const SampleMetadata = (props: IUploadingFileMetaDataProps) => {
   const {
     privacyValue,
     setPrivacyValue,
@@ -37,7 +36,6 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
     isEditSample,
     handleClose,
     isLoginProfile,
-    sampleOwner,
   } = props;
 
   const muiStyles = getMuiStyles();
@@ -185,14 +183,6 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
     }
   };
 
-  // Function to truncate email addresses
-  const truncateEmail = (email: string) => {
-    const [localPart, domain] = email.split('@');
-    const [domainName, extension] = domain.split('.');
-    return `${localPart.substring(0, 6)}...@${domainName.substring(0, 3)}...${extension}`;
-  };
-
-  // Function to truncate text
   const truncateText = (text: string) => {
     if (text.length <= 10) return text;
     return `${text.substring(0, 10)}...`;
@@ -288,10 +278,8 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
               {selectedComposer?.length ? (
                 selectedComposer?.map((composer, idx) => {
                   const { professional_name } = composer?.user;
-
-                  // Function to remove composer
                   const removeComposer = (event: React.MouseEvent) => {
-                    event.stopPropagation(); // Prevent parent onClick from firing
+                    event.stopPropagation();
                     setSelectedComposer(prev => 
                       prev.filter((_, index) => index !== idx)
                     );
@@ -308,7 +296,7 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
                       </Tooltip>
                       <div 
                         className="w-3.5 h-3.5 cursor-pointer rounded-full text-mediumGray flex justify-center items-center hover:bg-dimGray hover:text-black" // Change 'gray-600' to your desired color
-                        onClick={removeComposer} // Add onClick to remove composer
+                        onClick={removeComposer}
                       >
                         <CancelIcon className="w-2 h-2" />
                       </div>
@@ -405,4 +393,4 @@ const UploadingFileMetaData = (props: IUploadingFileMetaDataProps) => {
   );
 };
 
-export default UploadingFileMetaData;
+export default SampleMetadata;
