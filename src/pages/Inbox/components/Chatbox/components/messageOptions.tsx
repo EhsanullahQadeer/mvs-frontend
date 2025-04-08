@@ -1,14 +1,16 @@
-import { ReactComponent as AddEmoji } from "../../../assets/icons/addIcon.svg";
-import comment from "../../../assets/icons/comment.svg";
-import reply from "../../../assets/icons/reply.svg";
-import { ReactComponent as MenuIcon } from "../../../assets/icons/menuIcon.svg";
+import { ReactComponent as AddEmoji } from "../../../../../assets/icons/addIcon.svg";
+import comment from "../../../../../assets/icons/comment.svg";
+import reply from "../../../../../assets/icons/reply.svg";
+import { ReactComponent as MenuIcon } from "../../../../../assets/icons/menuIcon.svg";
 import { useEffect, useRef, useState } from "react";
 import { LuMessagesSquare } from "react-icons/lu";
 import { FiEdit3 } from "react-icons/fi";
 import { FiCopy } from "react-icons/fi";
 import { LuDelete } from "react-icons/lu";
 import { LuShieldAlert } from "react-icons/lu";
-import { deleteMessage } from "api/messenger";
+import { useMessenger } from "api/messenger/context";
+import { useToast } from "shared/toasts/ToastProvider";
+
 
 type Props = {
   handleEmojiSelect: (id: number, emoji: any) => void;
@@ -19,8 +21,23 @@ type Props = {
   setOverlayLoading?: (loading: boolean) => void;
 };
 
-const MessageReactions = (props: Props) => {
-  const { handleEmojiSelect, id, isDemoSender, isOwner, onMessageDeleted, setOverlayLoading } = props;
+const MessageOptions = (props: Props) => {
+  const {
+    handleEmojiSelect, 
+    id, 
+    isDemoSender, 
+    isOwner, 
+    onMessageDeleted, 
+    setOverlayLoading 
+  } = props;
+
+  const { 
+    deleteMessage,
+    messages,
+    setMessages
+  } = useMessenger();
+
+  const { addToast } = useToast();
 
   const emojiRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -146,7 +163,7 @@ const MessageReactions = (props: Props) => {
   ];
 
   return (
-    <div className="flex items-center bg-eerieBlack border border-charcoalGray gap-1 rounded-lg shadow-md relative">
+    <div className="flex items-center bg-eerieBlack border border-charcoalGray gap-1 rounded-lg shadow-md relative z-20">
       {emojis.map((emoji) => (
         <button
           key={emoji}
@@ -238,8 +255,17 @@ const MessageReactions = (props: Props) => {
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200]">
           <div className="bg-eerieBlack border border-charcoalGray rounded-lg p-6 max-w-md">
-            <h3 className="text-platinum text-lg mb-4">Delete Message?</h3>
-            <p className="text-silver mb-6">This action cannot be undone.</p>
+            {messages?.find((message) => message.id === id)?.transaction?.status === 'pending' ? (
+              <>
+                <h3 className="text-platinum text-lg mb-4">Message Has a Pending Transaction</h3>
+                <p className="text-silver mb-6">Deleting this message will cancel the pending transaction. This action cannot be undone.</p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-platinum text-lg mb-4">Delete Message</h3>
+                <p className="text-silver mb-6">This action cannot be undone.</p>
+              </>
+            )}
             <div className="flex justify-end gap-4">
               <button 
                 className="px-4 py-2 text-silver hover:text-platinum"
@@ -247,16 +273,33 @@ const MessageReactions = (props: Props) => {
               >
                 Cancel
               </button>
-              <button 
+              <button
                 className="px-4 py-2 bg-[#BD0039] text-[#FEF2F2] rounded hover:bg-opacity-90"
                 onClick={async () => {
                   try {
                     setOverlayLoading?.(true);
-                    await deleteMessage({ messageId: id });
+                    const response = await deleteMessage({ messageId: id });
+                    if (!response.error) {
+                      addToast({ state: "messageDeleted" })
+                      setMessages(messages?.filter((message) => message.id !== id));
+                    }
                     setShowDeleteConfirm(false);
                     onMessageDeleted?.();
                   } catch (error) {
-                    console.error('Failed to delete message:', error);
+                    addToast({ 
+                      state: "failedToDeleteMessage",
+                      actionFunction: async () => {
+                        await deleteMessage({ messageId: id })                        
+                        .then(() => {
+                          setMessages(messages?.filter((message) => message.id !== id));
+                          setShowDeleteConfirm(false);
+                          onMessageDeleted?.();
+                        })
+                        .catch(() => {
+                          addToast({ state: "unexpectedError", permanent: true, actionFunction: () => window.location.reload() })
+                        })
+                      }
+                    })
                   } finally {
                     setOverlayLoading?.(false);
                   }
@@ -272,4 +315,4 @@ const MessageReactions = (props: Props) => {
   );
 };
 
-export default MessageReactions;
+export default MessageOptions;

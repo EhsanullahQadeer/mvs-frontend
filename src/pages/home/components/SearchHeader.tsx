@@ -24,7 +24,7 @@ import { searchAllUsers, userArtistSearch } from "api/user";
 import useDebounce from "hooks/useDebounce";
 import { useState, useEffect } from "react";
 import avatarImg from "../../../assets/img/avatar.svg";
-
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 export interface IAppProps {}
 const headerButtons = [
   "pop",
@@ -69,7 +69,6 @@ export function SearchHeader() {
     (async () => {
       const response = await searchAllUsers("", 10, true, true);
       setSearchResults(response.data);
-      //console.log("searchResults", searchResults);
     })();
   }, []);
 
@@ -190,11 +189,7 @@ export function SearchHeader() {
                         handleArtistSelected(option);
                       }}
                     >
-                      <img
-                        src={option?.thumbnail || avatarImg}
-                        alt={option.professionalName}
-                        className="w-10 h-10 rounded-md"
-                      />
+                      <Thumbnail professionalName={option?.professional_name} thumbnail={option?.thumbnail} size="40" round={false}/>
                       <div className="flex items-center gap-3">
                         <span className="text-gainsboro text-sm w-32">
                           {option.professionalName}

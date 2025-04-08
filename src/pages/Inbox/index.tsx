@@ -1,13 +1,3 @@
-/*************************************************************************
- * @file InboxPage.tsx
- * @author Ehsanullah
- * @desc Component for displaying and managing user messages and
- *       conversations.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-
-/* IMPORTS */
 import Theme from "theme";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";

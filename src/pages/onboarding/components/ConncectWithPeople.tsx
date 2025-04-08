@@ -6,14 +6,14 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
-import { CircularProgress } from "@mui/material";
-import useDebounce from "hooks/useDebounce";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { conncetPeopleArr } from "../sample-data/sampleData";
-import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
-import { getTopPopularUsers, searchAllUsers } from "api/user";
+import { searchAllUsers } from "api/user";
+import useDebounce from "hooks/useDebounce";
+import { CircularProgress } from "@mui/material";
 import { IUserFollowConnection } from "api/user/types";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 const MIN_ITEMS = 21;
 const ITEM_WIDTH = 230;
@@ -180,13 +180,7 @@ const ConncectWithPeople = (props: Props) => {
                     className="h-[66px] w-full relative rounded-t-lg"
                   >
                     <div className="w-[92px] h-[92px] bg-eerieBlack rounded-full absolute top-1/2 mx-[9px] flex justify-center items-center">
-                      <div className="w-[84px] h-[84px]">
-                        <img
-                          src={thumbnail}
-                          alt="thumbnaiSrc"
-                          className="w-full h-full object-cover rounded-full"
-                        />
-                      </div>
+                      <Thumbnail professionalName={professional_name} thumbnail={thumbnail} size="84" userId={id}/>
                     </div>
                   </div>
 

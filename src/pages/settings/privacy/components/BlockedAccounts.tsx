@@ -1,5 +1,7 @@
-import { FiSearch } from "react-icons/fi";
 import sampleImg from "../download.png";
+import { FiSearch } from "react-icons/fi";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
+
 type Props = {};
 
 const BlockedAccounts = (props: Props) => {
@@ -43,14 +45,10 @@ const BlockedAccounts = (props: Props) => {
               className="py-1 flex justify-between items-center gap-2"
             >
               <div className="flex items-center gap-3">
-                <div
-                  className={`relative rounded-full p-[1px] w-8 h-8`}
-                >
-                  <img
-                    src={thumbnail}
-                    alt="thumbnail"
-                    className="h-full w-full rounded-full object-cover border-2 border-gray-900"
-                  />
+                <div className="flex h-auto w-auto rounded-full object-cover bg-[#000] items-center justify-center">
+                  <div className="p-1">
+                    <Thumbnail professionalName={artistName} thumbnail={thumbnail} size="8"/>
+                  </div>
                 </div>
 
                 <div>

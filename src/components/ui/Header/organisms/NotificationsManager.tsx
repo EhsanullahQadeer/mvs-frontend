@@ -29,6 +29,8 @@ interface NotificationManagerProps {
   setUnreadNotifCount: React.Dispatch<React.SetStateAction<number>>;
   allowLoading: boolean;
   setAllowLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  muteNotifications: boolean;
+  toggleMuteNotifications: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type NotificationType = 'CONNECTION_REQUEST' | 'CONNECTION_RESPONSE' | 'COLLABORATION_REQUEST' | 
@@ -65,9 +67,10 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
   setUnreadNotifCount,
   allowLoading,
   setAllowLoading,
+  muteNotifications,
+  toggleMuteNotifications,
 }) => {
   let skip = 0;
-  const [isToggled, setIsToggled] = useState<boolean>(false);
   const [notifIdForIsRead, setNotifIdForIsRead] = useState<number>();
   const [selectedTab, setSelectedTab] = useState<'all' | keyof typeof NOTIFICATION_GROUPS>('all');
   const refreshRef = useRef(null);
@@ -88,12 +91,8 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
 
   useEffect(() => {
     if(!refreshRef.current) return;
-      observer.observe(refreshRef.current);
-    }, [])
-
-  const handleToggle = () => {
-    setIsToggled(!isToggled);
-  }
+    observer.observe(refreshRef.current);
+  }, [])
 
   useEffect(() => {
     if (notifIdForIsRead !== undefined) {
@@ -146,30 +145,29 @@ const NotificationsManager: React.FC<NotificationManagerProps> = ({
     window.isNotificationInCurrentTab = isNotificationInCurrentTab;
   }, [selectedTab]);
 
-  
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-[8]" onClick={() => setIsOpen(false)} /> // Overlay
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[51]" onClick={() => setIsOpen(false)} /> // Overlay (Chatbox is at 50, set overlay to 51 and Notification Manager to 52)
       )}
       {isOpen && (
-        <div className='fixed w-[418px] h-[621px] top-[80px] right-[320px] shadow-lg rounded-[12px] z-[10] bg-[#131313] overflow-hidden border border-[#3D3D3D]'>
+        <div className='fixed w-[418px] h-[621px] top-[80px] right-[320px] shadow-lg rounded-[12px] z-[52] bg-[#131313] overflow-hidden border border-[#3D3D3D]'>
           <div className="pt-[10px] px-5">
             <div className="flex justify-between items-center pb-[21px]">
               <h2 className="text-[18px] font-semibold text-white pt-5">Notifications</h2>
               <div className='pt-5'>
-                <span className="text-[14px] font-[400] text-[#666666] mr-2">Disable Alerts</span>
-                <label htmlFor="toggle" className="relative inline-block w-12 h-6">
+              <span className="text-[14px] font-[400] text-[#666666] mr-2">Mute Sound</span>
+              <label htmlFor="toggle" className="relative inline-block w-12 h-6">
                   <input
                     id="toggle"
                     type="checkbox"
                     className="opacity-0 w-0 h-0"
-                    checked={isToggled}
-                    onChange={handleToggle}
+                    checked={muteNotifications}
+                    onChange={(e) => toggleMuteNotifications(!muteNotifications)}
                   />
                   <span
-                    className={`slider round ${isToggled ? 'bg-blue-500' : 'bg-gray-300'}`}
-                    aria-checked={isToggled ? 'true' : 'false'}
+                    className={`slider round `}
+                    aria-checked={muteNotifications ? 'true' : 'false'}
                   ></span>
                 </label>
               </div>

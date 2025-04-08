@@ -7,10 +7,9 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
-
+import { tableStyles } from "./tableStyles";
 import getMuiStyles from "styles/getMuiStyles";
 import musicBeam from "../../../../assets/icons/musicBeam.svg";
-import { tableStyles } from "./tableStyles";
 
 // THIRD PARTY IMPORTS
 import moment from "moment";
@@ -18,16 +17,17 @@ import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import { Checkbox } from "@mui/material";
+import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
-import { useDispatch, useSelector } from "react-redux";
 import TableContainer from "@mui/material/TableContainer";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import TablePagination from "@mui/material/TablePagination";
 import { ISample,ISampleSearchConstraints, IGetUserSamplesResponse } from "./types";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface Column {
   id: "filename" | "created_at" | "artist" | "uploadedBy";
@@ -264,14 +264,7 @@ const AttachedFilesTable = (props: Props) => {
                         onClick={(event) => handleClick(event, row.id)}
                       >
                         <div className="flex gap-2.5 items-center">
-                          <div className="rounded-full w-8 h-8">
-                            <img
-                              src={owner?.collaborator?.thumbnail}
-                              alt=""
-                              className="rounded-full w-full h-full"
-                            />
-                          </div>
-
+                          <Thumbnail professionalName={owner?.collaborator?.professional_name} thumbnail={owner?.collaborator?.thumbnail} userId={owner?.collaborator?.id} size="32"/>
                           <div className="text-sm font-medium whitespace-nowrap">
                             {ownerName}
                           </div>

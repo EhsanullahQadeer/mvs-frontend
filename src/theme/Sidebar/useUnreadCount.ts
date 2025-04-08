@@ -1,6 +1,7 @@
+import { currentUserAPI } from "api/auth";
 import { useEffect, useState } from "react";
 import { useMessenger } from "api/messenger/context";
-import { currentUserAPI } from "api/auth";
+
 export const useUnreadCount = () => {
   const { 
     getTotalConversationUnread,
@@ -14,7 +15,6 @@ export const useUnreadCount = () => {
   const refreshUnreadCount = async () => {
     try {
       const isLoggedIn = await currentUserAPI();
-      console.log("isLoggedIn", isLoggedIn);
       if (isLoggedIn) {
         getTotalConversationUnread({
           types: ["priority", "general", "icebreaker"]

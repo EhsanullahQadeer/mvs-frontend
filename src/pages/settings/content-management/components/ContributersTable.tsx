@@ -6,10 +6,10 @@
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  *************************************************************************/
 
+import { ChangeEvent } from "react";
 import Table from "@mui/material/Table";
 import Paper from "@mui/material/Paper";
 import TableRow from "@mui/material/TableRow";
-import { ChangeEvent, useEffect } from "react";
 import getMuiStyles from "styles/getMuiStyles";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -19,6 +19,7 @@ import { ICollaborator, IUserProfile } from "./types";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 import TableContainer from "@mui/material/TableContainer";
 import { AiOutlineDelete } from "react-icons/ai";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface Props {
   composerData: ICollaborator[];
@@ -29,7 +30,16 @@ interface Props {
   collaborators: any[];
 }
 
-function ContributersTable(props: Props) {
+// Function to truncate text
+const truncateText = (text: string, maxLength: number = 20) => {
+  if (!text) return '';
+  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+};
+
+function ContributersTable(
+  props: Props
+) {
+
   const {
     composerData,
     setComposerData,

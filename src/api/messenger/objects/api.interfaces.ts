@@ -62,12 +62,6 @@ export interface ISetConversationFavorite {
   conversationId: string;
 }
 
-export interface IGetConversationMessages {
-  conversationId: string;
-  skip?: number | null;
-  take?: number | null;
-}
-
 export interface IDeleteConversations {
   conversationIds: number[];
 }

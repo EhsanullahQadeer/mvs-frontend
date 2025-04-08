@@ -13,7 +13,7 @@ const HeaderCreditCount: React.FC<HeaderCreditCountProps> = ({
   return (
     <div className="w-[105px] h-[41px] flex items-center justify-center border-l border-[#1C1C1C] text-[12px] text-[#9EFF00] font-semibold">
       <span>{creditCount > 9999 ? "9999+" : wholeCredits.toString()}</span>
-      <sup>{decimalCredits>0 && creditCount < 9999?`${decimalCredits.toString().slice(1,4)}`:""}</sup>
+      <span className="text-[10px] opacity-75">{decimalCredits>0 && creditCount < 9999?`${decimalCredits.toString().slice(1,4)}`:""}</span>
       <span>&nbsp;Credits</span>
     </div>
   );

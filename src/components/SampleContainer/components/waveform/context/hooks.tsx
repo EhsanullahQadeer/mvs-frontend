@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import {
-  useCallback,
-  useContext,
-  useEffect,
-} from 'react'
-import { AudioTrack, PlayState } from '../types'
 import { waveformCtx } from '.'
 import { hashCode } from '../utils'
+import { useCallback, useContext } from 'react'
+import { AudioTrack, PlayState } from '../types'
 
 type TrackOptions = {
   reset?: boolean     // load only passed tracks, as opposed
@@ -107,5 +103,9 @@ export const useWaveform = () => {
     tracks,
     playTrack,
     pauseTrack,
+    setCurrent,
+    setLoading,
+    setPlayState,
+    setTracks
   };
 };

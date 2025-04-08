@@ -1,6 +1,9 @@
+import { RootState } from "redux/reducers";
 import AllTransactions from "./components/AllTransactions";
 import CreditsHistory from "./components/CreditsHistory";
 import Memberships from "./components/Memberships";
+import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 
 const MembershipsConnects = () => {
   return (

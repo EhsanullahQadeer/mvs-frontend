@@ -152,6 +152,7 @@ export type IMedia = {
   type: MEDIA_TYPE;
   created_at: string;
   updated_at: string;
+  played_through: boolean;
 } | null;
 
 export enum MEDIA_TYPE {
@@ -162,8 +163,20 @@ export enum MEDIA_TYPE {
 interface ThreadStats {
   replyCount: number;
   lastReplierThumbnail: string;
+  hasUnreadMessage: boolean;
+  professionalName: string;
+  id: number;
 }
 
+export  interface ISenderSample {
+  id: number;
+  s3_key: string;
+  filename: string;
+  created_at: string;
+  is_downloaded: boolean;
+  length: string;
+  
+}
 export interface IMessage {
   id: number;
   sender: TUser;
@@ -174,6 +187,7 @@ export interface IMessage {
   created_at: string;
   updated_at: string;
   media: IMedia | null;
+  sample: ISenderSample | null;
   thread: IThread | null;
   conversation: IConversation;
   transaction: ITransaction | null;

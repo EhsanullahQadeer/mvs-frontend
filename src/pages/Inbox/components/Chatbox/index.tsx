@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* IMPORTS */
+import axiosInstance from "api/axios";
 import { useChatbox } from "./context";
 import Footer from "./components/footer";
 import NotesSection from "../NotesSection";
@@ -23,8 +24,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { AudioRecordingProvider } from "./components/audioRecorder";
 import ChatboxTabs from "pages/Inbox/components/Chatbox/components/tabs";
 import { useNotification } from "services/WebSocket/useNotification.hook";
-import messageSound from "../../../../assets/audio/message-notification.mp3";
 import { ReactComponent as MenuIcon } from "../../../../assets/icons/menuIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface ChatboxProps {
   onClose: () => void;
@@ -37,6 +38,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     recipient,
     isThread,
     setIsThread,
+    LIMIT_MESSAGES
   } = useChatbox();
 
   const {
@@ -48,17 +50,20 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     setMessages,
     conversationNotes,
     setThreadMessages,
-    threadMessages
+    threadMessages,
+    getConversationMessages
   } = useMessenger();
 
   const [menuSection, setMenuSection] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("messages");
   const [prevIsThread, setPrevIsThread] = useState(isThread);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const messagesRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (prevIsThread !== isThread) {
@@ -67,15 +72,15 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
         setIsAnimating(false);
         setPrevIsThread(isThread);
       }, 300);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isThread, prevIsThread]);
-  
+
   // Determine animation classes based on transition state
   const getAnimationClass = () => {
     if (!isAnimating) return '';
-    
+
     if (isThread) {
       return 'animate-slide-left';
     } else {
@@ -93,111 +98,78 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
 
   useEffect(() => {
     if (activeConversation) {
-      //console.log("activeConversation", activeConversation);
       initialize();
     }
   }, [activeConversation]);
 
   const { refreshUnreadCount } = useUnreadCount();
 
-  // Add useEffect for audio initialization
-  useEffect(() => {
-    const initAudio = async () => {
-      try {
-        audioRef.current = new Audio(messageSound);
-        audioRef.current.crossOrigin = "anonymous";
-        audioRef.current.preload = "auto";
+  // Add this helper function
+  const isNearBottom = (element: HTMLElement, threshold = 0.2) => {
+    const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+    return distanceFromBottom <= element.clientHeight * threshold;
+  };
 
-        // Wait for audio to load
-        await new Promise(resolve => {
-          if (audioRef.current) {
-            audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
-            audioRef.current.load();
-          }
-        });
-
-        console.log('Message sound loaded successfully');
-      } catch (error) {
-        console.error('Error initializing message sound:', error);
-      }
-    };
-
-    initAudio();
-
-    // Cleanup
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
-        audioRef.current = null;
-      }
-    };
-  }, []);
-
-  const playSound = useCallback(() => {
-    console.log('Attempting to play message sound');
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            console.log('Message sound played successfully');
-          })
-          .catch(err => {
-            console.warn('Could not play message sound:', err);
-          });
-      }
-    } else {
-      console.log("Audio not loaded, skipping playback");
-    }
-  }, []);
-
-
+  // Modify the NEW_MESSAGE notification handler
   useNotification("NEW_MESSAGE", (data) => {
-    console.log("1. Data received:", data);
-    
-    if (!data || !data.message) {
-      console.log("No data or message");
+    if (!data || !data.message) return;
+
+    const message = data.message as IMessage;
+    const messageContainer = messagesRef.current;
+
+    if (messages?.some(m => m.id === message.id)) {
       return;
     }
 
-    const message = data.message as IMessage;
-    console.log("3. Message:", message);
     if (threadMessages && threadMessages[0]?.id === message.parentMessageId && isThread) {
-      console.log("5. Appending to thread messages");
       setThreadMessages([...threadMessages, message]);
       return;
     } else if (message.parentMessageId) {
       return;
     }
 
-    console.log("6. Messages:", messages);
-    console.log("7. Active conversation:", activeConversation);
     if (!messages) {
-      console.log("2. Setting messages");
       setMessages([message]);
-    } else if(activeConversation.id == message.conversation.id) {
-      console.log("4b. Appending to existing messages");
+    } else if (activeConversation.id == message.conversation.id) {
       setMessages([...messages, message]);
+      // Only scroll to bottom if we're already near the bottom
+      if (messageContainer && isNearBottom(messageContainer)) {
+        setTimeout(() => {
+          messageContainer.scrollTop = messageContainer.scrollHeight;
+        });
+      }
     }
-    console.log("7. Messages:", messages);
 
-    playSound();
     if (!isPublicProfile) {
       refreshUnreadCount();
     }
   });
 
+  // Remove or modify the useEffect that was forcing scroll to bottom
   useEffect(() => {
-    setTimeout(() => {
-      const messageContainer = messagesRef.current;
-      if (messageContainer) {
+    // Only scroll on new messages if we're near the bottom
+    const messageContainer = messagesRef.current;
+    if (messageContainer && isNearBottom(messageContainer)) {
+      setTimeout(() => {
         messageContainer.scrollTop = messageContainer.scrollHeight;
-      }
-    });
+      });
+    }
   }, [messages, conversationNotes]);
+
+  useEffect(() => {
+    if (messages === null) {
+      setHasMore(true);
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (messages === null) {
+      setIsInitialLoad(true);
+    } else if (isInitialLoad && messages && messages.length > 0 && messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      setIsInitialLoad(false);
+    }
+  }, [messages]);
 
   const handleMenuSection = () => {
     setMenuSection(!menuSection);
@@ -207,7 +179,7 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     {
       label: "Go to Profile",
       icon: <FiUser />,
-      func: () => {navigate(`/profile/${activeConversation?.recipient?.username}`)},
+      func: () => { navigate(`/profile/${activeConversation?.recipient?.username}`) },
     },
     {
       label: "Share Profile",
@@ -231,55 +203,90 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
     },
   ];
 
+  // Add scroll handler
+  const handleScroll = useCallback(async (e: React.UIEvent<HTMLDivElement>) => {
+    // Add this check at the top - don't handle scrolling if we're in thread view
+    if (isThread) return;
+    
+    const element = e.target as HTMLDivElement;
+    
+    // Check if we're at the top and not already loading
+    if (element.scrollTop === 0 && !isLoadingMore && hasMore && messages?.length > 0) {
+      setIsLoadingMore(true);
+      
+      try {
+        const response = await axiosInstance.get(`/messenger/conversation/${activeConversation.conversation_id}`, { 
+          params: { limit: LIMIT_MESSAGES, cursor: messages.length - 1 }
+        });
+        
+        const newMessages = response.data?.results.messages.reverse() || [];
+        
+        // Check for duplicates before merging
+        const uniqueNewMessages = newMessages.filter(
+          newMsg => !messages.some(existingMsg => existingMsg.id === newMsg.id)
+        );
+        
+        if (newMessages.length < 10) {
+          setHasMore(false);
+        }
+
+        const prevHeight = element.scrollHeight;
+        const mergedMessages = [...uniqueNewMessages, ...(messages || [])] as IMessage[];
+        setMessages(mergedMessages);
+        
+        setTimeout(() => {
+          element.scrollTop = element.scrollHeight - prevHeight;
+        }, 0);
+      } catch (error) {
+        console.error('Error loading more messages:', error);
+      } finally {
+        setIsLoadingMore(false);
+      }
+    }
+  }, [activeConversation, messages, isLoadingMore, hasMore, getConversationMessages, isThread]); // Add isThread to dependencies
+
   return (
     <div className="flex flex-col h-full w-full border-l border-eerieBlack bg-richBlack relative">
       <div className="flex flex-col h-full">
         {!isPublicProfile && (
-        <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
+          <div className="flex flex-col w-full max-md:max-w-full bg-richBlack">
 
-          <div className={`flex text-white items-center p-2
-               ${!isPublicProfile ? 'border-b border-[#1F1F1F]' : ''}`}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={onClose} className="cursor-pointer transform scale-x-[-1]">
-              <path d="M18 7L13 12L18 17M11 7L6 12L11 17" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
+            <div className={`flex text-white items-center p-2
+                ${!isPublicProfile ? 'border-b border-[#1F1F1F]' : ''}`}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={onClose} className="cursor-pointer transform scale-x-[-1]">
+                <path d="M18 7L13 12L18 17M11 7L6 12L11 17" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
 
-          <div className="flex flex-wrap gap-5 justify-between items-center p-4 w-full">
-            <div className="flex gap-2 items-center">
-              <div className="flex rounded-full p-0.5 w-12 h-12 aspect-square">
-                <div className="w-full h-full rounded-full border-[2px] border-[#151515]">
-                  <div
-                    style={{ backgroundImage: `url("${recipient?.thumbnail}")` }}
-                    className="w-full h-full rounded-full bg-cover bg-center"
-                  ></div>
+            <div className="flex flex-wrap gap-5 justify-between items-center p-4 w-full">
+              <div className="flex gap-2 items-center">
+                <Thumbnail professionalName={recipient.professional_name} thumbnail={recipient.thumbnail} size="40" userId={recipient.id}/>
+                <div className="flex flex-col gap-0.5">
+                  <div className="text-sm font-semibold text-white">
+                    {recipient?.name}
+                  </div>
+                  <div className="text-xs text-silver font-normal">
+                    {recipient?.country}, {recipient?.region}
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-0.5">
-                <div className="text-sm font-semibold text-white">
-                  {recipient?.name}
-                </div>
-                <div className="text-xs text-silver font-normal">
-                  {recipient?.country}, {recipient?.region}
+              <div className="flex items-center gap-2">
+                <div
+                  onClick={handleMenuSection}
+                  className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver relative"
+                >
+                  <MenuIcon className="w-5 h-5" />
+
+                  {menuSection && (
+                    <InboxDropdownMenu {...{ setMenuSection, dropdownMenuOptions }} />
+                  )}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div
-                onClick={handleMenuSection}
-                className="flex justify-center items-center w-9 h-9 rounded bg-[#242424] cursor-pointer text-silver relative"
-              >
-                <MenuIcon className="w-5 h-5" />
-
-                {menuSection && (
-                  <InboxDropdownMenu {...{ setMenuSection, dropdownMenuOptions}} />
-                )}
-              </div>
+            <div className="flex px-4 py-2 w-full">
+              <ChatboxTabs tab={activeTab} setter={setActiveTab} />
             </div>
           </div>
-          <div className="flex px-4 py-2 w-full">
-            <ChatboxTabs tab={activeTab} setter={setActiveTab} />
-          </div>
-        </div>
         )}
         <div className="flex flex-col flex-1 relative overflow-hidden">
           {messages === null ? (
@@ -295,8 +302,20 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
           ) : (
             <div
               ref={messagesRef}
-              className="flex-col flex-1 py-3 overflow-y-auto overflow-x-hidden w-full custom-dropdown"
+              className="flex-col flex-1 py-3 overflow-y-auto w-full custom-dropdown relative"
+              onScroll={handleScroll}
             >
+              {isLoadingMore && (
+                <div className="flex justify-center py-2">
+                  <CircularProgress
+                    sx={{
+                      width: "24px !important",
+                      height: "24px !important",
+                      color: "#9EFF00",
+                    }}
+                  />
+                </div>
+              )}
               {activeTab === "messages" && (
                 <>
                   {messages?.length === 0 ? (
@@ -309,14 +328,14 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                       </p>
                     </div>
                   ) : (
-                    <div className={`flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto ${getAnimationClass()}`}>
+                    <div className={`flex flex-col flex-1 w-full overflow-visible ${getAnimationClass()}`}>
                       {isThread ? (
-                        <>
+                        <div className="w-full flex flex-col">
                           <div className="sticky top-0 bg-[#131313] border-b border-[#242424] px-4 py-2 flex items-center justify-between">
                             <div className="flex items-center">
                               <span className="text-white text-sm font-medium">Thread</span>
                             </div>
-                            <button 
+                            <button
                               onClick={() => {
                                 setIsThread(false);
                                 setThreadMessages(null);
@@ -324,20 +343,20 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                               className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-[#242424] transition-colors"
                             >
                               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13 1L1 13" stroke="#9EFF00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M1 1L13 13" stroke="#9EFF00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M13 1L1 13" stroke="#9EFF00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M1 1L13 13" stroke="#9EFF00" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                             </button>
                           </div>
                           {threadMessages && threadMessages?.length > 0 ? (
-                            <div className="w-full overflow-x-hidden overflow-y-auto">
+                            <div className="w-full overflow-visible">
                               {threadMessages?.map((message: IMessage, index) => (
                                 <>
                                   <div
                                     key={message.id}
                                     ref={index === threadMessages.length - 1 ? (el) => {
                                       if (el) {
-                                        el.scrollIntoView({ 
+                                        el.scrollIntoView({
                                           behavior: 'smooth',
                                           block: 'end'
                                         });
@@ -381,21 +400,11 @@ const Chatbox = ({ onClose, isPublicProfile = false }: ChatboxProps) => {
                               </div>
                             </div>
                           )}
-                        </>
+                        </div>
                       ) : (
-                        <div className="w-full overflow-x-hidden">
+                        <div className="w-full overflow-visible">
                           {messages && Array.isArray(messages) ? messages.map((message: IMessage, index) => (
-                            <div
-                              key={message?.id || index}
-                              ref={index === messages.length - 1 ? (el) => {
-                                if (el) {
-                                  el.scrollIntoView({ 
-                                    behavior: 'smooth',
-                                    block: 'end'
-                                  });
-                                }
-                              } : undefined}
-                            >
+                            <div key={message?.id || index} className="overflow-visible">
                               <Message
                                 message={message}
                                 index={index}

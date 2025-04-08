@@ -1,15 +1,15 @@
+import { uploadMedia } from "api/sounds";
 import Dialog from "@mui/material/Dialog";
-import CardInfoDialog from "./CardInfoDialog";
-import { IoIosArrowDown } from "react-icons/io";
+import { useChatbox } from "./Chatbox/context";
 import { getUserByIdAPI } from "../../../api/user";
 import React, { useEffect, useState } from "react";
-import { FaRegCircleQuestion } from "react-icons/fa6";
-import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
-import { capitalizeRegion, convertToCurrencyFormat, formatNumberWithCommas } from "utils/dateUtils";
 import { useMessenger } from "api/messenger/context";
-import { uploadMedia } from "api/sounds";
-import { toast } from "react-toastify";
-import { CircularProgress } from "@mui/material";
+import { FaRegCircleQuestion } from "react-icons/fa6";
+import StripeElements from "components/stripe/stripeElements";
+import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
+import { capitalizeRegion, convertToCurrencyFormat, formatNumberWithCommas } from "utils/dateUtils";
+import { useToast } from "shared/toasts/ToastProvider";
 
 interface Props {
   openPurchaseOrder: boolean;
@@ -20,6 +20,7 @@ interface Props {
   demoFile: File;
   messageInputValue: string;
   clearMessageInputs: () => void;
+  handleButtonClick: () => void;
 }
 
 const serviceFeePercentage = 2.9;
@@ -29,7 +30,6 @@ const PurchaseOrderDialog = (props: Props) => {
     openPurchaseOrder,
     setOpenPurchaseOrder,
     activeConversation,
-    handleSendMessage,
     setIsSubmitting,
     demoFile,
     messageInputValue,
@@ -37,11 +37,18 @@ const PurchaseOrderDialog = (props: Props) => {
   } = props;
 
   const {
+    LIMIT_MESSAGES,
+  } = useChatbox();
+
+  const {
     sendMessage,
     getConversationMessages
   } = useMessenger();
 
+  const { addToast } = useToast();
+
   const recipient = activeConversation?.recipient;
+  console.log('Recipient: ', recipient);
   const MAX_TIP_AMOUNT = 1000000;
   const [basePrice, setBasePrice] = useState(0);
   const [inputTipAmount, setInputTipAmount] = useState("$0.00");
@@ -49,7 +56,6 @@ const PurchaseOrderDialog = (props: Props) => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [discountCode, setDiscountCode] = useState<string>("");
   const [openCardInfo, setOpenCardInfo] = useState(false);
-  const [formData, setFormData] = useState({});
   const [isSending,setIsSending] = useState(false);
 
   useEffect(() => {
@@ -105,35 +111,59 @@ const PurchaseOrderDialog = (props: Props) => {
     setOpenCardInfo(true);
   };
 
-  const handleSendDemo = async () => {
+  const handleSendDemo = async (paymentIntentId: string) => {
     console.log("handleSendDemo", demoFile, messageInputValue);
-    const response = await uploadMedia({
-      file: demoFile,
-      type: 'demo',
-    });
-    console.log("response", response);
+    let response;
+    try {
+      response = await uploadMedia({
+        file: demoFile,
+        type: 'demo',
+      });
+      console.log("response", response);
 
-    if (!response?.data?.media?.id) {
-      console.error("No media ID in response:", response);
-      toast.error("Failed to upload audio file");
+      if (!response?.data?.media?.id) {
+        // if no file didnt create an id (not sure what to put here)
+        addToast({ state: "somethingWentWrong", permanent: true, actionFunction: () => window.location.reload()})
+        return;
+      }
+      addToast({ state: "fileUploadedSuccessfully" });
+    } catch (error) {
+      // if overall file upload fails
+      console.error("Error uploading media:", error);
+      addToast({ state: "fileUploadFailed", permanent: true, 
+        actionFunction: () => {
+          try {
+            handleSendDemo(paymentIntentId);
+          } catch (error) {
+            addToast({state: "unexpectedError", permanent: true, actionFunction: () => window.location.reload()})
+          }
+        }
+      })
       return;
     }
-    console.log("response.data.media.id", response.data.media.id);
-    console.log("totalAmount", totalAmount);
-    await sendMessage({
-      conversationId: activeConversation?.conversation_id || '',
-      message: messageInputValue,
-      creditPaymentAmount: totalAmount,
-      messageType: 'demo',
-      audioMediaId: response.data.media.id,
-      // stripePaymentIntentId: 'pi_3QJKTeFHUzsY35bv0TtvIhG7'
-    });
-    setTipAmount(0);
-    setInputTipAmount("");
-    setOpenPurchaseOrder(false);
-    setIsSending(false);
-    await getConversationMessages({ conversationId: activeConversation.conversation_id });
-    clearMessageInputs();
+    
+    try {
+      await sendMessage({
+        conversationId: activeConversation?.conversation_id || '',
+        message: messageInputValue,
+        creditPaymentAmount: totalAmount,
+        messageType: 'demo',
+        audioMediaId: response.data.media.id,
+        stripePaymentIntentId: paymentIntentId,
+    })
+    } catch (error) {
+      console.error("Error sending message:", error);
+      addToast({state: "messageFailedToSend", permanent: true, actionFunction: () => handleSendDemo(paymentIntentId)})
+    }
+    finally {
+      setTipAmount(0);
+      setInputTipAmount("");
+      setOpenPurchaseOrder(false);
+      setIsSending(false);
+      addToast({state: "demoSentSuccessfully", actionFunction: () => props.handleButtonClick()})
+      await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
+      clearMessageInputs();
+    }
   };
 
   useEffect(() => {
@@ -147,7 +177,7 @@ const PurchaseOrderDialog = (props: Props) => {
   const serviceFee = (subtotal * serviceFeePercentage) / 100;
 
   return (
-    <div style={{ zIndex: 99999 }}>
+    <div style={{ zIndex: 9998 }}>
       <Dialog
         open={openPurchaseOrder}
         onClose={handleClose}
@@ -181,14 +211,11 @@ const PurchaseOrderDialog = (props: Props) => {
                   background:
                     "linear-gradient(141.84deg, #0258A5 4.32%, #9EFF00 94.89%)",
                 }}
-                className="flex rounded-full p-0.5 w-10 h-10 aspect-square"
+                className="flex rounded-full p-0.5 aspect-square"
               >
-                <img
-                  alt=""
-                  loading="lazy"
-                  src={recipient?.thumbnail}
-                  className="object-cover w-full h-full rounded-full border-[2px] border-[#151515]"
-                />
+                <div className=" border border-[#151515] rounded-full">
+                  <Thumbnail professionalName={recipient?.name} thumbnail={recipient?.thumbnail} size="35"/>
+                </div>
               </div>
               <div className="flex flex-col gap-0.5 text-[14px]">
                 <div className="text-sm font-semibold text-white">
@@ -305,20 +332,6 @@ const PurchaseOrderDialog = (props: Props) => {
               </div>
             </div>
             <div>
-              <h2 className="text-[18px] font-semibold pb-2 pt-3 text-softGray">
-                Payment Method
-              </h2>
-              <div onClick={handleOpenCardInfo} className="relative">
-                <span className="absolute inset-y-0 right-3 flex items-center text-dimGray">
-                  <IoIosArrowDown />
-                </span>
-                <input
-                  name="none"
-                  type="name"
-                  placeholder="MVSSIVE Beta - Testing Card"
-                  className=" focus:border-transparent flex-1 focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
-                />
-              </div>
             </div>
 
             <div>
@@ -330,46 +343,13 @@ const PurchaseOrderDialog = (props: Props) => {
                 onChange={(e) => setDiscountCode(e.target.value)}
                 className="hover:border-charcoalGray flex-1 mb-2 focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none w-full text-sm text-center p-[12px] bg-jetBlack border border-eclipseGray text-dimGray rounded-lg"
               />
-            </div>
-          </div>
-
-          <div className="flex bottom-0 sticky bg-darkGray justify-end pb-6 pt-1 gap-2">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="border border-charcoalGray bg-jetBlack text-sm text-white font-semibold py-[12px] w-[86px] flex justify-center items-center rounded-full"
-            >
-              Close
-            </button>
-            {isSending?(
-              <div className="flex items-center">
-                <CircularProgress
-                  sx={{
-                    width: "30px !important",
-                    height: "30px !important",
-                    color: "#9EFF00",
-                  }}
-                />
+              <div className="my-2">
+                <StripeElements demoStripeProps={{onPaymentComplete: (intentId)=>{setIsSending(true);handleSendDemo(intentId)}, amount: Number(totalAmount), recipientId: recipient?.id, onClose: handleClose}}/>
               </div>
-              ) 
-              :(<button
-              type="submit"
-              onClick={()=>{setIsSending(true);handleSendDemo();}}
-              className="bg-limeGreen text-sm text-jetBlack font-semibold py-[12px] px-5 rounded-full"
-            >
-              Send Demo
-            </button>)}   
+            </div>
           </div>
         </div>
       </Dialog>
-
-      <CardInfoDialog
-        openCardInfo={openCardInfo}
-        setOpenCardInfo={setOpenCardInfo}
-        formData={setFormData}
-        handleBack={handleBack}
-        setFormData={setFormData}
-      />
     </div>
   );
 };

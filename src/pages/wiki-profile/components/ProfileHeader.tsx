@@ -7,14 +7,11 @@
  *************************************************************************/
 
 /* LOCAL IMPORTS */
-import {
-  // FiEdit3,
-  FiUserPlus,
-} from "react-icons/fi";
 import { MdVerified } from "react-icons/md";
-import { LiaEllipsisVSolid } from "react-icons/lia";
-import { FiSend } from "react-icons/fi";
 import { IArtistProfileData } from "./types";
+import { LiaEllipsisVSolid } from "react-icons/lia";
+import { FiSend, FiUserPlus } from "react-icons/fi";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface ProfileHeaderProps {
   isWikiProfile?: boolean;
@@ -35,7 +32,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
   const truncatedBio =
     bio && (bio.length > 255 ? bio.slice(0, 255) + "..." : bio);
   return (
-    <>
       <header
         style={{
           background:
@@ -50,16 +46,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
             isWikiProfile ? "flex-col text-cente gap-2" : "flex-row  gap-5"
           }`}
         >
-          <div
-            className={`rounded-full  p-0.5 ${
-              isWikiProfile ? "w-32 h-32" : "w-48 h-48"
-            } `}
-          >
-            <img
-              src={thumbnail}
-              alt="Profile"
-              className="h-full w-full rounded-full object-cover border-4 border-gray-900"
-            />
+          <div className="flex h-auto w-auto rounded-full object-cover bg-[#000] items-center justify-center">
+            <div className="p-1">
+              <Thumbnail thumbnail={thumbnail} size={`${isWikiProfile ? "124" : "144"}`}/>
+            </div>
           </div>
 
           <div
@@ -161,7 +151,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = (props) => {
           </div>
         </div>
       </header>
-    </>
   );
 };
 

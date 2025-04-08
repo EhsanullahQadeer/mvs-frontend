@@ -1,4 +1,4 @@
-import axiosPublic from "api/axiosPublic";
+import axiosPublic from "api/axios";
 import {
   ICreateFanwallPost,
   IGetFanwallPostRepliesParams,

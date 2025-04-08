@@ -12,6 +12,7 @@ import Modal from "react-modal";
 const ContactModal = (props: any) => {
   return (
     <Modal
+      id="contact-us-modal"
       ariaHideApp={false}
       className="bg-transparent"
       isOpen={props.openModal}
@@ -31,7 +32,7 @@ const ContactModal = (props: any) => {
         },
       }}
     >
-      <div className="z-modal animate-fade-in fixed left-0 top-0 flex flex-col items-stretch w-full h-screen overflow-y-auto">
+      <div className="z-modal animate-fade-in fixed left-0 top-0 flex flex-col items-stretch w-full h-screen overflow-y-auto custom-dropdown">
         <div className="flex flex-grow items-center justify-center py-4 w-full">
           <div
             role="dialog"
@@ -101,13 +102,13 @@ const ContactModal = (props: any) => {
 
                   <div className="flex gap-3 p-5 mt-2 whitespace-nowrap">
                     {/* eslint-disable-next-line */}
-                                              <img
-                                                  loading="lazy"
-                                                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/6c295ae726afc2362827dcb2b4fc4f2ff4a14b879be51d65d5f255ecd191b4a0?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
-                                                  className="shrink-0 w-6 aspect-square"
-                                              />
-                                              <div className="my-auto underline">@soundboyz.als</div>
-                                          </div>
+                      <img
+                          loading="lazy"
+                          src="https://cdn.builder.io/api/v1/image/assets/TEMP/6c295ae726afc2362827dcb2b4fc4f2ff4a14b879be51d65d5f255ecd191b4a0?apiKey=dc17e74fd8f04620bba968dc4f90b76e&"
+                          className="shrink-0 w-6 aspect-square"
+                      />
+                      <div className="my-auto underline">@soundboyz.als</div>
+                    </div>
                   </div>
 
                   {/* end  */}

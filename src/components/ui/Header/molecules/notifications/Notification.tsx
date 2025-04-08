@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toggleNotificationAsRead } from "api/notifier";
 import NotifTimestamp from "../../atoms/notificationAtoms/notifTimestamp";
 import AudioShareNotifContent from "./notificationContents/audioShareContent";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 import ReadBubble from "components/ui/Header/atoms/notificationAtoms/readOrUnreadBubble";
 import CheckmarkButton from "../../atoms/notificationAtoms/markNotificationAsReadButton";
-import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import LikeNotifContent from "components/ui/Header/molecules/notifications/notificationContents/likeContent";
 import FollowNotifContent from "components/ui/Header/molecules/notifications/notificationContents/followContent";
 import ViewDemoNotifContent from "components/ui/Header/molecules/notifications/notificationContents/viewDemoContent";
@@ -81,6 +81,9 @@ const Notification = ({ notification, unreadNotifCount, setUnreadNotifCount }: {
   const NotificationContent = 
     NOTIFICATION_COMPONENTS[notification.type as keyof typeof NOTIFICATION_COMPONENTS];
 
+    console.log('Notification username: ', notification.sender.username);
+    console.log('Notification profileName: ', notification.sender.displayName);
+
   const handleMarkAsRead = async () => {
     try {
       await toggleNotificationAsRead(notification.id);
@@ -106,7 +109,7 @@ const Notification = ({ notification, unreadNotifCount, setUnreadNotifCount }: {
           <div className="flex items-center">
             <ReadBubble isRead={notification.isRead} />
             <div className="mr-2">
-              <Thumbnail thumbnail={notification.sender.thumbnail} />
+              <Thumbnail professionalName={notification.sender.displayName} thumbnail={notification.sender.thumbnail} size="56" userId={notification.sender.id}/>
             </div>
           </div>
           <div className="flex-grow">

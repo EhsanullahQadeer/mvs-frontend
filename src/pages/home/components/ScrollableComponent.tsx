@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { GrFormLocation } from "react-icons/gr";
-import ScrollableContainer from "components/util/scrollable-container";
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { artistData } from "./data";
-import { userTagsObj } from "utils/usersTags";
-import { getKeyByValue } from "utils/jsHandlers";
-import { getUsersByTag } from "api/user";
 import "../styles/user-card.scss";
+import { artistData } from "./data";
+import { getUsersByTag } from "api/user";
+import { loadAsset } from "utils/dateUtils";
+import { userTagsObj } from "utils/usersTags";
+import { GrFormLocation } from "react-icons/gr";
 import { UserFiltersDTO } from "api/user/types";
+import { getKeyByValue } from "utils/jsHandlers";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import ScrollableContainer from "components/util/scrollable-container";
 import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 
 interface Props {
@@ -138,8 +139,7 @@ const ScrollableComponent = (props: Props) => {
             const concatedLocation = city + " , " + country;
             const location =
               concatedLocation.length > 17 ? country : concatedLocation;
-            return (
-              
+            return (              
               <div
                 key={professional_name + idx}
                 className="user-card-wrap cursor-grab carousel-inner px-1 flex transition-transform duration-1000 ease-linear"
@@ -154,7 +154,7 @@ const ScrollableComponent = (props: Props) => {
                     #000 100%
                   ),
                   linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
-                  url(${thumbnail})`,
+                  url(${loadAsset(thumbnail)})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",

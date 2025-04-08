@@ -13,6 +13,7 @@ import { ReactComponent as ArchiveIcon } from "../../../../../assets/icons/archi
 import { ReactComponent as UnarchiveIcon } from "../../../../../assets/icons/unarchieveIcon.svg";
 import { ReactComponent as AlertOctagonIcon } from "../../../../../assets/icons/alertOctagon.svg";
 import { ReactComponent as FolderInputIcon } from "../../../../../assets/icons/folderInputIcon.svg";
+import { useToast } from "shared/toasts/ToastProvider";
 
 const InboxHeader = () => {
   const {
@@ -40,7 +41,9 @@ const InboxHeader = () => {
     getTotalConversationUnread,
   } = useMessenger();
 
-  function refreshConversations(){
+  const { addToast } = useToast();
+
+  function refreshConversations() {
     loadConversations();
     setSelectedConversations([]);
     getTotalConversationUnread({
@@ -49,12 +52,49 @@ const InboxHeader = () => {
   }
 
   const options = [
-    { 
-      id: "archived", 
+    {
+      id: "archived",
       icon: <ArchiveIcon />,
       icon2: <UnarchiveIcon />,
       onClick: () => {
-        toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
+        toggleConversationIsArchived({ conversationIds: selectedConversations.map(conv => conv.id) })
+          .then(() => {
+            refreshConversations();
+            const isArchiving = selectedConversations.some(conv => !conv.is_archived);
+            if (isArchiving) {
+              addToast({
+                state: selectedConversations.length > 1 ? "messagesArchived" : "messageArchived",
+                position: "bottom-center",
+                duration: 7000,
+                actionFunction: () => {
+                  toggleConversationIsArchived({
+                    conversationIds: selectedConversations.map(conv => conv.id)
+                  })
+                    .then(() => {
+                      refreshConversations();
+                    });
+                }
+              });
+            }
+          })
+          .catch(error => {
+            console.error(error);
+            addToast({
+              state: "failedToArchiveMessage",
+              duration: 7000,
+              actionFunction: () => {
+                toggleConversationIsArchived({
+                  conversationIds: selectedConversations.map(conv => conv.id)
+                })
+                  .then(() => {
+                    refreshConversations();
+                  })
+                  .catch(() => {
+                    addToast({state: "unexpectedError", permanent: true, actionFunction: () => window.location.reload()})
+                  })
+              }
+            });
+          });
       },
       label: "Archive Conversation",
       label2: "Unarchive Conversation"
@@ -64,7 +104,32 @@ const InboxHeader = () => {
       icon: <AlertOctagonIcon />,
       icon2: <AlertOctagonIcon />,
       onClick: () => {
-        toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
+        toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) })
+        .then(() => {
+          refreshConversations();
+          addToast({
+            state: selectedConversations.length > 1 ? "messagesMovedToSpam" : "messageMovedToSpam",
+            duration: 7000,
+            actionFunction: () => {
+              toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) })
+              .then(() => refreshConversations())
+            }
+          })
+        })
+        .catch(error => {
+          console.error(error);
+          addToast({
+            state: "failedToMoveToSpam",
+            duration: 7000,
+            actionFunction: () => {
+              toggleConversationsIsSpam({ conversationIds: selectedConversations.map(conv => conv.id) })
+              .then(() => refreshConversations())
+              .catch(() => {
+                addToast({state: "unexpectedError", permanent: true, actionFunction: () => window.location.reload()})
+              })
+            }
+          })
+        })
       },
       label: "Mark as Spam",
       label2: "Unmark as Spam"
@@ -81,7 +146,7 @@ const InboxHeader = () => {
       id: "priority",
       icon: <FolderInputIcon />,
       onClick: () => {
-        toggleConversationsIsPriority({ conversationIds: selectedConversations.map(conv => conv.id) }).then(()=>refreshConversations())
+        toggleConversationsIsPriority({ conversationIds: selectedConversations.map(conv => conv.id) }).then(() => refreshConversations())
       },
       label: "Move to Priority",
       label2: "Move to General"
@@ -112,7 +177,7 @@ const InboxHeader = () => {
   };
 
   const handleNextPage = () => {
-    const totalPages = Math.ceil(inboxTab === 'search'? totalSearchMessages/CONVERSATIONS_PER_PAGE : totalConversations / CONVERSATIONS_PER_PAGE);
+    const totalPages = Math.ceil(inboxTab === 'search' ? totalSearchMessages / CONVERSATIONS_PER_PAGE : totalConversations / CONVERSATIONS_PER_PAGE);
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
@@ -183,19 +248,19 @@ const InboxHeader = () => {
               />
             </div>
           </div>
-          {options.map(({ id, icon, icon2 , onClick, label, label2 }) => (
+          {options.map(({ id, icon, icon2, onClick, label, label2 }) => (
             <Tooltip key={id} text={selectedMenuItem.toLowerCase() === id || inboxTab === id ? label2 : label}>
-            <div
-              key={id}
-              onClick={selectedConversations.length > 0 ? onClick : undefined} // Updated to conditionally set onClick
+              <div
+                key={id}
+                onClick={selectedConversations.length > 0 ? onClick : undefined} // Updated to conditionally set onClick
               className={`flex justify-center items-center w-8 h-8 rounded  ${
                 selectedConversations.length > 0
                     ? "bg-[#242424] text-white cursor-pointer"
                     : "bg-eerieBlack text-slateGray-2 cursor-not-allowed"
-              }`}
-            >
-              {selectedMenuItem.toLowerCase() === id ? icon2 : icon}
-            </div>
+                  }`}
+              >
+                {selectedMenuItem.toLowerCase() === id ? icon2 : icon}
+              </div>
             </Tooltip>
           ))}
           <div
@@ -206,8 +271,8 @@ const InboxHeader = () => {
 
             {menuSection && (
               <InboxDropdownMenu
-                {...{ 
-                  dropdownMenuOptions, 
+                {...{
+                  dropdownMenuOptions,
                   setMenuSection,
                   isConvoListMenu: true,
                   selectedMenuItem: selectedMenuItem,
@@ -223,15 +288,14 @@ const InboxHeader = () => {
         <div className="flex gap-3 items-center self-stretch my-auto">
           <div className="gap-2.5 self-stretch p-2.5 my-auto text-sm leading-none text-neutral-400">
             {(currentPage - 1) * CONVERSATIONS_PER_PAGE + 1}-
-            {Math.min(currentPage * CONVERSATIONS_PER_PAGE,inboxTab === 'search'?totalSearchMessages : totalConversations)} of { inboxTab === 'search'? totalSearchMessages: totalConversations}
+            {Math.min(currentPage * CONVERSATIONS_PER_PAGE, inboxTab === 'search' ? totalSearchMessages : totalConversations)} of {inboxTab === 'search' ? totalSearchMessages : totalConversations}
           </div>
           <div className="flex gap-2 justify-center items-center self-stretch my-auto">
             <IoIosArrowBack
               className={`object-contain shrink-0 text-limeGreen self-stretch my-auto text-2xl aspect-square 
-                ${
-                  currentPage > 1
-                    ? "cursor-pointer opacity-100"
-                    : "opacity-50"
+                ${currentPage > 1
+                  ? "cursor-pointer opacity-100"
+                  : "opacity-50"
                 }`}
               onClick={currentPage > 1 ? handlePrevPage : undefined}
             />
@@ -239,8 +303,8 @@ const InboxHeader = () => {
               className={`object-contain shrink-0 self-stretch text-limeGreen  my-auto text-2xl aspect-square 
                 ${
                   currentPage < Math.ceil(inboxTab === 'search' ? totalSearchMessages / CONVERSATIONS_PER_PAGE : totalConversations / CONVERSATIONS_PER_PAGE)
-                    ? "cursor-pointer opacity-100"
-                    : "opacity-50"
+                  ? "cursor-pointer opacity-100"
+                  : "opacity-50"
                 }`}
               onClick={
                 currentPage < Math.ceil(inboxTab === 'search' ? totalSearchMessages / CONVERSATIONS_PER_PAGE : totalConversations / CONVERSATIONS_PER_PAGE)

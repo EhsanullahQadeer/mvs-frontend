@@ -1,19 +1,24 @@
-import { useEffect, useState } from "react";
 import Comment from "./Comment";
 import icon from "../../../assets/img/icon.svg";
-import { createFanwallPost, getFanwallPosts } from "api/fanwall";
 import { CircularProgress } from "@mui/material";
-import { IArtistProfileData, ICurrentUser } from "./types";
 import UnlockContentModel from "./UnlockContentModel";
 import { IUserData } from "pages/profile/components/types";
+import { IArtistProfileData, ICurrentUser } from "./types";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { createFanwallPost, getFanwallPosts } from "api/fanwall";
+import { useNotification } from "services/WebSocket/useNotification.hook";
+import { ReactComponent as MessageSquareHeart } from "../../../assets/icons/messageSquareHeart.svg";
 
 interface IProps {
   artistData: IArtistProfileData | IUserData | null;
   currentUserInfo: ICurrentUser | null;
+  isLoginUser?: boolean;
 }
 
+const LIMIT = 10;
+
 const FanWall = (props: IProps) => {
-  const { artistData, currentUserInfo } = props;
+  const { artistData, currentUserInfo, isLoginUser = false } = props;
   const { id } = artistData || {};
   const [isLoading, setLoading] = useState(true);
   const [fanwallPostsData, setFanwallPostsData] = useState([]);
@@ -22,21 +27,78 @@ const FanWall = (props: IProps) => {
   const [openUnlockModal, setOpenUnlockModal] = useState(false);
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const [viewingRepliesForPost, setViewingRepliesForPost] = useState<number | null>(null);
 
-  const getFanwallPostsData = async () => {
+  useNotification('FANWALL_POST', (event) => {
+    const newPost = event.post;
+    if (newPost.parent || newPost.reply_to) {
+      const parentId = newPost.parent?.id;
+      setFanwallPostsData(prevPosts => {
+        return prevPosts.map(post => {
+          if (post.id === parentId) {
+            const updatedPost = {
+              ...post,
+              replies_count: (post.replies_count || 0) + 1,
+              replies_list: viewingRepliesForPost === post.id
+                ? [...(post.replies_list || []), { ...newPost, comment: newPost.post }]
+                : post.replies_list
+            };
+
+            return updatedPost;
+          }
+          return post;
+        });
+      });
+      return;
+    }
+
+    setFanwallPostsData(prevPosts => {
+      newPost.comment = newPost.post;
+      return [newPost, ...prevPosts];
+    });
+  });
+
+  const lastPostElementRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isLoading || isLoadingMore) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if ((entries[0].isIntersecting || entries[0].intersectionRatio > 0) && hasMore) {
+          setIsLoadingMore(true);
+          getFanwallPostsData(fanwallPostsData.length);
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, isLoadingMore, hasMore, fanwallPostsData.length]
+  );
+
+  const getFanwallPostsData = async (skip: number = 0) => {
     try {
-      setLoading(true);
+      if (skip === 0) {
+        setLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
       const params = {
         fanwall_owner: id,
-        skip: 0,
-        take: 10,
+        skip: skip,
+        take: LIMIT,
       };
       const response = await getFanwallPosts(params);
-      setFanwallPostsData(response.data);
+      console.log("response", response);
+      setFanwallPostsData(prev => [...prev, ...response.data.results.posts]);
+      setHasMore(response.data.results.hasMore);
     } catch (error) {
       console.log("error", error);
     } finally {
       setLoading(false);
+      setIsLoadingMore(false);
     }
   };
 
@@ -60,11 +122,34 @@ const FanWall = (props: IProps) => {
         fanwall_owner_id: id,
       };
 
-      await createFanwallPost(body);
+      const response = await createFanwallPost(body);
+      const createdPost = response.data;
+
+      if (postId) {
+        setViewingRepliesForPost(replyToId || postId);
+        
+        setFanwallPostsData(prevPosts => 
+          prevPosts.map(post => {
+            if (post.id === (replyToId || postId)) {
+              return {
+                ...post,
+                replies_count: (post.replies_count || 0) + 1,
+                replies_list: [...(post.replies_list || []), { ...createdPost, comment: createdPost.post }]
+              };
+            }
+            return post;
+          })
+        );
+      } else {
+        setFanwallPostsData(prevPosts => [{
+          ...createdPost,
+          comment: createdPost.post,
+        }, ...prevPosts]);
+      }
+
       handleCancel();
       setReplyText("");
       setReplyingTo(null);
-      await getFanwallPostsData();
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -89,9 +174,39 @@ const FanWall = (props: IProps) => {
     setIsFocused(false);
   };
 
+  const handleShowReplies = (postId: number) => {
+    console.log("Setting viewingRepliesForPost to:", postId);
+    if (viewingRepliesForPost === postId) {
+      setViewingRepliesForPost(null);
+    } else {
+      setViewingRepliesForPost(postId);
+    }
+  };
+
+  const handleHideReplies = () => {
+    console.log("Setting viewingRepliesForPost to null");
+    setViewingRepliesForPost(null);
+  };
+
+  function emptyFanwallPostsData() {
+    return isLoginUser ? (
+      <div className="flex flex-col text-[#FFFFFF] justify-center items-center h-full">
+        <MessageSquareHeart/>
+        <p className="text-lg mt-4 mb-2">No comments yet</p>
+        <p className="text-mediumGray m-0 w-[300px] text-center">No posts on your FanWall yet. When fans show support, you’ll see it here.</p>
+      </div>
+    ) :(
+      <div className="flex flex-col text-[#FFFFFF] justify-center items-center h-full">
+        <MessageSquareHeart/>
+        <p className="text-lg mt-4 mb-2">No comments yet</p>
+        <p className="text-mediumGray m-0">Be the first to leave a message and show your support!</p>
+      </div>
+    )
+  }
+
   useEffect(() => {
-    console.log("post comment data...", fanwallPostsData);
-  }, [fanwallPostsData]);
+    console.log("viewingRepliesForPost changed to:", viewingRepliesForPost);
+  }, [viewingRepliesForPost]);
 
   return (
     <>
@@ -141,23 +256,30 @@ const FanWall = (props: IProps) => {
             )}
           </div>
         </div>
-        <div>
-          {!isLoading &&
-            fanwallPostsData.map((fanwallPost, index) => (
-              <div key={index}>
-                <Comment
-                  {...{
-                    fanwallPost,
-                    replyingTo,
-                    setReplyingTo,
-                    replyText,
-                    setReplyText,
-                    handleSendReply: handleSend,
-                    rootCommentId: fanwallPost.id,
-                  }}
-                />
-              </div>
-            ))}
+
+        <div className="overflow-y-auto h-[60vh] custom-dropdown"> {/* Set a fixed height and enable vertical scrolling */}
+          {fanwallPostsData.length > 0 ? fanwallPostsData.map((fanwallPost, index) => (
+            <div
+              key={index}
+              ref={index === fanwallPostsData.length - 1 ? lastPostElementRef : null}
+            >
+              <Comment
+                {...{
+                  fanwallPost,
+                  replyingTo,
+                  setReplyingTo,
+                  replyText,
+                  setReplyText,
+                  handleSendReply: handleSend,
+                  rootCommentId: fanwallPost.id,
+                  handleShowReplies,
+                  handleHideReplies,
+                  viewingRepliesForPost,
+                  allowReply: true,
+                }}
+              />
+            </div>
+          )) : emptyFanwallPostsData()}
         </div>
 
         <UnlockContentModel
@@ -165,6 +287,16 @@ const FanWall = (props: IProps) => {
           onClose={() => setOpenUnlockModal(false)}
         />
       </div>
+      {isLoadingMore && (
+        <div className="flex justify-center my-4">
+          <CircularProgress
+            size={40}
+            sx={{
+              color: "#9EFF00",
+            }}
+          />
+        </div>
+      )}
     </>
   );
 };

@@ -1,17 +1,17 @@
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/reducers';
 import { useMessenger } from 'api/messenger/context';
+import { checkPendingConnectAPI, checkUserHasStripeConnectedAccount } from 'api/user';
 import { IConversation, IMessage, INotes, TUser } from 'api/messenger/objects/states.types';
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
-// import { useMessageReactions } from '../../hooks/useMessageReactions';
 
 type ChatTabType = 'messages' | 'info' | 'notes';
+type ConnectionDetail = false | null | 'pending' | undefined | true;
 
 interface ChatboxContextType {
   // State
   activeTab: ChatTabType;
   setActiveTab: (tab: ChatTabType) => void;
-  chatMessages: IMessage[] | null;
   activeConversation: IConversation | null;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,6 +20,12 @@ interface ChatboxContextType {
   notes: any[];
   recipient: TUser;
   totalPaid: number;
+  connectionStatus: ConnectionDetail;
+  setConnectionStatus: (status: ConnectionDetail) => void;
+  listenToDemoEvent: boolean;
+  setListenToDemoEvent: (listenedToDemoEvent: boolean) => void;
+  onlyAllowAudioRecording: boolean;
+  setOnlyAllowAudioRecording: (onlyAllowAudioRecording: boolean) => void;
     // messageReactions: any;
     // handleEmojiSelect: (id: number, emoji: string) => void;
   
@@ -31,7 +37,11 @@ interface ChatboxContextType {
   handleLoadThread: (parentMessageId: number) => void;
   isThread: boolean;
   setIsThread: (isThread: boolean) => void;
+  hasListenedToDemo: boolean;
+  setHasListenedToDemo: (hasListened: boolean) => void;
   markMessageAsRead: (id:number)=> void;
+  LIMIT_MESSAGES: number;
+  isSendDemoAvailable: boolean;
 }
 
 const ChatboxContext = createContext<ChatboxContextType | undefined>(undefined);
@@ -59,21 +69,47 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     getConversationNotes,
     threadMessages,
     activeConversation,
-    toggleMessageIsRead
+    setThreadMessages,
+    toggleMessageIsRead,
+    setMessages
   } = useMessenger();
 
   const [activeTab, setActiveTab] = useState<ChatTabType>('messages');
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionDetail>(undefined);
   const [overlayLoading, setOverlayLoading] = useState<boolean>(false);
-  const [chatMessages, setChatMessages] = useState<IMessage[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [recipient, setRecipient] = useState<TUser>(activeConversation?.recipient || null);
   const [totalPaid, setTotalPaid] = useState<number>(activeConversation?.total_paid || 0);
   const [notes, setNotes] = useState<INotes[]>(conversationNotes);
-  const [isThread, setIsThread] = useState<boolean>(false);
+  const [isThread, setIsThread] = useState<boolean>(false); // Todo: implement the new haslistened to demo var
+
+  const [hasListenedToDemo, setHasListenedToDemo] = useState<boolean>(false);
+  const [listenToDemoEvent, setListenToDemoEvent] = useState<boolean>(false);
+  const [onlyAllowAudioRecording, setOnlyAllowAudioRecording] = useState<boolean>(false);
+
+  const [isSendDemoAvailable, setIsSendDemoAvailable] = useState<boolean>(false);
+  const LIMIT_MESSAGES = 100;
 
   let onMessageReadTimeout;
   const updateMessageReadIds = useRef<number[]>([]);
 
+  useEffect(() => {
+    if (recipient) {
+      checkUserHasStripeConnectedAccount(recipient.id)
+        .then((res) => {
+          //console.log('res', res);
+          setIsSendDemoAvailable(res.data || false);
+        })
+        .catch((error) => {
+          console.error('Error checking Stripe account:', error);
+          setIsSendDemoAvailable(false);
+        });
+        fetchConnectionStatus(recipient.id)
+    } else {
+      setIsSendDemoAvailable(false);
+    }
+    fetchConnectionStatus(recipient?.id)
+  }, [recipient]);
 
   async function markMessageAsRead(id:number){
     clearTimeout(onMessageReadTimeout);
@@ -82,29 +118,36 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
       if (updateMessageReadIds.current.length === 0) return;
       toggleMessageIsRead({messageIds:updateMessageReadIds.current});
       updateMessageReadIds.current = [];
-    },5000);
+    }, 5000);
   }
 
-  useEffect(() => {
-    if (updateMessageReadIds.current.length > 0) {
-      toggleMessageIsRead({messageIds:updateMessageReadIds.current});
-      updateMessageReadIds.current = [];
+  const fetchConnectionStatus = async (id: number) => {
+    //console.log('Fetching Connection status with user: ', id);
+    try {
+      const response = await checkPendingConnectAPI(id);
+      //console.log('response: ', response);
+      if(response.data.results.connectionDetails === null) {setConnectionStatus(null);}
+      else {
+        setConnectionStatus(
+          response.data.results.connectionDetails.request_accepted
+        );
+      }
+    } catch (error) {
+      console.log("error while checking connection", error);
     }
-    setIsThread(false);
-  }, [activeConversation]);
+  }
 
   const getConversationInfo = useCallback(async () => {
     if (activeConversation) {
       setTotalPaid(activeConversation.total_paid);
       setRecipient(activeConversation.recipient);
     }
-  }, [activeConversation]);
-  
-  useEffect(() => {
-    if (messages === null) {
-      setChatMessages(messages);
+    if (updateMessageReadIds.current.length > 0) {
+      toggleMessageIsRead({messageIds:updateMessageReadIds.current});
+      updateMessageReadIds.current = [];
     }
-  }, [messages]);
+    setIsThread(false);
+  }, [activeConversation]);
 
   useEffect(() => {
     if (notes) {
@@ -121,13 +164,18 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     if (activeConversation) {
       setLoading(true);
       if (!isThread) {
-        setChatMessages(null);
-        getConversationMessages({ conversationId: activeConversation.conversation_id })
+        setMessages(null);
+        getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 })
           .finally(() => {
             setLoading(false);
           });
-      } else if (threadMessages?.[0]?.id) {
-        getThreadMessages({ parentMessageId: threadMessages[0].id })
+      } else if (threadMessages?.[0]?.id && messages === null) {
+        setThreadMessages(null);
+        getThreadMessages({ 
+          parentMessageId: threadMessages[0].id,
+          limit: LIMIT_MESSAGES,
+          cursor: undefined,
+        })
           .finally(() => {
             setLoading(false);
           });
@@ -136,7 +184,7 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [
     activeConversation, 
     getConversationMessages, 
-    getThreadMessages, 
+    getThreadMessages,
     isThread
   ]);
 
@@ -146,31 +194,18 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   }, [refreshMessages]);
 
   const getNotes = useCallback(async () => {
-    // Implementation for fetching notes
-    //console.log('Fetching notes for activeConversation:', activeConversation?.conversation_id);
     const fetchedNotes = await getConversationNotes({ conversationId: activeConversation?.id, ascending: true });
-    //console.log("fetchedNotes", fetchedNotes);
-    // setNotes(fetchedNotes);
   }, [activeConversation]);
 
   const handleLoadThread = useCallback((parentMessageId: number) => {
-    console.log('feedbackthread parentMessageId', parentMessageId);
+    setThreadMessages(null);
+    setIsThread(true);
     getThreadMessages({
-      parentMessageId
+      parentMessageId,
+      limit: LIMIT_MESSAGES,
+      cursor: undefined,
     });
-  }, [getThreadMessages]);
-  
-  // useEffect(() => {
-  //   if (activeConversation) {
-  //     setLoading(true);
-  //     Promise.all([
-  //       refreshMessages(),
-  //       getNotes()
-  //     ]).finally(() => {
-  //       setLoading(false);
-  //     });
-  //   }
-  // }, [activeConversation, refreshMessages, getNotes]);
+  }, [getThreadMessages, setMessages, setIsThread]);
 
   const value: ChatboxContextType = {
     activeTab,
@@ -181,12 +216,10 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     overlayLoading,
     setOverlayLoading,
     notes,
-    chatMessages,
     recipient,
     totalPaid,
-    // messageReactions,
-    // handleEmojiSelect,
-  
+    connectionStatus,
+    setConnectionStatus,
     refreshMessages,
     handleSendMessage,
     getNotes,
@@ -194,7 +227,15 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     handleLoadThread,
     isThread,
     setIsThread,
-    markMessageAsRead
+    hasListenedToDemo,
+    setHasListenedToDemo,
+    listenToDemoEvent,
+    setListenToDemoEvent,
+    onlyAllowAudioRecording,
+    setOnlyAllowAudioRecording,
+    markMessageAsRead,
+    LIMIT_MESSAGES,
+    isSendDemoAvailable
   };
 
   return (

@@ -1,14 +1,14 @@
-import { useSendMessage } from './hooks/useSendMessage';
+import { ISendMessage, useSendMessage } from './hooks/useSendMessage';
 import { useDeleteConversations } from './hooks/useDeleteConversations';
 import { useGetConversationNotes } from './hooks/useGetConversationNotes';
 import { IReplyInThread, useReplyInThread } from './hooks/useReplyInThread';
-import { useGetConversationMessages } from './hooks/useGetConversationMessages';
+import { IGetConversationMessages, useGetConversationMessages } from './hooks/useGetConversationMessages';
 import { useToggleConversationIsSpam } from './hooks/useToggleConversationIsSpam';
 import { IAddReaction, useAddReactionMessage } from './hooks/useAddReactionMessage';
 import { IGetConversations, useGetConversations } from './hooks/useGetConversations';
 import { IConversation, IMessage, INotes  } from 'api/messenger/objects/states.types';
 import React, { createContext, useContext, useState, ReactNode, useMemo } from 'react';
-import { IGetThreadMessages, useGetThreadMessages } from './hooks/useGetThreadMessages';
+import { IGetThreadMessages, ThreadMessagesResponse, useGetThreadMessages } from './hooks/useGetThreadMessages';
 import { useToggleConversationIsArchive } from './hooks/useToggleConversationIsArchive';
 import { useGetSearchMessages, ISearchMessagesParams } from './hooks/useGetSearchMessage';
 import { useToggleConversationIsPriority } from './hooks/useToggleConversationIsPriority';
@@ -23,11 +23,11 @@ import {
   IToggleConversationIsArchived, 
   IToggleConversationIsPriority, 
   IToggleConversationIsSpam,
-  IGetConversationMessages,
   IGetConversationNotes,
   IDeleteConversations,
-  ISendMessage,
+  IDeleteMessage,
 } from './objects/api.interfaces';
+import { useDeleteMessage } from './hooks/useDeleteMessage';
 
 interface MessengerContextType {
   // State
@@ -64,12 +64,16 @@ interface MessengerContextType {
   toggleConversationFavorite: (payload: IToggleConversationFavorite) => Promise<void>;
   deleteConversations: (payload: IDeleteConversations) => Promise<void>;
   getSearchMessages: (payload: ISearchMessagesParams) => Promise<void>;
-  getThreadMessages: (payload: IGetThreadMessages) => Promise<void>;
+  getThreadMessages: (payload: IGetThreadMessages) => Promise<ThreadMessagesResponse>;
+  setTotalPriorityInboxUnread: (payload: number) => void;
+  setTotalGeneralInboxUnread: (payload: number) => void;
+  setTotalIcebreakerInboxUnread: (payload: number) => void;
   threadMessages: IMessage[] | null;
   setThreadMessages: (messages: IMessage[]) => void;
   setMessages: (messages: IMessage[]) => void;
   sendMessage: (payload: ISendMessage) => Promise<void>;
   replyInThread: (payload: IReplyInThread) => Promise<void>;
+  deleteMessage: (payload: IDeleteMessage) => Promise<any>;
 }
 
 const MessengerContext = createContext<MessengerContextType | undefined>(undefined);
@@ -140,12 +144,12 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
   const getThreadMessagesFunc = useGetThreadMessages(setThreadMessages);
   const addReactionMessageFunc = useAddReactionMessage();
   const deleteReactionMessageFunc = useDeleteReactionMessage();
-  const sendMessageFunc = useSendMessage();
-  const replyInThreadFunc = useReplyInThread();
+  const sendMessageFunc = useSendMessage(setMessages);
+  const replyInThreadFunc = useReplyInThread(setThreadMessages);
   const getSearchMessagesFunc = 
     useGetSearchMessages(setSearchMessages,setTotalSearchMessages);
+  const deleteMessageFunc = useDeleteMessage();
 
-  // Your state and functions here
   const value: MessengerContextType = useMemo(() => {
     return {
       activeConversation,
@@ -162,6 +166,9 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
       totalPriorityInboxUnread,
       totalGeneralInboxUnread,
       totalIcebreakerInboxUnread,
+      setTotalPriorityInboxUnread,
+      setTotalGeneralInboxUnread,
+      setTotalIcebreakerInboxUnread,
       totalSearchMessages,
       conversationNotes,
       getConversations: getConversationsFunc,
@@ -185,7 +192,8 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
       setThreadMessages,
       setMessages,
       sendMessage: sendMessageFunc,
-      replyInThread: replyInThreadFunc
+      replyInThread: replyInThreadFunc,
+      deleteMessage: deleteMessageFunc
     };
   }, [
     activeConversation,
@@ -202,6 +210,9 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
     totalPriorityInboxUnread,
     totalGeneralInboxUnread,
     totalIcebreakerInboxUnread,
+    setTotalPriorityInboxUnread,
+    setTotalGeneralInboxUnread,
+    setTotalIcebreakerInboxUnread,
     totalSearchMessages,
     conversationNotes,
     getConversationsFunc,
@@ -225,7 +236,8 @@ export const MessengerProvider: React.FC<MessengerProviderProps> = ({ children }
     setThreadMessages,
     setMessages,
     sendMessageFunc,
-    replyInThreadFunc
+    replyInThreadFunc,
+    deleteMessageFunc
   ]);
 
   return (

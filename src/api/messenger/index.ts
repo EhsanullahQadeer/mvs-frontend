@@ -26,7 +26,6 @@ import {
   IGetReactions,
   ICreateNewConversation,
   ISetConversationFavorite,
-  IGetConversationMessages,
   IDeleteConversations,
   IGetConversationsWithUser,
   IToggleConversationIsOpen,
@@ -59,10 +58,6 @@ export async function reportMessage(payload: IReportMessage) {
 
 export async function viewDemo(payload: IViewDemo) {
   return await axios.post('messenger/event/viewed-demo', payload);
-}
-
-export async function sendMessage(payload: ISendMessage) {
-  return await axios.post('messenger/message', payload);
 }
 
 export async function toggleMessageRead(payload: IToggleMessageRead) {
@@ -111,10 +106,6 @@ export async function createNewConversation(payload: ICreateNewConversation) {
 
 export async function toggleConversationFavorite(payload: ISetConversationFavorite) {
   return await axios.post(`messenger/conversation/favorite`, payload);
-}
-
-export async function getConversationMessages(payload: IGetConversationMessages) {
-  return await axios.get(`messenger/conversation/${payload.conversationId}`, { params: { skip: payload.skip, take: payload.take } });
 }
 
 export async function deleteConversationsApi(payload: IDeleteConversations) {

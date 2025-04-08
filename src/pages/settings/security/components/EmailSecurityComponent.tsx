@@ -14,6 +14,7 @@ import { EmailInputModal, EmailConfirmationModal } from './SecurityModal';
 import { useState } from "react";
 import { Form, Formik, Field } from "formik";
 import { requestEmailChange, updateEmail, validatePasswordAPI } from '../../../../api/user';
+import { useToast } from '../../../../shared/toasts/ToastProvider';
 
 
 
@@ -74,7 +75,8 @@ const EmailSecurityComponent = () => {
     const [showVerificationModal, setShowVerificationModal] = useState(false);
     const [hasPasswordError, setHasPasswordError] = useState(false);
     const [hasVerificationError, setHasVerificationError] = useState(false);
-    
+    const { addToast } = useToast();
+
     const initialValues = {
         email: "",
         verified: false
@@ -150,8 +152,12 @@ const EmailSecurityComponent = () => {
                 setIsEmailInputModalOpen(false);
                 setIsConfirmationModalOpen(true);
                 setHasVerificationError(false);
+                addToast({ state: 'emailUpdated' })
             } catch (error) {
                 console.error('Error requesting email change:', error);
+                addToast({ state: 'failedToUpdateEmail', actionFunction: () => {
+                    handlePasswordVerification(inputPassword);
+                } })
             }
         } else {
             setHasPasswordError(true);
@@ -159,6 +165,9 @@ const EmailSecurityComponent = () => {
         }
         } catch (error) {
             console.error('Error validating password:', error);
+            addToast({ state: 'failedToUpdateEmail', actionFunction: () => {
+                handlePasswordVerification(inputPassword);
+            } })
         }
         
         

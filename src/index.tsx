@@ -9,7 +9,7 @@
 /* IMPORTS */
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
@@ -23,15 +23,34 @@ import publicRoutes from "routes/publicRoutes";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { initializeTokenRefresher, refreshTokenEvery } from "redux/actions/tokenrefresher.actions";
+import { ToastProvider } from "shared/toasts/ToastProvider";
+import { shouldRedirectToProfile } from "utils/authHandler";
 
 const cleanupActivityRefresh = initializeTokenRefresher();
+
+const RouteWrapper = ({ component: Component, path, ...rest }) => {
+  const { shouldRedirect, username } = shouldRedirectToProfile(path);
+  
+  if (shouldRedirect && username) {
+    return <Navigate to={`/profile/${username}`} replace />;
+  }
+  
+  return <Component {...rest} />;
+};
 
 const renderRoutes = (routes: any[]) => {
   return routes.map((route, index) => (
     <Route
       key={index}
       path={route.path}
-      element={<route.component name={route.name} {...route.props} />}
+      element={
+        <RouteWrapper 
+          component={route.component} 
+          path={route.path}
+          name={route.name} 
+          {...route.props} 
+        />
+      }
     >
       {route.children ? renderRoutes(route.children) : null}
     </Route>
@@ -41,11 +60,13 @@ const renderRoutes = (routes: any[]) => {
 const Application: React.FunctionComponent<{}> = (props) => {
   return (
     <BrowserRouter>
-      <Routes>
-        {renderRoutes(routes)}
-        {renderRoutes(publicRoutes)}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <ToastProvider>
+        <Routes>
+          {renderRoutes(routes)}
+          {renderRoutes(publicRoutes)}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </ToastProvider>
     </BrowserRouter>
   );
 };

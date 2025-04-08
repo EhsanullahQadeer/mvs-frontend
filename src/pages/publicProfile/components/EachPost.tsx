@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { IoEllipsisHorizontal } from "react-icons/io5";
-import { MdVerified } from "react-icons/md";
 import { SlLock } from "react-icons/sl";
+import { MdVerified } from "react-icons/md";
 import like from "../../../assets/img/heart.svg";
-import comment from "../../../assets/img/comment.svg";
-import download from "../../../assets/img/downloadicon.svg";
-import UnlockContentModel from "./UnlockContentModel";
 import SendMessageModel from "./SendMessageModel";
+import comment from "../../../assets/img/comment.svg";
+import UnlockContentModel from "./UnlockContentModel";
+import { IoEllipsisHorizontal } from "react-icons/io5";
+import download from "../../../assets/img/downloadicon.svg";
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 interface PostProps {
   username: string;
@@ -59,13 +60,7 @@ const EachPost: React.FC<PostProps> = ({
       <div className="p-4 w-full">
         <div className="flex items-center w-full justify-between">
           <div className="flex w-fit items-center gap-2">
-            <div className="w-[52px] h-[52px] rounded-full">
-              <img
-                src={profileImg}
-                alt={username}
-                className="w-full rounded-full h-full object-cover"
-              />
-            </div>
+            <Thumbnail professionalName={username} thumbnail={profileImg} size="52"/>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <span className="text-[18px] text-white font-semibold">
@@ -81,7 +76,7 @@ const EachPost: React.FC<PostProps> = ({
 
         <div className="relative w-full mt-5">
           {locked && (
-            <div className="absolute top-2 left-2 p-[12px] bg-[#242424CC] rounded-lg flex gap-2 items-center justify-center z-10">
+            <div className="absolute top-2 left-2 p-[12px] bg-[#242424CC] rounded-lg flex gap-2 items-center justify-center">
               <SlLock className="text-white " />
               <button
                 className="text-white text-[14px] rounded-md font-semibold bg-[#242424CC]"

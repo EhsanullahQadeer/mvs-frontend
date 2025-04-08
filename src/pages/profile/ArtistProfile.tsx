@@ -33,7 +33,7 @@ import { RootState } from "redux/reducers";
 import SampleUploadModel from "./components/SampleUploadModel";
 import ProfileLibrary from "./components/ProfileLibrary";
 import ProfileRightSection from "../publicProfile/components/ProfileRightSection";
-import ArtistProfileMobile from "./components/ArtistProfileMobile";
+import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
 // import { getUserSamplesAPI } from "api/sounds";
 
 const ArtistProfile = () => {
@@ -80,6 +80,14 @@ const ArtistProfile = () => {
       console.log("response", response);
       console.log("response", user.id, artistData.id);
       setHasSampleType(response.data);
+      
+      // Find the first available sample type
+      const firstAvailableType = Object.entries(response.data).find(([_, value]) => value === true);
+      if (firstAvailableType) {
+        setSelectedTab(firstAvailableType[0]);
+      } else {
+        setSelectedTab(libraryTabs[0].value);
+      }
     }
   };
 
@@ -91,7 +99,6 @@ const ArtistProfile = () => {
       contribution: false,
       full_song: false,
     });
-    setSelectedTab("");
     fetchSampleTypes();
   }, [artistData, user]);
 
@@ -140,11 +147,6 @@ const ArtistProfile = () => {
             response.data.results.connectionDetails.request_accepted
           );
         }
-
-        // console.log(
-        //   "response check connect",
-        //   response.data.results.connectionDetails
-        // );
       } catch (error) {
         console.log("error while checking connection", error);
       }
@@ -152,12 +154,14 @@ const ArtistProfile = () => {
   };
 
   useEffect(() => {
-    getArtistData();
-  }, [getArtistData]);
-
-  useEffect(() => {
     checkConnection();
   }, [artistData]);
+
+  useEffect(() => {
+    setCreditsData([]);
+    setLoading(true);
+    getArtistData();
+  }, [username, getArtistData]);
 
   useEffect(() => {
     setIsConnect(isLoginUser || connectionDetail);
@@ -165,52 +169,10 @@ const ArtistProfile = () => {
 
   return (
     <Theme>
-      {!isLoading ? (
-        <>
-          <div className="relative md:flex hidden md:flex-row overflow-hidden">
-            <ProfileRightSection
-              artistData={artistData}
-              currentUserInfo={user}
-              hasSampleType={hasSampleType}
-              connectionDetail={connectionDetail}
-              selectedTab={selectedTab}
-              setSelectedTab={setSelectedTab}
-              isConnect={isConnect}
-              isLoginUser={isLoginUser}
-              user={user}
-              tabs={libraryTabs}
-              chatOpen={chatOpen}
-              setChatOpen={setChatOpen}
-              isPublicProfile={false}
-            />
+      {!isLoading ? (<>
+        <div className="relative flex overflow-hidden">
 
-            <section className="border-l border-eclipseGray w-[374px] h-screen overflow-x-hidden overflow-y-auto custom-dropdown">
-              <MessageContextProvider>
-                <ProfileAboutSection
-                  {...{
-                    artistData,
-                    creditsData,
-                    connectionDetail,
-                    setConnectionDetail,
-                    chatOpen,
-                    setChatOpen,
-                  }}
-                />
-              </MessageContextProvider>
-            </section>
-          </div>
-          <div></div>{" "}
-          <div className="block md:hidden">
-            <ArtistProfileMobile
-              {...{
-                artistData,
-                creditsData,
-                connectionDetail,
-                setConnectionDetail,
-                chatOpen,
-                setChatOpen,
-              }}
-            />
+          <div className={`${chatOpen ? 'w-[calc(100%-500px)]' : 'w-[calc(100%-374px)]'} transition-all duration-300`}>
             <ProfileRightSection
               artistData={artistData}
               currentUserInfo={user}
@@ -227,7 +189,18 @@ const ArtistProfile = () => {
               isPublicProfile={false}
             />
           </div>
-        </>
+
+          <section className={`border-l border-eclipseGray ${chatOpen ? 'w-[500px]' : 'w-[374px]'} h-screen overflow-x-hidden overflow-y-auto custom-dropdown transition-all duration-300`}>
+            <MessageContextProvider>
+              <ChatboxProvider>
+                <ProfileAboutSection
+                  {...{ artistData, creditsData, connectionDetail, setConnectionDetail, chatOpen, setChatOpen }}
+                />
+              </ChatboxProvider>
+            </MessageContextProvider>
+          </section>
+        </div>{" "}
+      </>
       ) : (
         <>
           <div className="absolute top-0 left-0 z-[9999] bg-black opacity-40 w-full h-full"></div>

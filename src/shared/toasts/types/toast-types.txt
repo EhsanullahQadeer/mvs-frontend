@@ -1,0 +1,116 @@
+To use add "const { addToast } = useToast();"
+and call addToast({state: "messageArchived" }) for prebuilt, or add the parameters you want for custom
+
+Success:
+  messageArchived ✅
+  messagesArchived ✅
+  messageDeleted ✅ - actually this cant be undone so removed "undo"
+  messageMovedToSpam ✅
+  messageMarkedAsUnread ❓- these features dont work yet i think
+  messageMarkedAsRead ❓- these features dont work yet i think
+  demoSentSuccessfully ✅ (purchase order dialog, sample send demo)
+  tipSentSuccessfully ✅(footer tip)
+  fileUploadedSuccessfully ✅ (purchase order dialog)
+  downloadComplete ✅ (dropdown, table, sampleMessage)
+  payoutMethodUpdated
+  newPayoutMethodAdded
+  stripeAccountConnected
+  withdrawalRequestSubmitted
+  //---group 2---
+  profileUpdated ✅ (settings/account: roles/genres, address, username/bio)
+  changesSaved
+  informationDeleted
+  accountInfoUpdated ✅ (settings/account: account information)
+  emailUpdated ✅ (settings/security)
+  passwordChanged ✅ (settings/security)
+  contributorAdded
+  metadataUpdated
+  fileDeleted ✅(settings/content-management: attached files)
+  publishPercentageUpdated
+  roleUpdated
+  fileShared
+  paymentMethodRemoved
+  defaultPaymentMethodChanged
+  statusRefreshed
+  //---group 3---
+  privacySettingsUpdated
+  accountUnblocked
+  inboxFeeUpdated
+  automaticMessageSaved
+  demoFeeUpdated
+  meetingFeeSaved
+  meetingDurationsUpdated
+  planChanged
+  creditsPurchased
+  monthlyCreditsAdded
+  userTypeSaved
+  personalInfoSaved
+  pricesUpdated
+
+
+Error:
+  failedToArchiveMessage ✅
+  failedToDeleteMessage ✅
+  failedToMoveToSpam ✅
+  couldNotApplyLabel
+  fileUploadFailed ✅ (purchase order dialog, footer)
+  unsupportedFileFormat ✅ (footer)
+  fileSizeExceeded ✅ (footer 50mb)
+  messageFailedToSend ✅ (purchase order dialog, inbox demo)
+  freeMessageLimitExceeded
+  tooManyMessagesSent
+  unexpectedError ✅ (used when retrying once doesnt work for any toast)
+  APITimeout
+  messageReported
+  userBlocked
+  failedToDownloadSample ✅(dropdown, table, sampleMessage)
+  fileDoesntExist ✅❕ (added by karla, when file isnt found in db)
+  //---group 2---
+  failedToSubmitWithdrawalRequest
+  somethingWentWrong ✅ (chatbox: if demo id isnt created before sending)
+  failedToUpdateEmail ✅ (settings/security)
+  failedToDeleteFile ✅❕(added by karla, settings/content-management: attached files)
+  atLeastOneContributor
+  publishingPercentage100
+  failedToAddPaymentMethod
+  failedToUpdatePrivacySettings
+  unableToUnblockAccount
+  //---group 3---
+  failedToAddPaymentMethod
+  failedToUpdatePayoutMethod
+  verificationFailed
+  failedToUpdateInboxFee
+  failedToSaveAutomaticMessage
+  failedToUpdateDemoFee
+  failedToSaveMeetingFee
+  failedToChangePlan
+  failedToPurchaseCredits
+  failedToRetrieveCreditHistory
+  pleaseSelectBothRoles
+  failedToSaveChanges ✅ (settings/account: roles/genres, address, bio/username)
+
+Warning:
+  actionCantBeUndone ❓ --not sure where to use
+  attachmentTooLarge ❓ -- this vs fileSizeExceeded ?? where
+  insufficientCredits
+  paymentFailed
+  uploadFailed ✅(chat recording)
+  connectionLost
+  //---group 2---
+  mustConnectToPayoutMethod
+  payoutMethodAlreadyDefault
+  mustCompleteMetadata
+  missingPublishingPercentage
+  fileAlreadyExists
+  unsavedChanges
+  cardAlreadyAdded
+  //---group 3---
+  feeCannotBeSetToZero
+  creditBalanceIsLow
+  aboutToRunOutOfCredits
+
+  Info:
+  upcomingMaintenance
+  systemUpdateCompleted
+  newVersionAvailable
+  scheduledDowntime

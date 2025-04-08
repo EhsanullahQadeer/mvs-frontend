@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as MLogo } from "../../../../assets/img/MLogo.svg";
 import BuyCredits from "./BuyCredits";
+import { useSelector } from "react-redux";
+import { RootState } from "redux/reducers";
 
 const Memberships = () => {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
+  const state = useSelector((state: RootState) => state);
+  const [credits, setCredits] = useState(0);
+  useEffect(() => {
+    setCredits(state.auth.user?.credits || 0);
+  }, [state.auth.user]);
 
   const handlePlan = () => {
-    navigate("/settings/plans/1");
+    navigate("/settings/plans/");
   };
 
   const handleBuyCreditsClick = () => {
@@ -34,7 +41,7 @@ const Memberships = () => {
                   $99.99/mo with 100 monthly credits
                 </p>
                 <p className="text-dimGray text-xs font-semibold">
-                  215 credits remaining
+                  {credits} credits remaining
                 </p>
               </div>
             </div>
@@ -58,7 +65,7 @@ const Memberships = () => {
           <div className="flex justify-between gap-1">
             <div className="flex flex-col gap-2">
               <h3 className="text-white text-base font-semibold">Credits balance</h3>
-              <p className="text-mediumGray text-xs font-normal">215</p>
+              <p className="text-mediumGray text-xs font-normal">{credits}</p>
               <p className="text-mediumGray text-xs font-semibold">
                 Learn more about how to use{" "}
                 <span className="text-limeGreen">Credits</span>

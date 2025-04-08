@@ -7,8 +7,9 @@
  *************************************************************************/
 
 import React, { useRef, useState } from "react";
-import pauseIcon from '../../../assets/img/player/pause-circle.svg';
 import playIcon from '../../../assets/img/player/play-circle.svg';
+import pauseIcon from '../../../assets/img/player/pause-circle.svg';
+import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
 
 // Define a TypeScript interface for props
 interface ProfileCardsProps {
@@ -50,13 +51,7 @@ const ProfileCards: React.FC<ProfileCardsProps> = (props) => {
       >
         <div className="flex gap-3 rounded-md items-center justify-between">
           <div className="flex gap-3">
-            <div className="min-w-[84px] h-[84px]">
-              <img
-                src={thumbnail}
-                alt="credits"
-                className="w-full h-full object-contain rounded-md"
-              />
-            </div>
+            <Thumbnail thumbnail={thumbnail} size="84" round={false}/>
             <div className="flex flex-col gap-0.5">
               <h2 className="text-white font-semibold text-xs text-wrap">{trackName}</h2>
               <div className="overflow-hidden w-[200px] group">

@@ -115,7 +115,7 @@ const CreditsHistory = () => {
         </div>
       </div>
       {/* Pass open and onClose props to the BuyCredits component */}
-      <BuyCredits open={openDialog} onClose={handleCloseDialog} />
+      <BuyCredits open={openDialog} onClose={handleCloseDialog}/>
     </Theme>
   );
 };
