@@ -9,6 +9,7 @@ type ToastData = {
   position?: "top-left" | "top-right" | "top-center" | "bottom-left" | "bottom-right" | "bottom-center";
   duration?: number;
   permanent?: boolean;
+  actionRemove?: boolean | undefined;
   actionFunction?: (params?: any) => void; //action to be called when e.g. "retry" or "undo" button is clicked
   params?: any;
   closeToast?: () => void;

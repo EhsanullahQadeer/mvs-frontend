@@ -5,7 +5,7 @@ import visaIcon from '../../../assets/icons/visa.svg';
 import musicBeam from "../../../assets/icons/musicBeam.svg";
 import StripeElements from "components/stripe/stripeElements";
 import { useMessenger } from "api/messenger/context";
-import { toast } from "react-toastify";
+import { useToast } from "shared/toasts/ToastProvider";
 
 interface AudioTrackTypeArray {
   id: number;
@@ -42,6 +42,7 @@ const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
   const [discountCode, setDiscountCode] = useState('');
   const [isSending, setIsSending] = useState(false);
   const { sendMessage, getConversationMessages } = useMessenger();
+  const { addToast } = useToast();
   
   const samplePrice = 5.00;
   const serviceFeePercentage = 0.029; // 2.9%
@@ -68,16 +69,16 @@ const SampleSendDemoModal: React.FC<ISampleSendDemoModal> = ({
         stripePaymentIntentId: intentId
       });
 
-      toast.success("Demos sent successfully!");
       onCloseAllModals();
       getConversationMessages({
         conversationId: conversationId,
         limit: 10,
         cursor: 0
       });
+      addToast({state: "demoSentSuccessfully", params: {count: selectedSamples.length, actionRemove: true } });
     } catch (error) {
       console.error("Error sending demos:", error);
-      toast.error("Failed to send demos");
+      addToast({state: "messageFailedToSend", permanent: true, actionFunction: () => handleSendDemo(intentId)});
     } finally {
       setIsSending(false);
     }
