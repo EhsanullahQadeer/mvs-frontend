@@ -9,14 +9,34 @@ import {
 import { MdCancel } from "react-icons/md";
 import { FaArrowLeft } from "react-icons/fa6";
 import { SiVisa } from "react-icons/si";
-
+import StripeElements from "components/stripe/stripeElements";
 interface BuyCreditsDialogProps {
   open: boolean;
   onClose: () => void;
 }
 
+interface CreditOption {
+  amount: number;
+  price: number;
+}
+
+const creditOptions: CreditOption[] = [
+  {
+    amount: 10,
+    price: 9.5,
+  },
+  {
+    amount: 20,
+    price: 18,
+  },
+  {
+    amount: 50,
+    price: 40,
+  },
+];
+
 const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
-  const [selectedAmount, setSelectedAmount] = useState<string>("10");
+  const [selectedAmount, setSelectedAmount] = useState<number>(0);
   const [promoCode, setPromoCode] = useState<string>("");
   const [availableCredits, setAvailableCredits] = useState<number>(215);
   const [chargeAmount, setChargeAmount] = useState<number>(9.5);
@@ -24,8 +44,8 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
   const [secondOpen, setSecondOpen] = useState<boolean>(false);
   const handleAmountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
-    setSelectedAmount(value);
-    const price = parseFloat(value) || 0;
+    setSelectedAmount(parseInt(value));
+    const price = parseFloat(creditOptions[parseInt(value)].price.toFixed(2) )|| 0;
     setChargeAmount(price);
   };
 
@@ -49,10 +69,17 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
   };
   const closeConfirmationDialog = () => {
     setSecondOpen(false);
+    window.location.reload();
   };
 
-  return (
-    <>
+  function getExpirationDate(){
+    const today = new Date();
+    today.setMonth(today.getMonth() + 1);
+    return today.toLocaleDateString();
+  }
+
+  function firstDialog(){
+    return (
       <Dialog
         open={open}
         onClose={onClose}
@@ -95,9 +122,11 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
                     onChange={handleAmountChange}
                     className="block w-full px-2 py-1 text-[14px] bg-black border border-[#1C1C1C] rounded-md appearance-none"
                   >
-                    <option value="10">10 credits for $9.50</option>
-                    <option value="20">20 credits for $18.00</option>
-                    <option value="50">50 credits for $40.00</option>
+                    {creditOptions.map((option,index) => (
+                      <option key={index} value={index}>
+                        {option.amount} credits for ${option.price.toFixed(2)}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -114,7 +143,7 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
                   Your new credits balance
                 </span>
                 <span className="text-[#fff] font-semibold text-[12px]">
-                  {availableCredits + parseInt(selectedAmount, 10)}
+                  {availableCredits + creditOptions[selectedAmount].amount}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
@@ -122,7 +151,7 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
                   These credits will expire on
                 </span>
                 <span className="text-[#fff] font-semibold text-[12px]">
-                  November 15, 2025
+                  {getExpirationDate()}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
@@ -206,135 +235,91 @@ const BuyCredits: React.FC<BuyCreditsDialogProps> = ({ open, onClose }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog
-        open={secondOpen}
-        onClose={closeConfirmationDialog}
-        sx={{
-          "& .MuiDialog-paper": {
-            backgroundColor: "#0F0F0F",
-            border: "1px solid #1C1C1C",
-            borderRadius: "16px",
-            color: "#fff",
-            width: "444px",
-            overflow: "hidden",
-          },
-        }}
-      >
-        <DialogTitle >
-          <div className="flex w-full justify-between items-center">
-          <div
-            className="text-platinum cursor-pointer "
-          >
-            <FaArrowLeft onClick={handleBack} className="text-[16px]" />
-          </div>{" "}
-          <div className="bg-w rounded-full">
-            <MdCancel
-              className="text-dimGray   cursor-pointer"
-              onClick={closeConfirmationDialog}
-            />
-          </div>
-          </div>
-          <span className="font-medium mb-6 ">Buy Credits</span>
+    )
 
-        </DialogTitle>
-        <DialogContent className="custom-dropdown overflow-y-auto">
-
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[#fff] font-medium text-[12px]">
-              Select a billing method
-            </span>
-            <span className="text-dimGray text-[10px]">
-              This will be your primary billing method across all contacts ,
-              account activity and suvscriptions.
-            </span>
-          </div>
-          <div className="flex  border-[#1C1C1C] my-1 items-center justify-between border rounded-md gap-2 p-2 w-full">
-            <div className="flex  items-center b gap-2  w-full">
-              <input
-                type="checkbox"
-                className="rounded-full w-[10px] h-[10px]"
-              />
-              <div className="bg-black px-1 rounded-sm flex items-center justify-center border border-[#1c1c1c]">
-                <SiVisa className="text-blue-700  text-[24px] " />
-              </div>
-
-              <div className="flex flex-col ">
-                <span className="text-[#fff] font-medium text-[10px]">
-                  Visa ending in 7879
-                </span>
-                <span className="text-dimGray text-[8px]">
-                  expiry 01/02/2026
-                </span>
-              </div>
-            </div>
-            <Button
-              sx={{
-                backgroundColor:"#9eff00" ,
-                color: "#000",
-                borderRadius: "30px",
-                textTransform: "none",
-                fontSize: "10px",
-                padding: "2px 4px",
-                ":hover": {
-                  backgroundColor:"#9eff00" ,
-                },
-              }}
-            >
-              Default
-            </Button>
-          </div>
-          <span className="text-blue-500 font-medium text-[10px]">
-            + Add new Billing metood
-          </span>
-          <div className="w-full  h-1  border-b-[2px] border-dashed my-2 mb-3 border-dimGray"></div>
-          <div className=" w-full px-2 py-1 my-1 mb-2 text-[14px] bg-black border border-[#1C1C1C] rounded-md appearance-none">
-            10 credits for $9.50
-          </div>
-          <div className="flex flex-col flex-1 text-[12px] gap-1 py-2  ">
-              <div className="flex flex-col  text-grayishSilver">
-                <div className="flex justify-between items-center">
-                  <span>Price</span>
-                  <span>$9.5</span>
-                </div>
-              </div>
-              <div className="flex flex-col  text-grayishSilver">
-                <div className="flex justify-between items-center">
-                  <span>Service Fee 2.9%</span>
-                  <span>$0.83</span>
-                </div>
-              </div>
-              <div className="flex flex-col  text-grayishSilver">
-                <div className="flex justify-between items-center">
-                  <span className="text-silver font-semibold text-[12px]">Total  Amount</span>
-                  <span className="text-limeGreen">$10.33</span>
-
-                </div>
-              </div>
-            </div>
-            <p className="text-[10px] my-2 text-dimGray">
-                By completing this transection , you are authorizing the change to your selected billing method. The total amount includes a 2.9% service fee.
-                Please insure your billing  details up to date to avoid any interruptions. For more information on charges and fees , please review your <a href="" className="text-limeGreen">billing policies</a>
-              </p>
-        </DialogContent>
-        <DialogActions>
-          <Button
+  }
+  function secondDialog(){
+    const amount = chargeAmount + (chargeAmount * 0.029);
+    return (      
+    <Dialog
+      open={secondOpen}
+      onClose={closeConfirmationDialog}
+      sx={{
+        "& .MuiDialog-paper": {
+          backgroundColor: "#0F0F0F",
+          border: "1px solid #1C1C1C",
+          borderRadius: "16px",
+          color: "#fff",
+          width: "444px",
+          overflow: "hidden",
+        },
+      }}
+    >
+      <DialogTitle >
+        <div className="flex w-full justify-between items-center">
+        <div
+          className="text-platinum cursor-pointer "
+        >
+          <FaArrowLeft onClick={handleBack} className="text-[16px]" />
+        </div>{" "}
+        <div className="bg-w rounded-full">
+          <MdCancel
+            className="text-dimGray   cursor-pointer"
             onClick={closeConfirmationDialog}
-            sx={{
-                                backgroundColor:"#9eff00" ,
-              color: "#000",
-              borderRadius: "30px",
-              textTransform: "none",
-              fontSize: "14px",
-              padding: "8px 16px",
-              ":hover": {
-                backgroundColor:"#9eff00" ,
-              },
-            }}
-          >
-            Buy Credit
-          </Button>
-        </DialogActions>
-      </Dialog>
+          />
+        </div>
+        </div>
+        <span className="font-medium mt-2 mb-6 ">Buy Credits</span>
+      </DialogTitle>
+      <DialogContent className="custom-dropdown overflow-y-auto">
+
+
+        
+        <div className=" w-full px-2 py-1 my-1 mb-2 text-[14px] bg-black border border-[#1C1C1C] rounded-md appearance-none">
+          {creditOptions[selectedAmount].amount} credits for ${creditOptions[selectedAmount].price.toFixed(2)}
+        </div>
+        <div className="flex flex-col flex-1 text-[12px] gap-1 py-2  ">
+            <div className="flex flex-col  text-grayishSilver">
+              <div className="flex justify-between items-center">
+                <span>Price</span>
+                <span>${chargeAmount.toFixed(2)}</span>
+              </div>
+            </div>
+            <div className="flex flex-col  text-grayishSilver">
+              <div className="flex justify-between items-center">
+                <span>Service Fee 2.9%</span>
+                <span>${(chargeAmount * 0.029).toFixed(2)}</span>
+              </div>
+            </div>
+            <div className="flex flex-col  text-grayishSilver">
+              <div className="flex justify-between items-center">
+                <span className="text-silver font-semibold text-[12px]">Total  Amount</span>
+                <span className="text-limeGreen">${amount.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[#fff] font-medium text-[12px]">
+            Select a billing method
+          </span>
+          <span className="text-dimGray text-[10px]">
+            This will be your primary billing method across all contacts ,
+            account activity and suvscriptions.
+          </span>
+        </div>
+        <StripeElements buyCreditsComponentProps={{amount: amount, onClose: closeConfirmationDialog, creditsAmount: creditOptions[selectedAmount].amount}} />
+        <p className="text-[10px] my-2 text-dimGray">
+          By completing this transection , you are authorizing the change to your selected billing method. The total amount includes a 2.9% service fee.
+          Please insure your billing  details up to date to avoid any interruptions. For more information on charges and fees , please review your <a href="" className="text-limeGreen">billing policies</a>
+        </p>
+      </DialogContent>
+    </Dialog>)
+  }
+
+  return (
+    <>
+      {firstDialog()}
+      {secondDialog()}
     </>
   );
 };
