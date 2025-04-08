@@ -1,4 +1,3 @@
-import { toast } from "react-toastify";
 import { uploadMedia } from "api/sounds";
 import Dialog from "@mui/material/Dialog";
 import { useChatbox } from "./Chatbox/context";
@@ -10,6 +9,7 @@ import StripeElements from "components/stripe/stripeElements";
 import { ReactComponent as CancelIcon } from "../../../assets/icons/cancelIcon.svg";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/notificationThumbnail";
 import { capitalizeRegion, convertToCurrencyFormat, formatNumberWithCommas } from "shared/utils/dateUtils";
+import { useToast } from "shared/toasts/ToastProvider";
 
 interface Props {
   openPurchaseOrder: boolean;
@@ -20,6 +20,7 @@ interface Props {
   demoFile: File;
   messageInputValue: string;
   clearMessageInputs: () => void;
+  handleButtonClick: () => void;
 }
 
 const serviceFeePercentage = 2.9;
@@ -43,6 +44,8 @@ const PurchaseOrderDialog = (props: Props) => {
     sendMessage,
     getConversationMessages
   } = useMessenger();
+
+  const { addToast } = useToast();
 
   const recipient = activeConversation?.recipient;
   console.log('Recipient: ', recipient);
@@ -110,33 +113,57 @@ const PurchaseOrderDialog = (props: Props) => {
 
   const handleSendDemo = async (paymentIntentId: string) => {
     console.log("handleSendDemo", demoFile, messageInputValue);
-    const response = await uploadMedia({
-      file: demoFile,
-      type: 'demo',
-    });
-    console.log("response", response);
+    let response;
+    try {
+      response = await uploadMedia({
+        file: demoFile,
+        type: 'demo',
+      });
+      console.log("response", response);
 
-    if (!response?.data?.media?.id) {
-      console.error("No media ID in response:", response);
-      toast.error("Failed to upload audio file");
+      if (!response?.data?.media?.id) {
+        // if no file didnt create an id (not sure what to put here)
+        addToast({ state: "somethingWentWrong", permanent: true, actionFunction: () => window.location.reload()})
+        return;
+      }
+      addToast({ state: "fileUploadedSuccessfully" });
+    } catch (error) {
+      // if overall file upload fails
+      console.error("Error uploading media:", error);
+      addToast({ state: "fileUploadFailed", permanent: true, 
+        actionFunction: () => {
+          try {
+            handleSendDemo(paymentIntentId);
+          } catch (error) {
+            addToast({state: "unexpectedError", permanent: true, actionFunction: () => window.location.reload()})
+          }
+        }
+      })
       return;
     }
-    console.log("response.data.media.id", response.data.media.id);
-    console.log("totalAmount", totalAmount);
-    await sendMessage({
-      conversationId: activeConversation?.conversation_id || '',
-      message: messageInputValue,
-      creditPaymentAmount: totalAmount,
-      messageType: 'demo',
-      audioMediaId: response.data.media.id,
-      stripePaymentIntentId: paymentIntentId,
-    });
-    setTipAmount(0);
-    setInputTipAmount("");
-    setOpenPurchaseOrder(false);
-    setIsSending(false);
-    await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
-    clearMessageInputs();
+    
+    try {
+      await sendMessage({
+        conversationId: activeConversation?.conversation_id || '',
+        message: messageInputValue,
+        creditPaymentAmount: totalAmount,
+        messageType: 'demo',
+        audioMediaId: response.data.media.id,
+        stripePaymentIntentId: paymentIntentId,
+    })
+    } catch (error) {
+      console.error("Error sending message:", error);
+      addToast({state: "messageFailedToSend", permanent: true, actionFunction: () => handleSendDemo(paymentIntentId)})
+    }
+    finally {
+      setTipAmount(0);
+      setInputTipAmount("");
+      setOpenPurchaseOrder(false);
+      setIsSending(false);
+      addToast({state: "demoSentSuccessfully", actionFunction: () => props.handleButtonClick()})
+      await getConversationMessages({ conversationId: activeConversation.conversation_id, limit: LIMIT_MESSAGES, cursor: 0 });
+      clearMessageInputs();
+    }
   };
 
   useEffect(() => {
@@ -150,7 +177,7 @@ const PurchaseOrderDialog = (props: Props) => {
   const serviceFee = (subtotal * serviceFeePercentage) / 100;
 
   return (
-    <div style={{ zIndex: 99999 }}>
+    <div style={{ zIndex: 9998 }}>
       <Dialog
         open={openPurchaseOrder}
         onClose={handleClose}
