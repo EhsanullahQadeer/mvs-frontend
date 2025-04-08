@@ -88,7 +88,8 @@ export const formatBytes = (bytes: number): string => {
 
 // Function to append the environment variable to the beginning of all assets in our S3 bucket
 export const loadAsset = (url: string): string => {
-  if (url === null) {
+  console.log('URL: ', url);
+  if (!url || url.trim() === '') {
     return '';
   }
   if (url.startsWith('https://')) {

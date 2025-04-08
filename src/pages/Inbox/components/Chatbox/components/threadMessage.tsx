@@ -2,6 +2,7 @@ import moment from "moment";
 import WaveSurfer from "wavesurfer.js";
 import { useChatbox } from "../context";
 import { FiUnlock } from "react-icons/fi";
+import { loadAsset } from "utils/dateUtils";
 import { useMessenger } from "api/messenger/context";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
@@ -61,7 +62,7 @@ const ThreadMessage = (props: Props) => {
   } = useMessenger();
 
   let is_read = message?.is_read;
-  const audioUrl = media?.url || null;
+  const audioUrl = loadAsset(media?.url) || null;
   const requiresFeedback = message_type === MESSAGE_TYPES.DEMO && 
     transaction?.status !== "completed";
 
@@ -154,7 +155,7 @@ const ThreadMessage = (props: Props) => {
     if (!media?.url) return;
 
     // Test if the audio is playable
-    const audio = new Audio(media.url);
+    const audio = new Audio(loadAsset(media?.url));
     audio.addEventListener('error', () => {
       console.log('Audio format not supported, needs conversion');
       setNeedsConversion(true);
@@ -183,7 +184,7 @@ const ThreadMessage = (props: Props) => {
     };
 
     if (media?.url && !convertedUrl) {
-      convertAudioFormat(media.url).then(setConvertedUrl);
+      convertAudioFormat(loadAsset(media.url)).then(setConvertedUrl);
     }
   }, [media?.url, convertedUrl]);
 

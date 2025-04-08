@@ -2,8 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import AudioPlayer from "./player";
-import { Avatar } from "@mui/material";
 import { FiDownload } from "react-icons/fi";
+import { loadAsset } from "utils/dateUtils";
 import DropDown from "components/util/dropdown";
 import { AudioTrackType } from "../player-container";
 import { AudioTrack, useWaveform } from "./waveform";
@@ -64,7 +64,6 @@ const SampleTable = (props: {
           }));
         }
       };
-      console.log('consideringData', consideringData);
 
       Object.values(samples).forEach((sample: any) => {
         fetchConsideringData(sample.id);
@@ -95,6 +94,10 @@ const SampleTable = (props: {
     loading,
     playTrack,
     pauseTrack,
+    setCurrent,     // Add these setters directly
+    setLoading,     // without the _ object
+    setPlayState,
+    setTracks
   } = useWaveform();
   // const { currentTrack, playTrack, isPaused, pauseTrack } = useContext(PlayerContext);
 
@@ -112,27 +115,34 @@ const SampleTable = (props: {
     sample: AudioTrackType,
     clickedSampleIndex: number
   ) => {
-    const audio_track: AudioTrack = {
-      id: sample.id, // Set the id from currentSample
-      src: sample.mp3_s3_key ? sample.mp3_s3_key : sample.s3_key, // Set the src from currentSample
+    // Create an updated sample with the transformed URL
+    const updatedSample = {
+      ...sample,
+      mp3_s3_key: sample.mp3_s3_key ? loadAsset(sample.mp3_s3_key) : loadAsset(sample.s3_key),
+      s3_key: sample.s3_key ? loadAsset(sample.s3_key) : loadAsset(sample.mp3_s3_key)
     };
+
+    const audio_track: AudioTrack = {
+      id: sample.id,
+      src: updatedSample.mp3_s3_key || updatedSample.s3_key,
+    };
+
     if (!current || current.id !== sample.id) {
-      // If no track is currently playing, or a new track is selected
       setCurrentPlaying(sample.id);
       setCurrentPlayingIndex(clickedSampleIndex);
-      armTrack(sample.id); // Arm the track first
-      setTrack(sample); // Set the track for the UI to update
-      playTrack(audio_track); // Play the track after arming
+      setCurrent(audio_track);
+      armTrack(sample.id);
+      setTrack(updatedSample); // Now passing the updated sample with transformed URLs
+      playTrack(audio_track);
       setIsPlaying(true);
       setPlay(true);
     } else {
-      // Toggle play/pause for the currently selected track
       if (isPlaying) {
-        pauseTrack(); // Pause if the track is currently playing
+        pauseTrack();
       } else {
-        playTrack(audio_track); // Play the track after arming
+        playTrack(audio_track);
       }
-      setIsPlaying(!isPlaying); // Toggle the isPlaying state
+      setIsPlaying(!isPlaying);
     }
   };
 
@@ -294,7 +304,7 @@ const SampleTable = (props: {
         await saveSampleDownloadAPI(sample.id);
       }
       const link = document.createElement('a');
-      link.href = sample.s3_key;
+      link.href = loadAsset(sample.s3_key);
       link.download = sample.filename;
       document.body.appendChild(link);
       link.click();
@@ -328,8 +338,6 @@ const SampleTable = (props: {
     });
     setLocalLikedStatus(initialStatus);
   }, [samples]);
-
-  console.log('Sample ID: ', samples);
 
   return (
     <>
@@ -468,29 +476,6 @@ const SampleTable = (props: {
                       </span>
                     </td>
 
-                    {/* Waveform */}
-                    {/* <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-gray-300 text-center">
-                    <div className="flex flex-col items-center justify-center h-full">
-                      <div className="h-[50px]">
-                        {tracks.find((t) => t.id === sample.id) && (
-                            <Waveform
-                            track={tracks.find((t) => t.id === sample.id)}
-                            trackDuration={sample.length}
-                            columns={60}
-                            hover_cursor={false}
-                            options={{
-                              colors: {
-                                default: 'white',
-                              },
-                              activeHeight: '0%',
-                              radius: '5px',
-                            }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </td> */}
-
                     {/* Sample Duration */}
                     <td
                       className={`playable-td meta-sample whitespace-nowrap px-3 py-4 text-sm text-center font-normal ${
@@ -509,17 +494,6 @@ const SampleTable = (props: {
                     <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center font-normal">
                       {sample?.bpm || "--"}
                     </td>
-
-                    {/* <td className="meta-sample whitespace-nowrap px-3 py-4 text-sm text-mediumGray text-center">
-                      <span className="bg-blackMarbel border-[1px] border-[#222222] rounded-lg text-white px-2 py-1 flex gap-1.5 w-max items-center">
-                        <div
-                          className={`w-[7px] h-[7px] rounded-full bg-[#25BA00]`}
-                        ></div>
-                        <span className="text-xs font-semibold text-mediumGray">
-                          Available
-                        </span>
-                      </span>
-                    </td> */}
 
                     {/* Considering List */}
                     <td className="considering-avatar whitespace-nowrap text-sm text-mediumGray text-center px-3 py-4">
@@ -557,40 +531,7 @@ const SampleTable = (props: {
                       }
                     >
                       <div className="flex items-center gap-4">
-                        {/* <div className="onboard-7 toggle-container">
-                        {parseInt(sample.is_liked) === 1 ? (
-                          <Toggle is_liked={true} sample={x} />
-                        ) : (
-                          <Toggle is_liked={false} sample={x} />
-                        )}
-                      </div> */}
-
-                        {/* <a
-                        href="#"
-                        className="onboard-8 download-link cursor-pointer"
-                        onClick={async (e) => {
-                          // e.preventDefault();
-                          // const FileSaver = require("file-saver");
-                          // await saveSampleDownloadAPI(x.id);
-                          // FileSaver.saveAs(sample.sample_src, sample.filename);
-                        }}
-                        rel="noreferrer"
-                        download
-                        target="_blank">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={24}
-                          height={24}
-                          viewBox="0 0 24 24"
-                          fill="none">
-                          <path
-                            d="M12 8V16M12 16L8 12M12 16L16 12M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
-                            stroke="#CDCDCD"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"/>
-                        </svg>
-                      </a> */}
+                        
                         <span 
                           onClick={(e) => handleLike(e, sample)}
                           className={`${!isConnect ? 'opacity-40 pointer-events-none' : ''}`}
