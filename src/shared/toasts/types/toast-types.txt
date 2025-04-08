@@ -22,7 +22,7 @@ Success:
   informationDeleted
   accountInfoUpdated ✅ (settings/account: account information)
   emailUpdated ✅ (settings/security)
-  passwordChanged
+  passwordChanged ✅ (settings/security)
   contributorAdded
   metadataUpdated
   fileDeleted
@@ -107,3 +107,9 @@ Warning:
   feeCannotBeSetToZero
   creditBalanceIsLow
   aboutToRunOutOfCredits
+
+  Info:
+  upcomingMaintenance
+  systemUpdateCompleted
+  newVersionAvailable
+  scheduledDowntime
