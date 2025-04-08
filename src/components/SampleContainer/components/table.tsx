@@ -356,26 +356,26 @@ const SampleTable = (props: {
           <tr>
             <th
               scope="col"
-              className="py-3.5 pl-4 pr-3 text-left text-sm font-normal text-softGray sm:pl-4"
+              className="py-3.5 pl-4 pr-3 text-left text-xs md:text-sm font-normal text-softGray sm:pl-4"
             >
               Sample
             </th>
             <th
               scope="col"
-              className="px-3 py-3.5 text-left text-sm font-normal text-softGray"
+              className="px-3 py-3.5 text-left text-xs md:text-sm font-normal text-softGray"
             >
               Filename
             </th>
             {/* <th scope="col" className="px-3 py-3.5 text-left text-sm font-normal text-softGray"></th> */}
             <th
               scope="col"
-              className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray"
+              className="meta-sample px-3 py-3.5 text-center text-xs md:text-sm font-normal text-softGray"
             >
               Time
             </th>
             <th
               scope="col"
-              className="meta-sample px-3 py-3.5 text-center text-sm font-normal text-softGray"
+              className="meta-sample px-3 py-3.5 text-center text-xs md:text-sm font-normal text-softGray"
             >
               Key
             </th>
@@ -399,7 +399,7 @@ const SampleTable = (props: {
             </th>
             <th
               scope="col"
-              className="px-3 py-3.5 text-left text-sm font-normal text-softGray"
+              className="px-3 py-3.5 text-left text-xs md:text-sm font-normal text-softGray"
             >
               Actions
             </th>
@@ -434,7 +434,7 @@ const SampleTable = (props: {
                     {/* Thumbnail */}
                     <td className="onboard-5 whitespace-nowrap px-3 py-4 text-sm playable-td">
                       <div className="flex items-center gap-5">
-                        <div className="w-8 h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-gunMetal text-charcoalGray">
+                        <div className="md:w-8 w-4 h-4 md:h-8 rounded-[4px] flex justify-center items-center border border-charcoalGray bg-gunMetal text-charcoalGray">
                           <MusicIcon />
                         </div>
                         <div className="relative w-4 h-4 cursor-pointer group">
@@ -466,7 +466,7 @@ const SampleTable = (props: {
 
                     {/* Sample info */}
                     <td
-                      className={`playable-td row-play px-3 py-4 text-xs text-mediumGray font-['Mona-Sans-M'] max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap ${
+                      className={`playable-td row-play md:px-3 md:py-4 px-1 py-2 text-[10px] md:text-xs text-mediumGray font-['Mona-Sans-M'] md:max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap ${
                         currPlayingId === sample.id
                           ? "text-white"
                           : "text-mediumGray "
@@ -577,7 +577,7 @@ const SampleTable = (props: {
                           />
                         </a>
 
-                        <div className={`dropdown-container z-0 ${!isConnect ? 'opacity-40 pointer-events-none' : ''}`}>
+                        <div className={`dropdown-container z-40 ${!isConnect ? 'opacity-40 pointer-events-none' : ''}`}>
                           <DropDown
                             {...{
                               sample,

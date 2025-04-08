@@ -12,8 +12,8 @@ const Filters = (props: Props) => {
   };
 
   return (
-    <div className="p-3 border-b border-borderColor">
-      <div className="mb-5">
+    <div className="">
+      <div className="mb-5  w-full flex flex-col justify-center items-center py-4 border border-eerieBlack">
         <h2 className="text-lightGray text-2xl font-bold mb-1">
           Discover Partners
         </h2>
@@ -23,17 +23,17 @@ const Filters = (props: Props) => {
         </p>
       </div>
 
-      <div className="flex max-w-[1381px] items-center justify-between flex-wrap gap-2">
-        <div className="flex gap-2 flex-wrap">
+      <div className="flex w-full mb-3  items-center justify-center flex-wrap gap-2">
+        <div className="flex mx-auto border border-eerieBlack rounded-full p-2 gap-2 flex-wrap">
           {Object.entries(userTagsObj).map(([value, label], idx) => {
             return (
               <div
                 key={label + idx}
                 onClick={() => handleFilters(value)}
-                className={`border-[1px] cursor-pointer px-3 py-2 rounded-[35px] text-[12px] font-normal ${
+                className={` cursor-pointer px-3 py-2 rounded-[35px] text-[12px] font-normal ${
                   filterValue === value
                     ? "bg-limeGreen border-limeGreen text-black"
-                    : "border-eclipseGray bg-darkGray text-charcoalGray"
+                    : " text-charcoalGray"
                 }`}
               >
                 {label}

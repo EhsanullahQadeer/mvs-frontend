@@ -82,7 +82,7 @@ const FileDropper = (props: Props) => {
         htmlFor="file-upload"
         className="cursor-pointer flex flex-col gap-2 items-center px-5 py-5"
       >
-        <div className="w-[74px] h-[88px]">
+        <div className="md:w-[74px] w-[33px] h-[41px] md:h-[88px]">
           <img
             src={uploadFileIcon}
             alt="uploadFileIcon"
@@ -91,17 +91,17 @@ const FileDropper = (props: Props) => {
         </div>
 
         <div>
-          <div className="mb-2">
-            <span className="text-softGray font-semibold text-sm underline">
+          <div className=" flex md:flex-row flex-col">
+            <span className="text-softGray font-semibold md:text-sm text-[10px] underline">
               Click to upload
             </span>
-            <span className="text-coolGray text-sm font-normal">
+            <span className="text-coolGray md:text-sm text-[10px]  font-normal">
               {" "}
               or drag and drop
             </span>
           </div>
 
-          <p className="text-sm text-dimGray font-normal">
+          <p className="md:text-sm text-[10px] text-dimGray font-normal">
             Maximum file size 50MB.
           </p>
           {!isLoginProfile &&

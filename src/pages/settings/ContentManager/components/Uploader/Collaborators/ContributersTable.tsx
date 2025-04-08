@@ -17,8 +17,8 @@ import TableHead from "@mui/material/TableHead";
 import { ICollaborator, IUserProfile } from "../../types";
 import TableContainer from "@mui/material/TableContainer";
 import Tooltip from "@mui/material/Tooltip";
-import MultiSelectDropdown from "../../MultiSelectDropdown";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
+import MultiSelectDropdown from "../../MultiSelectDropdown";
 
 export const rolesArr = [
   "Producer",
@@ -49,7 +49,6 @@ function ContributersTable(
     setComposerData,
     handleOpenDeleteDialog,
     setPercentError,
-    percentError
   } = props;
   const muiStyles = getMuiStyles();
 
@@ -124,16 +123,7 @@ function ContributersTable(
         >
           <TableRow>
             <TableCell>Contributors</TableCell>
-            <TableCell>
-              <div className="flex flex-col">
-                <span>Publishing %</span>
-                {percentError && (
-                  <span className="text-red-500 text-xs">
-                    Total percentage must equal 100%
-                  </span>
-                )}
-              </div>
-            </TableCell>
+            <TableCell>Publishing %</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Role</TableCell>
             <TableCell />
@@ -169,10 +159,10 @@ function ContributersTable(
                             max="100"
                             value={composer.contribution || ''}
                             onChange={(e) => handleInputChange(e, composer.user?.id)}
-                            className={`text-silver text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border ${percentError ? 'border-red-500' : 'border-eclipseGray'} hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                            className="text-silver text-sm font-semibold px-2 py-1 rounded-lg bg-darkGray border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 w-11 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                         ) : (
-                          <span className={`text-silver text-sm font-semibold ${percentError ? 'text-red-500' : ''}`}>
+                          <span className="text-silver text-sm font-semibold">
                             {composer.contribution}%
                           </span>
                         )}
