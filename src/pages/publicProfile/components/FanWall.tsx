@@ -7,6 +7,7 @@ import { IArtistProfileData, ICurrentUser } from "./types";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createFanwallPost, getFanwallPosts } from "api/fanwall";
 import { useNotification } from "services/WebSocket/useNotification.hook";
+import { ReactComponent as MessageSquareHeart } from "../../../assets/icons/messageSquareHeart.svg";
 
 interface IProps {
   artistData: IArtistProfileData | IUserData | null;
@@ -262,8 +263,10 @@ const FanWall = (props: IProps) => {
               />
             </div>
           )) : (
-            <div className="flex justify-center items-center h-full">
-              <p className="text-silver">No posts yet</p>
+            <div className="flex flex-col text-[#FFFFFF] justify-center items-center h-full">
+              <MessageSquareHeart/>
+              <p className="text-lg mt-4 mb-2">No comments yet</p>
+              <p className="text-mediumGray m-0">Be the first to leave a message and show your support!</p>
             </div>
           )}
         </div>
