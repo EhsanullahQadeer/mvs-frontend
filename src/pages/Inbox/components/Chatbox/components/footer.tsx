@@ -387,9 +387,9 @@ const Footer = () => {
                 </div>
               )}
 
-              <div className="flex items-center justify-between pl-2 pr-2 pb-2">
-                <div className="flex gap-4 items-center">
-                  <div className="flex gap-4 items-center p-2 rounded-lg border border-[#3D3D3D]">
+              <div className="flex items-center justify-between p-2">
+                <div className="flex gap-2 md:gap-4 items-center flex-1 min-w-0">
+                  <div className="flex gap-2 md:gap-4 items-center p-2 rounded-lg border border-[#3D3D3D] shrink-0">
                     <div className="flex flex-col gap-1">
                       <div className="text-sm font-semibold leading-none text-white whitespace-nowrap">
                         Tip
@@ -408,65 +408,67 @@ const Footer = () => {
                         onChange={handleTipAmountChange}
                         onKeyDown={handleKeyDown}
                         onFocus={handleFocus}
-                        className={`bg-transparent border-none border-transparent focus:border-transparent focus:ring-0 w-auto min-w-[50px] max-w-full px-0 py-2  ${listenToDemoEvent ? 'cursor-not-allowed' : 'cursor-pointer'}`} // Allow the input to grow and shrink
-                        style={{ width: `${inputTipAmount.length}ch` }} // Dynamically set width based on input length
+                        className={`bg-transparent border-none border-transparent focus:border-transparent focus:ring-0 w-auto min-w-[50px] max-w-full px-0 py-2  ${listenToDemoEvent ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                        style={{ width: `${inputTipAmount.length}ch` }}
                       />
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => setIsSampleModalOpen(true)}
-                    className={`text-dimGray p-2 rounded-lg ${
-                      isThread
-                        ? "cursor-not-allowed pointer-events-none"
-                        : "cursor-pointer hover:bg-[#202327]"
-                    }`}
-                    disabled={isThread}
-                    title={isThread ? "Cannot send samples in a thread" : "Select from your samples"}
-                  >
-                    <AudioFileIconFromSample />
-                  </button>
-
-                  <AudioRecorder
-                    onStopRef={stopRecordingRef}
-                  />
-
-                  <div
-                    className={`${
-                      isThread
-                        ? "cursor-not-allowed"
-                        : "cursor-pointer"
-                    }`}
-                  >
-                    <input
-                      type="file"
-                      accept="audio/*"
-                      ref={fileInputRef}
-                      onChange={handleAudioSelector}
-                      style={{ display: "none" }}
-                    />
+                  <div className="flex gap-2 items-center shrink-0">
                     <button
-                      onClick={handleButtonClick}
-                      className={`text-dimGray cursor-${isSendDemoAvailable && !isThread ? 'pointer' : 'not-allowed'} p-2 rounded-lg ${
-                        isSendDemoAvailable && !isThread ? 'hover:bg-[#202327]' : ''
+                      onClick={() => setIsSampleModalOpen(true)}
+                      className={`text-dimGray p-2 rounded-lg ${
+                        isThread
+                          ? "cursor-not-allowed pointer-events-none"
+                          : "cursor-pointer hover:bg-[#202327]"
                       }`}
-                      disabled={!isSendDemoAvailable || isThread}
-                      title={!isSendDemoAvailable ? "User currently is not accepting demos" : ""}
+                      disabled={isThread}
+                      title={isThread ? "Cannot send samples in a thread" : "Select from your samples"}
                     >
-                      <div className="relative">
-                        <AudioFileIcon />
-                        {!isSendDemoAvailable || isThread && (
-                          <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'scale(1.8)' }}>
-                            <div className="w-full h-0.5 bg-dimGray rotate-45 transform origin-center"/>
-                          </div>
-                        )}
-                      </div>
+                      <AudioFileIconFromSample />
                     </button>
+
+                    <AudioRecorder
+                      onStopRef={stopRecordingRef}
+                    />
+
+                    <div
+                      className={`${
+                        isThread
+                          ? "cursor-not-allowed"
+                          : "cursor-pointer"
+                      }`}
+                    >
+                      <input
+                        type="file"
+                        accept="audio/*"
+                        ref={fileInputRef}
+                        onChange={handleAudioSelector}
+                        style={{ display: "none" }}
+                      />
+                      <button
+                        onClick={handleButtonClick}
+                        className={`text-dimGray cursor-${isSendDemoAvailable && !isThread ? 'pointer' : 'not-allowed'} p-2 rounded-lg ${
+                          isSendDemoAvailable && !isThread ? 'hover:bg-[#202327]' : ''
+                        }`}
+                        disabled={!isSendDemoAvailable || isThread}
+                        title={!isSendDemoAvailable ? "User currently is not accepting demos" : ""}
+                      >
+                        <div className="relative">
+                          <AudioFileIcon />
+                          {!isSendDemoAvailable || isThread && (
+                            <div className="absolute inset-0 flex items-center justify-center" style={{ transform: 'scale(1.8)' }}>
+                              <div className="w-full h-0.5 bg-dimGray rotate-45 transform origin-center"/>
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="shrink-0 flex items-center gap-2">
-                  <div className="flex items-center justify-end text-sm font-normal leading-none" style={{ color: messageInputValue.length >= 255 ? '#EF4444' : '#848484' }}>
+                <div className="flex items-center gap-2 shrink-0 ml-2">
+                  <div className="flex items-center justify-end text-sm font-normal leading-none whitespace-nowrap min-w-[4rem]" style={{ color: messageInputValue.length >= 255 ? '#EF4444' : '#848484' }}>
                     {messageInputValue.length} / 255
                   </div>
 
@@ -477,7 +479,6 @@ const Footer = () => {
                   >
                     <div
                       onClick={() => {
-                        console.log("Send button clicked");  // Add this debug log
                         if (!isSendButtonDisabled && !isSubmitting) {
                           handleSendMessage();
                         }
