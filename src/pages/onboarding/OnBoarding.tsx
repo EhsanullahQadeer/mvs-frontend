@@ -11,7 +11,6 @@ import { FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import UserType from "./components/UserType";
 import PersonalInformation from "./components/PersonalInformation";
 import MusicIdentity from "./components/MusicIdentity";
-import UploadSampleSection from "./components/UploadSampleSection";
 import PricingSection from "./components/PricingSection";
 import ConncectWithPeople from "./components/ConncectWithPeople";
 import PaidSection from "./components/PaidSection";

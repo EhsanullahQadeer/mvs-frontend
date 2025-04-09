@@ -27,11 +27,8 @@ import { getCheckUserHasSampleType } from "api/sounds";
 import { CircularProgress } from "@mui/material";
 import ProfileAboutSection from "./components/ProfileAboutSection";
 import { MessageContextProvider } from "./messageContextProvider";
-import UploadFileSection from "./components/UploadFileSection";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/reducers";
-import SampleUploadModel from "./components/SampleUploadModel";
-import ProfileLibrary from "./components/ProfileLibrary";
 import ProfileRightSection from "../publicProfile/components/ProfileRightSection";
 import { ChatboxProvider } from "pages/Inbox/components/Chatbox/context";
 // import { getUserSamplesAPI } from "api/sounds";
@@ -58,9 +55,9 @@ const ArtistProfile = () => {
     instrumental: false,
     sample: false,
     contribution: false,
-    full_song: false
+    full_song: false,
   });
-  const [selectedTab, setSelectedTab] = useState('');
+  const [selectedTab, setSelectedTab] = useState("");
   const types = ["instrumental", "sample", "contribution", "full_song"];
   useEffect(() => {
     if (artistData && user) {
@@ -72,8 +69,11 @@ const ArtistProfile = () => {
 
   const fetchSampleTypes = async () => {
     if (user && artistData) {
-      const typeString = types.join(',');
-      const response = await getCheckUserHasSampleType(typeString, artistData.id);
+      const typeString = types.join(",");
+      const response = await getCheckUserHasSampleType(
+        typeString,
+        artistData.id
+      );
       console.log("response", response);
       console.log("response", user.id, artistData.id);
       setHasSampleType(response.data);
@@ -86,7 +86,7 @@ const ArtistProfile = () => {
         setSelectedTab(libraryTabs[0].value);
       }
     }
-  }
+  };
 
   useEffect(() => {
     // Reset states when user or artist changes
@@ -94,14 +94,12 @@ const ArtistProfile = () => {
       instrumental: false,
       sample: false,
       contribution: false,
-      full_song: false
+      full_song: false,
     });
     fetchSampleTypes();
   }, [artistData, user]);
 
   const [creditsData, setCreditsData] = useState([]);
-
-
 
   const getArtistData = useCallback(async () => {
     try {

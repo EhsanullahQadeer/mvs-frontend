@@ -1,6 +1,6 @@
 import React from "react";
 import Avatar from "react-avatar";
-import { loadAsset } from "utils/dateUtils";
+import { loadAsset } from "shared/utils/dateUtils";
 
 // Define the ButtonProps type to handle all possible props
 interface ButtonProps {

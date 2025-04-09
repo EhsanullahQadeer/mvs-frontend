@@ -272,20 +272,20 @@ const AudioPlayer = ({
 
       {/* Track Info and Waveform */}
       <div
-        className="border-l border-r border-eclipseGFray p-4 flex gap-2 items-center"
+        className="border-l border-r border-eclipseGFray md:p-4 p-2 flex gap-2 items-center"
         style={{
           display: sampleNameVisible ? "flex" : "none",
           alignItems: "center",
         }}
         id="trackInfo"
       >
-        <div className="h-8 w-8">
+        <div className="md:h-8 md:w-8 w-4 h-4">
           {currTrack?.thumbnail && (
             <Thumbnail thumbnail={currTrack.thumbnail} size="32"/>
           )}
         </div>
 
-        <div className="h-6 w-6">
+        <div className="md:h-6 md:w-6  w-4 h-4">
           <AnimatedWaveGraphic playing={isPlaying} />
         </div>
 
@@ -310,7 +310,7 @@ const AudioPlayer = ({
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5"
+              className="md:w-5 md:h-5 w-2.5 h-2.5"
             >
               <path
                 strokeLinecap="round"

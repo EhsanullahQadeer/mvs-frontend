@@ -1,11 +1,10 @@
 import { uploadFile } from "api/sounds";
-import DropFilesSection from "pages/settings/content-management/components/DropFilesSection";
-import UploadingFilesSection from "pages/settings/content-management/components/UploadingFilesSection";
+import DropFilesSection from "pages/settings/ContentManager/components/Uploader/FileSelector";
+import UploadingFilesSection from "pages/settings/ContentManager/components/Uploader/FileUploadingContainer";
 import { useEffect, useState } from "react";
 
 const UploadFileSection = (props) => {
   const { user } = props;
-  const [currentUserInfo, setCurrentUserInfo] = useState(user);
   const [uploadingFile, setUploadingFile] = useState<File>(null);
   const [fileRedisKey, setFileRedisKey] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -79,28 +78,17 @@ const UploadFileSection = (props) => {
     <div>
       <div>
         <div className="px-3">
-          <DropFilesSection
+          {/* <DropFilesSection
             {...{
               uploadingFile,
               setUploadingFile,
-              currentUserInfo,
+              user,
             }}
             isLoginProfile={true}
-          />
+          /> */}
 
           {uploadingFile && (
-            <UploadingFilesSection
-              {...{
-                uploadingFile,
-                setUploadingFile,
-                fileRedisKey,
-                uploadProgress,
-                handleCancel,
-                currentUserInfo,
-                setUpdateData,
-              }}
-              isLoginProfile={true}
-            />
+            <UploadingFilesSection/>
           )}
         </div>
       </div>

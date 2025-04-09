@@ -21,18 +21,20 @@ import { FiDownload, FiEdit3 } from "react-icons/fi";
 import { GoShareAndroid } from "react-icons/go";
 import { RiDeleteBinLine } from "react-icons/ri";
 import AlertDialog from "./AlertDialog";
-import UpdateSamplePopup from "pages/settings/content-management/components/UpdateSamplePopup";
+import UpdateSamplePopup from "pages/settings/ContentManager/components/Uploader/UpdateSamplePopup";
 import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
 import ShareSetting from "./ShareSetting";
 import { deleteSampleAPI } from "api/sounds";
 import { saveSampleDownloadAPI } from "api/sounds";
+import ShareModal from "pages/profile/components/ShareModal";
 import { useToast } from "shared/toasts/ToastProvider";
 
 const DropDown = (props: any) => {
   const { addToast } = useToast();
 
   const { sample, play, fetchAllUserSamples, is_owner } = props;
+  const [isSharing, setIsSharing] = useState(false);
 
   const [request_split_sheet, setRequestSplitSheet] = useState(false);
   const [sample_info, setSampleInfo] = useState(false);
@@ -116,7 +118,7 @@ const DropDown = (props: any) => {
             open: openEditPopup,
             handleClose: handleCloseDialog,
             sampleToEdit,
-            currentUserInfo: user,
+            user: user,
           }}
         />
       )}
@@ -201,7 +203,18 @@ const DropDown = (props: any) => {
                     </div>
                   </Menu.Item>
                 )}
-                
+                    <Menu.Item>
+  <div
+    className="onboard-12 md:hidden flex items-center hover:bg-eclipseGray cursor-pointer py-[8px] px-[12px]"
+    onClick={() => setIsSharing(true)}  // ✅ This opens ShareModal
+  >
+    <GoShareAndroid className="text-[18px]" />
+    <p className="ml-[8px]  font-['Mona-Sans-M'] text-[#a3a3a4]">
+      Share Sample
+    </p>
+  </div>
+</Menu.Item>
+
                 {is_owner && (
                   <Menu.Item>
                     <div
@@ -319,6 +332,8 @@ const DropDown = (props: any) => {
           </Transition>
         </Menu>
       </div>
+      <ShareModal open={isSharing} onClose={() => setIsSharing(false)} />
+
       {request_split_sheet && (
         <RequestSplitSheetModal
           sample={props.sample}

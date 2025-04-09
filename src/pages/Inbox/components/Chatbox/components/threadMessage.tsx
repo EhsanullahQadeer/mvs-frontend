@@ -2,7 +2,7 @@ import moment from "moment";
 import WaveSurfer from "wavesurfer.js";
 import { useChatbox } from "../context";
 import { FiUnlock } from "react-icons/fi";
-import { loadAsset } from "utils/dateUtils";
+import { loadAsset } from "shared/utils/dateUtils";
 import { useMessenger } from "api/messenger/context";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";

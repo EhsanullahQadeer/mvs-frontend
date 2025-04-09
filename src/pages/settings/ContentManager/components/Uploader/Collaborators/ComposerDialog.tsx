@@ -52,34 +52,16 @@ function ComposerDialog(props: Props) {
   const [isInvite, setIsInvite] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(null);
-  // Feedback message states
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
-  // Debounce the search value
   const debouncedSearchValue = useDebounce(searchTerm, 300);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [searchResults, setSearchResults] = useState([]);
-
-  // Replace the regex with Yup schema
   const emailSchema = Yup.string()
     .email('Invalid email address')
     .required('Email is required');
 
-  // Function to truncate email addresses
-  const truncateEmail = (email: string) => {
-    const [localPart, domain] = email.split('@');
-    const [domainName, extension] = domain.split('.');
-    return `${localPart.substring(0, 6)}...@${domainName.substring(0, 3)}...${extension}`;
-  };
-
-  // Function to truncate text
-  const truncateText = (text: string) => {
-    if (text.length <= 10) return text;
-    return `${text.substring(0, 10)}...`;
-  };
-
-  // Update the useEffect that checks email
   useEffect(() => {
     const isValidEmail = async () => {
       try {
@@ -97,17 +79,17 @@ function ComposerDialog(props: Props) {
   }, [searchTerm]);
 
   useEffect(() => {
-    if (openComposerDialog) { // Check if dialog is open
+    if (openComposerDialog) {
       const timer = setTimeout(() => {
         if (inputRef.current) {
           console.log("Focusing...");
-          inputRef.current.focus(); // Focus the input
+          inputRef.current.focus();
         }
-      }, 0); // Delay the focus call
+      }, 0);
 
-      return () => clearTimeout(timer); // Cleanup the timer on unmount
+      return () => clearTimeout(timer);
     }
-  }, [openComposerDialog]); // Run this effect when openComposerDialog changes
+  }, [openComposerDialog]);
 
   const handleClose = () => {
     setOpenComposerDialog(false);
@@ -131,7 +113,6 @@ function ComposerDialog(props: Props) {
             professionalName: debouncedSearchValue,
             take: 10,
           });
-          // Filter out users that are already in contributors list
           const filteredUsers = response.data.users.filter(user => 
             !contributors.some(contributor => 
               contributor.user.id === user.id || 
@@ -151,20 +132,13 @@ function ComposerDialog(props: Props) {
   }, [debouncedSearchValue, contributors]);
 
   const handleButtonClick = () => {
-    if (selected) {
-      handleAddComposer(selected);
-      setSelected(null);
-      setSearchTerm("");
-    }
     if (isInvite) {
       handleInviteByEmail(searchTerm);
     }
   };
 
-  // In handleInviteByEmail, update the validation
   const handleInviteByEmail = async (email: string) => {
     try {
-      // Validate email using Yup
       await emailSchema.validate(email);
       
       setLoading(true);
@@ -187,12 +161,6 @@ function ComposerDialog(props: Props) {
     }
   };
 
-  // Add a useEffect to monitor the feedback message state
-  useEffect(() => {
-    console.log("Feedback message changed:", feedbackMessage);
-    console.log("Is success:", isSuccess);
-  }, [feedbackMessage, isSuccess]);
-
   const isSelected = (selectedComposer) => {
     for (const a of contributors) {
       if (a.id === selectedComposer.id){
@@ -202,11 +170,13 @@ function ComposerDialog(props: Props) {
     return false;
   };
 
-
   const handleSelectingContributor = (selectedComposer) => {
+    console.log("Selected composer:", selectedComposer);
     if (!isSelected(selectedComposer)) {
       setSelected(selectedComposer);
+      handleAddComposer(selectedComposer);
       setSearchTerm(selectedComposer.professional_name);
+      setIsFocused(false);
     }
   };
 
@@ -248,7 +218,6 @@ function ComposerDialog(props: Props) {
         </div>
       </DialogTitle>
       
-      {/* Dedicated feedback message container */}
       <div className="px-6 -mt-2 mb-2">
         {feedbackMessage && (
           <div 
@@ -273,10 +242,11 @@ function ComposerDialog(props: Props) {
               onChange={handleSearchChange}
               onFocus={() => setIsFocused(true)}
               onBlur={(e) => {
-                // Only hide if we're not clicking inside the dropdown
-                if (!e.relatedTarget?.closest('.collaborators-dropdown')) {
-                  setIsFocused(false);
-                }
+                setTimeout(() => {
+                  if (!e.relatedTarget?.closest('.collaborators-dropdown')) {
+                    setIsFocused(false);
+                  }
+                }, 200);
               }}
             />
             <div className="absolute right-[9px] top-1/2 -translate-y-1/2 text-[#4C4C4C] cursor-pointer flex">
@@ -288,23 +258,29 @@ function ComposerDialog(props: Props) {
 
           <div
             className={`${
-              selected || isInvite
+              isInvite
                 ? "bg-[#059669] text-softGray cursor-pointer"
                 : "bg-eclipseGray text-dimGray pointer-events-none"
             } rounded-lg text-sm font-semibold w-[69px] flex justify-center items-center`}
-            onClick={handleButtonClick}
+            onClick={isInvite ? handleButtonClick : undefined}
           >
-            {isInvite ? "Invite" : "Add"}
+            Invite
           </div>
         </div>
         {isFocused && (
           <div className={`flex flex-col bg-[#1C1C17] absolute top-full w-full rounded-lg ${dropdownItemMaxHeight} overflow-y-auto custom-dropdown collaborators-dropdown`}>
             {searchResults.map((composer, idx) => {
-              const { thumbnail, professional_name, primary_role, secondary_role, id} =
-                composer;
+              const { 
+                thumbnail, 
+                professional_name, 
+                primary_role, 
+                secondary_role, 
+                id
+              } = composer;
               return (
                 <div
                   onClick={() => {
+                    console.log("Selecting contributor:", composer);
                     handleSelectingContributor(composer);
                   }}
                   key={professional_name + idx}
@@ -353,11 +329,18 @@ function ComposerDialog(props: Props) {
         <div className="text-silver text-xs font-normal p-2">
           Contributors to this sample
         </div>
-        <div className={`bg-eclipseGray rounded-lg ${dropdownItemMaxHeight} p-${searchedContributorsPadding} overflow-y-auto custom-dropdown`}>
+        <div className="bg-eclipseGray rounded-lg h-[200px] overflow-y-auto custom-dropdown">
           {contributors?.length ? (
             contributors?.map((composer, idx) => {
-              const { user: { thumbnail, professional_name, primary_role, secondary_role, id } } =
-                composer;
+              const { 
+                user: { 
+                  thumbnail, 
+                  professional_name, 
+                  primary_role, 
+                  secondary_role, 
+                  id 
+                } 
+              } = composer;
 
               return (
                 <div

@@ -4,7 +4,7 @@ import { useChatbox } from "../context";
 import { useSelector } from "react-redux";
 import TipMessage from "../../TipMessage";
 import { RootState } from "redux/reducers";
-import { loadAsset } from "utils/dateUtils";
+import { loadAsset } from "shared/utils/dateUtils";
 import MessageOptions from "./messageOptions";
 import { formatMediaDetails } from "../../../handlers/mediaUtils";
 import React, { useCallback, useEffect, useRef, useState } from "react";

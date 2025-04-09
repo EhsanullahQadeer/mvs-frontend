@@ -42,7 +42,7 @@ const FormikLabeledField = (props: Props) => {
         htmlFor={name}
         className={`${
           labelColor ? `text-${labelColor}` : "text-silver"
-        } text-sm font-normal`}
+        } text-xs md:text-sm font-normal`}
       >
         {label}
       </label>
@@ -59,7 +59,7 @@ const FormikLabeledField = (props: Props) => {
         style={{
           boxShadow: "none",
         }}
-        className={`text-dimGray text-sm font-normal px-4 py-3 rounded-lg ${
+        className={`text-dimGray md:text-sm text-xs font-normal px-3 md:px-4 py-3 rounded-lg ${
           inputBgColor ? `bg-${inputBgColor}` : "bg-darkGray"
         } border border-eclipseGray hover:border-charcoalGray focus:border-transparent focus:outline-charcoalGray focus:outline-2 focus:outline-offset-0 resize-none`}
       />

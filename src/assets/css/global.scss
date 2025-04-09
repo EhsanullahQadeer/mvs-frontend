@@ -614,6 +614,12 @@ body {
   width: 700px !important;
   text-align: center;
 }
+@media  (max-width: 768px) {
+  .Toastify__toast-container {
+    width: 300px !important;
+    text-align: center;
+  }
+}
 
 .track-info-container {
   width: 500px !important;

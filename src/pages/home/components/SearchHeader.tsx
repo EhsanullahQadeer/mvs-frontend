@@ -2,41 +2,62 @@
  * @file SearchHeader.tsx
  * @author Ehsanullah Qadeer
  * @desc Search header component.
- * 
+ *
  * @copyright (c) 2024 MVSSIVE. All rights reserved.
  ****************************************************************************************/
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import "../styles/search-header.scss";
-import { searchAllUsers } from "api/user";
-import { MdCancel } from "react-icons/md";
-import { useState, useEffect } from "react";
-import useDebounce from "hooks/useDebounce";
-import CustomPopper from "./CutomPopperSearch";
-import { Autocomplete, TextField } from "@mui/material";
-import leftWing from "../../../assets/img/left wing.svg";
+import banner from "../../../assets/img/[M].svg";
+import stars from "../../../assets/img/stars.svg";
 import rightWing from "../../../assets/img/right wing.svg";
-import { useSearchHeader } from '../hooks/useSearchHeader';
-import banner from "../../../assets/img/welcome-banner.svg";
-import crownIcon from "../../../assets/icons/crownIcon.svg";
-import CircularProgress from "@mui/material/CircularProgress";
 import frquesncyIcon from "../../../assets/img/frequency-Icon.svg";
-import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
+import crownIcon from "../../../assets/icons/crownIcon.svg";
+import "../styles/search-header.scss";
+import { Autocomplete, TextField } from "@mui/material";
 import { ReactComponent as SearchIcon } from "../../../assets/icons/searchIcon.svg";
+import { MdCancel } from "react-icons/md";
+import CustomPopper from "./CutomPopperSearch";
+import CircularProgress from "@mui/material/CircularProgress";
+import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
+import { useSearchHeader } from "../hooks/useSearchHeader";
+import { searchAllUsers, userArtistSearch } from "api/user";
+import useDebounce from "hooks/useDebounce";
+import { useState, useEffect } from "react";
+import avatarImg from "../../../assets/img/avatar.svg";
 import Thumbnail from "components/ui/Header/atoms/notificationAtoms/thumbnailAvatar";
-
 export interface IAppProps {}
+const headerButtons = [
+  "pop",
+  "Dance/Electronic",
+  "hiphop",
+  "Reggaeton",
+  "K-Pop",
+  "R&B",
+  "Rock",
+  "Country",
+];
 
 export function SearchHeader() {
-  const { topResults, searchInput, setSearchInput, loading, loadTopArtists, setLoading } = useSearchHeader();
+  const {
+    topResults,
+    searchInput,
+    setSearchInput,
+    loading,
+    loadTopArtists,
+    setLoading,
+  } = useSearchHeader();
   const { handleArtistSelected } = useHandleArtistSelected();
   const [searchResults, setSearchResults] = useState([]);
-    
+  const [filterValue, setFilterValue] = useState<string>(""); // default value
+
   // Debounce the search value
   const debouncedSearchValue = useDebounce(searchInput, 300);
 
   const handleCancelBtn = () => {
     setSearchInput("");
+  };
+  const handleFilters = (value: string) => {
+    setFilterValue(value);
   };
 
   const getUniqueResults = (data) => {
@@ -51,13 +72,17 @@ export function SearchHeader() {
     })();
   }, []);
 
-
   useEffect(() => {
     if (debouncedSearchValue) {
       (async () => {
         try {
           setLoading(true);
-          const response = await searchAllUsers(debouncedSearchValue, 10, true, true);
+          const response = await searchAllUsers(
+            debouncedSearchValue,
+            10,
+            true,
+            true
+          );
           setSearchResults(getUniqueResults(response.data));
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -78,18 +103,22 @@ export function SearchHeader() {
   };
 
   return (
-    <div 
-        className="search-header-wrap relative flex justify-center items-center" 
-        style={{backgroundImage: `url(${banner})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
+    <div
+      className="search-header-wrap relative bg-no-repeat bg-cover  flex flex-col justify-center items-center"
+      style={{ backgroundImage: `url(${stars})` }}
+      // style={{backgroundImage: `url(${banner})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
     >
-      <div className="search-wrap w-[45em]">
-        <div className="flex h-full search-box gap-1">
-          <div className="flex items-end ">
+      <div className="search-wrap ">
+        <div className="flex h-full search-box w-[450px] gap-1">
+          {/* <div className="flex items-end ">
             <img className="wing-img h-auto" src={leftWing} alt="left-wing" />
-          </div>
-          <div className="flex-1 flex flex-col  justify-end pb-3 gap-5">
+          </div> */}
+          <div className="flex-1 flex flex-col  justify-end pb-2 gap-5">
             <div id="title-and-description" className="flex justify-center">
-              <div className="relative">
+              <div>
+                <img src={banner} alt="" />
+              </div>
+              {/* <div className="relative">
                 <img
                   className="absolute left-[-22px] top-1/2 transform -translate-y-1/2"
                   src={frquesncyIcon}
@@ -110,7 +139,7 @@ export function SearchHeader() {
                     professionals.
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div id="search-input" className="relative">
               <Autocomplete
@@ -143,8 +172,9 @@ export function SearchHeader() {
                 )}
                 renderOption={(props, option: any) => {
                   // Create a truly unique key using spotify_artist_id and timestamp
-                  const uniqueKey = `${option.professionalName}-${option.spotify_artist_id || option.id}-${Date.now()}`;
-                  
+                  const uniqueKey = `${option.professionalName}-${
+                    option.spotify_artist_id || option.id
+                  }-${Date.now()}`;
 
                   return (
                     <li
@@ -166,7 +196,9 @@ export function SearchHeader() {
                         </span>
                         <span className="text-charcoalGray text-xs ml-auto">
                           From{" "}
-                          <span className="text-coolGray">{option?.type || "Wiki"}</span>
+                          <span className="text-coolGray">
+                            {option?.type || "Wiki"}
+                          </span>
                         </span>
                       </div>
                     </li>
@@ -176,15 +208,16 @@ export function SearchHeader() {
                   <TextField
                     onChange={handleSearchInput}
                     {...params}
-                    placeholder="search producers, songwriters and more..."
+                    placeholder="Search by Song, Producer, or Writer..."
                     sx={{
                       background: "#1C1C1C",
-                      borderRadius: "8px",
+                      borderRadius: "40px",
 
                       "& .MuiOutlinedInput-root": {
                         paddingLeft: "35px",
                         paddingRight: "35px",
                         "& fieldset": {
+                          borderRadius: "40px", // <-- This makes the actual border rounded
                           borderColor: "rgba(104, 113, 126, 0.20)",
                         },
                         "&:hover fieldset": {
@@ -220,8 +253,35 @@ export function SearchHeader() {
               </div>
             </div>
           </div>
-          <div className="flex items-end">
+          {/* <div className="flex items-end">
             <img className="wing-img h-auto" src={rightWing} alt="left-wing" />
+          </div> */}
+        </div>
+      </div>
+      <div className=" flex flex-col-reverse">
+        <div className="  w-full flex flex-col justify-center items-center  ">
+          <p className="text-sm font-normal text-dimGray">
+            Discover producers, songwriters, artists, engineers by genre:
+          </p>
+        </div>
+
+        <div className="flex w-full  py-3 mb-2 items-center justify-center flex-wrap gap-2">
+          <div className="flex mx-auto gap-2 flex-wrap">
+            {headerButtons.map((value, idx) => {
+              return (
+                <div
+                  key={idx}
+                  onClick={() => handleFilters(value)}
+                  className={` cursor-pointer px-3 py-2 rounded-[35px] text-[12px] font-normal ${
+                    filterValue === value
+                      ? "bg-limeGreen border-limeGreen text-black"
+                      : " text-charcoalGray"
+                  }`}
+                >
+                  {value}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
