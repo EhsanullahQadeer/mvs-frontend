@@ -42,6 +42,7 @@ import Plans from "./settings/plans/Plans";
 import CreditsHistory from "./settings/credits-history/CreditsHistory";
 import Notification from "components/ui/Header/molecules/notifications/NotificationList"
 import ForgotPassword from "./creator/forgetPasword";
+import CollaboratorRequest from "./collaborator-request/CollaboratorRequest";
 
 interface IRoute {
   path: string;
@@ -305,7 +306,11 @@ const routes: IRoute[] = [
     name: "Audio Message Notification",
     component: Notification,
   },
-
+  {
+    path: "/collaborator-request",
+    name: "Collaborator Request",
+    component: CollaboratorRequest,
+  },
  
 ];
 
