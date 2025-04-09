@@ -10,6 +10,7 @@ import TermsOfService from "pages/terms";
 import SamplesPage from "pages/samples";
 import MyLikesPage from "pages/my-likes";
 import MyDownloadsPage from "pages/downloaded-samples";
+import CollaboratorRequest from "pages/CollaboratorRequest"
 
 const routes: IRoute[] = [
   {
@@ -102,6 +103,11 @@ const routes: IRoute[] = [
     path: "/sound/vocals/:id",
     name: "Vocals",
     component: SamplesPage,
+  },
+  {
+    path: "/collaborator-request",
+    name: "Collaborator Request",
+    component: CollaboratorRequest,
   },
 ];
 
