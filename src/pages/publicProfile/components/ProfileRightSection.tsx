@@ -4,6 +4,7 @@ import { IArtistProfileData, ICurrentUser } from "./types";
 import { IUserData } from "pages/profile/components/types";
 import LockedContent from "pages/profile/components/LockedContent";
 import ProfileLibrary from "pages/profile/components/ProfileLibrary";
+import { ContentManagerProvider } from "pages/settings/ContentManager/context";
 
 interface IProps {
   artistData: IArtistProfileData | IUserData | null;
@@ -60,7 +61,10 @@ const ProfileRightSection = (props: IProps) => {
   const normalTabs = [
     {
       label: "Library",
-      component: <ProfileLibrary {...{ artistData, currentUserInfo, isLoginUser, user, tabs, hasSampleType, connectionDetail, selectedTab, setSelectedTab, isConnect, chatOpen, setChatOpen }} />
+      component: 
+      <ContentManagerProvider>
+        <ProfileLibrary {...{ artistData, currentUserInfo, isLoginUser, user, tabs, hasSampleType, connectionDetail, selectedTab, setSelectedTab, isConnect, chatOpen, setChatOpen }} />
+      </ContentManagerProvider>
     },
     // {
     //   label: "Posts",

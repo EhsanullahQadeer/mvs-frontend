@@ -2,11 +2,11 @@
 import "../styles/user-card.scss";
 import { artistData } from "./data";
 import { getUsersByTag } from "api/user";
-import { loadAsset } from "utils/dateUtils";
-import { userTagsObj } from "utils/usersTags";
+import { loadAsset } from "shared/utils/dateUtils";
+import { userTagsObj } from "shared/utils/usersTags";
 import { GrFormLocation } from "react-icons/gr";
 import { UserFiltersDTO } from "api/user/types";
-import { getKeyByValue } from "utils/jsHandlers";
+import { getKeyByValue } from "shared/utils/jsHandlers";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import ScrollableContainer from "components/util/scrollable-container";
 import useHandleArtistSelected from "../hooks/useHandleArtistSelected";

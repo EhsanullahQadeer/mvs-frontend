@@ -1,4 +1,4 @@
-import { formatBytes, formatTime } from "utils/dateUtils";
+import { formatBytes, formatTime } from "shared/utils/dateUtils";
 import PlayPauseButton from "../../atoms/chatboxPlayPauseButton";
 
 export interface DemoPlayerFeedbackThreadProps {

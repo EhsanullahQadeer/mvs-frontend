@@ -1,24 +1,48 @@
-/*************************************************************************
- * @file MetaDataForm.tsx
- * @author Ehsanullah Qadeer
- * @desc  This is the component for the mui dropdown to select one element.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
-import { sanitizeInput } from "utils/stringUtils";
-import ContributersTable from "./ContributersTable";
+import { sanitizeInput } from "shared/utils/stringUtils";
 import AlertDialog from "components/util/AlertDialog";
-import UploadingFileMetaData from "./UploadingFileMetaData";
-import { updateFileMetadata, uploadedFileMetadata } from "api/sounds";
-import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
+import { storeSample, updateSampleData } from "api/sounds";
+import { ICollaborator, ISample, IUserProfile } from "../types";
+import SampleMetadata from "./SampleMetadata";
+import ContributersTable from "./Collaborators/ContributersTable";
+import { useContentManager } from "../../context";
+
+interface CollaboratorUserDTO {
+  id: number;
+  thumbnail?: string;
+  professional_name: string;
+  is_owner?: boolean;
+  primary_role?: string;
+  secondary_role?: string;
+}
+
+export interface CollaboratorDTO {
+  id: number;
+  contribution: number;
+  roles: string[];
+  user: CollaboratorUserDTO;
+  sampleId?: number;
+  isOwner?: boolean;
+}
+
+interface StoreSampleDTO {
+  s3Key: string;
+  sampleName: string;
+  filename: string;
+  mimetype: string;
+  duration: number;
+  bpm?: string;
+  sampleKey?: string;
+  tags?: string[];
+  isPrivate?: boolean;
+  collaborators?: CollaboratorDTO[];
+  type?: string;
+}
 
 type Props = {
-  fileRedisKey?: string;
   setUploadingFile?: (file: File) => void;
   handleCancel?: () => void;
   uploadProgress?: number;
@@ -26,7 +50,6 @@ type Props = {
   handleClose?: () => void;
   sampleOwner?: IUserProfile;
   sampleToEdit?: ISample;
-  currentUserInfo?: ICurrentUser;
   collaborators?: ICollaborator[];
   setUpdateData?: (event: any) => void;
 };
@@ -35,19 +58,42 @@ const validationSchema = Yup.object().shape({
   songName: Yup.string().required('Sample name is required'),
 });
 
-const MetaDataForm = (props: Props) => {
+const UploadingSampleDetails = (props: Props) => {
   const {
-    fileRedisKey,
     handleCancel,
     setUploadingFile,
     uploadProgress,
     isEditSample,
     handleClose,
     sampleToEdit,
-    currentUserInfo,
     collaborators,
     setUpdateData,
   } = props;
+
+  const {
+    handleCancelUpload,
+    fileS3Key
+  } = useContentManager();
+
+  const [selectedComposer, setSelectedComposer] = useState(() => collaborators);
+  const [composerToDelete, setComposerToDelete] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [composerData, setComposerData] = useState(
+    selectedComposer?.map((composer) => ({
+      contribution: composer.contribution,
+      id: composer.id,
+      roles: composer.roles || [],
+      isEditable: false,
+      user: {
+        id: composer?.user?.id,
+        thumbnail: composer?.user?.thumbnail,
+        professional_name: composer?.user?.professional_name,
+        is_owner: composer?.user?.is_owner,
+        primary_role: composer?.user?.primary_role,
+        secondary_role: composer?.user?.secondary_role,
+      },
+    }))
+  );
 
   const {
     filename,
@@ -62,27 +108,6 @@ const MetaDataForm = (props: Props) => {
     mime_type,
     length,
   } = sampleToEdit || {};
-
-  const [selectedComposer, setSelectedComposer] = useState(() => collaborators);
-  const [composerToDelete, setComposerToDelete] = useState(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
-  const [composerData, setComposerData] = useState(
-    selectedComposer?.map((composer) => ({
-      user: {
-        id: composer?.user?.id,
-        thumbnail: composer?.user?.thumbnail,
-        professional_name: composer?.user?.professional_name,
-        is_owner: composer?.user?.is_owner,
-        primary_role: composer?.user?.primary_role,
-        secondary_role: composer?.user?.secondary_role,
-      },
-      contribution: composer.contribution,
-      id: composer.id,
-      roles: [],
-      isEditable: false,
-    }))
-  );
 
   const [privacyValue, setPrivacyValue] = useState(
     is_private ? "private" : "public"
@@ -101,47 +126,40 @@ const MetaDataForm = (props: Props) => {
   };
 
   useEffect(() => {
+    if (!selectedComposer?.length) return;
+
     setComposerData((prevComposerData) => {
-      const updatedComposerData = selectedComposer?.map((composer) => {
-        const existingComposer = prevComposerData?.find(
-          (existing) => existing.user.id === composer.user.id
+      return selectedComposer.map((composer) => {
+        const contribution = (() => {
+          const existingCollaborator = collaborators?.find(
+            (collab) => collab.id === composer.id
+          );
+          return existingCollaborator?.contribution || 
+            parseFloat((100 / selectedComposer.length).toFixed(2));
+        })();
+    
+        const existingData = prevComposerData?.find(
+          (existing) => existing.user?.id === composer.user?.id
         );
-
-        const initialCollaborator = collaborators?.find(
-          (collab) => collab.id === composer.id
-        );
-
-        const percentValue = initialCollaborator?.contribution
-          ? initialCollaborator.contribution
-          : parseFloat((100 / selectedComposer?.length).toFixed(2));
-
-        if (existingComposer) {
-          return {
-            ...composer,
-            roles: existingComposer.roles,
-            percentValue,
-            isEditable: existingComposer.isEditable || false,
-          };
-        }
-
+    
         return {
           ...composer,
-          roles: [],
-          percentValue,
-          isEditable: false,
+          contribution,
+          roles: existingData?.roles || composer.roles || [],
+          isEditable: existingData?.isEditable || false,
         };
       });
-
-      return updatedComposerData;
     });
+
     setPercentError(false);
   }, [selectedComposer, collaborators]);
 
   const handleSubmit = async (values) => {
     setIsSaving(true);
+    console.log("handleSubmit", values);
     try {
       const {
-        songName, 
+        songName,
         songBpm,
         sampleKey,
         songType, 
@@ -163,63 +181,67 @@ const MetaDataForm = (props: Props) => {
         return;
       }
 
-      const collaborators = composerData
-        .filter((data) => data.id !== currentUserInfo.id)
-        .map((composer) => ({
-          id: composer.id,
-          contribution: composer.contribution,
-          roles: composer.roles,
-          sampleId: props.sampleToEdit?.id,
-          user: {
-            id: composer.user?.id,
-            professional_name: composer.user?.professional_name,
-            thumbnail: composer.user?.thumbnail,
-            is_owner: composer.user?.is_owner,
-            primary_role: composer.user?.primary_role,
-            secondary_role: composer.user?.secondary_role,
-          },
-        }));
+      const collaborators = composerData.map((composer) => ({
+        id: composer.id,
+        contribution: composer.contribution,
+        roles: composer.roles || [],
+        user: {
+          id: composer.user?.id,
+          professional_name: composer.user?.professional_name,
+          thumbnail: composer.user?.thumbnail,
+          is_owner: composer.user?.is_owner,
+        }
+      }));
 
-      const body = {
-        name: songName,
+      console.log("collaborators", collaborators);
+
+      if (isEditSample) {
+        console.log("isEditSample", isEditSample);
+        const updateBody = {
+          sampleId: sampleToEdit?.id,
+          s3Key: s3_key,
+          sampleName: songName,
+          filename: songName,
+          mimetype: mime_type || 'audio/mpeg',
+          bpm: songBpm,
+          sampleKey: sampleKey,
+          type: songType?.value || songType,
+          tags: formattedTags,
+          isPrivate: privacyValue === "private",
+          collaborators: collaborators.map(collab => ({
+            id: collab.id,
+            contribution: collab.contribution,
+            roles: collab.roles || [],
+            user: collab.user,
+          }))
+        };
+        await updateSampleData(sampleToEdit?.id, updateBody);
+        handleClose && handleClose();
+        return;
+      }
+
+      const storeBody = {
+        s3Key: fileS3Key,
+        sampleName: songName,
+        filename: songName,
+        mimetype: mime_type || 'audio/mpeg',
+        duration: length,
         bpm: songBpm,
-        key: sampleKey,
+        sampleKey: sampleKey,
         type: songType?.value || songType,
         tags: formattedTags,
-        is_private: privacyValue === "private",
-        collaborators: JSON.stringify(collaborators),
-        ...(isEditSample && {
-          sample_id: sampleToEdit?.id,
-          s3_key,
-          mime_type,
-          length,
-        }),
-      };
+        isPrivate: privacyValue === "private",
+        collaborators: collaborators.map(collab => ({
+          id: collab.user?.id,
+          contribution: collab.contribution,
+          roles: collab.roles || [],
+          isOwner: collab.user?.is_owner
+        }))
+      } as StoreSampleDTO;
 
-      console.log("Attempting save with:", {
-        isEditSample,
-        editFileId: sampleToEdit?.id,
-        fileRedisKey,
-        body,
-      });
-
-      if (fileRedisKey) {
-        const response = await uploadedFileMetadata(fileRedisKey, body);
-        console.log("Upload response:", response);
-        setUpdateData && setUpdateData(Date.now());
-        setUploadingFile && setUploadingFile(null);
-        return;
-      }
-
-      if (isEditSample && sampleToEdit?.id) {
-        const response = await updateFileMetadata(sampleToEdit.id, body);
-        console.log("Update response:", response);
-        setUpdateData && setUpdateData(Date.now());
-        setUploadingFile && setUploadingFile(null);
-        return;
-      }
-
-      console.error("No valid file key or sample ID for update");
+      await storeSample(storeBody);
+      setUpdateData && setUpdateData(Date.now());
+      setUploadingFile && setUploadingFile(null);
     } catch (error) {
       console.error("Save error:", error);
     } finally {
@@ -261,7 +283,6 @@ const MetaDataForm = (props: Props) => {
           onConfirm: handleDeleteComposer,
         }}
       />
-
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -271,7 +292,7 @@ const MetaDataForm = (props: Props) => {
           <Form onSubmit={handleSubmit}>
             <>
               <div>
-                <UploadingFileMetaData
+                <SampleMetadata
                   {...{
                     privacyValue,
                     setPrivacyValue,
@@ -290,7 +311,6 @@ const MetaDataForm = (props: Props) => {
                   </div>
                 )}
               </div>
-
               {selectedComposer?.length > 0 && (
                 <div className={`${isEditSample && "px-5"} my-2`}>
                   <ContributersTable
@@ -298,14 +318,13 @@ const MetaDataForm = (props: Props) => {
                       composerData,
                       setComposerData,
                       handleOpenDeleteDialog,
-                      percentError,
                       setPercentError,
+                      percentError,
                       collaborators,
                     }}
                   />
                 </div>
               )}
-
               <div
                 className={`py-5 ${
                   isEditSample ? "px-5" : "px-2.5"
@@ -313,7 +332,7 @@ const MetaDataForm = (props: Props) => {
               >
                 <button
                   type="button"
-                  onClick={handleCancel}
+                  onClick={handleCancelUpload}
                   className="bg-transparent border border-limeGreen w-[151px] flex justify-center items-center py-3 text-limeGreen text-sm font-semibold rounded-[60px]"
                 >
                   Cancel
@@ -355,4 +374,4 @@ const MetaDataForm = (props: Props) => {
   );
 };
 
-export default MetaDataForm;
+export default UploadingSampleDetails;

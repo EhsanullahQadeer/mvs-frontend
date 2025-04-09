@@ -1,25 +1,37 @@
 import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
-import MetaDataForm from "./MetaDataForm";
-import { ICollaborator, ICurrentUser, ISample, IUserProfile } from "./types";
-import { getUserByIdAPI } from "api/user";
+import { ISample } from "../types";
 import { getSampleCollaborators } from "api/sounds";
+import UploadingSampleDetails from "./UploadingSampleDetails";
 
 interface Props {
-  open: boolean;
   handleClose: () => void;
   sampleToEdit: ISample;
-  currentUserInfo: ICurrentUser;
+  user: any;
+}
+
+interface ICollaborator {
+  id: number;
+  user: {
+    id: number;
+    professional_name: string;
+    thumbnail: string;
+    is_owner: boolean;
+    primary_role: string;
+    secondary_role: string;
+  };
+  roles: string[];
+  contribution: number;
+  isEditable: boolean;
 }
 
 export default function UpdateSamplePopup(
   props: Props
 ) {
-  const [collaborators, setCollaborators] = useState<any[]>([]);
+  const [collaborators, setCollaborators] = useState<ICollaborator[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { open, handleClose, sampleToEdit, currentUserInfo } = props;
-  const isEditSample = true;
+  const { handleClose, sampleToEdit, user } = props;
 
   useEffect(() => {
     const fetchCollaborators = async () => {
@@ -27,7 +39,9 @@ export default function UpdateSamplePopup(
       setIsLoading(true);
       try {
         const response = await getSampleCollaborators(sampleToEdit?.id);
+        console.log("response", response.data);
         setCollaborators(response.data);
+
       } catch (error) {
         console.error('Error fetching collaborators:', error);
         setCollaborators([]);
@@ -40,8 +54,8 @@ export default function UpdateSamplePopup(
 
   return (
     <React.Fragment>
-      <Dialog
-        open={open}
+      <Dialog 
+        open={true}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         sx={{
@@ -58,12 +72,12 @@ export default function UpdateSamplePopup(
               <div className="text-white">Loading collaborators...</div>
             </div>
           ) : (
-            <MetaDataForm
+            <UploadingSampleDetails
               {...{
-                isEditSample,
+                isEditSample: true,
                 handleClose,
                 sampleToEdit,
-                currentUserInfo,
+                user,
                 collaborators,
               }}
             />

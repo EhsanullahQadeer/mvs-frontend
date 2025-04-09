@@ -26,14 +26,10 @@ export const tableStyles = {
       }
     }
   },
-  // You can add more table-related styles here
   tableBody: {
     "& .MuiTableCell-body": {
       borderBottom: "1px solid #242424",
       padding: "10px 10px"
     }
   },
-  tablePagination: {
-    // Your pagination styles
-  }
 };

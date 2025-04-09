@@ -21,7 +21,7 @@ import { FiDownload, FiEdit3 } from "react-icons/fi";
 import { GoShareAndroid } from "react-icons/go";
 import { RiDeleteBinLine } from "react-icons/ri";
 import AlertDialog from "./AlertDialog";
-import UpdateSamplePopup from "pages/settings/content-management/components/UpdateSamplePopup";
+import UpdateSamplePopup from "pages/settings/ContentManager/components/Uploader/UpdateSamplePopup";
 import { RootState } from "redux/reducers";
 import { useSelector } from "react-redux";
 import ShareSetting from "./ShareSetting";
@@ -118,7 +118,7 @@ const DropDown = (props: any) => {
             open: openEditPopup,
             handleClose: handleCloseDialog,
             sampleToEdit,
-            currentUserInfo: user,
+            user: user,
           }}
         />
       )}

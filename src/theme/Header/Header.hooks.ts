@@ -17,7 +17,7 @@ import cookie from 'js-cookie';
 import { updateUserAPI } from '../../api/user';
 import { fetchCurrentUser } from '../../redux/actions';
 import { UserData, RootState } from './Header.types';
-import { isRouteAccessible } from 'utils/authHandler';
+import { isRouteAccessible } from 'shared/utils/authHandler';
 
 export const useHeaderHooks = () => {
   const navigate = useNavigate();

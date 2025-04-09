@@ -1,11 +1,3 @@
-/*************************************************************************
- * @file SingleSelectDropdown.tsx
- * @author Ehsanullah Qadeer
- * @desc  This is the component for the mui dropdown to select multiple elements.
- *
- * @copyright (c) 2024 MVSSIVE. All rights reserved.
- *************************************************************************/
-
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";

@@ -3,7 +3,7 @@
 
 import AudioPlayer from "./player";
 import { FiDownload } from "react-icons/fi";
-import { loadAsset } from "utils/dateUtils";
+import { loadAsset } from "shared/utils/dateUtils";
 import DropDown from "components/util/dropdown";
 import { AudioTrackType } from "../player-container";
 import { AudioTrack, useWaveform } from "./waveform";

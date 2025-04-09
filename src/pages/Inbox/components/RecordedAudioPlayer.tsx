@@ -1,5 +1,5 @@
 import WaveSurfer from 'wavesurfer.js';
-import { formatTime } from 'utils/dateUtils';
+import { formatTime } from 'shared/utils/dateUtils';
 import VolumeIcon from '../../../assets/img/volume.svg';
 import PlayDefault from '../../../assets/img/PlayD.svg';
 import PauseDefault from '../../../assets/img/PauseD.svg';

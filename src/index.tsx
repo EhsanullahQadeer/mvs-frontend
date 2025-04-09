@@ -24,7 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { initializeTokenRefresher, refreshTokenEvery } from "redux/actions/tokenrefresher.actions";
 import { ToastProvider } from "shared/toasts/ToastProvider";
-import { shouldRedirectToProfile } from "utils/authHandler";
+import { shouldRedirectToProfile } from "shared/utils/authHandler";
 
 const cleanupActivityRefresh = initializeTokenRefresher();
 

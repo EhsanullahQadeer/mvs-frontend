@@ -1,4 +1,4 @@
-import { userTagsObj } from "utils/usersTags";
+import { userTagsObj } from "shared/utils/usersTags";
 
 interface Props {
   filterValue: string;
