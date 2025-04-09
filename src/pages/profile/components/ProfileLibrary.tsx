@@ -38,7 +38,7 @@ const ProfileLibrary = (props: Props) => {
     <section className="flex-1 min-w-[780px] flex flex-col overflow-x-hidden overflow-y-auto custom-dropdown">
       {/* {isLoginUser && <UploadFileSection />} */}
 
-      <FileSelector />
+      {isLoginUser && <FileSelector />}
       {uploadingFile && (
         <FileUploadingContainer modal={true}/>
       )}

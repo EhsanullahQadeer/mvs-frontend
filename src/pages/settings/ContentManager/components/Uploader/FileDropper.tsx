@@ -96,8 +96,7 @@ const FileDropper = (props: Props) => {
               Click to upload
             </span>
             <span className="text-coolGray md:text-sm text-[10px]  font-normal">
-              {" "}
-              or drag and drop
+              &nbsp;or drag and drop
             </span>
           </div>
 
