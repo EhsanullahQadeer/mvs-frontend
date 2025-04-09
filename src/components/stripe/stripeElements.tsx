@@ -87,13 +87,13 @@ function StripeElements(props: StripeElementsProps) {
         mode: 'payment',
         currency: 'usd',
         capture_method: 'manual',
-        amount: Number((props.buyCreditsComponentProps.amount*100).toFixed(0)),
+        amount: Number((props.demoStripeProps.amount*100).toFixed(0)),
         customerSessionClientSecret: customerSession?.clientSecret,
         appearance: appearance,
       }}>
         <DemoStripe 
           onPaymentComplete={props.demoStripeProps.onPaymentComplete} 
-          amount={Number((props.buyCreditsComponentProps.amount*100).toFixed(0))} 
+          amount={Number((props.demoStripeProps.amount*100).toFixed(0))} 
           recipientId={props.demoStripeProps.recipientId} 
           onClose={props.demoStripeProps.onClose} 
         />
