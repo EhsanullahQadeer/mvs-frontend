@@ -34,24 +34,17 @@ export function ContentManagerProvider({ children }: { children: React.ReactNode
   const handleUploadFile = useCallback(async () => {
     try {
       if (uploadingFile) {
-        const { xhr, key } = await uploadContent(uploadingFile, {
-          onProgress: (progress) => {
-            setUploadProgress(progress);
-          },
-          onComplete: (key) => {
-            setFileS3Key(key);
-            setUploadRequest(null);
-          },
-          onError: (error) => {
-            setUploadRequest(null);
-          }
+        const { xhr } = await uploadContent(uploadingFile, {
+          setFileS3Key,
+          setUploadProgress,
+          onError: () => setUploadRequest(null)
         });
         setUploadRequest(xhr);
       }
     } catch (error) {
       setUploadRequest(null);
     }
-  }, [uploadingFile]);
+  }, [uploadingFile, setFileS3Key, setUploadProgress]);
 
   useEffect(() => {
     if (uploadingFile) {
