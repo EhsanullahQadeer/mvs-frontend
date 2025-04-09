@@ -298,25 +298,33 @@ const Footer = () => {
     <>
       <div className="sticky bottom-0">
         <div className="flex flex-col p-3 w-full bg-richBlack relative">
-          <div className="flex flex-col justify-center px-3 py-2 w-full bg-[#131313] border border-[#ACD7FFCC] rounded-xl shadow-sm relative overflow-hidden">
+          <div className="flex flex-col justify-center w-full bg-[#131313] border border-[#ACD7FFCC] rounded-xl shadow-sm relative">
             <div 
-              className={`absolute left-0 top-0 w-full px-3 transition-all duration-500 ease-out ${
-                showTipMessage ? "opacity-100 transform translate-y-2" : "opacity-0 transform -translate-y-full pointer-events-none"
+              className={`w-full transition-all duration-300 ease-out ${
+                showTipMessage 
+                  ? "opacity-100 max-h-[2.5rem]" 
+                  : "opacity-0 max-h-0 overflow-hidden"
               }`}
             >
-              <div className="flex justify-center px-7 bg-[#f9e2dd] rounded-xl">
-                <p className="py-1 text-sm font-semibold text-[#955353]">
+              <div className="flex justify-center px-4 py-1 mt-2 ml-2 mr-2 bg-[#f9e2dd] rounded-xl">
+                <p className="text-sm font-semibold text-[#955353]">
                   Messages with tip are prioritized in the recipient inbox
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-col w-full mt-10">
-              <div className="relative p-2.5">
+            <div className="flex flex-col w-full mt-4 px-3">
+              <div className="relative pr-2.5">
                 <textarea
                   ref={textareaRef}
                   value={messageInputValue}
-                  onChange={(e) => setMessageInputValue(e.target.value)}
+                  onChange={(e) => {
+                    setMessageInputValue(e.target.value);
+                    // Auto-resize textarea
+                    const textarea = e.target;
+                    textarea.style.height = '2.5rem';
+                    textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey && 
                       !isSubmitting && !isRecording && 
@@ -325,7 +333,8 @@ const Footer = () => {
                       handleSendMessage();
                     }
                   }}
-                  className={`resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 pb-16 custom-dropdown ${
+                  style={{ height: '2.5rem' }}
+                  className={`resize-none bg-transparent border-none w-full text-base text-[#ACD7FF] focus:ring-0 overflow-y-auto custom-dropdown ${
                     isRecording || recordedAudio ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                   placeholder={
@@ -340,7 +349,7 @@ const Footer = () => {
                 />
 
                 {recordedAudio && !uploadedAudioFile && (
-                  <div className="absolute bottom-0 left-2.5 w-full max-w-[calc(100%-6rem)]">
+                  <div className="mt-2 w-full max-w-[calc(100%-6rem)]">
                     <RecordedAudioPlayer
                       audioUrl={URL.createObjectURL(recordedAudio)}
                       onDelete={() => clearRecording()}
@@ -349,7 +358,7 @@ const Footer = () => {
                 )}
 
                 {(uploadedAudioFile) && (
-                  <div className="absolute bottom-0 left-2.5 w-[234px] relative">
+                  <div className="mt-2 w-[234px] relative">
                     <div className="absolute -top-3 -right-3 z-50">
                       <button 
                         onClick={() => setUploadedAudioFile(null)}
@@ -378,7 +387,7 @@ const Footer = () => {
                 </div>
               )}
 
-              <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center justify-between pl-2 pr-2 pb-2">
                 <div className="flex gap-4 items-center">
                   <div className="flex gap-4 items-center p-2 rounded-lg border border-[#3D3D3D]">
                     <div className="flex flex-col gap-1">
