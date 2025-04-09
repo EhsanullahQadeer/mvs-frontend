@@ -6,6 +6,7 @@ import { getSampleCollaborators } from "api/sounds";
 import UploadingSampleDetails from "./UploadingSampleDetails";
 
 interface Props {
+  open: boolean;
   handleClose: () => void;
   sampleToEdit: ISample;
   user: any;
@@ -31,7 +32,7 @@ export default function UpdateSamplePopup(
 ) {
   const [collaborators, setCollaborators] = useState<ICollaborator[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { handleClose, sampleToEdit, user } = props;
+  const { handleClose, sampleToEdit, user, open } = props;
 
   useEffect(() => {
     const fetchCollaborators = async () => {
@@ -55,7 +56,7 @@ export default function UpdateSamplePopup(
   return (
     <React.Fragment>
       <Dialog 
-        open={true}
+        open={open}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         sx={{

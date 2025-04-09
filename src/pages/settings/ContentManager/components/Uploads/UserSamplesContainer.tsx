@@ -122,15 +122,16 @@ const UserSamplesContainer = (props: Props) => {
           onConfirm: handleDeleteComposer,
         }}
       />
-      {openSampleEditPopup && (
-        <UpdateSamplePopup
-          {...{
-            handleClose: handleCloseDialog,
-            sampleToEdit,
-            user,
-            }}
-        />
-      )}
+      
+      <UpdateSamplePopup
+        {...{
+          handleClose: handleCloseDialog,
+          sampleToEdit,
+          user,
+          open: openSampleEditPopup,
+          }}
+      />
+      
 
       <div className="py-3 flex flex-col gap-2">
         <h3 className="text-lg font-semibold text-platinum">Attached files</h3>

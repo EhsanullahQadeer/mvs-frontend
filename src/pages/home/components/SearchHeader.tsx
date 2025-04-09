@@ -105,7 +105,7 @@ export function SearchHeader() {
   return (
     <div
       className="search-header-wrap relative bg-no-repeat bg-cover  flex flex-col justify-center items-center"
-      style={{ backgroundImage: `url(${stars})` }}
+      style={{ backgroundImage: `url(${stars})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
       // style={{backgroundImage: `url(${banner})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
     >
       <div className="search-wrap ">
@@ -175,7 +175,6 @@ export function SearchHeader() {
                   const uniqueKey = `${option.professionalName}-${
                     option.spotify_artist_id || option.id
                   }-${Date.now()}`;
-
                   return (
                     <li
                       {...props}
@@ -275,7 +274,7 @@ export function SearchHeader() {
                   className={` cursor-pointer px-3 py-2 rounded-[35px] text-[12px] font-normal ${
                     filterValue === value
                       ? "bg-limeGreen border-limeGreen text-black"
-                      : " text-charcoalGray"
+                      : "text-charcoalGray hover:bg-jetBlack"
                   }`}
                 >
                   {value}

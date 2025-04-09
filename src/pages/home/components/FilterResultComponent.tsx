@@ -3,6 +3,7 @@ import useHandleArtistSelected from "../hooks/useHandleArtistSelected";
 import { artistData } from "./data";
 import { UserFiltersDTO } from "api/user/types";
 import { getUsersByTag } from "api/user";
+import { loadAsset } from "shared/utils/dateUtils";
 
 const { filtersArr } = artistData;
 
@@ -112,7 +113,7 @@ const FilterResultComponent = (props: Props) => {
                   #000 100%
                 ),
                 linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
-                url(${thumbnail})`,
+                url(${loadAsset(thumbnail)})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
