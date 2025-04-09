@@ -1,4 +1,4 @@
-import { uploadMedia } from "api/sounds";
+import { storeMedia, uploadMedia } from "api/sounds";
 import Dialog from "@mui/material/Dialog";
 import { useChatbox } from "./Chatbox/context";
 import { getUserByIdAPI } from "../../../api/user";
@@ -38,6 +38,9 @@ const PurchaseOrderDialog = (props: Props) => {
 
   const {
     LIMIT_MESSAGES,
+    handleUploadFile,
+    fileS3Key,
+    calculateAudioDuration
   } = useChatbox();
 
   const {
@@ -102,27 +105,23 @@ const PurchaseOrderDialog = (props: Props) => {
     setInputTipAmount("");
     setIsSubmitting(false);
   };
-  const handleBack = () => {
-    setOpenPurchaseOrder(true);
-    setOpenCardInfo(false);
-
-  };
-  const handleOpenCardInfo = () => {
-    setOpenCardInfo(true);
-  };
 
   const handleSendDemo = async (paymentIntentId: string) => {
-    console.log("handleSendDemo", demoFile, messageInputValue);
-    let response;
+    let uploadedMedia;
     try {
-      response = await uploadMedia({
-        file: demoFile,
-        type: 'demo',
+      await handleUploadFile(demoFile);
+      const duration = await calculateAudioDuration(demoFile);
+      uploadedMedia = await storeMedia({
+        s3Key: fileS3Key,
+        format: demoFile.name.split('.').pop()?.toLowerCase() || '',
+        duration: Math.ceil(Number(duration)),
+        file_size_bytes: demoFile.size,
+        file_name: demoFile.name,
+        mimetype: demoFile.type,
+        type: "demo"
       });
-      console.log("response", response);
 
-      if (!response?.data?.media?.id) {
-        // if no file didnt create an id (not sure what to put here)
+      if (!uploadedMedia?.data?.id) {
         addToast({ state: "somethingWentWrong", permanent: true, actionFunction: () => window.location.reload()})
         return;
       }
@@ -148,7 +147,7 @@ const PurchaseOrderDialog = (props: Props) => {
         message: messageInputValue,
         creditPaymentAmount: totalAmount,
         messageType: 'demo',
-        audioMediaId: response.data.media.id,
+        audioMediaId: uploadedMedia.data.id,
         stripePaymentIntentId: paymentIntentId,
     })
     } catch (error) {

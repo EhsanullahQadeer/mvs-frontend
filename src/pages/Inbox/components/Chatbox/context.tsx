@@ -4,6 +4,7 @@ import { useMessenger } from 'api/messenger/context';
 import { checkPendingConnectAPI, checkUserHasStripeConnectedAccount } from 'api/user';
 import { IConversation, IMessage, INotes, TUser } from 'api/messenger/objects/states.types';
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from 'react';
+import { uploadContent } from 'shared/utils/uploadContent';
 
 type ChatTabType = 'messages' | 'info' | 'notes';
 type ConnectionDetail = false | null | 'pending' | undefined | true;
@@ -42,6 +43,10 @@ interface ChatboxContextType {
   markMessageAsRead: (id:number)=> void;
   LIMIT_MESSAGES: number;
   isSendDemoAvailable: boolean;
+  handleUploadFile: (file: File) => Promise<void>;
+  uploadRequest: XMLHttpRequest | null;
+  fileS3Key: string | null;
+  calculateAudioDuration: (file: File) => Promise<number>;
 }
 
 const ChatboxContext = createContext<ChatboxContextType | undefined>(undefined);
@@ -81,12 +86,12 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
   const [recipient, setRecipient] = useState<TUser>(activeConversation?.recipient || null);
   const [totalPaid, setTotalPaid] = useState<number>(activeConversation?.total_paid || 0);
   const [notes, setNotes] = useState<INotes[]>(conversationNotes);
-  const [isThread, setIsThread] = useState<boolean>(false); // Todo: implement the new haslistened to demo var
-
+  const [isThread, setIsThread] = useState<boolean>(false);
   const [hasListenedToDemo, setHasListenedToDemo] = useState<boolean>(false);
   const [listenToDemoEvent, setListenToDemoEvent] = useState<boolean>(false);
   const [onlyAllowAudioRecording, setOnlyAllowAudioRecording] = useState<boolean>(false);
-
+  const [uploadRequest, setUploadRequest] = useState<XMLHttpRequest | null>(null);
+  const [fileS3Key, setFileS3Key] = useState<string | null>(null);
   const [isSendDemoAvailable, setIsSendDemoAvailable] = useState<boolean>(false);
   const LIMIT_MESSAGES = 100;
 
@@ -207,6 +212,40 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     });
   }, [getThreadMessages, setMessages, setIsThread]);
 
+  const handleUploadFile = useCallback(async (file: File) => {
+    try {
+      if (file) {
+        const { xhr } = await uploadContent(file, {
+          setFileS3Key,
+          onError: () => setUploadRequest(null)
+        });
+        setUploadRequest(xhr);
+      }
+    } catch (error) {
+      setUploadRequest(null);
+    }
+  }, [setFileS3Key]);
+
+  const calculateAudioDuration = async (file: File): Promise<number> => {
+    return new Promise((resolve) => {
+      const audioContext = new AudioContext();
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        if (e.target?.result) {
+          const arrayBuffer = e.target.result as ArrayBuffer;
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+          resolve(audioBuffer.duration);
+        } else {
+          resolve(0);
+        }
+      };
+
+      reader.onerror = () => resolve(0);
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
   const value: ChatboxContextType = {
     activeTab,
     setActiveTab,
@@ -235,7 +274,11 @@ export const ChatboxProvider: React.FC<ChatboxProviderProps> = ({ children }) =>
     setOnlyAllowAudioRecording,
     markMessageAsRead,
     LIMIT_MESSAGES,
-    isSendDemoAvailable
+    isSendDemoAvailable,
+    handleUploadFile,
+    uploadRequest,
+    fileS3Key,
+    calculateAudioDuration
   };
 
   return (

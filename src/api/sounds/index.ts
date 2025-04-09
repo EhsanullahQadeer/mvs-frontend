@@ -118,6 +118,10 @@ export async function storeSample(payload: any) {
   return axiosInstance.post(`/sounds/sample`, payload);
 }
 
+export async function storeMedia(payload: any) {
+  return axiosInstance.post(`/sounds/media`, payload);
+}
+
 export async function soundPublicUrl(id: number, payload: any) {
   return axiosInstance.post(`/sounds/public-url/${id}`, payload);
 }

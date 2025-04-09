@@ -1,13 +1,12 @@
 import axiosInstance from "api/axios";
-import { useState } from "react";
-
-import { useRef } from "react";
 
 interface UploadOptions {
   onProgress?: (progress: number) => void;
   onComplete?: (key: string) => void;
   onError?: (error: Error) => void;
   directory?: 'audio' | 'images';
+  setFileS3Key?: (key: string) => void;
+  setUploadProgress?: (progress: number) => void;
 }
 
 export async function uploadContent(file: File, options: UploadOptions = {}) { 
@@ -35,11 +34,13 @@ export async function uploadContent(file: File, options: UploadOptions = {}) {
         if (event.lengthComputable) {
           const percentComplete = Math.round((event.loaded * 100) / event.total);
           options.onProgress?.(percentComplete);
+          options.setUploadProgress?.(percentComplete);
         }
       });
       xhr.addEventListener('load', () => {
         if (xhr.status === 200) {
           options.onComplete?.(key);
+          options.setFileS3Key?.(key);
           resolve({ xhr, key });
         } else {
           const error = new Error(`Upload failed with status: ${xhr.status}`);
