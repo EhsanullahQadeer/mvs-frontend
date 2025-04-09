@@ -43,7 +43,7 @@ function BuyCreditsStripe(props: BuyCreditsStripeProps) {
       tokenId: confirmationToken.id,amount: props.amount,creditsAmount: props.creditsAmount });
       if (paymentIntent.data.intent.status === 'requires_action') {
         await stripe.handleNextAction({
-          clientSecret: paymentIntent.data.paymentIntent.clientSecret
+          clientSecret: paymentIntent.data.intent.client_secret
         });
       }
       else{
