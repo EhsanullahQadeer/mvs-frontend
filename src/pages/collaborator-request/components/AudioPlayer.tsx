@@ -13,8 +13,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl }) => {
     if (waveformRef.current) {
       wavesurfer.current = WaveSurfer.create({
         container: waveformRef.current,
-        waveColor: '#ffffff', // White bars for the waveform
-        progressColor: '#4a5568', // Gray color for the played portion
+        waveColor: '#363A3F', // Unplayed wave color
+        progressColor: '#D0D8E3', // Played wave color
         cursorColor: 'transparent',
         barWidth: 2,
         barGap: 1,
