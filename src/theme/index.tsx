@@ -28,7 +28,7 @@ const Theme = (props: ThemeProps) => {
 
   return (
     <MessengerProvider>
-      <div className="flex flex-col h-screen w-full bg-[#08090A]">
+      <div className="flex flex-col min-h-screen w-full bg-[#08090A]">
         {/* Header Row - stays fixed */}
         <div className="md:flex hidden h-[80px] border-b-2 border-[#1F1F1F]">
           {/* M Logo */}

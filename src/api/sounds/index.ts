@@ -187,7 +187,7 @@ export async function getCheckUserHasSampleType(sampleTypes: string, user_id: nu
   });
 }
 
-export async function handleCollaborationRequest(sampleId: number, action: boolean) {
+export async function handleCollaborationRequest(sampleId: number | string, action: boolean) {
   return axiosInstance.post(`/sounds/collaboration/accept`, {
     sampleId,
     action

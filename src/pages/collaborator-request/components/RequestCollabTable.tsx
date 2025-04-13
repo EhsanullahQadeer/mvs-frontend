@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MdOutlinePerson } from "react-icons/md";
+import { FiUser } from "react-icons/fi";
 import { FaChevronRight, FaChevronDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { config } from "config/ConfigManager";
@@ -39,27 +39,33 @@ const CollabTable: React.FC<CollabTableProps> = ({ data, heading }) => {
   };
 
   return (
-    <div className="md:px-8 py-8 px-4">
-      <h1 className="text-gray-200 text-xl font-medium pb-3">{heading}</h1>
-      <table className="w-full md:w-[98%] md:mx-[1%] max-md:text-sm">
-        <thead className="text-left text-white">
-          <tr>
-            <th className="ps-4 text-xl">
-              <MdOutlinePerson />
+    <div className="p-5 overflow-x-hidden">
+      <h1 className="text-mediumGray text-[23px] font-semibold pb-3">
+        {heading}
+      </h1>
+      <table className="w-full max-md:text-sm overflow-x-auto">
+        <thead className="text-left text-softGray">
+          <tr className="border-b border-darkGray">
+            <th className="ps-4 text-xl py-4 md:min-w-[66px]">
+              <FiUser className="text-silver" />
             </th>
-            <th>User</th>
-            <th>Contribution</th>
-            <th className="max-md:hidden">Status</th>
-            <th className="max-md:hidden">Role</th>
-            <th>Action</th>
+            <th className="py-4 text-platinum md:min-w-[200px]">User</th>
+            <th className="py-4 md:min-w-[200px]">Publishing Split</th>
+            <th className="max-md:hidden py-4 md:min-w-[200px]">Status</th>
+            <th className="max-md:hidden py-4 md:min-w-[200px]">Role</th>
+            <th className="py-4 md:min-w-[200px]">Action</th>
             <th className="md:hidden"></th>
           </tr>
         </thead>
         <tbody>
           {data.map((collab, index) => (
             <React.Fragment key={collab.id}>
-              <tr className="border-none text-gray-300">
-                <td>
+              <tr
+                className={`text-mediumGray ${
+                  expandedRows.includes(index) ? "" : "border-b border-darkGray"
+                }`}
+              >
+                <td className="py-4">
                   {collab.collaborator.thumbnail ? (
                     <img
                       src={`${config.get("ASSETS")}/${
@@ -69,34 +75,39 @@ const CollabTable: React.FC<CollabTableProps> = ({ data, heading }) => {
                       className="w-8 h-8 rounded-full m-2 object-cover"
                     />
                   ) : (
-                    <div className="bg-gray-200 w-8 h-8 rounded-full m-2"></div>
+                    <div className="bg-[#151515] w-8 h-8 rounded-full m-2"></div>
                   )}
                 </td>
-                <td className="font-medium text-white">
+                <td className="font-semibold text-platinum py-4">
                   {collab.collaborator.professional_name}
                 </td>
-                <td>{collab.contribution}%</td>
-                <td className="max-md:hidden capitalize ">
+                <td className="py-4">{collab.contribution}%</td>
+                <td className="max-md:hidden capitalize py-4">
                   {" "}
                   {collab.status.charAt(0).toUpperCase() +
                     collab.status.slice(1).toLowerCase()}
                 </td>
-                <td className="max-w-[200px] text-sm max-md:hidden">
-                  {collab.roles.map((role, i) => (
-                    <span
-                      key={i}
-                      className="bg-zinc-900 rounded-full px-4 mx-1 py-1"
-                    >
-                      {role}
-                    </span>
-                  ))}
+                <td className="py-4 max-w-[200px] text-sm max-md:hidden">
+                  <div className="flex gap-1">
+                    {collab.roles.map((role, i) => (
+                      <span
+                        key={i}
+                        className="bg-eerieBlack rounded-full px-3 py-1 text-mediumGray text-xs font-normal"
+                      >
+                        {role}
+                      </span>
+                    ))}
+                  </div>
                 </td>
-                <td>
+                <td className="py-4">
                   <Link to="#" className="underline">
-                    {collab.is_owner ? "View" : "Accept/Deny"}
+                    {collab.is_owner ? "View Profile" : "Accept/Deny"}
                   </Link>
                 </td>
-                <td className="md:hidden" onClick={() => handleToggle(index)}>
+                <td
+                  className="md:hidden py-4"
+                  onClick={() => handleToggle(index)}
+                >
                   {expandedRows.includes(index) ? (
                     <FaChevronDown />
                   ) : (
@@ -108,7 +119,7 @@ const CollabTable: React.FC<CollabTableProps> = ({ data, heading }) => {
               {/* Show hidden content when the row is expanded */}
               {expandedRows.includes(index) && (
                 <tr>
-                  <td colSpan={7} className="py-2 text-sm text-gray-400">
+                  <td colSpan={7} className="py-2 text-sm text-platinum bg-richBlack">
                     <div className="py-2">
                       <h3 className="text-white font-medium py-2 text-md mb-1">
                         Roles
@@ -123,7 +134,7 @@ const CollabTable: React.FC<CollabTableProps> = ({ data, heading }) => {
                       ))}
                     </div>
                     <div className="py-2">
-                      <h3 className="text-white font-medium py-2 text-md mb-1">
+                      <h3 className="text-platinum font-medium py-2 text-md mb-1">
                         Status
                       </h3>
                       <span className="bg-zinc-900 rounded-full px-4 mx-1 py-1">

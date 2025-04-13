@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { AxiosResponse } from "axios";
 import Theme from "theme";
 import { config } from "config/ConfigManager";
+import { handleCollaborationRequest } from "api/sounds";
 
 interface Collaborator {
   id: number;
@@ -44,6 +45,7 @@ const CollaboratorRequest = () => {
   const [fileName, setFileName] = useState("");
   const [sampleData, setSampleData] = useState<Sample | null>(null);
   const [audioUrl, setAudioUrl] = useState("");
+  const [status, setStatus] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -79,15 +81,18 @@ const CollaboratorRequest = () => {
     {}
   );
 
-  useEffect(() => {
-    if (sampleData) {
-      console.log("sampleData: ", sampleData);
+  const handleStatusFunc = async (status: boolean) => {
+    try {
+      await handleCollaborationRequest(collaborationId, status);
+      setStatus(true);
+    } catch (error) {
+      console.log("error: ", error);
     }
-  }, [sampleData]);
+  };
 
   return (
     <Theme>
-      <div className="text-white">
+      <div className="text-white overflow-x-hidden">
         <div className="max-md:px-4 bg-zinc-900 text-center py-6">
           <div className="md:max-w-4xl mx-auto">
             <h1 className="font-bold text-xl md:text-2xl pb-2">
@@ -105,11 +110,11 @@ const CollaboratorRequest = () => {
         {/* Audio Player */}
         {audioUrl && <AudioPlayer audioUrl={audioUrl} />}
 
-        <div className="md:max-w-5xl px-4 md:px-8 py-8">
-          <h1 className="text-xl md:text-2xl font-bold pb-2">
+        <div className="px-4 md:px-5 py-3 max-w-[786px]">
+          <h1 className="text-xl md:text-[28px] font-semibold pb-1 text-lightGray">
             File Contributors
           </h1>
-          <p className="text-gray-200 max-md:text-sm">
+          <p className="text-xs md:text-sm text-silver">
             This section displays all collaborators involved in this file or
             song, including producers, songwriters, musicians, and other key
             contributors. Each listed contributor has played a role in shaping
@@ -117,16 +122,30 @@ const CollaboratorRequest = () => {
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-between bg-zinc-900 py-4 px-4 md:px-6 items-center gap-y-2">
-          <p className="text-sm md:text-lg">
-            <b className="max-md:text-sm">File Name:</b> {fileName}
+        <div
+          className={`flex flex-wrap justify-between bg-jetBlack p-3 items-center gap-2 border-y border-eerieBlack ${
+            status ? "hidden" : "flex"
+          }`}
+        >
+          <p className="text-sm md:text-base text-platinum">
+            <b>File Name:</b> {fileName}
           </p>
           <div className="flex gap-x-3">
-            <button className="text-gray-300 flex items-center gap-x-2 rounded-full px-2 md:px-4 font-medium border border-gray-300 py-[2px] md:py-[6px]">
+            <button
+              onClick={() => {
+                handleStatusFunc(false);
+              }}
+              className="text-mediumGray flex items-center gap-x-2 rounded-full px-4 text-sm border border-charcoalGray py-[6px]"
+            >
               <MdOutlineCancel className="text-lg" />
               Deny
             </button>
-            <button className="bg-[#84ff48] text-black flex items-center gap-x-2 rounded-full px-2 md:px-4 font-medium md:py-[6px]">
+            <button
+              onClick={() => {
+                handleStatusFunc(true);
+              }}
+              className="bg-lightGreen text-black flex items-center gap-x-2 rounded-full px-4 text-sm py-[6px] font-semibold"
+            >
               <MdOutlineCheckCircle className="text-lg" /> Accept
             </button>
           </div>

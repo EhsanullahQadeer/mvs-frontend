@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import WaveSurfer from 'wavesurfer.js';
+import React, { useEffect, useRef } from "react";
+import WaveSurfer from "wavesurfer.js";
+import stars from "../../../assets/img/stars.svg";
 
 interface AudioPlayerProps {
   audioUrl: string;
@@ -13,21 +14,21 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl }) => {
     if (waveformRef.current) {
       wavesurfer.current = WaveSurfer.create({
         container: waveformRef.current,
-        waveColor: '#363A3F', // Unplayed wave color
-        progressColor: '#D0D8E3', // Played wave color
-        cursorColor: 'transparent',
+        waveColor: "#363A3F", // Unplayed wave color
+        progressColor: "#D0D8E3", // Played wave color
+        cursorColor: "transparent",
         barWidth: 2,
         barGap: 1,
-        height: 120,
+        height: 177,
         barRadius: 0,
         normalize: true,
-        backend: 'WebAudio'
+        backend: "WebAudio",
       });
 
       wavesurfer.current.load(audioUrl);
 
       // Handle play/pause when clicking on the waveform
-      wavesurfer.current.on('interaction', () => {
+      wavesurfer.current.on("interaction", () => {
         wavesurfer.current?.playPause();
       });
 
@@ -40,11 +41,15 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl }) => {
   }, [audioUrl]);
 
   return (
-    <div className="bg-zinc-900 p-6 rounded-lg max-w-4xl mx-auto my-8">
-      <div 
-        ref={waveformRef} 
-        className="w-full cursor-pointer" 
-      />
+    <div
+      style={{
+        backgroundImage: `url(${stars})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+      className="pt-[80px] md:pt-[120px] rounded-lg w-full"
+    >
+      <div ref={waveformRef} className="w-full cursor-pointer" />
     </div>
   );
 };
