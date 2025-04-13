@@ -2,12 +2,37 @@ import React, { useState } from "react";
 import { MdOutlinePerson } from "react-icons/md";
 import { FaChevronRight, FaChevronDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { config } from "config/ConfigManager";
 
-const CollabTable = ({ data, heading }) => {
+interface Collaborator {
+  id: number;
+  contribution: number;
+  roles: string[];
+  is_owner: boolean;
+  status: string;
+  sample_id: number;
+  collaborator_id: number;
+  collaborator: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    professional_name: string;
+    primary_role: string;
+    thumbnail?: string;
+    [key: string]: any;
+  };
+}
+
+interface CollabTableProps {
+  data: Collaborator[];
+  heading: string;
+}
+
+const CollabTable: React.FC<CollabTableProps> = ({ data, heading }) => {
   // State to keep track of expanded rows
-  const [expandedRows, setExpandedRows] = useState([]);
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
 
-  const handleToggle = (index) => {
+  const handleToggle = (index: number) => {
     setExpandedRows((prev) =>
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
     );
@@ -23,7 +48,7 @@ const CollabTable = ({ data, heading }) => {
               <MdOutlinePerson />
             </th>
             <th>User</th>
-            <th>Publishing Split</th>
+            <th>Contribution</th>
             <th className="max-md:hidden">Status</th>
             <th className="max-md:hidden">Role</th>
             <th>Action</th>
@@ -31,28 +56,44 @@ const CollabTable = ({ data, heading }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((producer, index) => (
-            <React.Fragment key={index}>
+          {data.map((collab, index) => (
+            <React.Fragment key={collab.id}>
               <tr className="border-none text-gray-300">
                 <td>
-                  <div className="bg-gray-200 w-8 h-8 rounded-full m-2"></div>
+                  {collab.collaborator.thumbnail ? (
+                    <img
+                      src={`${config.get("ASSETS")}/${
+                        collab.collaborator.thumbnail
+                      }`}
+                      alt={collab.collaborator.professional_name}
+                      className="w-8 h-8 rounded-full m-2 object-cover"
+                    />
+                  ) : (
+                    <div className="bg-gray-200 w-8 h-8 rounded-full m-2"></div>
+                  )}
                 </td>
-                <td className="font-medium text-white">{producer.name}</td>
-                <td>{producer.split}</td>
-                <td className="max-md:hidden">{producer.status}</td>
+                <td className="font-medium text-white">
+                  {collab.collaborator.professional_name}
+                </td>
+                <td>{collab.contribution}%</td>
+                <td className="max-md:hidden capitalize ">
+                  {" "}
+                  {collab.status.charAt(0).toUpperCase() +
+                    collab.status.slice(1).toLowerCase()}
+                </td>
                 <td className="max-w-[200px] text-sm max-md:hidden">
-                  {producer.role.map((r, i) => (
+                  {collab.roles.map((role, i) => (
                     <span
                       key={i}
                       className="bg-zinc-900 rounded-full px-4 mx-1 py-1"
                     >
-                      {r}
+                      {role}
                     </span>
                   ))}
                 </td>
                 <td>
                   <Link to="#" className="underline">
-                    {producer.action}
+                    {collab.is_owner ? "View" : "Accept/Deny"}
                   </Link>
                 </td>
                 <td className="md:hidden" onClick={() => handleToggle(index)}>
@@ -72,12 +113,12 @@ const CollabTable = ({ data, heading }) => {
                       <h3 className="text-white font-medium py-2 text-md mb-1">
                         Roles
                       </h3>
-                      {producer.role.map((r, i) => (
+                      {collab.roles.map((role, i) => (
                         <span
                           key={i}
                           className="bg-zinc-900 rounded-full px-4 mx-1 py-1"
                         >
-                          {r}
+                          {role}
                         </span>
                       ))}
                     </div>
@@ -87,7 +128,7 @@ const CollabTable = ({ data, heading }) => {
                       </h3>
                       <span className="bg-zinc-900 rounded-full px-4 mx-1 py-1">
                         <div className="inline-block bg-[#84ff48] w-[10px] h-[10px] me-2 rounded-full"></div>
-                        <p className="inline-block">{producer.status}</p>
+                        <p className="inline-block">{collab.status}</p>
                       </span>
                     </div>
                   </td>

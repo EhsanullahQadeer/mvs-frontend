@@ -22,7 +22,10 @@ export class ConfigManager {
       // API Gateway
       GATEWAY: {
         API_URL: process.env.REACT_APP_APIGATEWAY_URL,
-      }
+      },
+
+      // Assets
+      ASSETS: process.env.REACT_APP_ASSETS,
     };
   }
 
