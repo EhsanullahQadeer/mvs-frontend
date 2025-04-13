@@ -307,7 +307,7 @@ const routes: IRoute[] = [
     component: Notification,
   },
   {
-    path: "/collaborator-request",
+    path: "/collaborator-request/:collaborationId",
     name: "Collaborator Request",
     component: CollaboratorRequest,
   },

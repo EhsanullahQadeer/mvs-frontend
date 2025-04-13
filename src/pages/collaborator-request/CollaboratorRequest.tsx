@@ -1,8 +1,22 @@
 import { MdOutlineCheckCircle, MdOutlineCancel } from "react-icons/md";
 import CollabTable from "./components/RequestCollabTable";
 import { musicProducrs, writers } from "./lib/constants";
+import { useEffect } from "react";
+import { handleCollaborationRequestData } from "api/sounds";
+import { useParams } from "react-router-dom";
 
 const CollaboratorRequest = () => {
+  const { collaborationId } = useParams();
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await handleCollaborationRequestData({ collaborationId });
+        console.log("data: ", data);
+      } catch (error) {
+        console.log("error: ", error);
+      }
+    })();
+  }, []);
   return (
     <div className="text-white">
       <div className="max-md:px-4 bg-zinc-900 text-center py-6">
@@ -57,7 +71,5 @@ const CollaboratorRequest = () => {
     </div>
   );
 };
-
-
 
 export default CollaboratorRequest;

@@ -179,10 +179,10 @@ export async function uploadMedia(payload: UploadMediaPayload) {
 
 export async function getCheckUserHasSampleType(sampleTypes: string, user_id: number) {
   return axiosInstance.get('/sounds/check-user-has-sample-types', {
-    params: { 
+    params: {
       userId: user_id,
       types: sampleTypes
-      
+
     }
   });
 }
@@ -192,4 +192,9 @@ export async function handleCollaborationRequest(sampleId: number, action: boole
     sampleId,
     action
   });
+}
+
+export async function handleCollaborationRequestData(params: {collaborationId:string}) {
+  return axiosInstance.get(`/sounds/collaboration`, { params:params });
+  
 }
