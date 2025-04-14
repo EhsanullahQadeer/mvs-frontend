@@ -52,12 +52,23 @@ export async function cancelUploadAPI(redisKey: string) {
   return axiosInstance.delete(`/sounds/sample/upload/cancel/${redisKey}`);
 }
 
-export async function getSoundMetaData(id: string, params: { code: String }): Promise<{ metadata: ISoundMetaData }> {
-  const response = await axiosInstance.get<{ metadata: ISoundMetaData }>(`/sounds/metadata/${id}`, { params });
+export async function getSoundMetaData(
+  id: string,
+  params: { code: String }
+): Promise<{ metadata: ISoundMetaData }> {
+  const response = await axiosInstance.get<{ metadata: ISoundMetaData }>(
+    `/sounds/metadata/${id}`,
+    { params }
+  );
   return response.data;
 }
-export async function checkIfSoundHasPass(params: { code: String }): Promise<boolean> {
-  const response = await axiosInstance.get<boolean>(`/sounds/sample/has-password`, { params });
+export async function checkIfSoundHasPass(params: {
+  code: String;
+}): Promise<boolean> {
+  const response = await axiosInstance.get<boolean>(
+    `/sounds/sample/has-password`,
+    { params }
+  );
   return response.data;
 }
 
@@ -160,15 +171,15 @@ export async function getSampleCollaborators(sampleId: number) {
 
 export interface UploadMediaPayload {
   file: File;
-  type: 'demo' | 'recording';
+  type: "demo" | "recording";
   duration?: number;
 }
 
 export async function uploadMedia(payload: UploadMediaPayload) {
   const formData = new FormData();
-  formData.append('file', payload.file);
-  formData.append('type', payload.type);
-  formData.append('duration', payload.duration?.toString() || '0');
+  formData.append("file", payload.file);
+  formData.append("type", payload.type);
+  formData.append("duration", payload.duration?.toString() || "0");
   console.log("formData", formData);
   return axiosInstance.post("/sounds/upload/media", formData, {
     headers: {
@@ -177,24 +188,28 @@ export async function uploadMedia(payload: UploadMediaPayload) {
   });
 }
 
-export async function getCheckUserHasSampleType(sampleTypes: string, user_id: number) {
-  return axiosInstance.get('/sounds/check-user-has-sample-types', {
+export async function getCheckUserHasSampleType(
+  sampleTypes: string,
+  user_id: number
+) {
+  return axiosInstance.get("/sounds/check-user-has-sample-types", {
     params: {
       userId: user_id,
-      types: sampleTypes
-
-    }
+      types: sampleTypes,
+    },
   });
 }
 
-export async function handleCollaborationRequest(sampleId: number | string, action: boolean) {
-  return axiosInstance.post(`/sounds/collaboration/accept`, {
-    sampleId,
-    action
-  });
+export async function handleCollaborationRequest(params: {
+  sampleId?: number | string;
+  collaborationId?: number | string;
+  action: boolean;
+}) {
+  return axiosInstance.post(`/sounds/collaboration/accept`, params);
 }
 
-export async function handleCollaborationRequestData(params: {collaborationId:string}) {
-  return axiosInstance.get(`/sounds/collaboration`, { params:params });
-  
+export async function handleCollaborationRequestData(params: {
+  collaborationId: string;
+}) {
+  return axiosInstance.get(`/sounds/collaboration`, { params: params });
 }

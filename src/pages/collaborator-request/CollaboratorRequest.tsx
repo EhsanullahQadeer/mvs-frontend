@@ -8,6 +8,8 @@ import { AxiosResponse } from "axios";
 import Theme from "theme";
 import { config } from "config/ConfigManager";
 import { handleCollaborationRequest } from "api/sounds";
+import { toast } from "react-toastify";
+import { CircularProgress } from "@mui/material";
 
 interface Collaborator {
   id: number;
@@ -43,18 +45,18 @@ const CollaboratorRequest = () => {
   const { collaborationId } = useParams();
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
   const [fileName, setFileName] = useState("");
-  const [sampleData, setSampleData] = useState<Sample | null>(null);
   const [audioUrl, setAudioUrl] = useState("");
   const [status, setStatus] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    (async () => {
+    const fetchCollaborationData = async () => {
       try {
+        setIsLoading(true);
         const response: AxiosResponse<CollaborationData> =
           await handleCollaborationRequestData({ collaborationId });
         const data = response.data;
         if (data?.sample) {
-          setSampleData(data.sample);
           setFileName(data.sample.filename);
           setCollaborators(data.sample.collaborators || []);
           // Set the audio URL using the S3 key
@@ -64,9 +66,16 @@ const CollaboratorRequest = () => {
         }
       } catch (error) {
         console.log("error: ", error);
+        toast.error("Failed to load collaboration data");
+      } finally {
+        setIsLoading(false);
       }
-    })();
-  }, []);
+    };
+
+    if (collaborationId) {
+      fetchCollaborationData();
+    }
+  }, [collaborationId]);
 
   // Group collaborators by primary role
   const collaboratorsByRole = collaborators.reduce(
@@ -83,12 +92,34 @@ const CollaboratorRequest = () => {
 
   const handleStatusFunc = async (status: boolean) => {
     try {
-      await handleCollaborationRequest(collaborationId, status);
+      await handleCollaborationRequest({ collaborationId, action: status });
+      toast.success(
+        `${status ? "Accepted" : "Denied"} collaboration request successfully!`
+      );
       setStatus(true);
     } catch (error) {
       console.log("error: ", error);
+      toast.error(
+        `Failed to ${status ? "accept" : "deny"} collaboration request`
+      );
     }
   };
+
+  if (isLoading) {
+    return (
+      <Theme>
+        <div className="min-h-screen flex items-center justify-center">
+          <CircularProgress
+            sx={{
+              width: "80px !important",
+              height: "80px !important",
+              color: "#9EFF00",
+            }}
+          />
+        </div>
+      </Theme>
+    );
+  }
 
   return (
     <Theme>
