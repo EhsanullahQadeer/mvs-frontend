@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 import stars from "../../../assets/img/stars.svg";
 
@@ -9,6 +9,7 @@ interface AudioPlayerProps {
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl }) => {
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (waveformRef.current) {
@@ -32,16 +33,33 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl }) => {
 
       wavesurfer.current.load(audioUrl);
 
-      wavesurfer.current.on("interaction", () => {
-        wavesurfer.current?.playPause();
-      });
-    }
+      const updateProgress = () => {
+        if (wavesurfer.current) {
+          const currentTime = wavesurfer.current.getCurrentTime();
+          const duration = wavesurfer.current.getDuration() || 1;
+          setProgress((currentTime / duration) * 100);
+        }
+      };
 
-    return () => {
-      if (wavesurfer.current) {
-        wavesurfer.current.destroy();
-      }
-    };
+      wavesurfer.current.on("timeupdate", updateProgress);
+
+      // @ts-ignore - WaveSurfer types are incomplete for these events
+      wavesurfer.current.on("seek", (progress: number) => {
+        setProgress(progress * 100);
+      });
+
+      // Handle seeking and clicking on waveform
+      wavesurfer.current.on("interaction", () => {
+        updateProgress();
+        wavesurfer.current.playPause();
+      });
+
+      return () => {
+        if (wavesurfer.current) {
+          wavesurfer.current.destroy();
+        }
+      };
+    }
   }, [audioUrl]);
 
   return (
@@ -49,9 +67,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl }) => {
       style={{
         backgroundImage: `url(${stars})`,
         backgroundSize: "cover",
-        backgroundPosition: "center",
       }}
-      className="pt-[80px] md:pt-[120px] rounded-lg w-full"
+      className=" rounded-lg w-full"
     >
       <div className="relative">
         <div className="h-[177px] relative">
@@ -60,7 +77,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl }) => {
             className="absolute bottom-0 left-0 right-0 [&>wave]:absolute [&>wave]:bottom-0" 
           />
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#B2B2B2]" />
+        <div className="absolute bottom-0 left-0 right-0 h-[1px]" style={{
+          background: `linear-gradient(to right, #D0D8E3 ${progress}%, #363A3F ${progress}%)`
+        }} />
       </div>
     </div>
   );
